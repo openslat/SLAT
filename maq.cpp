@@ -20,10 +20,17 @@ namespace SLAT {
 
         IntegrationSettings IntegrationSettings::default_settings;
         
+        void IntegrationSettings::Reset(void)
+        {
+            default_settings.tolerance = TOLERANCE_DEFAULT;
+            default_settings.max_evals = EVALUATIONS_DEFAULT;
+        }
+
         IntegrationSettings::IntegrationSettings(void)
         {
             tolerance = TOLERANCE_DEFAULT;
             max_evals = EVALUATIONS_DEFAULT;
+            parent = NULL;
         }
 
         IntegrationSettings::IntegrationSettings(const IntegrationSettings *other)

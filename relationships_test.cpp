@@ -65,97 +65,96 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
         /*
          * Make sure the class and object defaults are correct:
          */
-        {
-            Integration::IntegrationSettings &class_settings = 
-                RateRelationship::Get_Class_Integration_Settings();
+        Integration::IntegrationSettings &class_settings = 
+            RateRelationship::Get_Class_Integration_Settings();
 
-            BOOST_REQUIRE_EQUAL(class_settings.Get_Effective_Tolerance(), 1E-6);
-            BOOST_REQUIRE_EQUAL(class_settings.Get_Effective_Max_Evals(), 1024);
-
-            Integration::IntegrationSettings &rel1_settings = 
-                rel1.Get_Integration_Settings();
-            BOOST_REQUIRE_EQUAL(rel1_settings.Get_Effective_Tolerance(), 1E-6);
-            BOOST_REQUIRE_EQUAL(rel1_settings.Get_Effective_Max_Evals(), 1024);
-
-            Integration::IntegrationSettings &rel2_settings = 
-                rel2.Get_Integration_Settings();
-            BOOST_REQUIRE_EQUAL(rel2_settings.Get_Effective_Tolerance(), 1E-6);
-            BOOST_REQUIRE_EQUAL(rel2_settings.Get_Effective_Max_Evals(), 1024);
-        }
-
+        BOOST_REQUIRE_EQUAL(class_settings.Get_Effective_Tolerance(), 1E-6);
+        BOOST_REQUIRE_EQUAL(class_settings.Get_Effective_Max_Evals(), 1024);
+        
+        Integration::IntegrationSettings &rel1_settings = 
+            rel1.Get_Integration_Settings();
+        BOOST_REQUIRE_EQUAL(rel1_settings.Get_Effective_Tolerance(), 1E-6);
+        BOOST_REQUIRE_EQUAL(rel1_settings.Get_Effective_Max_Evals(), 1024);
+            
+        Integration::IntegrationSettings &rel2_settings = 
+            rel2.Get_Integration_Settings();
+        BOOST_REQUIRE_EQUAL(rel2_settings.Get_Effective_Tolerance(), 1E-6);
+        BOOST_REQUIRE_EQUAL(rel2_settings.Get_Effective_Max_Evals(), 1024);
 
         /*
-         * Change the class defaults; objects don't change:
+         * Change the class defaults; objects see changes:
          */
         {
-            // CompoundRateRelationship::SetDefaultIntegrationParameters(1.2, 125);
-            // double temp_tol;
-            // unsigned int temp_evals;
-            // CompoundRateRelationship::GetDefaultIntegrationParameters(temp_tol,
-            //                                                           temp_evals);
-            // BOOST_REQUIRE_EQUAL(temp_tol, 1.2);
-            // BOOST_REQUIRE_EQUAL(temp_evals, 125);
-            
-            // /*
-            //  * Make sure the object defaults are correct:
-            //  */
-            // rel1.GetIntegrationParameters(tol, max_evals);
-//            BOOST_REQUIRE_EQUAL(tol, Integration::TOLERANCE_UNSPECIFIED);
-//            BOOST_REQUIRE_EQUAL(max_evals, Integration::EVALUATIONS_UNSPECIFIED);
-            
-            // rel2.GetIntegrationParameters(tol, max_evals);
-//            BOOST_REQUIRE_EQUAL(tol, Integration::TOLERANCE_UNSPECIFIED);
-//            BOOST_REQUIRE_EQUAL(max_evals, Integration::EVALUATIONS_UNSPECIFIED);
+            class_settings.Override_Tolerance(1E-5);
+            BOOST_REQUIRE_EQUAL(class_settings.Get_Effective_Tolerance(), 1E-5);
+            BOOST_REQUIRE_EQUAL(rel1_settings.Get_Effective_Tolerance(), 1E-5);
+            BOOST_REQUIRE_EQUAL(rel2_settings.Get_Effective_Tolerance(), 1E-5);
+
+            class_settings.Override_Max_Evals(2048);
+            BOOST_REQUIRE_EQUAL(class_settings.Get_Effective_Max_Evals(), 2048);
+            BOOST_REQUIRE_EQUAL(rel1_settings.Get_Effective_Max_Evals(), 2048);
+            BOOST_REQUIRE_EQUAL(rel2_settings.Get_Effective_Max_Evals(), 2048);
         }
 
         /*
-         * Change an object defaults; others don't change:
+         * Override an object; other object and class not affected:
          */
         {
-            double temp_tol;
-            unsigned int temp_evals;
+            rel1_settings.Override_Tolerance(1E-4);
+            BOOST_REQUIRE_EQUAL(rel1_settings.Get_Effective_Tolerance(), 1E-4);
+            BOOST_REQUIRE_EQUAL(class_settings.Get_Effective_Tolerance(), 1E-5);
+            BOOST_REQUIRE_EQUAL(rel2_settings.Get_Effective_Tolerance(), 1E-5);
 
-            // rel1.SetIntegrationParameters(0.7, 500);
-            // rel1.GetIntegrationParameters(temp_tol, temp_evals);
-            // BOOST_REQUIRE_EQUAL(temp_tol, 0.7);
-            // BOOST_REQUIRE_EQUAL(temp_evals, 500);
-            
-            // CompoundRateRelationship::GetDefaultIntegrationParameters(temp_tol,
-            //                                                           temp_evals);
-            // BOOST_REQUIRE_EQUAL(temp_tol, 1.2);
-            // BOOST_REQUIRE_EQUAL(temp_evals, 125);
-            
-            // rel2.GetIntegrationParameters(tol, max_evals);
-//            BOOST_REQUIRE_EQUAL(tol, Integration::TOLERANCE_UNSPECIFIED);
-//            BOOST_REQUIRE_EQUAL(max_evals, Integration::EVALUATIONS_UNSPECIFIED);
+            rel2_settings.Override_Max_Evals(512);
+            BOOST_REQUIRE_EQUAL(rel2_settings.Get_Effective_Max_Evals(), 512);
+            BOOST_REQUIRE_EQUAL(class_settings.Get_Effective_Max_Evals(), 2048);
+            BOOST_REQUIRE_EQUAL(rel1_settings.Get_Effective_Max_Evals(), 2048);
         }
+
+
 
 /**
- * TODO: Test that default parameters are used correctly in lambda().
+ * Test that integration parameters are used correctly in lambda(). If the
+ * integration fails to converge to the required accuracy within the allotted
+ * number of evaluations, it will return NAN.
  */
+
+        /*
+         * Current settings should produce a valid result:
+         */
         BOOST_REQUIRE(!std::isnan(rel2.lambda(0.01)));
         
-        // rel2.SetIntegrationParameters(1E-6, 5);
-        // BOOST_REQUIRE(std::isnan(rel2.lambda(0.01)));
+        /*
+         * Too few evaluations--fails:
+         */
+        rel2_settings.Override_Tolerance(1E-6);
+        rel2_settings.Override_Max_Evals(5);
+        BOOST_REQUIRE(std::isnan(rel2.lambda(0.01)));
 
-        // CompoundRateRelationship::SetDefaultIntegrationParameters(1E-6, 5);
-        // rel2.SetIntegrationParameters(Integration::TOLERANCE_UNSPECIFIED,
-        //                               Integration::EVALUATIONS_UNSPECIFIED);
-        // BOOST_REQUIRE(std::isnan(rel2.lambda(0.01)));
-       
+        /*
+         * Plenty of evaluations--succeeds:
+         */
+        rel2_settings.Override_Max_Evals(4096);
+        BOOST_REQUIRE(!std::isnan(rel2.lambda(0.01)));
 
-        // CompoundRateRelationship::SetDefaultIntegrationParameters(1E-6, 4096);
-        // BOOST_REQUIRE(!std::isnan(rel2.lambda(0.01)));
+        /*
+         * Demand ridiculous precision; fail:
+         */
+        rel2_settings.Override_Tolerance(1E-30);
+        BOOST_REQUIRE(std::isnan(rel2.lambda(0.01)));
         
-        // CompoundRateRelationship::SetDefaultIntegrationParameters(
-        //     Integration::TOLERANCE_UNSPECIFIED,
-        //     Integration::EVALUATIONS_UNSPECIFIED);
-        // BOOST_REQUIRE(!std::isnan(rel2.lambda(0.01)));
+        /*
+         * Use the class default; succeed:
+         */
+        rel2_settings.Use_Default_Tolerance();
+        rel2_settings.Use_Default_Max_Evals();
+        BOOST_REQUIRE(!std::isnan(rel2.lambda(0.01)));
 
         /*
          * Restore class defaults before returning 
          */
-        // CompoundRateRelationship::SetDefaultIntegrationParameters(def_tol, def_max_evals);
+        class_settings.Use_Default_Tolerance();
+        class_settings.Use_Default_Max_Evals();
     }
 }
 

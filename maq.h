@@ -35,6 +35,7 @@ namespace SLAT {
              */
             static void Set_Tolerance(double tolerance);
             static void Set_Max_Evals(unsigned int max_evals);  
+            static void Reset();
 
             unsigned int Get_Effective_Max_Evals(void) const;
             double Get_Effective_Tolerance(void) const;
