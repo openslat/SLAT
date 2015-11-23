@@ -18,50 +18,76 @@
 namespace SLAT {
     namespace Integration {
 
-/**
- * Default tolearance for integration.
- */
-        static double default_tolerance = 1E-6;
+        IntegrationSettings IntegrationSettings::default_settings;
+        
+        IntegrationSettings::IntegrationSettings(void)
+        {
+            tolerance = TOLERANCE_DEFAULT;
+            max_evals = EVALUATIONS_DEFAULT;
+        }
 
-/**
- * Default evaluation limit for integration.
- */
-        static unsigned int default_evaluations = 1024;
+        IntegrationSettings::IntegrationSettings(const IntegrationSettings *other)
 
-        void Set_Default_Tolerance(double tolerance) 
         {
-            if (tolerance == TOLERANCE_UNSPECIFIED) {
-                std::cerr << "Can't set tolerance to 'unspecified'; ignoring."
-                          << std::endl;
-            } else if (tolerance < 0) {
-                std::cerr << "Can't set tolerance <0; using absolute value instead."
-                          << std::endl;
-                default_tolerance = std::abs(tolerance);
-            } else {
-                default_tolerance = tolerance;
+            tolerance = TOLERANCE_UNSPECIFIED;
+            max_evals = EVALUATIONS_UNSPECIFIED;
+            parent = other;
+        }
+
+        const IntegrationSettings *IntegrationSettings::Get_Global_Settings(void) 
+        {
+            return &IntegrationSettings::default_settings;
+        }
+
+        unsigned int IntegrationSettings::Get_Effective_Max_Evals(void) const
+        {
+            const IntegrationSettings *ptr = this;
+            while (ptr != NULL && ptr->max_evals == EVALUATIONS_UNSPECIFIED) {
+                ptr = ptr->parent;
             }
+            return ptr->max_evals;
         }
-        
-        void Set_Default_Evaluations(unsigned int evaluations)
+
+
+        double IntegrationSettings::Get_Effective_Tolerance(void) const
         {
-            if (evaluations == EVALUATIONS_UNSPECIFIED) {
-                std::cerr << "Can't set evaluations limit to 'unspecified'."
-                          << std::endl;
-            } else {
-                default_evaluations = evaluations;
+            const IntegrationSettings *ptr = this;
+            while (ptr != NULL && ptr->tolerance == TOLERANCE_UNSPECIFIED) {
+                ptr = ptr->parent;
             }
+            return ptr->tolerance;
         }
-        
-        double Get_Default_Tolerance(void)
+
+        void IntegrationSettings::Override_Tolerance(double tol) 
         {
-            return default_tolerance;
+            tolerance = tol;
         }
-        
-        unsigned int Get_Default_Evaluations(void)
+
+        void IntegrationSettings::Override_Max_Evals(unsigned int evals) 
         {
-            return default_evaluations;
+            max_evals = evals;
         }
-        
+
+        void IntegrationSettings::Use_Default_Tolerance() 
+        {
+            tolerance = TOLERANCE_UNSPECIFIED;
+        }
+
+        void IntegrationSettings::Use_Default_Max_Evals() 
+        {
+            max_evals = EVALUATIONS_UNSPECIFIED;
+        }
+
+        void IntegrationSettings::Set_Tolerance(double tol) 
+        {
+            default_settings.Override_Tolerance(tol);
+        }
+
+        void IntegrationSettings::Set_Max_Evals(unsigned int evals)
+        {
+            default_settings.Override_Max_Evals(evals);
+        }
+
 /*
  * Functions for mapping between the x and t domains:
  */
@@ -127,12 +153,13 @@ namespace SLAT {
         MAQ_RESULT MAQ(std::function<double (double)> integrand,
                        double tol, int maxeval)
         {
-            if (tol == TOLERANCE_UNSPECIFIED) {
-                tol = default_tolerance;
+            if (tol == 0) {
+                tol = 
+                    IntegrationSettings::Get_Global_Settings()->Get_Effective_Tolerance();
             }
             
-            if (maxeval == EVALUATIONS_UNSPECIFIED) {
-                maxeval = default_evaluations;
+            if (maxeval == 0) {
+                maxeval = IntegrationSettings::Get_Global_Settings()-> Get_Effective_Max_Evals();
             }
 
             bool success = true;

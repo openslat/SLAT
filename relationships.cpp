@@ -19,11 +19,9 @@
 
 namespace SLAT {
 
-    double CompoundRateRelationship::default_tolerance =
-        Integration::TOLERANCE_UNSPECIFIED;
+    double CompoundRateRelationship::default_tolerance = 0;
 
-    unsigned int CompoundRateRelationship::default_max_evaluations =
-        Integration::EVALUATIONS_UNSPECIFIED;
+    unsigned int CompoundRateRelationship::default_max_evaluations = 0;
     
 /** 
  * Local wrapper function for use with GSL. 
@@ -90,8 +88,7 @@ namespace SLAT {
         this->base_rate = base_rate;
         this->dependent_rate = dependent_rate;
 
-        this->SetIntegrationParameters(Integration::TOLERANCE_UNSPECIFIED,
-                                       Integration::EVALUATIONS_UNSPECIFIED);
+        this->SetIntegrationParameters(0, 0);
     }
 
     double CompoundRateRelationship::lambda(double min_y)
@@ -117,8 +114,10 @@ namespace SLAT {
                 }
                 return result;
             }, 
-            my_tol != Integration::TOLERANCE_UNSPECIFIED ? my_tol : class_tol,
-            my_max_evals != Integration::EVALUATIONS_UNSPECIFIED 
+            my_tol != 0
+            ? my_tol : class_tol,
+
+            my_max_evals != 0
             ? my_max_evals : class_max_evals);
         if (result.successful) {
             return result.integral;
