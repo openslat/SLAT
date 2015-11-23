@@ -10,6 +10,7 @@
  * ©2015 Canterbury University
  */
 #include "functions.h"
+#include "maq.h"
 #ifndef _RELATIONSHIPS_H_
 #define _RELATIONSHIPS_H_
 
@@ -18,14 +19,16 @@ namespace SLAT {
 /**
  * @brief Rate Relationship
  * 
- * A 'Rate Relationship' represents the probability of a function exceeding a
+u * A 'Rate Relationship' represents the probability of a function exceeding a
  * given value. This is an abstract class.
  */
     class RateRelationship
     {
     protected:
-        RateRelationship(void) {}; /**< Default constructor; does nothing. */
+        RateRelationship(void); /**< Default constructor. */
         ~RateRelationship() { };   /**< Default destructor; does nothing. */
+        Integration::IntegrationSettings local_settings;
+        static Integration::IntegrationSettings class_settings;
     public:
         /** 
          * Returns the probability of exceedence at a given value.
@@ -44,6 +47,16 @@ namespace SLAT {
          * @return The derivative of the relationship at x.
          */
         virtual double DerivativeAt(double x) const;
+
+        /**
+         * Returns class integration settings:
+         */
+        static Integration::IntegrationSettings &Get_Class_Integration_Settings(void);
+
+        /**
+         * Returns object integration settings:
+         */
+        Integration::IntegrationSettings &Get_Integration_Settings(void);
     };
 
 /**
@@ -137,23 +150,6 @@ namespace SLAT {
          */
         virtual double lambda(double x);
 
-        /** 
-         * Set the default tolerance and evaluations limit used by the
-         * integrator when calculating lambda for this object.
-         * 
-         * @param tol   Tolerance
-         * @param evals Maximum number of evaluations
-         */
-        void SetIntegrationParameters(double tol, unsigned int evals);
-
-        /** 
-         * Get the default tolerance and evaluations limit used by the
-         * integrator.
-         * 
-         * @param tol    Returned with the tolerance.
-         * @param evals  Returned with the evaluations limit.
-         */
-        void GetIntegrationParameters(double &tol, unsigned int &evals);
     protected:
         std::shared_ptr<RateRelationship> base_rate; /**< Base rate relationship */
         std::shared_ptr<ProbabilisticFunction> dependent_rate; /**< Dependent function */

@@ -150,17 +150,16 @@ namespace SLAT {
             return (b - a) / 6 * (fa + 4 * fc + fb);
         }
 
-        MAQ_RESULT MAQ(std::function<double (double)> integrand,
-                       double tol, int maxeval)
+        MAQ_RESULT MAQ(std::function<double (double)> integrand) 
         {
-            if (tol == 0) {
-                tol = 
-                    IntegrationSettings::Get_Global_Settings()->Get_Effective_Tolerance();
-            }
-            
-            if (maxeval == 0) {
-                maxeval = IntegrationSettings::Get_Global_Settings()-> Get_Effective_Max_Evals();
-            }
+            return MAQ(integrand, *IntegrationSettings::Get_Global_Settings());
+        }
+
+        MAQ_RESULT MAQ(std::function<double (double)> integrand,
+                       const IntegrationSettings &settings)
+        {
+            double tol = settings.Get_Effective_Tolerance();
+            unsigned int maxeval = settings.Get_Effective_Max_Evals();
 
             bool success = true;
             // Initialisation

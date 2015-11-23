@@ -62,10 +62,9 @@ namespace SLAT {
             bool successful;
             int evaluations;
         } MAQ_RESULT;
+        MAQ_RESULT MAQ(std::function<double (double)> integrand);
         MAQ_RESULT MAQ(std::function<double (double)> integrand,
-                       double tol=0,
-                       int maxeval=0);
-
+                       const IntegrationSettings &settings);
     }
 }
 #endif

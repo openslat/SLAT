@@ -19,9 +19,22 @@
 
 namespace SLAT {
 
-    double CompoundRateRelationship::default_tolerance = 0;
+    Integration::IntegrationSettings RateRelationship::class_settings(
+        Integration::IntegrationSettings::Get_Global_Settings());
 
-    unsigned int CompoundRateRelationship::default_max_evaluations = 0;
+    RateRelationship::RateRelationship() : local_settings(&class_settings) {
+    };
+
+    Integration::IntegrationSettings &RateRelationship::Get_Class_Integration_Settings(void)
+    {
+        return class_settings;
+    }
+
+    Integration::IntegrationSettings &RateRelationship::Get_Integration_Settings(void)
+    {
+        return local_settings;
+    }
+
     
 /** 
  * Local wrapper function for use with GSL. 
@@ -40,6 +53,7 @@ namespace SLAT {
     }
 
     SimpleRateRelationship::SimpleRateRelationship(std::shared_ptr<DeterministicFunction> func) 
+        : RateRelationship()
     {
         f = func;
     }
@@ -84,11 +98,10 @@ namespace SLAT {
     CompoundRateRelationship::CompoundRateRelationship(
         std::shared_ptr<RateRelationship> base_rate,
         std::shared_ptr<ProbabilisticFunction> dependent_rate)
+        : RateRelationship()
     {
         this->base_rate = base_rate;
         this->dependent_rate = dependent_rate;
-
-        this->SetIntegrationParameters(0, 0);
     }
 
     double CompoundRateRelationship::lambda(double min_y)
@@ -98,8 +111,6 @@ namespace SLAT {
          */
         double my_tol, class_tol;
         unsigned int my_max_evals, class_max_evals;
-        GetIntegrationParameters(my_tol, my_max_evals);
-        GetDefaultIntegrationParameters(class_tol, class_max_evals);
         
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
@@ -113,45 +124,12 @@ namespace SLAT {
                     result = p * std::abs(d);
                 }
                 return result;
-            }, 
-            my_tol != 0
-            ? my_tol : class_tol,
-
-            my_max_evals != 0
-            ? my_max_evals : class_max_evals);
+            }, local_settings); 
         if (result.successful) {
             return result.integral;
         } else {
             // Log error
             return NAN;
         };
-    }
-
-    void CompoundRateRelationship::SetDefaultIntegrationParameters(
-        double tol, unsigned int evals)
-    {
-        default_tolerance = tol;
-        default_max_evaluations = evals;
-    }
-    
-    void CompoundRateRelationship::GetDefaultIntegrationParameters(
-        double &tol, unsigned int &evals)
-    {
-        tol = default_tolerance;
-        evals = default_max_evaluations;
-    }
-
-    void CompoundRateRelationship::SetIntegrationParameters(
-        double tol, unsigned int evals)
-    {
-        tolerance = tol;
-        max_evaluations = evals;
-    }
-    
-    void CompoundRateRelationship::GetIntegrationParameters(
-        double &tol, unsigned int &evals)
-    {
-        tol = tolerance;
-        evals = max_evaluations;
     }
 }
