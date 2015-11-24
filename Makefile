@@ -5,7 +5,7 @@ clean:
 
 CC=g++
 CFLAGS=-g -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
-LDFLAGS=-lgsl -lgslcblas -lm -lboost_log -lboost_thread ./-lboost_system -lpthread
+LDFLAGS=-lgsl -lgslcblas -lm -lboost_log -lboost_thread -lboost_system -lpthread
 
 SRCS = main.cpp functions.cpp relationships.cpp maq.cpp
 HEADERS = functions.h
