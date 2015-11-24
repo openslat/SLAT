@@ -6,8 +6,27 @@
 using namespace std;
 using namespace SLAT;
 
+#include <boost/move/utility.hpp>
+#include <boost/log/sources/logger.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/log/sources/global_logger_storage.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/sinks/text_ostream_backend.hpp>
+
+namespace logging = boost::log;
+namespace src = boost::log::sources;
+namespace keywords = boost::log::keywords;
+
+BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(main_logger, src::logger_mt)
 int main(int argc, char **argv)
 {
+    logging::add_file_log("main.log");
+    logging::add_common_attributes();
+
+    src::logger_mt& logger = main_logger::get();
+    BOOST_LOG(logger) << "Starting main().";
+
     cout << "Welcome to SLAT" << endl;
     
     shared_ptr<DeterministicFunction> im_rate_function(
@@ -17,6 +36,7 @@ int main(int argc, char **argv)
         new SimpleRateRelationship(im_rate_function));
 
     {
+        BOOST_LOG(logger) << "Writing IM-RATE table";
         ofstream outfile("im_rate.dat");
         outfile << setw(10) << "IM" << setw(12) << "RATE" << endl;
         outfile << setprecision(6) << fixed;
@@ -25,6 +45,7 @@ int main(int argc, char **argv)
             outfile << setw(10) << im << setw(12) << im_rate_rel->lambda(im) << endl;
         }
         outfile.close();
+        BOOST_LOG(logger) << "IM-RATE table written";
     }
 
     
@@ -38,6 +59,7 @@ int main(int argc, char **argv)
         new LogNormalFunction(mu_edp, sigma_edp));
 
     {
+        BOOST_LOG(logger) << "Writing IM-EDP table";
         ofstream outfile("im_edp.dat");
 
         outfile << setw(10) << "IM" << setw(12) << "EDP16"
@@ -53,10 +75,12 @@ int main(int argc, char **argv)
                     << endl;
         }
         outfile.close();
+        BOOST_LOG(logger) << "IM-EDP table done.";
     }
 
     CompoundRateRelationship rel(im_rate_rel, edp_im_relationship);
     {
+        BOOST_LOG(logger) << "Writing EDP-RATE table";
         ofstream outfile("edp_rate.dat");
         
         outfile << setw(10) << "EDP" << setw(12) << "RATE" << endl;
@@ -66,6 +90,7 @@ int main(int argc, char **argv)
             outfile << setw(10) << edp << setw(12) << rel.lambda(edp) << endl;
         }
         outfile.close();
+        BOOST_LOG(logger) << "EDP-RATE table written.";
     }
-    
+    BOOST_LOG(logger) << "Exiting main().";
 }

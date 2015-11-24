@@ -16,6 +16,18 @@
 #include <functional>
 #include <boost/shared_ptr.hpp>
 
+#include <boost/move/utility.hpp>
+#include <boost/log/sources/logger.hpp>
+#include <boost/log/sources/record_ostream.hpp>
+#include <boost/log/sources/global_logger_storage.hpp>
+#include <boost/log/utility/setup/file.hpp>
+#include <boost/log/utility/setup/common_attributes.hpp>
+#include <boost/log/sinks/text_ostream_backend.hpp>
+
+namespace logging = boost::log;
+namespace src = boost::log::sources;
+namespace keywords = boost::log::keywords;
+
 namespace SLAT {
     namespace Integration {
         
@@ -53,6 +65,8 @@ namespace SLAT {
 
             IntegrationSettings();
             static IntegrationSettings default_settings;
+        protected:
+            static src::logger_mt settings_logger;
         };
         
 /*

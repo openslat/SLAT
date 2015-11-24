@@ -18,6 +18,7 @@
 namespace SLAT {
     namespace Integration {
 
+        src::logger_mt IntegrationSettings::settings_logger;
         IntegrationSettings IntegrationSettings::default_settings;
         
         void IntegrationSettings::Reset(void)
@@ -49,7 +50,7 @@ namespace SLAT {
         unsigned int IntegrationSettings::Get_Effective_Max_Evals(void) const
         {
             const IntegrationSettings *ptr = this;
-            while (ptr != NULL && ptr->max_evals == EVALUATIONS_UNSPECIFIED) {
+            while (ptr->parent != NULL && ptr->max_evals == EVALUATIONS_UNSPECIFIED) {
                 ptr = ptr->parent;
             }
             return ptr->max_evals;
@@ -59,7 +60,7 @@ namespace SLAT {
         double IntegrationSettings::Get_Effective_Tolerance(void) const
         {
             const IntegrationSettings *ptr = this;
-            while (ptr != NULL && ptr->tolerance == TOLERANCE_UNSPECIFIED) {
+            while (ptr->parent != NULL && ptr->tolerance == TOLERANCE_UNSPECIFIED) {
                 ptr = ptr->parent;
             }
             return ptr->tolerance;
@@ -87,12 +88,22 @@ namespace SLAT {
 
         void IntegrationSettings::Set_Tolerance(double tol) 
         {
-            default_settings.Override_Tolerance(tol);
+            if (tol > 0.0) {
+                default_settings.Override_Tolerance(tol);
+            } else {
+                BOOST_LOG(settings_logger) << "Can't set tolerance to " << tol
+                                           << "; must be > 0.0.";
+            }
         }
 
         void IntegrationSettings::Set_Max_Evals(unsigned int evals)
         {
-            default_settings.Override_Max_Evals(evals);
+            if (evals > 0) {
+                default_settings.Override_Max_Evals(evals);
+            } else {
+                BOOST_LOG(settings_logger) << "Can't set max evaluatons to " << evals
+                                           << "; must be > 0.0.";
+            }
         }
 
 /*
