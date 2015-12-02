@@ -15,6 +15,7 @@
 #include <gsl/gsl_spline.h>
 #include <memory>
 #include <iostream>
+#include <math.h>
 #ifndef _FUNCTIONS_H_
 #define _FUNCTIONS_H_
 
@@ -45,12 +46,12 @@ namespace SLAT {
          * 
          * @return   The result of evaluating the function at x.
          */
-        virtual double Evaluate(double x) const { };
+        virtual double Evaluate(double x) const { return NAN; };
     public:
         /** 
          * Default destructor; does nothing.
          */     
-        ~DeterministicFunction(void) { std::cout << "DESTROY" << std::endl; };
+        ~DeterministicFunction(void) { };
 
         /** 
          * Evaluate the function at a given input. This is the public interface,
@@ -200,7 +201,7 @@ namespace SLAT {
          * 
          * @return   The interpolated value at x.
          */
-        virtual double Evaluate(double x) const {};
+        virtual double Evaluate(double x) const { return NAN; };
     };
 
 /**
@@ -327,7 +328,7 @@ namespace SLAT {
          * 
          * @return The probability that f(x) >= min_y.
          */
-        virtual double P_exceedence(double x, double min_y) const {};
+        virtual double P_exceedence(double x, double min_y) const { return NAN; };
 
         /** 
          * @brief Inverse Exceedence
@@ -341,7 +342,7 @@ namespace SLAT {
          * 
          * @return y, such that f(x) <= y with probability p.
          */
-        virtual double X_at_exceedence(double x, double p) const {};
+        virtual double X_at_exceedence(double x, double p) const { return NAN; };
 
         ~ProbabilisticFunction() { }; /**< Destructor does not need to do
                                        * anything. */

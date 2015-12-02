@@ -59,9 +59,6 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
     CompoundRateRelationship rel2(im_rate_rel, edp_im_relationship);
 
     {
-        double def_tol, tol;
-        unsigned int def_max_evals, max_evals;
-        
         /*
          * Make sure the class and object defaults are correct:
          */
@@ -210,7 +207,7 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
             double ko=1.6E-4, k=2.74, a=0.1, b=1.5, beta=0.5;
 
             double expected = ko * pow(x/a, -k/b)*exp(0.5 * k*k/(b*b)*beta*beta);
-            BOOST_CHECK_CLOSE(rel_ptr->lambda(x), expected, 0.1);
+            BOOST_REQUIRE_CLOSE(rel_ptr->lambda(x), expected, 0.1);
         }
     }
     {

@@ -75,7 +75,7 @@ namespace SLAT {
         typedef struct {
             double integral;
             bool successful;
-            int evaluations;
+            unsigned int evaluations;
         } MAQ_RESULT;
         MAQ_RESULT MAQ(std::function<double (double)> integrand);
         MAQ_RESULT MAQ(std::function<double (double)> integrand,

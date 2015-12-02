@@ -10,7 +10,6 @@
  *
  * ©2015 Canterbury University
  */
-#include <iostream>
 #include "gsl/gsl_cdf.h"
 #include "gsl/gsl_deriv.h"
 
@@ -63,7 +62,6 @@ namespace SLAT {
 
     double SimpleRateRelationship::lambda(double x) const
     {
-        //std::cout << "SimpleRateRelationship::lambda()" << std::endl;
         return f->ValueAt(x);
     }
 
@@ -110,13 +108,9 @@ namespace SLAT {
 
     double CompoundRateRelationship::lambda(double min_y) const
     {
-        std::cout << "CompoundRateRelationship::lambda()" << std::endl;
         /*
          * Decide which parameters to use:
          */
-        double my_tol, class_tol;
-        unsigned int my_max_evals, class_max_evals;
-        
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
             [this, min_y] (double x2) -> double {

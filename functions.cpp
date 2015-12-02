@@ -11,7 +11,6 @@
  */
 #include <math.h>
 #include <vector>
-#include <iostream>
 #include <functional>
 #include "functions.h"
 #include "gsl/gsl_cdf.h"
@@ -100,7 +99,6 @@ namespace SLAT {
 
     PowerLawParametricCurve::PowerLawParametricCurve(double a, double b)
     {
-        std::cout << "PowerLawParametricCurve()" << std::endl;
         this->a = a;
         this->b = b;
     }
@@ -119,7 +117,7 @@ namespace SLAT {
     InterpolatedFunction::InterpolatedFunction(double x[], double y[], size_t size) : 
         DeterministicFunction()
     {
-        for (int i=0; i < size; i++) {
+        for (unsigned int i=0; i < size; i++) {
             data.push_back(std::pair<double, double>(x[i], y[i]));
         }
     }
@@ -171,7 +169,7 @@ namespace SLAT {
         // Make a copy of the data in log scale for the interpolator:
         double logx[size];
         double logy[size];
-        for (int i=0; i < size; i++) {
+        for (unsigned int i=0; i < size; i++) {
             logx[i] = log(x[i]);
             logy[i] = log(y[i]);
         }

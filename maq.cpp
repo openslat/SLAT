@@ -181,7 +181,7 @@ namespace SLAT {
 
             bool success = true;
             // Initialisation
-            int counter;
+            unsigned int counter;
             double integral = 0.0;
 
             // Stack for keeping track of what still needs to be evaluated:

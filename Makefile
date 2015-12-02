@@ -4,7 +4,7 @@ clean:
 	rm -f *.o main
 
 CC=g++
-CFLAGS=-g -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
+CFLAGS=-g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
 LDFLAGS=-lgsl -lgslcblas -lm -lboost_log -lboost_thread -lboost_system -lpthread
 
 SRCS = main.cpp functions.cpp relationships.cpp maq.cpp
@@ -33,4 +33,3 @@ unit_tests: $(UNIT_OBJS)
 
 doc: $(OBJS) $(HEADERS)
 	doxygen
-

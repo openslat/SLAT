@@ -35,8 +35,6 @@ BOOST_AUTO_TEST_CASE( Power_Law_Curve_025_05)
     for (int i=0; i < 100; i++) {
         double x = double(i)/10.0;
         
-        // cout << i << ", " << x << ", " << f.ValueAt(x) << ", " 
-        //      << f.DerivativeAt(x) << ", " << 1.0/(2.0*sqrt(x)) << endl;
         BOOST_CHECK_EQUAL( f.ValueAt(x), 0.25 * sqrt(x));
         if (x > 0) {
             BOOST_CHECK_CLOSE( f.DerivativeAt(x), 1.0 / (8.0 * sqrt(x)), 0.1);
@@ -102,7 +100,7 @@ BOOST_AUTO_TEST_CASE( Log_Log_Interp_Test_1 )
     double x[size], y[size];
     NonLinearHyperbolicLaw h(1221, 29.8, 62.2);
 
-    for (int i=0; i < size; i++) {
+    for (unsigned int i=0; i < size; i++) {
         x[i] = double(i)/(size -1) * 28;
         if (x[i] == 0) x[i] = 0.001;
         y[i] = h.ValueAt(x[i]);
@@ -163,7 +161,7 @@ BOOST_AUTO_TEST_CASE(Log_Normal_Function_Test)
         { 2.40, 0.16, 2.261E-01 }, { 2.40, 0.50, 3.718E-01 }, { 2.40, 0.84, 6.113E-01 },
         { 2.50, 0.16, 2.404E-01 }, { 2.50, 0.50, 3.953E-01 }, { 2.50, 0.84, 6.499E-01 },
     };
-    for (int i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
+    for (unsigned int i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
         double im = test_data[i].im;
         double expected_pct = test_data[i].pct;
         double expected_edp = test_data[i].edp;
@@ -175,8 +173,12 @@ BOOST_AUTO_TEST_CASE(Log_Normal_Function_Test)
         BOOST_CHECK_CLOSE(expected_edp, actual_edp, 1.0);
     }
 
+    /*
+     * Make sure we get the right overloaded function when we access a LogNormalFunction
+     * through a pointer:
+     */
     std::shared_ptr<ProbabilisticFunction> f(new LogNormalFunction(mu_func, sigma_func));
-    for (int i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
+    for (uint i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
         double im = test_data[i].im;
         double expected_pct = test_data[i].pct;
         double expected_edp = test_data[i].edp;
