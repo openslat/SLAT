@@ -153,7 +153,7 @@ namespace SLAT {
          * 
          * @return The probability that the value will exceed x.
          */
-        virtual double lambda(double x);
+        virtual double lambda(double x) const;
 
     protected:
         std::shared_ptr<RateRelationship> base_rate; /**< Base rate relationship */

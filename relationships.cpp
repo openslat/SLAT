@@ -108,7 +108,7 @@ namespace SLAT {
         id = 2;
     }
 
-    double CompoundRateRelationship::lambda(double min_y)
+    double CompoundRateRelationship::lambda(double min_y) const
     {
         std::cout << "CompoundRateRelationship::lambda()" << std::endl;
         /*
