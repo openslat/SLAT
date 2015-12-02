@@ -34,4 +34,3 @@ unit_tests: $(UNIT_OBJS)
 doc: $(OBJS) $(HEADERS)
 	doxygen
 
-

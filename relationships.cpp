@@ -23,6 +23,7 @@ namespace SLAT {
         Integration::IntegrationSettings::Get_Global_Settings());
 
     RateRelationship::RateRelationship() : local_settings(&class_settings) {
+        id = 0;
     };
 
     Integration::IntegrationSettings &RateRelationship::Get_Class_Integration_Settings(void)
@@ -56,11 +57,13 @@ namespace SLAT {
         : RateRelationship()
     {
         f = func;
+        id = 1;
     }
 
 
     double SimpleRateRelationship::lambda(double x) const
     {
+        //std::cout << "SimpleRateRelationship::lambda()" << std::endl;
         return f->ValueAt(x);
     }
 
@@ -102,10 +105,12 @@ namespace SLAT {
     {
         this->base_rate = base_rate;
         this->dependent_rate = dependent_rate;
+        id = 2;
     }
 
     double CompoundRateRelationship::lambda(double min_y)
     {
+        std::cout << "CompoundRateRelationship::lambda()" << std::endl;
         /*
          * Decide which parameters to use:
          */

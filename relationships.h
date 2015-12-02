@@ -19,11 +19,13 @@ namespace SLAT {
 /**
  * @brief Rate Relationship
  * 
-u * A 'Rate Relationship' represents the probability of a function exceeding a
+ * A 'Rate Relationship' represents the probability of a function exceeding a
  * given value. This is an abstract class.
  */
     class RateRelationship
     {
+    public:
+        int id;
     protected:
         RateRelationship(void); /**< Default constructor. */
         ~RateRelationship() { };   /**< Default destructor; does nothing. */
@@ -37,8 +39,11 @@ u * A 'Rate Relationship' represents the probability of a function exceeding a
          * 
          * @return The probability the of exceedence.
          */
-        virtual double lambda(double x) const {};
-
+        virtual double lambda(double x) const {
+            //std::cout << "RateRelationship::lambda()" << std::endl;
+            return NAN;
+        };
+        
         /** 
          * Returns the derivative of lambda at the given point.
          * 

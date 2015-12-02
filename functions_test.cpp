@@ -174,4 +174,17 @@ BOOST_AUTO_TEST_CASE(Log_Normal_Function_Test)
         BOOST_CHECK_CLOSE(expected_pct, actual_pct, 0.5);
         BOOST_CHECK_CLOSE(expected_edp, actual_edp, 1.0);
     }
+
+    std::shared_ptr<ProbabilisticFunction> f(new LogNormalFunction(mu_func, sigma_func));
+    for (int i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
+        double im = test_data[i].im;
+        double expected_pct = test_data[i].pct;
+        double expected_edp = test_data[i].edp;
+
+        double actual_edp = f->X_at_exceedence(im, expected_pct);
+        double actual_pct = 1.0 - f->P_exceedence(im, expected_edp);
+
+        BOOST_CHECK_CLOSE(expected_pct, actual_pct, 0.5);
+        BOOST_CHECK_CLOSE(expected_edp, actual_edp, 1.0);
+    }
 }

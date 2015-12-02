@@ -185,5 +185,33 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
         double expected = ko * pow(x/a, -k/b)*exp(0.5 * k*k/(b*b)*beta*beta);
         BOOST_CHECK_CLOSE(rel.lambda(x), expected, 0.1);
     }
+
+    {
+        std::shared_ptr<CompoundRateRelationship> rel_ptr(
+            new CompoundRateRelationship(im_rate_rel, edp_im_relationship));
+
+        for (int i=1; i < 150; i++) {
+            double x = i / 1000.0;
+
+            double ko=1.6E-4, k=2.74, a=0.1, b=1.5, beta=0.5;
+
+            double expected = ko * pow(x/a, -k/b)*exp(0.5 * k*k/(b*b)*beta*beta);
+            BOOST_CHECK_CLOSE(rel_ptr->lambda(x), expected, 0.1);
+        }
+    }
+
+    {
+        std::shared_ptr<RateRelationship> rel_ptr(
+            new CompoundRateRelationship(im_rate_rel, edp_im_relationship));
+
+        for (int i=1; i < 150; i++) {
+            double x = i / 1000.0;
+
+            double ko=1.6E-4, k=2.74, a=0.1, b=1.5, beta=0.5;
+
+            double expected = ko * pow(x/a, -k/b)*exp(0.5 * k*k/(b*b)*beta*beta);
+            BOOST_CHECK_CLOSE(rel_ptr->lambda(x), expected, 0.1);
+        }
+    }
 }
 

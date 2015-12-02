@@ -68,8 +68,8 @@ namespace SLAT {
          */
         double result, abserror;
         gsl_deriv_central(&F, x, 1E-8, &result, &abserror);
-        if (std::isnan(result)) gsl_deriv_forward(&F, x, 1E-8, &result, &abserror);
-        if (std::isnan(result)) gsl_deriv_backward(&F, x, 1E-8, &result, &abserror);
+        if (isnan(result)) gsl_deriv_forward(&F, x, 1E-8, &result, &abserror);
+        if (isnan(result)) gsl_deriv_backward(&F, x, 1E-8, &result, &abserror);
 
         return result;
     }
@@ -100,6 +100,7 @@ namespace SLAT {
 
     PowerLawParametricCurve::PowerLawParametricCurve(double a, double b)
     {
+        std::cout << "PowerLawParametricCurve()" << std::endl;
         this->a = a;
         this->b = b;
     }

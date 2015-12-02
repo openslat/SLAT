@@ -13,8 +13,8 @@
 #include <map>
 #include <gsl/gsl_errno.h>
 #include <gsl/gsl_spline.h>
-#include <boost/shared_ptr.hpp>
-
+#include <memory>
+#include <iostream>
 #ifndef _FUNCTIONS_H_
 #define _FUNCTIONS_H_
 
@@ -38,11 +38,6 @@ namespace SLAT {
         DeterministicFunction(void) { };
 
         /** 
-         * Default constructor; does nothing.
-         */     
-        ~DeterministicFunction(void) { };
-
-        /** 
          * Evalue the function at the given input. Subclasses will override this
          * method.
          * 
@@ -50,8 +45,13 @@ namespace SLAT {
          * 
          * @return   The result of evaluating the function at x.
          */
-        virtual double Evaluate(double x) const {};
+        virtual double Evaluate(double x) const { };
     public:
+        /** 
+         * Default destructor; does nothing.
+         */     
+        ~DeterministicFunction(void) { std::cout << "DESTROY" << std::endl; };
+
         /** 
          * Evaluate the function at a given input. This is the public interface,
          * which will invoke Evaluate() to perform the calculation. The class is
@@ -185,7 +185,7 @@ namespace SLAT {
          * this point this is done solely to facilitate development and
          * debugging. None of the subclasses need this data beyond their constructor.
          */
-        std::vector<std::pair<double, double>> data; 
+        std::vector<std::pair<double, double> > data; 
     public:
         /**
          * The default constructor takes arrays of corresponding input and output values.
