@@ -1,7 +1,7 @@
 #! /bin/bash
 
 rm *.png *.dat
-if make && ./main; then
+if make && LD_LIBRARY_PATH=. ./main; then
     graph -T png -l x -l y <(tail -n +2 im_rate.dat) \
 	  -L "IM-Rate Relationship" \
 	  -X "IM" \
@@ -25,3 +25,5 @@ if make && ./main; then
 
     qiv -Dft im_rate.png edp_im.png edp_rate.png 
 fi
+
+LD_LIBRARY_PATH=. ./unit_tests
