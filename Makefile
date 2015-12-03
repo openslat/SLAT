@@ -1,4 +1,4 @@
-all: main unit_tests doc
+all: main unit_tests pyslat.so doc 
 
 clean:
 	rm -f *.so *.o main unit_tests
@@ -6,6 +6,9 @@ clean:
 CC=g++
 CFLAGS=-g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK -fPIC
 LDFLAGS=-lgsl -lgslcblas -lm -lboost_log -lboost_thread -lboost_system -lpthread
+# Uncomment the next line to add the current directory to the search path. This is *NOT*
+# generally recommended, but saves on from specifying 'LD_LIBRARY_PATH=.':
+#LDFLAGS+=-Wl,-rpath,.
 
 LIBSRCS=functions.cpp relationships.cpp maq.cpp
 LIBOBJS=$(LIBSRCS:.cpp=.o)
@@ -37,6 +40,11 @@ unit_test.o: unit_test.cpp
 	g++ -c $(CFLAGS) -o $@ $<
 unit_tests: unit_test.o maq_test.o relationships_test.o functions_test.o libslat.so
 	g++ -fPIC $(UNIT_OBJS) -L. -lslat -o unit_tests ${LDFLAGS} -lboost_unit_test_framework
+
+pyslat.o: pyslat.cpp functions.h relationships.h
+	g++ -c $(CFLAGS) -o $@ $< -I/usr/include/python3.4m
+pyslat.so: pyslat.o libslat.so
+	g++ -fPIC -shared -Wl,-soname,pyslat.so -o pyslat.so pyslat.o ${LDFLAGS} -L. -lslat -lpython3.4m -lboost_python-py34
 
 doc: $(OBJS) $(HEADERS)
 	doxygen
