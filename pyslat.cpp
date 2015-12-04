@@ -1,7 +1,14 @@
-// Copyright Ralf W. Grosse-Kunstleve 2002-2004. Distributed under the Boost
-// Software License, Version 1.0. (See accompanying
-// file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-
+/**
+ * @file   pyslat.cpp
+ * @author Michael Gauland <michael.gauland@canterbury.ac.nz>
+ * @date   Fri Dec  4 10:45:30 2015
+ * 
+ * @brief Python interface to SLAT C++ code.
+ * 
+ * This file part of SLAT (the Seismic Loss Assessment Tool).
+ *
+ * ©2015 Canterbury University
+ */
 #include <memory>
 #include <boost/python.hpp>
 #include <string>
@@ -28,7 +35,7 @@ namespace SLAT {
     private:
     };
 
-    enum FUNCTION_TYPE { NLH, PLC, LIN };
+    enum FUNCTION_TYPE { NLH, PLC, LIN, LOGLOG };
     
     DeterministicFunctionWrapper *factory(FUNCTION_TYPE t, python::list params)
     {
@@ -67,6 +74,25 @@ namespace SLAT {
             }
             
             result = new LinearInterpolatedFunction(x_data, y_data, size);
+            break;
+        }
+        case LOGLOG:
+        {
+            double *x_data, *y_data;
+            int size = len(params);
+            x_data = new double[size];
+            y_data = new double[size];
+        
+            for (int i=0; i < size; i++) {
+                python::list o = python::extract<python::list>(params.pop());
+                double y = python::extract<double>(o.pop());
+                double x = python::extract<double>(o.pop());
+
+                x_data[size - i - 1] = x;
+                y_data[size - i - 1] = y;
+            }
+            
+            result = new LogLogInterpolatedFunction(x_data, y_data, size);
             break;
         }
         default:
@@ -181,6 +207,7 @@ namespace SLAT {
             .value("NLH", NLH)
             .value("PLC", PLC)
             .value("LIN", LIN)
+            .value("LOGLOG", LOGLOG)
             ;
     }
 }
