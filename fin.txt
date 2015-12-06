@@ -1,3 +1,10 @@
 FUNC F1 NLH 1221 29.8 62.2
 FUNC F2 PLC 0.1 1.5
 FUNC F3 PLC 0.5 0
+TABLE F1 0:1.00:0.001 IM-Rate:IM:Rate
+PLOT F1 LIN 0:1.00:0.001 Plot_of_IM_Rate:IM:Lambda lin_plot.png
+PLOT F1 LOG 0:1.00:0.001 Plot_of_IM_Rate:IM:Lambda log_plot.png
+
+
+
+
