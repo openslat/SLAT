@@ -10,6 +10,9 @@ command_list = {
     'DTABLE': 'Print a table of values: DTABLE <DFUNC ID> <min:max:step> <x label:y label>',
     'DPLOT': 'Plot a function: DPLOT <DFUNC ID> <min:max:step> <Title:X label:Y label> [file]',
     'PFUNC': 'Create a probabilistic functioN: PFUNC ID TYPE MU_FUNCTION SIGMA_FUNCTION',
+    'DTABLE': 'Print a table of values: PTABLE <PFUNC ID> <min:max:step> <x label:y label>',
+    'DPLOT': 'Plot a function: PPLOT <PFUNC ID> <min:max:step> <Title:X label:Y label> [file]',
+    'REL': 'Define a relationship: REL <REL ID> <DFUNC ID> <PFUNC ID>',
     'IM': 'Intensity Measure',
 }
 
@@ -23,9 +26,12 @@ def usage(which=None):
 
 deter_funcs = dict()
 prob_funcs = dict()
+rels = dict()
 
 def func_in_use(f):
-    deter_funcs.get(f, False) or prob_funcs.get(f, False)
+    deter_funcs.get(f, False) or \
+    prob_funcs.get(f, False) or \
+    rels.get(f, False)
 
 
 def line_error(line):
@@ -41,7 +47,7 @@ try:
         command = line.split()
         if len(command) > 0:
             cmd = command[0].upper()
-            if command[0]=='DFUNC':
+            if cmd=='DFUNC':
                 if len(command) > 4:
                     flavours = {
                         'NLH': pyslat.FUNCTION_TYPE.NLH,
@@ -68,7 +74,7 @@ try:
                     line_error(line)
                     print("Too few arguments")
                     usage("FUNC")
-            elif command[0]=='PFUNC':
+            elif cmd=='PFUNC':
                 if len(command) == 5:
                     id = command[1]
                     flavour = command[2]
@@ -95,7 +101,7 @@ try:
                     line_error(line)
                     print("Wrong number of few arguments")
                     usage("PFUNC")
-            elif command[0]=='DTABLE':
+            elif cmd=='DTABLE':
                 start, stop, increment = map(lambda s: float(s), command[2].split(":"))
                 main_title, x_title, y_title = command[3].split(":")
 
@@ -115,7 +121,7 @@ try:
                     
                     if len(command > 4):
                         file.close()
-            elif command[0]=='DPLOT':
+            elif cmd=='DPLOT':
                 try:
                     f = deter_funcs[command[1]]
                     start, stop, increment = map(lambda s: float(s), command[3].split(":"))
@@ -142,10 +148,9 @@ try:
                 except KeyError:
                     line_error(line)
                     print("Undefined function")
-            elif command[0]=='PTABLE':
+            elif cmd=='PTABLE':
                 start, stop, increment = map(lambda s: float(s), command[2].split(":"))
                 pcts = list(map(lambda s:float(s), command[3].split(",")))
-                print(pcts)
                 main_title, x_title, y_title = command[4].split(":")
 
                 try:
@@ -169,7 +174,7 @@ try:
                 except KeyError:
                     line_error(line)
                     print("Undefined function")
-            elif command[0]=='PPLOT':
+            elif cmd=='PPLOT':
                 try:
                     f = prob_funcs[command[1]]
                     pcts = list(map(lambda s:float(s), command[4].split(",")))
@@ -204,7 +209,45 @@ try:
                 except KeyError:
                     line_error(line)
                     print("Undefined function")
-            elif command[0]=='IM':
+            elif cmd=='REL':
+                try:
+                    rel_id = command[1]
+                    if func_in_use(rel_id):
+                        raise ValueError("Function '{0}' already in use.".format(rel_id))
+
+                    if len(command) == 3:
+                        base_id = command[2]
+                        rels[rel_id]=pyslat.MakeSimpleRelationship(deter_funcs[base_id])
+                    else:
+                        base_id = command[2]
+                        dependent_id = command[3]
+                        rels[rel_id]=pyslat.MakeCompoundRelationship(
+                            rels[base_id],
+                            prob_funcs[dependent_id])
+                except:
+                    line_error(line)
+                    usage(cmd)
+            elif cmd=='RTABLE':
+                start, stop, increment = map(lambda s: float(s), command[2].split(":"))
+                main_title, x_title, y_title = command[3].split(":")
+
+                try:
+                    f = rels[command[1]]
+                    if len(command) > 4:
+                        file = open(command[4], "w")
+                    else:
+                        file = sys.stdout
+                    file.write("\n{0}\n".format(main_title))
+                    file.write("{0}, {1}\n".format(x_title, y_title))
+                    for x in np.arange(start, stop+increment, increment):
+                        file.write("{0}, {1}\n".format(x, f.getlambda(x)))
+                except KeyError:
+                    line_error(line)
+                    print("Undefined function")
+                    
+                    if len(command > 4):
+                        file.close()
+            elif cmd=='IM':
                 line_error(line)
                 print("intensity measure not implemented")
             else:
@@ -217,5 +260,6 @@ except EOFError:
 
     print("Deterministic functions: ", deter_funcs.keys())
     print("Probabilistic functions: ", prob_funcs.keys())
+    print("Relationships: ", rels.keys())
     
     
