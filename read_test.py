@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 
+import sys
 import pyslat
 import numpy as np
 import matplotlib.pyplot as plt
@@ -100,13 +101,20 @@ try:
 
                 try:
                     f = deter_funcs[command[1]]
-                    print("\n", main_title)
-                    print(x_title, ", ", y_title)
+                    if len(command) > 4:
+                        file = open(command[4], "w")
+                    else:
+                        file = sys.stdout
+                    file.write("\n{0}\n".format(main_title))
+                    file.write("{0}, {1}\n".format(x_title, y_title))
                     for x in np.arange(start, stop+increment, increment):
-                        print(x, ", ", f.ValueAt(x))
+                        file.write("{0}, {1}\n".format(x, f.ValueAt(x)))
                 except KeyError:
                     line_error(line)
                     print("Undefined function")
+                    
+                    if len(command > 4):
+                        file.close()
             elif command[0]=='DPLOT':
                 try:
                     f = deter_funcs[command[1]]
@@ -141,18 +149,22 @@ try:
 
                 try:
                     f = prob_funcs[command[1]]
-                    print("\n", main_title)
+                    if len(command) > 5:
+                        file = open(command[5], "w")
+                    else:
+                        file = sys.stdout
+                    file.write("{0}\n".format(main_title))
                     title_line = x_title
                     for p in pcts:
                         title_line = "{0}, {1} [{2}%]".format(title_line, y_title, p)
-                    print(title_line)
+                    file.write("{0}\n".format(title_line))
 
                     for x in np.arange(start, stop+increment, increment):
                         this_line = "{0}".format(x)
                         for p in pcts:
                             this_line = "{0}, {1}".format(this_line,
                                                           f.X_at_exceedence(x, p/100.))
-                        print(this_line)
+                        file.write("{0}\n".format(this_line))
                 except KeyError:
                     line_error(line)
                     print("Undefined function")
