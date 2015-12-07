@@ -122,6 +122,7 @@ try:
                     x_data = np.arange(start, stop+increment, increment)
                     y_data = list(map(f.ValueAt, x_data))
                     
+                    plt.figure()
                     if command[2]=="LIN":
                         plt.plot(x_data, y_data)
                     elif command[2]=="LOG":
@@ -165,6 +166,41 @@ try:
                             this_line = "{0}, {1}".format(this_line,
                                                           f.X_at_exceedence(x, p/100.))
                         file.write("{0}\n".format(this_line))
+                except KeyError:
+                    line_error(line)
+                    print("Undefined function")
+            elif command[0]=='PPLOT':
+                try:
+                    f = prob_funcs[command[1]]
+                    pcts = list(map(lambda s:float(s), command[4].split(",")))
+                    start, stop, increment = map(lambda s: float(s), command[3].split(":"))
+ 
+                    x_data = np.arange(start, stop+increment, increment)
+                    
+                    plt.figure()
+
+                    for p in pcts:
+                        y_data = list(map(f.X_at_exceedence, x_data,
+                                          map(lambda x:p/100., x_data)))
+
+                        if command[2]=="LIN":
+                            plt.plot(x_data, y_data, label="{0}%".format(p))
+                        elif command[2]=="LOG":
+                            plt.loglog(x_data, y_data, label="{0}%".format(p))
+                        else:
+                            raise ValueError(' '.join(['Unrecognised plot type:', 
+                                                       command[2]])) 
+                        
+                    main_title, x_title, y_title = command[5].split(":")
+                    plt.title(main_title)
+                    plt.xlabel(x_title)
+                    plt.ylabel(y_title)
+                    plt.legend(loc='upper center')
+                    
+                    if len(command) > 6:
+                        plt.savefig(command[6])
+                    else:
+                        plt.show()
                 except KeyError:
                     line_error(line)
                     print("Undefined function")
