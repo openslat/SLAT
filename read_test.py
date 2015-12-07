@@ -128,7 +128,7 @@ try:
                     x_data = np.arange(start, stop+increment, increment)
                     y_data = list(map(f.ValueAt, x_data))
                     
-                    plt.figure()
+                    plt.clf()
                     if command[2]=="LIN":
                         plt.plot(x_data, y_data)
                     elif command[2]=="LOG":
@@ -182,7 +182,7 @@ try:
  
                     x_data = np.arange(start, stop+increment, increment)
                     
-                    plt.figure()
+                    plt.clf()
 
                     for p in pcts:
                         y_data = list(map(f.X_at_exceedence, x_data,
@@ -247,6 +247,33 @@ try:
                     
                     if len(command > 4):
                         file.close()
+            elif cmd=='RPLOT':
+                try:
+                    f = rels[command[1]]
+                    start, stop, increment = map(lambda s: float(s), command[3].split(":"))
+                    x_data = np.arange(start, stop+increment, increment)
+                    y_data = list(map(f.getlambda, x_data))
+                    
+                    plt.clf()
+                    if command[2]=="LIN":
+                        plt.plot(x_data, y_data)
+                    elif command[2]=="LOG":
+                        plt.loglog(x_data, y_data)
+                    else:
+                        raise ValueError(' '.join(['Unrecognised plot type:', command[2]])) 
+
+                    main_title, x_title, y_title = command[4].split(":")
+                    plt.title(main_title)
+                    plt.xlabel(x_title)
+                    plt.ylabel(y_title)
+                    
+                    if len(command) > 5:
+                        plt.savefig(command[5])
+                    else:
+                        plt.show()
+                except KeyError:
+                    line_error(line)
+                    print("Undefined function")
             elif cmd=='IM':
                 line_error(line)
                 print("intensity measure not implemented")

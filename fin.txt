@@ -4,16 +4,23 @@ DFUNC F3 PLC 0.5 0
 #DTABLE F1 0:1.00:0.001 IM-Rate:IM:Rate
 DTABLE F1 0:1.00:0.001 IM-Rate:IM:Rate f1.dat
 #DPLOT F1 LIN 0:1.00:0.001 Plot_of_IM_Rate:IM:Lambda lin_plot.png
-DPLOT F1 LOG 0:1.00:0.001 Plot_of_IM_Rate:IM:Lambda log_plot.png
+DPLOT F1 LOG 0:1.00:0.001 LOG_Plot_of_IM_Rate:IM:Lambda log_plot.png
 
 PFUNC F4 LOGN F2 F3
 #PTABLE F4 0:1.00:0.001 16,50,84 IM-EDP:IM:EDP
 PTABLE F4 0:1.00:0.001 16,50,84 IM-EDP:IM:EDP f4.dat
-PPLOT F4 LIN 0:1.00:0.001 16,50,84 Plot_of_IM_EDP:IM:EDP lin_pplot.png
+PPLOT F4 LIN 0:1.00:0.001 16,50,84 LIN_Plot_of_IM_EDP:IM:EDP lin_pplot.png
 #PPLOT F4 LOG 0.001:1.00:0.001 16,50,84 Plot_of_IM_EDP:IM:EDP log_pplot.png
 
 REL IM_RATE F1
 REL EDP_IM IM_RATE F4
-RTABLE IM_RATE 0:0.20:0.001 "IM-Rate_Relationship":EDP:IM
-RTABLE EDP_IM 0:0.20:0.001 "EDP-IM_Relationship":EDP:IM
+RTABLE IM_RATE 0:0.20:0.001 IM-Rate_Relationship:EDP:IM im_rate.txt
+RTABLE EDP_IM 0:0.20:0.001 EDP-IM_Relationship:EDP:IM edp_im.txt
+RPLOT IM_RATE LOG 0.001:0.20:0.001 LOG_IM-Rate_Relationship:EDP:IM im_rate.png
+RPLOT EDP_IM LOG 0.001:0.20:0.001 LOG_EDP-IM_Relationship:EDP:IM edp_im.png
+#RPLOT EDP_IM LOG 0.001:0.20:0.001 LOG_EDP-IM_Relationship:EDP:IM 
+
+
+
+
 
