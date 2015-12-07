@@ -1,24 +1,52 @@
+# Create a deterministic non-linear hyperbolic function:
 DFUNC F1 NLH 1221 29.8 62.2
-DFUNC F2 PLC 0.1 1.5
-DFUNC F3 PLC 0.5 0
+
+# Dump a table of function values to the screen:
 #DTABLE F1 0:1.00:0.001 IM-Rate:IM:Rate
+
+# ...and to the file 'f1.dat':
 DTABLE F1 0:1.00:0.001 IM-Rate:IM:Rate f1.dat
-#DPLOT F1 LIN 0:1.00:0.001 Plot_of_IM_Rate:IM:Lambda lin_plot.png
+
+# Plot the function on a linear scale to 'lin_plot.png':
+DPLOT F1 LIN 0:1.00:0.001 Plot_of_IM_Rate:IM:Lambda lin_plot.png
+
+# ...and on a log-log scale to the file 'log_plot.png'
 DPLOT F1 LOG 0:1.00:0.001 LOG_Plot_of_IM_Rate:IM:Lambda log_plot.png
 
-PFUNC F4 LOGN F2 F3
-#PTABLE F4 0:1.00:0.001 16,50,84 IM-EDP:IM:EDP
-PTABLE F4 0:1.00:0.001 16,50,84 IM-EDP:IM:EDP f4.dat
-PPLOT F4 LIN 0:1.00:0.001 16,50,84 LIN_Plot_of_IM_EDP:IM:EDP lin_pplot.png
-#PPLOT F4 LOG 0.001:1.00:0.001 16,50,84 Plot_of_IM_EDP:IM:EDP log_pplot.png
+# Create power-law curve functions:
+DFUNC F2 PLC 0.1 1.5
+DFUNC F3 PLC 0.5 0
 
+# Create a probabilistic function using F2 and F3:
+PFUNC F4 LOGN F2 F3
+
+# Dump a table of the probabilistic function at 16%, 50%, and 84% to
+# the screen:
+#PTABLE F4 0:1.00:0.001 16,50,84 IM-EDP:IM:EDP
+
+# ...and to the file f4.dat:
+PTABLE F4 0:1.00:0.001 16,50,84 IM-EDP:IM:EDP f4.dat
+
+# Plot the probabilistic function at 16%, 50%, and 84%, to 'lin_pplot.png':
+PPLOT F4 LIN 0:1.00:0.001 16,50,84 LIN_Plot_of_IM_EDP:IM:EDP lin_pplot.png
+
+# Create an IM-RATE relationship from function F1:
 REL IM_RATE F1
-REL EDP_IM IM_RATE F4
+
+# Dump a table of values of the IM-RATE relationship as 'im_rate.txt':
 RTABLE IM_RATE 0:0.20:0.001 IM-Rate_Relationship:EDP:IM im_rate.txt
-RTABLE EDP_IM 0:0.20:0.001 EDP-IM_Relationship:EDP:IM edp_im.txt
+
+# Plot the IM-RATE relationship as 'im_rate.png:
 RPLOT IM_RATE LOG 0.001:0.20:0.001 LOG_IM-Rate_Relationship:EDP:IM im_rate.png
+
+# Create an EDP-RATE relationship from function F4:
+REL EDP_IM IM_RATE F4
+
+# Dump a table of values of the EDP-RATE relationship as 'edp_im.txt':
+RTABLE EDP_IM 0:0.20:0.001 EDP-IM_Relationship:EDP:IM edp_im.txt
+
+# Plot the EDP-RATE relationship as 'edp_im.png':
 RPLOT EDP_IM LOG 0.001:0.20:0.001 LOG_EDP-IM_Relationship:EDP:IM edp_im.png
-#RPLOT EDP_IM LOG 0.001:0.20:0.001 LOG_EDP-IM_Relationship:EDP:IM 
 
 
 
