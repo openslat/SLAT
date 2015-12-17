@@ -9,6 +9,8 @@
  *
  * ©2015 Canterbury University
  */
+#ifndef _FUNCTIONS_H_
+#define _FUNCTIONS_H_
 #include <vector>
 #include <map>
 #include <gsl/gsl_errno.h>
@@ -16,11 +18,9 @@
 #include <memory>
 #include <iostream>
 #include <math.h>
-#ifndef _FUNCTIONS_H_
-#define _FUNCTIONS_H_
+#include "replaceable.h"
 
 namespace SLAT {
-
 /**
  * @brief Deterministic Functions
  *
@@ -29,14 +29,14 @@ namespace SLAT {
  * given input. This contrasts with probabilistic functions, whose results will
  * vary according to a probability distribution.
  */
-    class DeterministicFunction
+    class DeterministicFunction : public Replaceable<DeterministicFunction>
     {
     private:
     protected:
         /** 
          * Default constructor; does nothing.
          */     
-        DeterministicFunction(void) { };
+    DeterministicFunction(void) : Replaceable<DeterministicFunction>() { };
 
         /** 
          * Evalue the function at the given input. Subclasses will override this
@@ -302,7 +302,7 @@ namespace SLAT {
  * This contrasts with deterministic functions, which always return the same
  * value for a given input.
  */
-    class ProbabilisticFunction
+    class ProbabilisticFunction : public Replaceable<ProbabilisticFunction>
     {
     public:
         /** 
@@ -356,6 +356,8 @@ namespace SLAT {
          * Shared pointer to the sigma function.
          */
         std::shared_ptr<DeterministicFunction> sigma_function;
+
+        int mu_function_callback_id, sigma_function_callback_id;
     };
 
 

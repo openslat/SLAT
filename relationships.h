@@ -9,10 +9,12 @@
  *
  * ©2015 Canterbury University
  */
-#include "functions.h"
-#include "maq.h"
 #ifndef _RELATIONSHIPS_H_
 #define _RELATIONSHIPS_H_
+
+#include "functions.h"
+#include "maq.h"
+#include "replaceable.h"
 
 namespace SLAT {
 
@@ -22,7 +24,7 @@ namespace SLAT {
  * A 'Rate Relationship' represents the probability of a function exceeding a
  * given value. This is an abstract class.
  */
-    class RateRelationship
+    class RateRelationship : public Replaceable<RateRelationship>
     {
     public:
         int id;
@@ -31,6 +33,7 @@ namespace SLAT {
         ~RateRelationship() { };   /**< Default destructor; does nothing. */
         Integration::IntegrationSettings local_settings;
         static Integration::IntegrationSettings class_settings;
+        int callback_id;
     public:
         /** 
          * Returns the probability of exceedence at a given value.
@@ -161,6 +164,8 @@ namespace SLAT {
 
         double tolerance;
         unsigned int max_evaluations;
+
+        int base_rate_callback_id, dependent_rate_callback_id;
 
         static double default_tolerance;
         static unsigned int default_max_evaluations;

@@ -204,6 +204,20 @@ namespace SLAT {
     {
         this->mu_function = mu_function;
         this->sigma_function = sigma_function;
+
+        mu_function_callback_id = mu_function->add_callbacks(
+            [this] (void) {this->notify_change();},
+            [this] (std::shared_ptr<DeterministicFunction> new_mu_function) {
+                this->mu_function = new_mu_function;
+                this->notify_change();
+            });
+
+        sigma_function_callback_id = sigma_function->add_callbacks(
+            [this] (void) {this->notify_change();},
+            [this] (std::shared_ptr<DeterministicFunction> new_sigma_function) {
+                this->sigma_function = new_sigma_function;
+                this->notify_change();
+            });
     }
 
 

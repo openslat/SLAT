@@ -56,7 +56,12 @@ namespace SLAT {
         : RateRelationship()
     {
         f = func;
-        id = 1;
+        callback_id = f->add_callbacks(
+            [this] (void) {this->notify_change();},
+            [this] (std::shared_ptr<DeterministicFunction> new_f) {
+                this->f = new_f;
+                this->notify_change();
+            });
     }
 
 
@@ -103,7 +108,20 @@ namespace SLAT {
     {
         this->base_rate = base_rate;
         this->dependent_rate = dependent_rate;
-        id = 2;
+
+        base_rate_callback_id = base_rate->add_callbacks(
+            [this] (void) {this->notify_change();},
+            [this] (std::shared_ptr<RateRelationship> new_base_rate) {
+                this->base_rate = new_base_rate;
+                this->notify_change();
+            });
+
+        dependent_rate_callback_id = dependent_rate->add_callbacks(
+            [this] (void) {this->notify_change();},
+            [this] (std::shared_ptr<ProbabilisticFunction> new_dependent_rate) {
+                this->dependent_rate = new_dependent_rate;
+                this->notify_change();
+            });
     }
 
     double CompoundRateRelationship::lambda(double min_y) const
