@@ -16,32 +16,32 @@ LIBOBJS=$(LIBSRCS:.cpp=.o)
 UNIT_SRCS = functions_test.cpp relationships_test.cpp unit_test.cpp maq_test.cpp
 UNIT_OBJS = $(UNIT_SRCS:.cpp=.o)
 
-functions.o: functions.cpp functions.h
+functions.o: functions.cpp functions.h replaceable.h
 	g++ -c $(CFLAGS) -o $@ $<
-relationships.o: relationships.cpp relationships.h functions.h maq.h
+relationships.o: relationships.cpp relationships.h functions.h maq.h replaceable.h
 	g++ -c $(CFLAGS) -o $@ $<
 maq.o: maq.cpp maq.h 
 	g++ -c $(CFLAGS) -o $@ $<
 libslat.so: functions.o relationships.o maq.o
 	g++ -fPIC -shared -Wl,-soname,libslat.so -o libslat.so $(LIBOBJS) ${LDFLAGS}
 
-main.o: main.cpp functions.h relationships.h maq.h libslat.so
+main.o: main.cpp functions.h relationships.h maq.h libslat.so replaceable.h
 	g++ -c $(CFLAGS) -o $@ $<
 main: main.o libslat.so
 	g++ -fPIC main.o -L. -lslat -o main ${LDFLAGS}
 
-functions_test.o: functions_test.cpp functions.h
+functions_test.o: functions_test.cpp functions.h replaceable.h
 	g++ -c $(CFLAGS) -o $@ $<
-relationships_test.o: relationships_test.cpp relationships.h functions.h
+relationships_test.o: relationships_test.cpp relationships.h functions.h replaceable.h
 	g++ -c $(CFLAGS) -o $@ $<
-maq_test.o: maq_test.cpp maq.h relationships.h functions.h
+maq_test.o: maq_test.cpp maq.h relationships.h functions.h replaceable.h
 	g++ -c $(CFLAGS) -o $@ $<
 unit_test.o: unit_test.cpp
 	g++ -c $(CFLAGS) -o $@ $<
 unit_tests: unit_test.o maq_test.o relationships_test.o functions_test.o libslat.so
 	g++ -fPIC $(UNIT_OBJS) -L. -lslat -o unit_tests ${LDFLAGS} -lboost_unit_test_framework
 
-pyslat.o: pyslat.cpp functions.h relationships.h
+pyslat.o: pyslat.cpp functions.h relationships.h replaceable.h
 	g++ -c $(CFLAGS) -o $@ $< -I/usr/include/python3.4m
 pyslat.so: pyslat.o libslat.so
 	g++ -fPIC -shared -Wl,-soname,pyslat.so -o pyslat.so pyslat.o ${LDFLAGS} -L. -lslat -lpython3.4m -lboost_python-py34
