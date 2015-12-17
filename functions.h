@@ -77,6 +77,9 @@ namespace SLAT {
          * @return  The derivative of the function at x.
          */
         virtual double DerivativeAt(double x) const;
+
+        friend std::ostream& operator<<(std::ostream& out, const DeterministicFunction& o);
+        virtual std::string ToString(void) const;
     };
 
 
@@ -130,6 +133,7 @@ namespace SLAT {
          * @return   The value of the function at x.
          */
         double Evaluate(double x) const;
+        virtual std::string ToString(void) const;
     private:
         double v_asy;   /**< Equation parameter */
         double IM_asy;  /**< Equation parameter */
@@ -166,6 +170,7 @@ namespace SLAT {
          * @return  The value of the function at x.
          */
         double Evaluate(double x) const; 
+        virtual std::string ToString(void) const;
     private:
         double a;  /**< Equation parameter */
         double b;  /**< Equation parameter */
@@ -202,6 +207,7 @@ namespace SLAT {
          * @return   The interpolated value at x.
          */
         virtual double Evaluate(double x) const { return NAN; };
+        virtual std::string ToString(void) const { return "Interpolated Function"; };
     };
 
 /**
@@ -233,6 +239,7 @@ namespace SLAT {
         virtual double Evaluate(double x) const;
 
         ~LinearInterpolatedFunction();  /**< Destructor; releases GSL structures. */
+        virtual std::string ToString(void) const;
     protected: 
         /**
          * GSL spline used for interpolation. This is allocated in the constructor, and
@@ -277,6 +284,7 @@ namespace SLAT {
         virtual double Evaluate(double x) const;
 
         ~LogLogInterpolatedFunction();  /**< Destructor; releases GSL structures. */
+        virtual std::string ToString(void) const;
     protected:
         /**
          * GSL spline used for interpolation. This is allocated in the constructor, and
@@ -346,6 +354,9 @@ namespace SLAT {
 
         ~ProbabilisticFunction() { }; /**< Destructor does not need to do
                                        * anything. */
+        
+        friend std::ostream& operator<<(std::ostream& out, const ProbabilisticFunction& o);
+        virtual std::string ToString(void) const { return "ProbabilisticFunction"; };
     protected:
         /**
          * Shared pointer to the mu function.
@@ -407,6 +418,7 @@ namespace SLAT {
         virtual double X_at_exceedence(double x, double p) const;
 
         ~LogNormalFunction() { }; /**< Destructor; doesn't need to do anything. */
+        virtual std::string ToString(void) const;
     };
 }
 #endif

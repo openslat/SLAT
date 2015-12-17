@@ -9,6 +9,7 @@
  *
  * ©2015 Canterbury University
  */
+#include <sstream>
 #include <math.h>
 #include <vector>
 #include <functional>
@@ -17,6 +18,57 @@
 #include "gsl/gsl_deriv.h"
 
 namespace SLAT {
+    std::string DeterministicFunction::ToString(void) const 
+    {
+        return "Deterministic Function";
+    }
+
+    std::string NonLinearHyperbolicLaw::ToString(void) const 
+    {
+        std::stringstream result;
+        result << "Hyperbolic(" << v_asy << ", " << IM_asy
+               << ", " << alpha << ")";
+        return result.str();
+    }
+    
+
+    std::string PowerLawParametricCurve::ToString(void) const 
+    {
+        std::stringstream result;
+        result << "Power(" << a << ", " << b << ")";
+        return result.str();
+    }
+
+    std::string LinearInterpolatedFunction::ToString(void) const 
+    {
+        return "LinearInterpolatedFunction";
+    }
+
+    std::string LogLogInterpolatedFunction::ToString(void) const 
+    {
+        return "LogLogInterpolatedFunction";
+    }
+
+    std::ostream& operator<<(std::ostream& out, const DeterministicFunction& o)
+    {
+        out << o.ToString();
+        return out;
+    }
+
+    std::string LogNormalFunction::ToString(void) const 
+    {
+        return "LogNormal(" + mu_function->ToString() + ", " + 
+            sigma_function->ToString() + ")";
+
+    }
+
+    std::ostream& operator<<(std::ostream& out, const ProbabilisticFunction& o)
+    {
+        out << o.ToString();
+        return out;
+    }
+
+    
     double DeterministicFunction::ValueAt(double x) const
     {
         return this->Evaluate(x);

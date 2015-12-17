@@ -93,4 +93,10 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "EDP-RATE table written.";
     }
     BOOST_LOG(logger) << "Exiting main().";
+
+    std::cout << rel << std::endl;
+    shared_ptr<DeterministicFunction> new_im_rate_function(
+        new NonLinearHyperbolicLaw(12.21, 29.8, 62.2));
+    im_rate_function->replace(new_im_rate_function);
+    std::cout << rel << std::endl;
 }

@@ -65,6 +65,10 @@ namespace SLAT {
          * Returns object integration settings:
          */
         Integration::IntegrationSettings &Get_Integration_Settings(void);
+
+        virtual std::string ToString(void) const;
+            
+        friend std::ostream& operator<<(std::ostream& out, const RateRelationship& o);
     };
 
 /**
@@ -95,6 +99,8 @@ namespace SLAT {
          * @return The probability that the value will exceed x.
          */
         virtual double lambda(double x) const;
+
+        virtual std::string ToString(void) const;
     protected:
         std::shared_ptr<DeterministicFunction> f; /**< Function describing the
                                                    * relationship. */
@@ -158,6 +164,7 @@ namespace SLAT {
          */
         virtual double lambda(double x) const;
 
+        virtual std::string ToString(void) const;
     protected:
         std::shared_ptr<RateRelationship> base_rate; /**< Base rate relationship */
         std::shared_ptr<ProbabilisticFunction> dependent_rate; /**< Dependent function */

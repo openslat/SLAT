@@ -70,6 +70,27 @@ namespace SLAT {
         return f->ValueAt(x);
     }
 
+    std::string RateRelationship::ToString(void) const 
+    {
+        return "Rate Relationship: ";
+    }
+
+    std::string SimpleRateRelationship::ToString(void) const 
+    {
+        return "Simple(" + f->ToString() + ")";
+    }
+
+    std::string CompoundRateRelationship::ToString(void) const 
+    {
+        return "Compound(" + base_rate->ToString()
+            + ", " + dependent_rate->ToString() + ")";
+    }
+
+    std::ostream& operator<<(std::ostream& out, const RateRelationship& o)
+    {
+        out << o.ToString();
+        return out;
+    }
 /*
  * Uses the GSL to calculate the derivative; can be overridden by subclasses.
  */
