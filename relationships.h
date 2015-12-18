@@ -12,11 +12,45 @@
 #ifndef _RELATIONSHIPS_H_
 #define _RELATIONSHIPS_H_
 
+#include <unordered_map>
 #include "functions.h"
 #include "maq.h"
 #include "replaceable.h"
 
+#include <iostream>
+
 namespace SLAT {
+    namespace Caching {
+        void Add_Cache(void *cache, std::function<void (void)> clear_func);
+        void Remove_Cache(void *cache);
+        void Clear_Caches(void);
+            
+        template <class T, class V> class CachedFunction {
+        private:
+            std::function<T (V)> func;
+            std::unordered_map<V, T> cache;
+        public:
+            CachedFunction(std::function<T (V)> base_func) { 
+                func = base_func; 
+                Add_Cache(this, [this] (void) { this->ClearCache(); });
+            };
+            ~CachedFunction() {
+                Remove_Cache(this);
+            }
+            T operator()(V v) { 
+                try {
+                    T result = cache.at(v);
+                    return result;
+                } catch (...) {
+                    cache[v] = func(v); 
+                    return cache[v];
+                };
+            }
+            void ClearCache(void) {
+                cache.clear(); 
+            };
+        };
+    }
 
 /**
  * @brief Rate Relationship
@@ -34,7 +68,7 @@ namespace SLAT {
         Integration::IntegrationSettings local_settings;
         static Integration::IntegrationSettings class_settings;
         int callback_id;
-    public:
+
         /** 
          * Returns the probability of exceedence at a given value.
          * 
@@ -42,10 +76,14 @@ namespace SLAT {
          * 
          * @return The probability the of exceedence.
          */
-        virtual double lambda(double x) const {
+        virtual double calc_lambda(double x) {
             //std::cout << "RateRelationship::lambda()" << std::endl;
             return NAN;
         };
+
+        
+    public:
+        Caching::CachedFunction<double, double> lambda;
         
         /** 
          * Returns the derivative of lambda at the given point.
@@ -54,7 +92,7 @@ namespace SLAT {
          * 
          * @return The derivative of the relationship at x.
          */
-        virtual double DerivativeAt(double x) const;
+        virtual double DerivativeAt(double x) ;
 
         /**
          * Returns class integration settings:
@@ -98,7 +136,7 @@ namespace SLAT {
          * 
          * @return The probability that the value will exceed x.
          */
-        virtual double lambda(double x) const;
+        virtual double calc_lambda(double x);
 
         virtual std::string ToString(void) const;
     protected:
@@ -162,7 +200,7 @@ namespace SLAT {
          * 
          * @return The probability that the value will exceed x.
          */
-        virtual double lambda(double x) const;
+        virtual double calc_lambda(double x);
 
         virtual std::string ToString(void) const;
     protected:

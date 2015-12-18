@@ -126,18 +126,21 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
          */
         rel2_settings.Override_Tolerance(1E-6);
         rel2_settings.Override_Max_Evals(5);
+        rel2.lambda.ClearCache();
         BOOST_REQUIRE(std::isnan(rel2.lambda(0.01)));
 
         /*
          * Plenty of evaluations--succeeds:
          */
         rel2_settings.Override_Max_Evals(4096);
+        rel2.lambda.ClearCache();
         BOOST_REQUIRE(!std::isnan(rel2.lambda(0.01)));
 
         /*
          * Demand ridiculous precision; fail:
          */
         rel2_settings.Override_Tolerance(1E-30);
+        rel2.lambda.ClearCache();
         BOOST_REQUIRE(std::isnan(rel2.lambda(0.01)));
         
         /*
@@ -145,11 +148,13 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
          */
         rel2_settings.Use_Default_Tolerance();
         rel2_settings.Use_Default_Max_Evals();
+        rel2.lambda.ClearCache();
         BOOST_REQUIRE(!std::isnan(rel2.lambda(0.01)));
 
         /*
          * Restore class defaults before returning 
          */
+        Caching::Clear_Caches();
         class_settings.Use_Default_Tolerance();
         class_settings.Use_Default_Max_Evals();
     }

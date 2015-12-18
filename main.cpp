@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include "relationships.h"
+#include <chrono>
 
 using namespace std;
 using namespace SLAT;
@@ -58,7 +59,9 @@ int main(int argc, char **argv)
     shared_ptr<ProbabilisticFunction> edp_im_relationship(
         new LogNormalFunction(mu_edp, sigma_edp));
 
+    for (int i=0; i < 5; i++) 
     {
+        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
         BOOST_LOG(logger) << "Writing IM-EDP table";
         ofstream outfile("im_edp.dat");
 
@@ -76,6 +79,9 @@ int main(int argc, char **argv)
         }
         outfile.close();
         BOOST_LOG(logger) << "IM-EDP table done.";
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
+
     }
 
     CompoundRateRelationship rel(im_rate_rel, edp_im_relationship);

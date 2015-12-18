@@ -17,11 +17,30 @@
 #include "maq.h"
 
 namespace SLAT {
+    namespace Caching {
+        std::unordered_map<void *, std::function<void (void)>> caches;
+        
+        void Add_Cache(void *cache, std::function<void (void)> clear_func) {
+            caches[cache] = clear_func;
+        }
 
+        void Remove_Cache(void *cache) {
+            caches.erase(cache);
+        }
+
+        void Clear_Caches(void) {
+            for (auto it=caches.begin(); it != caches.end(); it++) {
+                it->second();
+            }
+        }
+    };
+        
     Integration::IntegrationSettings RateRelationship::class_settings(
         Integration::IntegrationSettings::Get_Global_Settings());
 
-    RateRelationship::RateRelationship() : local_settings(&class_settings) {
+    RateRelationship::RateRelationship() : local_settings(&class_settings),
+                                         lambda([this] (double x) { return this->calc_lambda(x); })
+    {
         id = 0;
     };
 
@@ -65,7 +84,7 @@ namespace SLAT {
     }
 
 
-    double SimpleRateRelationship::lambda(double x) const
+    double SimpleRateRelationship::calc_lambda(double x)
     {
         return f->ValueAt(x);
     }
@@ -94,7 +113,7 @@ namespace SLAT {
 /*
  * Uses the GSL to calculate the derivative; can be overridden by subclasses.
  */
-    double RateRelationship::DerivativeAt(double x) const
+    double RateRelationship::DerivativeAt(double x)
     {
         /*
          * Encapsulate the function in a lambda, that we can pass to the GSL through
@@ -145,11 +164,8 @@ namespace SLAT {
             });
     }
 
-    double CompoundRateRelationship::lambda(double min_y) const
+    double CompoundRateRelationship::calc_lambda(double min_y) 
     {
-        /*
-         * Decide which parameters to use:
-         */
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
             [this, min_y] (double x2) -> double {
