@@ -13,6 +13,7 @@
 #define _REPLACEABLE_H_
 #include <map>
 #include <memory>
+#include <iostream>
 
 namespace SLAT {
     template <class T> class Replaceable {
@@ -35,7 +36,7 @@ namespace SLAT {
         }
 
         void remove_callbacks(int id) {
-            callbacks.remove(id);
+            callbacks.erase(id);
         }
 
         void notify_change(void) {

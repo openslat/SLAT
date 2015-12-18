@@ -32,7 +32,8 @@ namespace SLAT {
         public:
             CachedFunction(std::function<T (V)> base_func) { 
                 func = base_func; 
-                Add_Cache(this, [this] (void) { this->ClearCache(); });
+                Add_Cache(this, [this] (void) { 
+                        this->ClearCache(); });
             };
             ~CachedFunction() {
                 Remove_Cache(this);
@@ -47,6 +48,7 @@ namespace SLAT {
                 };
             }
             void ClearCache(void) {
+                std::cout << "ClearCache" << std::endl;
                 cache.clear(); 
             };
         };
@@ -77,7 +79,6 @@ namespace SLAT {
          * @return The probability the of exceedence.
          */
         virtual double calc_lambda(double x) {
-            //std::cout << "RateRelationship::lambda()" << std::endl;
             return NAN;
         };
 

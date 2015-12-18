@@ -35,7 +35,6 @@ int main(int argc, char **argv)
 
     shared_ptr<RateRelationship> im_rate_rel(
         new SimpleRateRelationship(im_rate_function));
-
     {
         BOOST_LOG(logger) << "Writing IM-RATE table";
         ofstream outfile("im_rate.dat");
@@ -102,6 +101,46 @@ int main(int argc, char **argv)
     std::cout << rel << std::endl;
     shared_ptr<DeterministicFunction> new_im_rate_function(
         new NonLinearHyperbolicLaw(12.21, 29.8, 62.2));
+    std::cout << "Replacing im_rate_function" << std::endl;
     im_rate_function->replace(new_im_rate_function);
     std::cout << rel << std::endl;
+    for (int i=0; i < 5; i++) 
+    {
+        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+        BOOST_LOG(logger) << "Writing EDP-RATE table";
+        ofstream outfile("edp_rate.dat");
+        
+        outfile << setw(10) << "EDP" << setw(12) << "RATE" << endl;
+        outfile << setprecision(6) << fixed;
+        for (int i=1; i < 150; i++) {
+            double edp = i / 1000.0;
+            outfile << setw(10) << edp << setw(12) << rel.lambda(edp) << endl;
+        }
+        outfile.close();
+        BOOST_LOG(logger) << "EDP-RATE table written.";
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
+    }
+
+    std::cout << "Replacing new_im_rate_function" << std::endl;
+    new_im_rate_function->replace(std::shared_ptr<DeterministicFunction>(new NonLinearHyperbolicLaw(1221, 29.8, 62.2)));
+
+    std::cout << rel << std::endl;
+    for (int i=0; i < 5; i++) 
+    {
+        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+        BOOST_LOG(logger) << "Writing EDP-RATE table";
+        ofstream outfile("edp_rate.dat");
+        
+        outfile << setw(10) << "EDP" << setw(12) << "RATE" << endl;
+        outfile << setprecision(6) << fixed;
+        for (int i=1; i < 150; i++) {
+            double edp = i / 1000.0;
+            outfile << setw(10) << edp << setw(12) << rel.lambda(edp) << endl;
+        }
+        outfile.close();
+        BOOST_LOG(logger) << "EDP-RATE table written.";
+        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
+    }
 }

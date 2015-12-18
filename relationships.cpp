@@ -76,7 +76,9 @@ namespace SLAT {
     {
         f = func;
         callback_id = f->add_callbacks(
-            [this] (void) {this->notify_change();},
+            [this] (void) {
+                this->notify_change();
+            },
             [this] (std::shared_ptr<DeterministicFunction> new_f) {
                 this->f = new_f;
                 this->notify_change();
@@ -150,15 +152,23 @@ namespace SLAT {
         this->dependent_rate = dependent_rate;
 
         base_rate_callback_id = base_rate->add_callbacks(
-            [this] (void) {this->notify_change();},
+            [this] (void) {
+                this->lambda.ClearCache();
+                this->notify_change();
+            },
             [this] (std::shared_ptr<RateRelationship> new_base_rate) {
+                this->lambda.ClearCache();
                 this->base_rate = new_base_rate;
                 this->notify_change();
             });
 
         dependent_rate_callback_id = dependent_rate->add_callbacks(
-            [this] (void) {this->notify_change();},
+            [this] (void) {
+                this->lambda.ClearCache();
+                this->notify_change();
+            },
             [this] (std::shared_ptr<ProbabilisticFunction> new_dependent_rate) {
+                this->lambda.ClearCache();
                 this->dependent_rate = new_dependent_rate;
                 this->notify_change();
             });

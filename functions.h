@@ -32,11 +32,18 @@ namespace SLAT {
     class DeterministicFunction : public Replaceable<DeterministicFunction>
     {
     private:
+        int callback_id;
     protected:
         /** 
          * Default constructor; does nothing.
          */     
-    DeterministicFunction(void) : Replaceable<DeterministicFunction>() { };
+    DeterministicFunction(void) : Replaceable<DeterministicFunction>() {
+            /* callback_id = this->add_callbacks( */
+            /*     [this] (void) { this->notify_change(); }, */
+            /*     [this] (std::shared_ptr<DeterministicFunction> f) { */
+            /*         this->replace(f); */
+            /*     }); */
+        };
 
         /** 
          * Evalue the function at the given input. Subclasses will override this
@@ -48,10 +55,9 @@ namespace SLAT {
          */
         virtual double Evaluate(double x) const { return NAN; };
     public:
-        /** 
-         * Default destructor; does nothing.
-         */     
-        ~DeterministicFunction(void) { };
+        ~DeterministicFunction(void) { 
+            /* thisremove_callbacks->callback_id(); */
+        };
 
         /** 
          * Evaluate the function at a given input. This is the public interface,
@@ -352,8 +358,7 @@ namespace SLAT {
          */
         virtual double X_at_exceedence(double x, double p) const { return NAN; };
 
-        ~ProbabilisticFunction() { }; /**< Destructor does not need to do
-                                       * anything. */
+        ~ProbabilisticFunction();
         
         friend std::ostream& operator<<(std::ostream& out, const ProbabilisticFunction& o);
         virtual std::string ToString(void) const { return "ProbabilisticFunction"; };
