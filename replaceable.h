@@ -46,6 +46,7 @@ namespace SLAT {
         }
 
         void replace(std::shared_ptr<T> replacement) {
+            replacement->callbacks = callbacks;
             for (auto it=callbacks.begin(); it != callbacks.end();) {
                 it->second.replace_cb(replacement);
                 it = callbacks.erase(it);
