@@ -29,8 +29,10 @@ namespace SLAT {
         private:
             std::function<T (V)> func;
             std::unordered_map<V, T> cache;
+            bool cache_active;
         public:
-            CachedFunction(std::function<T (V)> base_func) { 
+            CachedFunction(std::function<T (V)> base_func, bool activate_cache=true) { 
+                cache_active = activate_cache;
                 func = base_func; 
                 Add_Cache(this, [this] (void) { 
                         this->ClearCache(); });
@@ -39,16 +41,19 @@ namespace SLAT {
                 Remove_Cache(this);
             }
             T operator()(V v) { 
-                try {
-                    T result = cache.at(v);
-                    return result;
-                } catch (...) {
-                    cache[v] = func(v); 
-                    return cache[v];
-                };
+                if (cache_active) {
+                    try {
+                        T result = cache.at(v);
+                        return result;
+                    } catch (...) {
+                        cache[v] = func(v); 
+                        return cache[v];
+                    };
+                } else {
+                    return func(v);
+                }
             }
             void ClearCache(void) {
-                std::cout << "ClearCache" << std::endl;
                 cache.clear(); 
             };
         };
@@ -63,9 +68,8 @@ namespace SLAT {
     class RateRelationship : public Replaceable<RateRelationship>
     {
     public:
-        int id;
     protected:
-        RateRelationship(void); /**< Default constructor. */
+        RateRelationship(bool activate_cache);
         ~RateRelationship() { };   /**< Default destructor; does nothing. */
         Integration::IntegrationSettings local_settings;
         static Integration::IntegrationSettings class_settings;

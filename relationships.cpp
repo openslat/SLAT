@@ -18,16 +18,30 @@
 
 namespace SLAT {
     namespace Caching {
+        /**
+         * Maintaina map of all cached functions, so we can clear all caches
+         * with a single function call (e.g., when changing the integration
+         * method or parameters).
+         */
         std::unordered_map<void *, std::function<void (void)>> caches;
         
+        /**
+         * Add a cached function to the list.
+         */
         void Add_Cache(void *cache, std::function<void (void)> clear_func) {
             caches[cache] = clear_func;
         }
 
+        /**
+         * Remove a cached function from the list.
+         */
         void Remove_Cache(void *cache) {
             caches.erase(cache);
         }
 
+        /**
+         * Clear all (registered) function caches.
+         */
         void Clear_Caches(void) {
             for (auto it=caches.begin(); it != caches.end(); it++) {
                 it->second();
@@ -38,10 +52,10 @@ namespace SLAT {
     Integration::IntegrationSettings RateRelationship::class_settings(
         Integration::IntegrationSettings::Get_Global_Settings());
 
-    RateRelationship::RateRelationship() : local_settings(&class_settings),
-                                         lambda([this] (double x) { return this->calc_lambda(x); })
+    RateRelationship::RateRelationship(bool activate_cache) :
+        local_settings(&class_settings),
+        lambda([this] (double x) { return this->calc_lambda(x); }, activate_cache)
     {
-        id = 0;
     };
 
     Integration::IntegrationSettings &RateRelationship::Get_Class_Integration_Settings(void)
@@ -71,8 +85,8 @@ namespace SLAT {
         return (*f)(x);
     }
 
-    SimpleRateRelationship::SimpleRateRelationship(std::shared_ptr<DeterministicFunction> func) 
-        : RateRelationship()
+    SimpleRateRelationship::SimpleRateRelationship(
+        std::shared_ptr<DeterministicFunction> func) : RateRelationship(false)
     {
         f = func;
         callback_id = f->add_callbacks(
@@ -135,7 +149,7 @@ namespace SLAT {
         F.params = &local_lambda;
     
         /*
-         * Just return the result reported by the GSL--we're ignoring the absolution
+         * Just return the result reported by the GSL--we're ignoring the absolute
          * error, and any error codes, at least for now.
          */
         double result, abserror;
@@ -146,7 +160,7 @@ namespace SLAT {
     CompoundRateRelationship::CompoundRateRelationship(
         std::shared_ptr<RateRelationship> base_rate,
         std::shared_ptr<ProbabilisticFunction> dependent_rate)
-        : RateRelationship()
+        : RateRelationship(true)
     {
         this->base_rate = base_rate;
         this->dependent_rate = dependent_rate;
