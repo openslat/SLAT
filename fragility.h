@@ -25,9 +25,8 @@ namespace SLAT {
         FragilityFunction(std::vector<std::pair<double, double>> onsets);
         
         ~FragilityFunction();
-        int n_states(void);
+        std::size_t n_states(void);
         
-        double pDamage(int state, double edp);
         std::vector<double> pDamage(double edp);
         const std::vector<damage_state> get_damage_states(void);
     private:

@@ -144,4 +144,23 @@ int main(int argc, char **argv)
         std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
     }
+
+
+    {
+        FragilityFunction fragFn({
+                {0.0062, 0.4},
+                {0.0230, 0.4},
+                {0.0440, 0.4},
+                {0.0564, 0.4}});
+
+        for (double edp=0; edp <= 2.; edp += 0.1) {
+            std::vector<double> damage = fragFn.pDamage(edp);
+
+            cout << edp;
+            for (size_t i=0; i < damage.size(); i++) {
+                cout << ", " << damage[i];
+            }
+            cout << endl;
+        }
+    }
 }

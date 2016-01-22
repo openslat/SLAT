@@ -13,6 +13,7 @@
 #include <stdexcept>
 #include <cmath>
 #include <iostream>
+#include <gsl/gsl_cdf.h>
 using namespace std;
 
 namespace SLAT {
@@ -40,7 +41,7 @@ namespace SLAT {
     {
     };
 
-    int FragilityFunction::n_states(void)
+    std::size_t FragilityFunction::n_states(void)
     {
         return damage_states.size();
     };
@@ -49,5 +50,14 @@ namespace SLAT {
     FragilityFunction::get_damage_states(void)
     {
         return damage_states;
+    }
+
+    std::vector<double> FragilityFunction::pDamage(double edp)
+    {
+        std::vector<double> result(n_states());
+        for (size_t i=0; i < n_states(); i++) {
+            result[i] = gsl_cdf_lognormal_P(edp, (damage_states[i].mu_lnX), damage_states[i].sigma_lnX);
+        }
+        return result;
     }
 }
