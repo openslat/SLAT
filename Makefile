@@ -10,10 +10,11 @@ LDFLAGS=-lgsl -lgslcblas -lm -lboost_log -lboost_thread -lboost_system -lpthread
 # generally recommended, but saves on from specifying 'LD_LIBRARY_PATH=.':
 #LDFLAGS+=-Wl,-rpath,.
 
-LIBSRCS=functions.cpp relationships.cpp maq.cpp
+LIBSRCS=functions.cpp relationships.cpp maq.cpp fragility.cpp
 LIBOBJS=$(LIBSRCS:.cpp=.o)
 
-UNIT_SRCS = functions_test.cpp relationships_test.cpp unit_test.cpp maq_test.cpp
+UNIT_SRCS = functions_test.cpp relationships_test.cpp unit_test.cpp maq_test.cpp \
+	fragility_test.cpp
 UNIT_OBJS = $(UNIT_SRCS:.cpp=.o)
 
 functions.o: functions.cpp functions.h replaceable.h
@@ -22,10 +23,12 @@ relationships.o: relationships.cpp relationships.h functions.h maq.h replaceable
 	g++ -c $(CFLAGS) -o $@ $<
 maq.o: maq.cpp maq.h 
 	g++ -c $(CFLAGS) -o $@ $<
-libslat.so: functions.o relationships.o maq.o
+fragility.o: fragility.cpp fragility.h 
+	g++ -c $(CFLAGS) -o $@ $<
+libslat.so: functions.o relationships.o maq.o fragility.o
 	g++ -fPIC -shared -Wl,-soname,libslat.so -o libslat.so $(LIBOBJS) ${LDFLAGS}
 
-main.o: main.cpp functions.h relationships.h maq.h libslat.so replaceable.h
+main.o: main.cpp functions.h relationships.h maq.h libslat.so replaceable.h fragility.h
 	g++ -c $(CFLAGS) -o $@ $<
 main: main.o libslat.so
 	g++ -fPIC main.o -L. -lslat -o main ${LDFLAGS}
@@ -36,9 +39,11 @@ relationships_test.o: relationships_test.cpp relationships.h functions.h replace
 	g++ -c $(CFLAGS) -o $@ $<
 maq_test.o: maq_test.cpp maq.h relationships.h functions.h replaceable.h
 	g++ -c $(CFLAGS) -o $@ $<
+fragility_test.o: fragility_test.cpp fragility.h
+	g++ -c $(CFLAGS) -o $@ $<
 unit_test.o: unit_test.cpp
 	g++ -c $(CFLAGS) -o $@ $<
-unit_tests: unit_test.o maq_test.o relationships_test.o functions_test.o libslat.so
+unit_tests: unit_test.o $(UNIT_OBJS) libslat.so 
 	g++ -fPIC $(UNIT_OBJS) -L. -lslat -o unit_tests ${LDFLAGS} -lboost_unit_test_framework
 
 pyslat.o: pyslat.cpp functions.h relationships.h replaceable.h

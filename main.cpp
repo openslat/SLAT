@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iomanip>
 #include "relationships.h"
+#include "fragility.h"
 #include <chrono>
 
 using namespace std;
