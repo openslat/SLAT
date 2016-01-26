@@ -148,10 +148,10 @@ int main(int argc, char **argv)
 
     {
         FragilityFunction fragFn({
-                {0.0062, 0.4},
-                {0.0230, 0.4},
-                {0.0440, 0.4},
-                {0.0564, 0.4}});
+                {log(0.0062) - 0.4 * 0.4 / 2, 0.4},
+                {log(0.0230) - 0.4 * 0.4 / 2, 0.4},
+                {log(0.0440) - 0.4 * 0.4 / 2, 0.4},
+                {log(0.0564) - 0.4 * 0.4 / 2, 0.4}});
 
         for (double edp=0; edp <= 2.; edp += 0.1) {
             std::vector<double> damage = fragFn.pDamage(edp);

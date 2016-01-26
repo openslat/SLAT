@@ -98,10 +98,10 @@ BOOST_AUTO_TEST_CASE(Fragility_Initialisation)
 BOOST_AUTO_TEST_CASE(Fragility_Probability)
 {
     FragilityFunction fragFn({
-            {0.0062, 0.4},
-            {0.0230, 0.4},
-            {0.0440, 0.4},
-            {0.0564, 0.4}});
+            {log(0.0062) - 0.4*0.4/2, 0.4},
+            {log(0.0230) - 0.4*0.4/2, 0.4},
+            {log(0.0440) - 0.4*0.4/2, 0.4},
+            {log(0.0564) - 0.4*0.4/2, 0.4}});
     
     std::vector<double> damage = fragFn.pDamage(0);
 
@@ -111,31 +111,45 @@ BOOST_AUTO_TEST_CASE(Fragility_Probability)
     BOOST_CHECK_EQUAL(damage[2], 0.0);
     BOOST_CHECK_EQUAL(damage[3], 0.0);
 
-    damage = fragFn.pDamage(0.0062);
+    damage = fragFn.pDamage(exp(log(0.0062) - 0.4*0.4/2));
     BOOST_CHECK_EQUAL(damage.size(), 4);
-    BOOST_CHECK_EQUAL(damage[0], 0.5);
-    BOOST_CHECK_EQUAL(damage[1], 0.0);
-    BOOST_CHECK_EQUAL(damage[2], 0.0);
-    BOOST_CHECK_EQUAL(damage[3], 0.0);
+    BOOST_CHECK_CLOSE(damage[0], 0.5, 1E-1);
+    BOOST_CHECK_SMALL(damage[1], 1E-1);
+    BOOST_CHECK_SMALL(damage[2], 1E-1);
+    BOOST_CHECK_SMALL(damage[3], 1E-1);
 
-    damage = fragFn.pDamage(0.0230);
+    damage = fragFn.pDamage(exp(log(0.0230) - 0.4*0.4/2));
     BOOST_CHECK_EQUAL(damage.size(), 4);
-    BOOST_CHECK_EQUAL(damage[0], 0.5);
-    BOOST_CHECK_EQUAL(damage[1], 0.0);
-    BOOST_CHECK_EQUAL(damage[2], 0.0);
-    BOOST_CHECK_EQUAL(damage[3], 0.0);
+    BOOST_CHECK_CLOSE(damage[0], 1.00, 1E-1);
+    BOOST_CHECK_CLOSE(damage[1], 0.50, 1E-1);
+    BOOST_CHECK_CLOSE(damage[2], 0.05, 10);
+    BOOST_CHECK_CLOSE(damage[3], 0.012, 10);
 
-    damage = fragFn.pDamage(0.0440);
+    damage = fragFn.pDamage(exp(log(0.0440) - 0.4*0.4/2));
     BOOST_CHECK_EQUAL(damage.size(), 4);
-    BOOST_CHECK_EQUAL(damage[0], 0.5);
-    BOOST_CHECK_EQUAL(damage[1], 0.0);
-    BOOST_CHECK_EQUAL(damage[2], 0.0);
-    BOOST_CHECK_EQUAL(damage[3], 0.0);
+    BOOST_CHECK_CLOSE(damage[0], 1.00, 1E-1);
+    BOOST_CHECK_CLOSE(damage[1], 0.95, 1);
+    BOOST_CHECK_CLOSE(damage[2], 0.5, 1E1);
+    BOOST_CHECK_CLOSE(damage[3], 0.25, 10);
 
-    damage = fragFn.pDamage(0.0564);
+    damage = fragFn.pDamage(exp(log(0.0564) - 0.4*0.4/2));
     BOOST_CHECK_EQUAL(damage.size(), 4);
-    BOOST_CHECK_EQUAL(damage[0], 0.5);
-    BOOST_CHECK_EQUAL(damage[1], 0.0);
-    BOOST_CHECK_EQUAL(damage[2], 0.0);
-    BOOST_CHECK_EQUAL(damage[3], 0.0);
+    BOOST_CHECK_CLOSE(damage[0], 1.00, 1E-1);
+    BOOST_CHECK_CLOSE(damage[1], 0.98, 1);
+    BOOST_CHECK_CLOSE(damage[2], 0.75, 10);
+    BOOST_CHECK_CLOSE(damage[3], 0.5, 1E-3);
+
+    damage = fragFn.pDamage(exp(log(0.075) - 0.4*0.4/2));
+    BOOST_CHECK_EQUAL(damage.size(), 4);
+    BOOST_CHECK_CLOSE(damage[0], 1.00, 1E-1);
+    BOOST_CHECK_CLOSE(damage[1], 1.00, 1);
+    BOOST_CHECK_CLOSE(damage[2], 0.90, 5);
+    BOOST_CHECK_CLOSE(damage[3], 0.75, 5);
+
+    damage = fragFn.pDamage(exp(log(0.250) - 0.4*0.4/2));
+    BOOST_CHECK_EQUAL(damage.size(), 4);
+    BOOST_CHECK_CLOSE(damage[0], 1.00, 1E-1);
+    BOOST_CHECK_CLOSE(damage[1], 1.00, 1E-1);
+    BOOST_CHECK_CLOSE(damage[2], 1.00, 1E-1);
+    BOOST_CHECK_CLOSE(damage[3], 1.00, 1E-1);
 }
