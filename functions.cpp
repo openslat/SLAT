@@ -13,9 +13,9 @@
 #include <math.h>
 #include <vector>
 #include <functional>
+#include <gsl/gsl_deriv.h>
 #include "functions.h"
-#include "gsl/gsl_cdf.h"
-#include "gsl/gsl_deriv.h"
+#include "lognormal.h"
 
 namespace SLAT {
     std::string DeterministicFunction::ToString(void) const 
@@ -290,14 +290,16 @@ namespace SLAT {
 
     double LogNormalFunction::P_exceedence(double x, double min_y) const
     {
-        return 1.0 - gsl_cdf_lognormal_P(min_y, log(mu_function->ValueAt(x)), 
-                                         sigma_function->ValueAt(x));
+        return LognormalFunction::Lognormal_from_mu_lnX_and_sigma_lnX(
+            log(mu_function->ValueAt(x)), 
+            sigma_function->ValueAt(x)).p_at_least(min_y);
     }
 
     double LogNormalFunction::X_at_exceedence(double x, double p) const
     {
-        return gsl_cdf_lognormal_Pinv(p, log(mu_function->ValueAt(x)),
-                                      sigma_function->ValueAt(x));
+        return LognormalFunction::Lognormal_from_mu_lnX_and_sigma_lnX(
+            log(mu_function->ValueAt(x)), 
+            sigma_function->ValueAt(x)).x_at_p(p);
     }
 
 }

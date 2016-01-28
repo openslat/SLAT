@@ -40,17 +40,31 @@ namespace SLAT {
         return result;
     };
 
-    double LognormalFunction::p_at_least(double x)
+    const LognormalFunction LognormalFunction::Lognormal_from_mu_lnX_and_sigma_lnX(double mu_lnX, double sigma_lnX)
+    {
+        LognormalFunction result;
+        result.mu_lnX = mu_lnX;
+        result.sigma_lnX = sigma_lnX;
+        return result;
+    };
+
+    double LognormalFunction::p_at_least(double x) const
     {
         return gsl_cdf_lognormal_Q(x, mu_lnX, sigma_lnX);
     }
 
-    double LognormalFunction::p_at_most(double x)
+    double LognormalFunction::p_at_most(double x) const
     {
         return gsl_cdf_lognormal_P(x, mu_lnX, sigma_lnX);
     }
 
-    double LognormalFunction::get_mu_lnX(void)
+    double LognormalFunction::x_at_p(double p) const
+    {
+        return gsl_cdf_lognormal_Pinv(p, mu_lnX, sigma_lnX);
+    }
+
+
+    double LognormalFunction::get_mu_lnX(void) const
     {
         return mu_lnX;
     }

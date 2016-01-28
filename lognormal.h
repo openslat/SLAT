@@ -22,10 +22,13 @@ namespace SLAT {
         static const LognormalFunction Lognormal_from_mean_X_and_sigma_X(double mean_X, double sigma_X);
         ~LognormalFunction() {};
 
-        double p_at_least(double x);
-        double p_at_most(double x);
+        double p_at_least(double x) const;
+        double p_at_most(double x) const;
 
-        double get_mu_lnX(void);
+        double x_at_p(double p) const;
+
+        double get_mu_lnX(void) const;
+
     private:
         double mu_lnX;
         double sigma_lnX;
