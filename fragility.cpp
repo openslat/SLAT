@@ -13,11 +13,10 @@
 #include <stdexcept>
 #include <cmath>
 #include <iostream>
-#include <gsl/gsl_cdf.h>
 using namespace std;
 
 namespace SLAT {
-    FragilityFunction::FragilityFunction(std::vector<std::pair<double, double>> onsets)
+    FragilityFunction::FragilityFunction(std::vector<LognormalFunction> onsets)
     {
         if (onsets.size() == 0) {
             throw std::invalid_argument("onsets");
@@ -25,13 +24,12 @@ namespace SLAT {
             damage_states.resize(onsets.size());
             double mean = NAN;
             for (uint i=0; i < onsets.size(); i++) {
-                if (onsets[i].first <= mean) {
+                if (onsets[i].get_mu_lnX() <= mean) {
                     throw std::invalid_argument("onsets");
                     break;
                 } else {
-                    damage_states[i].mu_lnX = onsets[i].first;
-                    damage_states[i].sigma_lnX = onsets[i].second;
-                    mean = damage_states[i].mu_lnX;
+                    damage_states[i] = onsets[i];
+                    mean = damage_states[i].get_mu_lnX();
                 }
             }   
         }
@@ -46,17 +44,11 @@ namespace SLAT {
         return damage_states.size();
     };
 
-    const std::vector<FragilityFunction::damage_state> 
-    FragilityFunction::get_damage_states(void)
-    {
-        return damage_states;
-    }
-
     std::vector<double> FragilityFunction::pDamage(double edp)
     {
         std::vector<double> result(n_states());
         for (size_t i=0; i < n_states(); i++) {
-            result[i] = gsl_cdf_lognormal_P(edp, (damage_states[i].mu_lnX), damage_states[i].sigma_lnX);
+            result[i] = damage_states[i].p_at_most(edp);
         }
         return result;
     }

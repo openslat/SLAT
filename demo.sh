@@ -23,7 +23,17 @@ rm *.png *.dat
 	  <(tail -n +2 edp_rate.dat) \
 	  > edp_rate.png
 
-    qiv -Dft im_rate.png edp_im.png edp_rate.png 
+    graph -T png -C \
+	  -L "DS-EDP Relationship" \
+	  -X "EDP" \
+	  -Y "p(DS)" \
+	  <(tail -n +2 ds_edp.dat | awk -e '{print $1, $2}') \
+	  <(tail -n +2 ds_edp.dat | awk -e '{print $1, $3}') \
+	  <(tail -n +2 ds_edp.dat | awk -e '{print $1, $4}') \
+	  <(tail -n +2 ds_edp.dat | awk -e '{print $1, $5}') \
+	  > ds_edp.png
+
+    qiv -Dft im_rate.png edp_im.png edp_rate.png ds_edp.png
 fi
 
 LD_LIBRARY_PATH=. ./unit_tests

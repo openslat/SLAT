@@ -3,6 +3,7 @@
 #include <iomanip>
 #include "relationships.h"
 #include "fragility.h"
+#include "lognormal.h"
 #include <chrono>
 
 using namespace std;
@@ -82,7 +83,7 @@ int main(int argc, char **argv)
     CompoundRateRelationship rel(im_rate_rel, edp_im_relationship);
     for (int i=0; i < 5; i++) 
     {
-        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+        //std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
         BOOST_LOG(logger) << "Writing EDP-RATE table";
         ofstream outfile("edp_rate.dat");
         
@@ -94,10 +95,10 @@ int main(int argc, char **argv)
         }
         outfile.close();
         BOOST_LOG(logger) << "EDP-RATE table written.";
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
+        //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        //std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
     }
-    BOOST_LOG(logger) << "Exiting main().";
+
 
     std::cout << rel << std::endl;
     shared_ptr<DeterministicFunction> new_im_rate_function(
@@ -107,7 +108,7 @@ int main(int argc, char **argv)
     std::cout << rel << std::endl;
     for (int i=0; i < 5; i++) 
     {
-        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+        //std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
         BOOST_LOG(logger) << "Writing EDP-RATE table";
         ofstream outfile("edp_rate.dat");
         
@@ -119,8 +120,8 @@ int main(int argc, char **argv)
         }
         outfile.close();
         BOOST_LOG(logger) << "EDP-RATE table written.";
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
+        //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        //std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
     }
 
     std::cout << "Replacing new_im_rate_function" << std::endl;
@@ -129,7 +130,7 @@ int main(int argc, char **argv)
     std::cout << rel << std::endl;
     for (int i=0; i < 5; i++) 
     {
-        std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+        //std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
         BOOST_LOG(logger) << "Writing EDP-RATE table";
         ofstream outfile("edp_rate.dat");
         
@@ -141,26 +142,37 @@ int main(int argc, char **argv)
         }
         outfile.close();
         BOOST_LOG(logger) << "EDP-RATE table written.";
-        std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
-        std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
+        //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
+        //std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
     }
 
 
+    FragilityFunction fragFn(
+        { LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0062, 0.4),
+                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0230, 0.4),
+                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0440, 0.4),
+                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
     {
-        FragilityFunction fragFn({
-                {log(0.0062) - 0.4 * 0.4 / 2, 0.4},
-                {log(0.0230) - 0.4 * 0.4 / 2, 0.4},
-                {log(0.0440) - 0.4 * 0.4 / 2, 0.4},
-                {log(0.0564) - 0.4 * 0.4 / 2, 0.4}});
-
-        for (double edp=0; edp <= 2.; edp += 0.1) {
-            std::vector<double> damage = fragFn.pDamage(edp);
-
-            cout << edp;
-            for (size_t i=0; i < damage.size(); i++) {
-                cout << ", " << damage[i];
-            }
-            cout << endl;
+        BOOST_LOG(logger) << "Writing DS-EDP table";
+        ofstream outfile("ds_edp.dat");
+        
+        outfile << setw(10) << "EDP";
+        for (int i=0; i < 4; i++) {
+            outfile << setw(11) << "DS" << setw(1) << i;
         }
+        outfile << endl;
+        outfile << setprecision(6) << fixed;
+        for (int i=0; i < 200; i++) {
+            double edp = i / 1000.0;
+            outfile << setw(10) << edp;
+
+            std::vector<double> damage = fragFn.pDamage(edp);
+            for (int j=0; j<4; j++) {
+                outfile << setw(12) << damage[j];
+            }
+            outfile << endl;            
+        }
+        outfile.close();
+        BOOST_LOG(logger) << "DS-DSP table written.";
     }
 }

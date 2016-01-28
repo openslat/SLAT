@@ -12,25 +12,20 @@
 #ifndef _FRAGILITY_H_
 #define _FRAGILITY_H_
 
+#include "lognormal.h"
 #include <vector>
 
 namespace SLAT {
     class FragilityFunction {
     public:
-        typedef struct {
-            double mu_lnX;
-            double sigma_lnX;
-        } damage_state ;
-
-        FragilityFunction(std::vector<std::pair<double, double>> onsets);
+        FragilityFunction(std::vector<LognormalFunction> onsets);
         
         ~FragilityFunction();
         std::size_t n_states(void);
         
         std::vector<double> pDamage(double edp);
-        const std::vector<damage_state> get_damage_states(void);
     private:
-        std::vector<damage_state> damage_states;
+        std::vector<LognormalFunction> damage_states;
     };
 }
 #endif
