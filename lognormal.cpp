@@ -13,6 +13,7 @@
 #include "lognormal.h"
 #include <cmath>
 #include <iostream>
+#include <stdexcept>
 using namespace std;
 
 namespace SLAT {
