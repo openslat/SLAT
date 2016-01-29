@@ -19,6 +19,7 @@
 #include <iostream>
 #include <math.h>
 #include "replaceable.h"
+#include "lognormal.h"
 
 namespace SLAT {
 /**
@@ -331,6 +332,10 @@ namespace SLAT {
         ProbabilisticFunction(std::shared_ptr<DeterministicFunction> mu_function,
                               std::shared_ptr<DeterministicFunction> sigma_function);
 
+        ProbabilisticFunction ProbabilisticFunction_mu_lnX_sigma_lnX(std::shared_ptr<DeterministicFunction> mu_function,
+                                               std::shared_ptr<DeterministicFunction> sigma_function);
+
+
         /** 
          * @brief Probability of Exceedence 
          * 
@@ -357,6 +362,17 @@ namespace SLAT {
          * @return y, such that f(x) <= y with probability p.
          */
         virtual double X_at_exceedence(double x, double p) const { return NAN; };
+
+        /** 
+         * @brief Mean Exceedence
+         * 
+         * Given an input value 'x',  returns the mean of f(x).
+          *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return mean(f(x))
+         */
+        virtual double Mean(double x) const { return NAN; };
 
         ~ProbabilisticFunction();
         
@@ -385,15 +401,21 @@ namespace SLAT {
  */
     class LogNormalFunction : public ProbabilisticFunction
     {
+    private:
+        std::function<double (double)> mean_X, mean_lnX, median_X, sigma_X, sigma_lnX;
+        LognormalFunction distribution(double x) const;
     public:
+        typedef enum { MEAN_X, MEAN_LN_X, MEDIAN_X } M_TYPE;
+        typedef enum { SIGMA_X, SIGMA_LN_X } S_TYPE;
+        
         /** 
          * Constructor for a log-normal probabilistic function.
          * 
          * @param mu_function     Shared pointer to the mu function.
          * @param sigma_function  Shared pointer to the sigma function.
          */
-        LogNormalFunction(std::shared_ptr<DeterministicFunction> mu_function,
-                          std::shared_ptr<DeterministicFunction> sigma_function);
+        LogNormalFunction(std::shared_ptr<DeterministicFunction> mu_function, M_TYPE m_type,
+                          std::shared_ptr<DeterministicFunction> sigma_function, S_TYPE s_type);
 
         /** 
          * @brief Probability of Exceedence 
@@ -421,6 +443,17 @@ namespace SLAT {
          * @return y, such that f(x) <= y with probability p.
          */
         virtual double X_at_exceedence(double x, double p) const;
+
+        /** 
+         * @brief Mean Exceedence
+         * 
+         * Given an input value 'x',  returns the mean of f(x).
+         *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return mean(f(x))
+         */
+        virtual double Mean(double x) const;
 
         ~LogNormalFunction() { }; /**< Destructor; doesn't need to do anything. */
         virtual std::string ToString(void) const;

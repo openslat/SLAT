@@ -53,7 +53,7 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
         new PowerLawParametricCurve(0.5, 0.0));
 
     shared_ptr<ProbabilisticFunction> edp_im_relationship(
-        new LogNormalFunction(mu_edp, sigma_edp));
+        new LogNormalFunction(mu_edp, LogNormalFunction::MEAN_LN_X,  sigma_edp, LogNormalFunction::SIGMA_LN_X));
 
     CompoundRateRelationship rel1(im_rate_rel, edp_im_relationship);
     CompoundRateRelationship rel2(im_rate_rel, edp_im_relationship);
@@ -175,7 +175,7 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
         new PowerLawParametricCurve(0.5, 0.0));
 
     shared_ptr<ProbabilisticFunction> edp_im_relationship(
-        new LogNormalFunction(mu_edp, sigma_edp));
+        new LogNormalFunction(mu_edp, LogNormalFunction::MEDIAN_X, sigma_edp, LogNormalFunction::SIGMA_LN_X));
 
     CompoundRateRelationship rel(im_rate_rel, edp_im_relationship);
 

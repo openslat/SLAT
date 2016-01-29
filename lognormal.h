@@ -12,6 +12,8 @@
 #ifndef _LOGNORMAL_H_
 #define _LOGNORMAL_H_
 
+#include <vector>
+
 namespace SLAT {
     class LognormalFunction {
     public:
@@ -28,7 +30,14 @@ namespace SLAT {
         double x_at_p(double p) const;
 
         double get_mu_lnX(void) const;
+        double get_median_X(void) const;
+        double get_mean_X(void) const;
+        double get_sigma_lnX(void) const;
+        double get_sigma_X(void) const;
 
+        static LognormalFunction AddWeightedDistributions(
+            const std::vector<LognormalFunction> distributions, 
+            const std::vector<double> weights);
     private:
         double mu_lnX;
         double sigma_lnX;

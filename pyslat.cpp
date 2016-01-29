@@ -125,8 +125,8 @@ namespace SLAT {
     {
         std::shared_ptr<ProbabilisticFunction> function(
             new LogNormalFunction(
-                std::shared_ptr<DeterministicFunction>(mu.function),
-                std::shared_ptr<DeterministicFunction>(sigma.function)));
+                std::shared_ptr<DeterministicFunction>(mu.function), LogNormalFunction::MEAN_LN_X, 
+                std::shared_ptr<DeterministicFunction>(sigma.function), LogNormalFunction::SIGMA_LN_X));
         return new ProbabilisticFunctionWrapper(function);
     };
 

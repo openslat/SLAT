@@ -44,11 +44,20 @@ namespace SLAT {
         return damage_states.size();
     };
 
-    std::vector<double> FragilityFunction::pDamage(double edp)
+    std::vector<double> FragilityFunction::pExceeded(double edp)
     {
         std::vector<double> result(n_states());
         for (size_t i=0; i < n_states(); i++) {
             result[i] = damage_states[i].p_at_most(edp);
+        }
+        return result;
+    }
+
+    std::vector<double> FragilityFunction::pHighest(double edp)
+    {
+        std::vector<double> result = pExceeded(edp);
+        for (size_t i=1; i < n_states(); i++) {
+            result[i-1] -= result[i];
         }
         return result;
     }

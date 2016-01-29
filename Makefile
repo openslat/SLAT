@@ -10,7 +10,7 @@ LDFLAGS=-lgsl -lgslcblas -lm -lboost_log -lboost_thread -lboost_system -lpthread
 # generally recommended, but saves on from specifying 'LD_LIBRARY_PATH=.':
 #LDFLAGS+=-Wl,-rpath,.
 
-LIBSRCS=functions.cpp relationships.cpp maq.cpp fragility.cpp lognormal.cpp
+LIBSRCS=functions.cpp relationships.cpp maq.cpp fragility.cpp lognormal.cpp loss_functions.cpp
 LIBOBJS=$(LIBSRCS:.cpp=.o)
 
 UNIT_SRCS = functions_test.cpp relationships_test.cpp unit_test.cpp maq_test.cpp \
@@ -27,10 +27,12 @@ fragility.o: fragility.cpp fragility.h
 	g++ -c $(CFLAGS) -o $@ $<
 lognormal.o: lognormal.cpp lognormal.h 
 	g++ -c $(CFLAGS) -o $@ $<
-libslat.so: functions.o relationships.o maq.o fragility.o lognormal.o
+loss_functions.o: loss_functions.cpp loss_functions.h 
+	g++ -c $(CFLAGS) -o $@ $<
+libslat.so: functions.o relationships.o maq.o fragility.o lognormal.o loss_functions.o
 	g++ -fPIC -shared -Wl,-soname,libslat.so -o libslat.so $(LIBOBJS) ${LDFLAGS}
 
-main.o: main.cpp functions.h relationships.h maq.h libslat.so replaceable.h fragility.h lognormal.h
+main.o: main.cpp functions.h relationships.h maq.h libslat.so replaceable.h fragility.h lognormal.h loss_functions.h
 	g++ -c $(CFLAGS) -o $@ $<
 main: main.o libslat.so
 	g++ -fPIC main.o -L. -lslat -o main ${LDFLAGS}

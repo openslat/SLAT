@@ -282,24 +282,70 @@ namespace SLAT {
         sigma_function->remove_callbacks(sigma_function_callback_id);
     }
 
-    LogNormalFunction::LogNormalFunction(std::shared_ptr<DeterministicFunction> mu_function,
-                                         std::shared_ptr<DeterministicFunction> sigma_function)
+    LogNormalFunction::LogNormalFunction(std::shared_ptr<DeterministicFunction> mu_function, M_TYPE m_type,
+                                         std::shared_ptr<DeterministicFunction> sigma_function, S_TYPE s_type)
         : ProbabilisticFunction(mu_function, sigma_function)
     {
+        switch (m_type) {
+        case MEAN_LN_X:
+            mean_lnX = [this] (double x) -> double { return this->mu_function->ValueAt(x); };
+            median_X = [this] (double x) -> double { return exp(this->mean_lnX(x)); };
+            mean_X = [this] (double x) -> double { 
+                return exp(this->mean_lnX(x) + this->sigma_lnX(x) * this->sigma_lnX(x) / 2);
+            };
+            break;
+        case MEAN_X:
+            mean_X = [this] (double x) -> double { return this->mu_function->ValueAt(x); };
+            mean_lnX = [this] (double x) -> double {
+                return log(this->mean_X(x)) - this->sigma_lnX(x) * this->sigma_lnX(x) / 2; 
+            };
+            median_X = [this] (double x) -> double { return exp(this->mean_lnX(x)); };
+            break;
+        case MEDIAN_X:
+            median_X = [this] (double x) -> double { return this->mu_function->ValueAt(x); };
+            mean_lnX = [this] (double x) -> double { return log(this->median_X(x)); };
+            mean_X = [this] (double x) -> double { 
+                return exp(this->mean_lnX(x) + this->sigma_lnX(x) * this->sigma_lnX(x) /2);
+            };
+            break;
+        };
+        
+        switch (s_type) {
+        case SIGMA_LN_X:
+            sigma_lnX = [this] (double x) -> double{ return this->sigma_function->ValueAt(x); };
+            sigma_X = [this] (double x) -> double{
+                return this->mean_X(x) * sqrt(exp(this->sigma_lnX(x) * this->sigma_lnX(x)) - 1); 
+            };
+            break;
+        case SIGMA_X:
+            sigma_X = [this] (double x) -> double { return this->sigma_function->ValueAt(x); };
+            sigma_lnX = [this] (double x) -> double { 
+                double sd = this->sigma_X(x);
+                double mean = this->mean_X(x);
+                return sqrt(log(1.0 + (sd * sd)/(mean * mean))); 
+            };
+            break;
+        };
     }
 
     double LogNormalFunction::P_exceedence(double x, double min_y) const
     {
-        return LognormalFunction::Lognormal_from_mu_lnX_and_sigma_lnX(
-            log(mu_function->ValueAt(x)), 
-            sigma_function->ValueAt(x)).p_at_least(min_y);
+        return distribution(x).p_at_least(min_y);
     }
 
     double LogNormalFunction::X_at_exceedence(double x, double p) const
     {
-        return LognormalFunction::Lognormal_from_mu_lnX_and_sigma_lnX(
-            log(mu_function->ValueAt(x)), 
-            sigma_function->ValueAt(x)).x_at_p(p);
+        return distribution(x).x_at_p(p);
     }
 
+    double LogNormalFunction::Mean(double x) const
+    {
+        return distribution(x).get_mean_X();
+    }
+
+    LognormalFunction LogNormalFunction::distribution(double x) const
+    {
+        LognormalFunction result = LognormalFunction::Lognormal_from_mu_lnX_and_sigma_lnX(mean_lnX(x), sigma_lnX(x));
+        return result;
+    }
 }

@@ -4,6 +4,7 @@
 #include "relationships.h"
 #include "fragility.h"
 #include "lognormal.h"
+#include "loss_functions.h"
 #include <chrono>
 
 using namespace std;
@@ -58,7 +59,7 @@ int main(int argc, char **argv)
         new PowerLawParametricCurve(0.5, 0.0));
 
     shared_ptr<ProbabilisticFunction> edp_im_relationship(
-        new LogNormalFunction(mu_edp, sigma_edp));
+        new LogNormalFunction(mu_edp, LogNormalFunction::MEAN_X, sigma_edp, LogNormalFunction::SIGMA_LN_X));
 
     {
         BOOST_LOG(logger) << "Writing IM-EDP table";
@@ -72,7 +73,7 @@ int main(int argc, char **argv)
             double im = i / 100.0;
             outfile << setw(10) << im
                     << setw(12) << edp_im_relationship->X_at_exceedence(im, 0.16)
-                    << setw(12) << edp_im_relationship->X_at_exceedence(im, 0.50)
+                    << setw(12) << edp_im_relationship->Mean(im)
                     << setw(12) << edp_im_relationship->X_at_exceedence(im, 0.84)
                     << endl;
         }
@@ -166,7 +167,7 @@ int main(int argc, char **argv)
             double edp = i / 1000.0;
             outfile << setw(10) << edp;
 
-            std::vector<double> damage = fragFn.pDamage(edp);
+            std::vector<double> damage = fragFn.pExceeded(edp);
             for (int j=0; j<4; j++) {
                 outfile << setw(12) << damage[j];
             }
@@ -174,5 +175,29 @@ int main(int argc, char **argv)
         }
         outfile.close();
         BOOST_LOG(logger) << "DS-DSP table written.";
+    }
+
+    LossFunction lossFn(
+        { LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.03, 0.4),
+                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.08, 0.4),
+                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.25, 0.4),
+                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(1.00, 0.4)});
+    
+    {
+        BOOST_LOG(logger) << "Writing LOSS-EDP table";
+        ofstream outfile("loss_edp.dat");
+    
+        outfile << setw(10) << "EDP" << setw(12) << "Loss"
+                << setw(12) << "SD" << endl;
+        
+        for (int i=1; i < 200; i++) {
+            double edp = i / 1000.;
+            LognormalFunction ln_fn = LognormalFunction::AddWeightedDistributions(
+                lossFn.LossFunctions(), fragFn.pHighest(edp));
+            outfile << setw(10) << edp << setw(12) << ln_fn.get_mean_X() 
+                    << setw(12) << ln_fn.get_sigma_lnX() << endl;
+        }
+        outfile.close();
+        BOOST_LOG(logger) << "LOSS-EDP table written." << endl;
     }
 }

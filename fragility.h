@@ -23,7 +23,8 @@ namespace SLAT {
         ~FragilityFunction();
         std::size_t n_states(void);
         
-        std::vector<double> pDamage(double edp);
+        std::vector<double> pExceeded(double edp);
+        std::vector<double> pHighest(double edp);
     private:
         std::vector<LognormalFunction> damage_states;
     };

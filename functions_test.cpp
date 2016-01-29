@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE(Log_Normal_Function_Test)
     shared_ptr<DeterministicFunction> mu_func(new PowerLawParametricCurve(0.1, 1.5));
     shared_ptr<DeterministicFunction> sigma_func(new PowerLawParametricCurve(0.5, 0));
 
-    LogNormalFunction edp_im(mu_func, sigma_func);
+    LogNormalFunction edp_im(mu_func, LogNormalFunction::MEDIAN_X, sigma_func, LogNormalFunction::SIGMA_LN_X);
     
     struct { double im; double pct; double edp; } test_data[] = {
         { 0.10, 0.16, 1.923E-03 }, { 0.10, 0.50, 3.162E-03 }, { 0.10, 0.84, 5.199E-03 },
@@ -177,7 +177,8 @@ BOOST_AUTO_TEST_CASE(Log_Normal_Function_Test)
      * Make sure we get the right overloaded function when we access a LogNormalFunction
      * through a pointer:
      */
-    std::shared_ptr<ProbabilisticFunction> f(new LogNormalFunction(mu_func, sigma_func));
+    std::shared_ptr<ProbabilisticFunction> f(new LogNormalFunction(mu_func, LogNormalFunction::MEDIAN_X, 
+                                                                   sigma_func, LogNormalFunction::SIGMA_LN_X));
     for (uint i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
         double im = test_data[i].im;
         double expected_pct = test_data[i].pct;
