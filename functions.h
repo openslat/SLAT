@@ -19,7 +19,7 @@
 #include <iostream>
 #include <math.h>
 #include "replaceable.h"
-#include "lognormal.h"
+#include "lognormaldist.h"
 
 namespace SLAT {
 /**
@@ -30,7 +30,7 @@ namespace SLAT {
  * given input. This contrasts with probabilistic functions, whose results will
  * vary according to a probability distribution.
  */
-    class DeterministicFunction : public Replaceable<DeterministicFunction>
+    class DeterministicFn : public Replaceable<DeterministicFn>
     {
     private:
         int callback_id;
@@ -38,10 +38,10 @@ namespace SLAT {
         /** 
          * Default constructor; does nothing.
          */     
-    DeterministicFunction(void) : Replaceable<DeterministicFunction>() {
+    DeterministicFn(void) : Replaceable<DeterministicFn>() {
             /* callback_id = this->add_callbacks( */
             /*     [this] (void) { this->notify_change(); }, */
-            /*     [this] (std::shared_ptr<DeterministicFunction> f) { */
+            /*     [this] (std::shared_ptr<DeterministicFn> f) { */
             /*         this->replace(f); */
             /*     }); */
         };
@@ -56,7 +56,7 @@ namespace SLAT {
          */
         virtual double Evaluate(double x) const { return NAN; };
     public:
-        ~DeterministicFunction(void) { 
+        ~DeterministicFn(void) { 
             /* thisremove_callbacks->callback_id(); */
         };
 
@@ -64,7 +64,7 @@ namespace SLAT {
          * Evaluate the function at a given input. This is the public interface,
          * which will invoke Evaluate() to perform the calculation. The class is
          * structured this way to facilitate instrumenting or caching all
-         * DeterministicFunction objects without having to change any of the
+         * DeterministicFn objects without having to change any of the
          * subclasses.
          * 
          * @param x  The input at which to evaluate the function.
@@ -85,7 +85,7 @@ namespace SLAT {
          */
         virtual double DerivativeAt(double x) const;
 
-        friend std::ostream& operator<<(std::ostream& out, const DeterministicFunction& o);
+        friend std::ostream& operator<<(std::ostream& out, const DeterministicFn& o);
         virtual std::string ToString(void) const;
     };
 
@@ -100,11 +100,11 @@ namespace SLAT {
  * I expect we'll implement a 'factory' to provide objects of an appropriate
  * subclass based on the function requested in an input file.
  */
-    class FormulaFunction : public DeterministicFunction
+    class FormulaFn : public DeterministicFn
     {
     protected:
-        FormulaFunction() {};   /**< Default constructor; does nothing. */
-        ~FormulaFunction() { }; /**< Default destructor; does nothing. */
+        FormulaFn() {};   /**< Default constructor; does nothing. */
+        ~FormulaFn() { }; /**< Default destructor; does nothing. */
     };
 
 /**
@@ -119,7 +119,7 @@ namespace SLAT {
  * to 1, and will return 0 for x >= IM_asy (normally, there would be a
  * discontinuity at x=IM_asy).
  */
-    class NonLinearHyperbolicLaw : public FormulaFunction
+    class NonLinearHyperbolicLaw : public FormulaFn
     {
     public:
         /** 
@@ -155,7 +155,7 @@ namespace SLAT {
  *
  *     y = a * x^b
  */
-    class PowerLawParametricCurve :public FormulaFunction
+    class PowerLawParametricCurve :public FormulaFn
     {
     public:
         /** 
@@ -190,7 +190,7 @@ namespace SLAT {
  * of (input, output) std::pairs provided to the constructor, and an interpolation
  * algorithm.
  */
-    class InterpolatedFunction : public DeterministicFunction
+    class InterpolatedFn : public DeterministicFn
     {
     protected:
         /**
@@ -203,8 +203,8 @@ namespace SLAT {
         /**
          * The default constructor takes arrays of corresponding input and output values.
          */
-        InterpolatedFunction(double x[], double y[], size_t size);
-        ~InterpolatedFunction() { };  /**< Default destructor; does nothing. */
+        InterpolatedFn(double x[], double y[], size_t size);
+        ~InterpolatedFn() { };  /**< Default destructor; does nothing. */
 
         /** 
          * Subclasses will override this method to perform interpolation.
@@ -222,7 +222,7 @@ namespace SLAT {
  * 
  * This class linearly interpolates between the provided data points.
  */
-    class LinearInterpolatedFunction : public InterpolatedFunction
+    class LinearInterpolatedFn : public InterpolatedFn
     {
     public: 
         /** 
@@ -233,7 +233,7 @@ namespace SLAT {
          * @param y      An array of corresponding output values
          * @param size   The size of the arrays
          */
-        LinearInterpolatedFunction(double x[], double y[], size_t size);
+        LinearInterpolatedFn(double x[], double y[], size_t size);
 
         /** 
          * Linearly interpolate the function value, using the points provided in the
@@ -245,7 +245,7 @@ namespace SLAT {
          */
         virtual double Evaluate(double x) const;
 
-        ~LinearInterpolatedFunction();  /**< Destructor; releases GSL structures. */
+        ~LinearInterpolatedFn();  /**< Destructor; releases GSL structures. */
         virtual std::string ToString(void) const;
     protected: 
         /**
@@ -267,7 +267,7 @@ namespace SLAT {
  * This class linearly interpolates between the logs of the provided data
  * points.
  */
-    class LogLogInterpolatedFunction : public InterpolatedFunction
+    class LogLogInterpolatedFn : public InterpolatedFn
     {
     public: 
         /** 
@@ -278,7 +278,7 @@ namespace SLAT {
          * @param y      An array of corresponding output values
          * @param size   The size of the arrays
          */
-        LogLogInterpolatedFunction(double x[], double y[], size_t size);
+        LogLogInterpolatedFn(double x[], double y[], size_t size);
 
         /** 
          * Logarithmicly interpolate the function value, using the points provided
@@ -290,7 +290,7 @@ namespace SLAT {
          */
         virtual double Evaluate(double x) const;
 
-        ~LogLogInterpolatedFunction();  /**< Destructor; releases GSL structures. */
+        ~LogLogInterpolatedFn();  /**< Destructor; releases GSL structures. */
         virtual std::string ToString(void) const;
     protected:
         /**
@@ -317,7 +317,7 @@ namespace SLAT {
  * This contrasts with deterministic functions, which always return the same
  * value for a given input.
  */
-    class ProbabilisticFunction : public Replaceable<ProbabilisticFunction>
+    class ProbabilisticFn : public Replaceable<ProbabilisticFn>
     {
     public:
         /** 
@@ -329,11 +329,11 @@ namespace SLAT {
          * @param mu_function     A function describing the 'mu' of the distribution.
          * @param sigma_function  A function describing the 'sigma' of the distribution.
          */
-        ProbabilisticFunction(std::shared_ptr<DeterministicFunction> mu_function,
-                              std::shared_ptr<DeterministicFunction> sigma_function);
+        ProbabilisticFn(std::shared_ptr<DeterministicFn> mu_function,
+                              std::shared_ptr<DeterministicFn> sigma_function);
 
-        ProbabilisticFunction ProbabilisticFunction_mu_lnX_sigma_lnX(std::shared_ptr<DeterministicFunction> mu_function,
-                                               std::shared_ptr<DeterministicFunction> sigma_function);
+        ProbabilisticFn ProbabilisticFn_mu_lnX_sigma_lnX(std::shared_ptr<DeterministicFn> mu_function,
+                                               std::shared_ptr<DeterministicFn> sigma_function);
 
 
         /** 
@@ -374,20 +374,20 @@ namespace SLAT {
          */
         virtual double Mean(double x) const { return NAN; };
 
-        ~ProbabilisticFunction();
+        ~ProbabilisticFn();
         
-        friend std::ostream& operator<<(std::ostream& out, const ProbabilisticFunction& o);
-        virtual std::string ToString(void) const { return "ProbabilisticFunction"; };
+        friend std::ostream& operator<<(std::ostream& out, const ProbabilisticFn& o);
+        virtual std::string ToString(void) const { return "ProbabilisticFn"; };
     protected:
         /**
          * Shared pointer to the mu function.
          */
-        std::shared_ptr<DeterministicFunction> mu_function;
+        std::shared_ptr<DeterministicFn> mu_function;
 
         /**
          * Shared pointer to the sigma function.
          */
-        std::shared_ptr<DeterministicFunction> sigma_function;
+        std::shared_ptr<DeterministicFn> sigma_function;
 
         int mu_function_callback_id, sigma_function_callback_id;
     };
@@ -399,11 +399,11 @@ namespace SLAT {
  * This class represents a probabilistic function that follows a log-normal
  * distribution.
  */
-    class LogNormalFunction : public ProbabilisticFunction
+    class LogNormalFn : public ProbabilisticFn
     {
     private:
         std::function<double (double)> mean_X, mean_lnX, median_X, sigma_X, sigma_lnX;
-        LognormalFunction distribution(double x) const;
+        LogNormalDist distribution(double x) const;
     public:
         typedef enum { MEAN_X, MEAN_LN_X, MEDIAN_X } M_TYPE;
         typedef enum { SIGMA_X, SIGMA_LN_X } S_TYPE;
@@ -414,8 +414,8 @@ namespace SLAT {
          * @param mu_function     Shared pointer to the mu function.
          * @param sigma_function  Shared pointer to the sigma function.
          */
-        LogNormalFunction(std::shared_ptr<DeterministicFunction> mu_function, M_TYPE m_type,
-                          std::shared_ptr<DeterministicFunction> sigma_function, S_TYPE s_type);
+        LogNormalFn(std::shared_ptr<DeterministicFn> mu_function, M_TYPE m_type,
+                          std::shared_ptr<DeterministicFn> sigma_function, S_TYPE s_type);
 
         /** 
          * @brief Probability of Exceedence 
@@ -455,7 +455,7 @@ namespace SLAT {
          */
         virtual double Mean(double x) const;
 
-        ~LogNormalFunction() { }; /**< Destructor; doesn't need to do anything. */
+        ~LogNormalFn() { }; /**< Destructor; doesn't need to do anything. */
         virtual std::string ToString(void) const;
     };
 }

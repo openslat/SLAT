@@ -16,7 +16,7 @@
 using namespace std;
 
 namespace SLAT {
-    FragilityFunction::FragilityFunction(std::vector<LognormalFunction> onsets)
+    FragilityFunction::FragilityFunction(std::vector<LogNormalDist> onsets)
     {
         if (onsets.size() == 0) {
             throw std::invalid_argument("onsets");

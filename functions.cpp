@@ -15,10 +15,10 @@
 #include <functional>
 #include <gsl/gsl_deriv.h>
 #include "functions.h"
-#include "lognormal.h"
+#include "lognormaldist.h"
 
 namespace SLAT {
-    std::string DeterministicFunction::ToString(void) const 
+    std::string DeterministicFn::ToString(void) const 
     {
         return "Deterministic Function";
     }
@@ -39,37 +39,37 @@ namespace SLAT {
         return result.str();
     }
 
-    std::string LinearInterpolatedFunction::ToString(void) const 
+    std::string LinearInterpolatedFn::ToString(void) const 
     {
-        return "LinearInterpolatedFunction";
+        return "LinearInterpolatedFn";
     }
 
-    std::string LogLogInterpolatedFunction::ToString(void) const 
+    std::string LogLogInterpolatedFn::ToString(void) const 
     {
-        return "LogLogInterpolatedFunction";
+        return "LogLogInterpolatedFn";
     }
 
-    std::ostream& operator<<(std::ostream& out, const DeterministicFunction& o)
+    std::ostream& operator<<(std::ostream& out, const DeterministicFn& o)
     {
         out << o.ToString();
         return out;
     }
 
-    std::string LogNormalFunction::ToString(void) const 
+    std::string LogNormalFn::ToString(void) const 
     {
         return "LogNormal(" + mu_function->ToString() + ", " + 
             sigma_function->ToString() + ")";
 
     }
 
-    std::ostream& operator<<(std::ostream& out, const ProbabilisticFunction& o)
+    std::ostream& operator<<(std::ostream& out, const ProbabilisticFn& o)
     {
         out << o.ToString();
         return out;
     }
 
     
-    double DeterministicFunction::ValueAt(double x) const
+    double DeterministicFn::ValueAt(double x) const
     {
         return this->Evaluate(x);
     }
@@ -94,7 +94,7 @@ namespace SLAT {
 /*
  * Uses the GSL to calculate the derivative; can be overridden by subclasses.
  */
-    double DeterministicFunction::DerivativeAt(double x) const
+    double DeterministicFn::DerivativeAt(double x) const
     {
         /*
          * Encapsulate the function in a lambda, that we can pass to the GSL through
@@ -161,13 +161,13 @@ namespace SLAT {
     }
 
 /*
- * Base constructor for InterpolatedFunction
+ * Base constructor for InterpolatedFn
  *
  * Just stashes the data describing the function, in case we want to refer to it
  * later (e.g., during debugging).
  */
-    InterpolatedFunction::InterpolatedFunction(double x[], double y[], size_t size) : 
-        DeterministicFunction()
+    InterpolatedFn::InterpolatedFn(double x[], double y[], size_t size) : 
+        DeterministicFn()
     {
         for (unsigned int i=0; i < size; i++) {
             data.push_back(std::pair<double, double>(x[i], y[i]));
@@ -176,12 +176,12 @@ namespace SLAT {
 
 
 /*
- * LinearInterpolatedFunction constructor
+ * LinearInterpolatedFn constructor
  *
  * Allocate and initialise the GSL data structures used for interpolation.
  */
-    LinearInterpolatedFunction::LinearInterpolatedFunction(double x[], double y[], size_t size) :
-        InterpolatedFunction(x, y, size)
+    LinearInterpolatedFn::LinearInterpolatedFn(double x[], double y[], size_t size) :
+        InterpolatedFn(x, y, size)
     {
         accel = gsl_interp_accel_alloc();
         interp = gsl_spline_alloc (gsl_interp_linear, size);
@@ -189,17 +189,17 @@ namespace SLAT {
     }
 
 /*
- * LinearInterpolatedFunction destructor
+ * LinearInterpolatedFn destructor
  *
  * Release the GSL data structures used for interpolation.
  */
-    LinearInterpolatedFunction::~LinearInterpolatedFunction()
+    LinearInterpolatedFn::~LinearInterpolatedFn()
     {
         gsl_spline_free(interp);
         gsl_interp_accel_free(accel);
     }
 
-    double LinearInterpolatedFunction::Evaluate(double x) const
+    double LinearInterpolatedFn::Evaluate(double x) const
     {
         // Use the GSL interpolator allocated by the constructor:
         double y;
@@ -208,12 +208,12 @@ namespace SLAT {
     }
 
 /*
- * LogLogInterpolatedFunction constructor
+ * LogLogInterpolatedFn constructor
  *
  * Allocate and initialise the GSL data structures used for interpolation.
  */
-    LogLogInterpolatedFunction::LogLogInterpolatedFunction(double x[], double y[], size_t size) :
-        InterpolatedFunction(x, y, size)
+    LogLogInterpolatedFn::LogLogInterpolatedFn(double x[], double y[], size_t size) :
+        InterpolatedFn(x, y, size)
     {
         accel = gsl_interp_accel_alloc();
         interp = gsl_spline_alloc (gsl_interp_linear, size);
@@ -229,11 +229,11 @@ namespace SLAT {
     }
 
 /*
- * LogLogInterpolatedFunction destructor
+ * LogLogInterpolatedFn destructor
  *
  * Release the GSL data structures used for interpolation.
  */
-    LogLogInterpolatedFunction::~LogLogInterpolatedFunction()
+    LogLogInterpolatedFn::~LogLogInterpolatedFn()
     {
         gsl_spline_free(interp);
         gsl_interp_accel_free(accel);
@@ -243,7 +243,7 @@ namespace SLAT {
  * Perform the log-log interpolation, using the GSL interpolator set up in the
  * constructor.
  */
-    double LogLogInterpolatedFunction::Evaluate(double x) const
+    double LogLogInterpolatedFn::Evaluate(double x) const
     {
         double y;
         (void)gsl_spline_eval_e(interp, log(x), accel, &y);
@@ -251,8 +251,8 @@ namespace SLAT {
     }
 
 
-    ProbabilisticFunction::ProbabilisticFunction(std::shared_ptr<DeterministicFunction> mu_function,
-                                                 std::shared_ptr<DeterministicFunction> sigma_function)
+    ProbabilisticFn::ProbabilisticFn(std::shared_ptr<DeterministicFn> mu_function,
+                                                 std::shared_ptr<DeterministicFn> sigma_function)
     {
         this->mu_function = mu_function;
         this->sigma_function = sigma_function;
@@ -261,7 +261,7 @@ namespace SLAT {
             [this] (void) {
                 this->notify_change();
             },
-            [this] (std::shared_ptr<DeterministicFunction> new_mu_function) {
+            [this] (std::shared_ptr<DeterministicFn> new_mu_function) {
                 this->mu_function = new_mu_function;
                 this->notify_change();
             });
@@ -270,21 +270,21 @@ namespace SLAT {
             [this] (void) {
                 this->notify_change();
             },
-            [this] (std::shared_ptr<DeterministicFunction> new_sigma_function) {
+            [this] (std::shared_ptr<DeterministicFn> new_sigma_function) {
                 this->sigma_function = new_sigma_function;
                 this->notify_change();
             });
     }
 
-    ProbabilisticFunction::~ProbabilisticFunction() 
+    ProbabilisticFn::~ProbabilisticFn() 
     {
         mu_function->remove_callbacks(mu_function_callback_id);
         sigma_function->remove_callbacks(sigma_function_callback_id);
     }
 
-    LogNormalFunction::LogNormalFunction(std::shared_ptr<DeterministicFunction> mu_function, M_TYPE m_type,
-                                         std::shared_ptr<DeterministicFunction> sigma_function, S_TYPE s_type)
-        : ProbabilisticFunction(mu_function, sigma_function)
+    LogNormalFn::LogNormalFn(std::shared_ptr<DeterministicFn> mu_function, M_TYPE m_type,
+                                         std::shared_ptr<DeterministicFn> sigma_function, S_TYPE s_type)
+        : ProbabilisticFn(mu_function, sigma_function)
     {
         switch (m_type) {
         case MEAN_LN_X:
@@ -328,24 +328,24 @@ namespace SLAT {
         };
     }
 
-    double LogNormalFunction::P_exceedence(double x, double min_y) const
+    double LogNormalFn::P_exceedence(double x, double min_y) const
     {
         return distribution(x).p_at_least(min_y);
     }
 
-    double LogNormalFunction::X_at_exceedence(double x, double p) const
+    double LogNormalFn::X_at_exceedence(double x, double p) const
     {
         return distribution(x).x_at_p(p);
     }
 
-    double LogNormalFunction::Mean(double x) const
+    double LogNormalFn::Mean(double x) const
     {
         return distribution(x).get_mean_X();
     }
 
-    LognormalFunction LogNormalFunction::distribution(double x) const
+    LogNormalDist LogNormalFn::distribution(double x) const
     {
-        LognormalFunction result = LognormalFunction::Lognormal_from_mu_lnX_and_sigma_lnX(mean_lnX(x), sigma_lnX(x));
+        LogNormalDist result = LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(mean_lnX(x), sigma_lnX(x));
         return result;
     }
 }

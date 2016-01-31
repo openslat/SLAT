@@ -3,7 +3,7 @@
 #include <iomanip>
 #include "relationships.h"
 #include "fragility.h"
-#include "lognormal.h"
+#include "lognormaldist.h"
 #include "loss_functions.h"
 #include <chrono>
 
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
 
     cout << "Welcome to SLAT" << endl;
     
-    shared_ptr<DeterministicFunction> im_rate_function(
+    shared_ptr<DeterministicFn> im_rate_function(
         new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
 
     shared_ptr<RateRelationship> im_rate_rel(
@@ -52,14 +52,14 @@ int main(int argc, char **argv)
     }
 
     
-    shared_ptr<DeterministicFunction> mu_edp(
+    shared_ptr<DeterministicFn> mu_edp(
         new PowerLawParametricCurve(0.1, 1.5));
 
-    shared_ptr<DeterministicFunction> sigma_edp(
+    shared_ptr<DeterministicFn> sigma_edp(
         new PowerLawParametricCurve(0.5, 0.0));
 
-    shared_ptr<ProbabilisticFunction> edp_im_relationship(
-        new LogNormalFunction(mu_edp, LogNormalFunction::MEAN_X, sigma_edp, LogNormalFunction::SIGMA_LN_X));
+    shared_ptr<ProbabilisticFn> edp_im_relationship(
+        new LogNormalFn(mu_edp, LogNormalFn::MEAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X));
 
     {
         BOOST_LOG(logger) << "Writing IM-EDP table";
@@ -102,7 +102,7 @@ int main(int argc, char **argv)
 
 
     std::cout << rel << std::endl;
-    shared_ptr<DeterministicFunction> new_im_rate_function(
+    shared_ptr<DeterministicFn> new_im_rate_function(
         new NonLinearHyperbolicLaw(12.21, 29.8, 62.2));
     std::cout << "Replacing im_rate_function" << std::endl;
     im_rate_function->replace(new_im_rate_function);
@@ -126,7 +126,7 @@ int main(int argc, char **argv)
     }
 
     std::cout << "Replacing new_im_rate_function" << std::endl;
-    new_im_rate_function->replace(std::shared_ptr<DeterministicFunction>(new NonLinearHyperbolicLaw(1221, 29.8, 62.2)));
+    new_im_rate_function->replace(std::shared_ptr<DeterministicFn>(new NonLinearHyperbolicLaw(1221, 29.8, 62.2)));
 
     std::cout << rel << std::endl;
     for (int i=0; i < 5; i++) 
@@ -149,10 +149,10 @@ int main(int argc, char **argv)
 
 
     FragilityFunction fragFn(
-        { LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0062, 0.4),
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0230, 0.4),
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0440, 0.4),
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
+        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
     {
         BOOST_LOG(logger) << "Writing DS-EDP table";
         ofstream outfile("ds_edp.dat");
@@ -178,10 +178,10 @@ int main(int argc, char **argv)
     }
 
     LossFunction lossFn(
-        { LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.03, 0.4),
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.08, 0.4),
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.25, 0.4),
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(1.00, 0.4)});
+        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)});
     
     {
         BOOST_LOG(logger) << "Writing LOSS-EDP table";
@@ -192,7 +192,7 @@ int main(int argc, char **argv)
         
         for (int i=1; i < 200; i++) {
             double edp = i / 1000.;
-            LognormalFunction ln_fn = LognormalFunction::AddWeightedDistributions(
+            LogNormalDist ln_fn = LogNormalDist::AddWeightedDistributions(
                 lossFn.LossFunctions(), fragFn.pHighest(edp));
             outfile << setw(10) << edp << setw(12) << ln_fn.get_mean_X() 
                     << setw(12) << ln_fn.get_sigma_lnX() << endl;

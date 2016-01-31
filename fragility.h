@@ -12,13 +12,13 @@
 #ifndef _FRAGILITY_H_
 #define _FRAGILITY_H_
 
-#include "lognormal.h"
+#include "lognormaldist.h"
 #include <vector>
 
 namespace SLAT {
     class FragilityFunction {
     public:
-        FragilityFunction(std::vector<LognormalFunction> onsets);
+        FragilityFunction(std::vector<LogNormalDist> onsets);
         
         ~FragilityFunction();
         std::size_t n_states(void);
@@ -26,7 +26,7 @@ namespace SLAT {
         std::vector<double> pExceeded(double edp);
         std::vector<double> pHighest(double edp);
     private:
-        std::vector<LognormalFunction> damage_states;
+        std::vector<LogNormalDist> damage_states;
     };
 }
 #endif

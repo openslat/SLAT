@@ -86,14 +86,14 @@ namespace SLAT {
     }
 
     SimpleRateRelationship::SimpleRateRelationship(
-        std::shared_ptr<DeterministicFunction> func) : RateRelationship(false)
+        std::shared_ptr<DeterministicFn> func) : RateRelationship(false)
     {
         f = func;
         callback_id = f->add_callbacks(
             [this] (void) {
                 this->notify_change();
             },
-            [this] (std::shared_ptr<DeterministicFunction> new_f) {
+            [this] (std::shared_ptr<DeterministicFn> new_f) {
                 this->f = new_f;
                 this->notify_change();
             });
@@ -159,7 +159,7 @@ namespace SLAT {
 
     CompoundRateRelationship::CompoundRateRelationship(
         std::shared_ptr<RateRelationship> base_rate,
-        std::shared_ptr<ProbabilisticFunction> dependent_rate)
+        std::shared_ptr<ProbabilisticFn> dependent_rate)
         : RateRelationship(true)
     {
         this->base_rate = base_rate;
@@ -181,7 +181,7 @@ namespace SLAT {
                 this->lambda.ClearCache();
                 this->notify_change();
             },
-            [this] (std::shared_ptr<ProbabilisticFunction> new_dependent_rate) {
+            [this] (std::shared_ptr<ProbabilisticFn> new_dependent_rate) {
                 this->lambda.ClearCache();
                 this->dependent_rate = new_dependent_rate;
                 this->notify_change();

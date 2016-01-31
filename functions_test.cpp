@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE( Linear_Interp_Test_1 )
 {
     double x[] = { 1, 10, 20, 50 };
     double y[] = { 1, 10, 25, 85 };
-    LinearInterpolatedFunction f(x, y, sizeof(x)/sizeof(x[0]));
+    LinearInterpolatedFn f(x, y, sizeof(x)/sizeof(x[0]));
 
     BOOST_REQUIRE(std::isnan(f.ValueAt(0.0)));
     BOOST_CHECK_EQUAL(f.ValueAt(1.0), 1.0);
@@ -105,7 +105,7 @@ BOOST_AUTO_TEST_CASE( Log_Log_Interp_Test_1 )
         if (x[i] == 0) x[i] = 0.001;
         y[i] = h.ValueAt(x[i]);
     }
-    LogLogInterpolatedFunction f(x, y, size);
+    LogLogInterpolatedFn f(x, y, size);
 
     BOOST_REQUIRE(std::isnan(f.ValueAt(0.0)));
     BOOST_REQUIRE(std::isnan(f.ValueAt(30.0)));
@@ -129,10 +129,10 @@ BOOST_AUTO_TEST_CASE( Log_Log_Interp_Test_1 )
 
 BOOST_AUTO_TEST_CASE(Log_Normal_Function_Test)
 {
-    shared_ptr<DeterministicFunction> mu_func(new PowerLawParametricCurve(0.1, 1.5));
-    shared_ptr<DeterministicFunction> sigma_func(new PowerLawParametricCurve(0.5, 0));
+    shared_ptr<DeterministicFn> mu_func(new PowerLawParametricCurve(0.1, 1.5));
+    shared_ptr<DeterministicFn> sigma_func(new PowerLawParametricCurve(0.5, 0));
 
-    LogNormalFunction edp_im(mu_func, LogNormalFunction::MEDIAN_X, sigma_func, LogNormalFunction::SIGMA_LN_X);
+    LogNormalFn edp_im(mu_func, LogNormalFn::MEDIAN_X, sigma_func, LogNormalFn::SIGMA_LN_X);
     
     struct { double im; double pct; double edp; } test_data[] = {
         { 0.10, 0.16, 1.923E-03 }, { 0.10, 0.50, 3.162E-03 }, { 0.10, 0.84, 5.199E-03 },
@@ -174,11 +174,11 @@ BOOST_AUTO_TEST_CASE(Log_Normal_Function_Test)
     }
 
     /*
-     * Make sure we get the right overloaded function when we access a LogNormalFunction
+     * Make sure we get the right overloaded function when we access a LogNormalFn
      * through a pointer:
      */
-    std::shared_ptr<ProbabilisticFunction> f(new LogNormalFunction(mu_func, LogNormalFunction::MEDIAN_X, 
-                                                                   sigma_func, LogNormalFunction::SIGMA_LN_X));
+    std::shared_ptr<ProbabilisticFn> f(new LogNormalFn(mu_func, LogNormalFn::MEDIAN_X, 
+                                                                   sigma_func, LogNormalFn::SIGMA_LN_X));
     for (uint i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
         double im = test_data[i].im;
         double expected_pct = test_data[i].pct;

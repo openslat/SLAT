@@ -18,7 +18,7 @@ using namespace SLAT;
 
 BOOST_AUTO_TEST_CASE( Simple_Rate_Relationship_Test )
 {
-    shared_ptr<DeterministicFunction> im_rate_function(
+    shared_ptr<DeterministicFn> im_rate_function(
         new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
     
     SimpleRateRelationship im_rate_rel(im_rate_function);
@@ -40,20 +40,20 @@ BOOST_AUTO_TEST_CASE( Simple_Rate_Relationship_Test )
 
 BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
 {
-    shared_ptr<DeterministicFunction> im_rate_function(
+    shared_ptr<DeterministicFn> im_rate_function(
         new PowerLawParametricCurve(1.6E-4, -2.74));
 
     shared_ptr<RateRelationship> im_rate_rel(
         new SimpleRateRelationship(im_rate_function));
     
-    shared_ptr<DeterministicFunction> mu_edp(
+    shared_ptr<DeterministicFn> mu_edp(
         new PowerLawParametricCurve(0.1, 1.5));
 
-    shared_ptr<DeterministicFunction> sigma_edp(
+    shared_ptr<DeterministicFn> sigma_edp(
         new PowerLawParametricCurve(0.5, 0.0));
 
-    shared_ptr<ProbabilisticFunction> edp_im_relationship(
-        new LogNormalFunction(mu_edp, LogNormalFunction::MEAN_LN_X,  sigma_edp, LogNormalFunction::SIGMA_LN_X));
+    shared_ptr<ProbabilisticFn> edp_im_relationship(
+        new LogNormalFn(mu_edp, LogNormalFn::MEAN_LN_X,  sigma_edp, LogNormalFn::SIGMA_LN_X));
 
     CompoundRateRelationship rel1(im_rate_rel, edp_im_relationship);
     CompoundRateRelationship rel2(im_rate_rel, edp_im_relationship);
@@ -162,20 +162,20 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
 
 BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
 {
-    shared_ptr<DeterministicFunction> im_rate_function(
+    shared_ptr<DeterministicFn> im_rate_function(
         new PowerLawParametricCurve(1.6E-4, -2.74));
 
     shared_ptr<RateRelationship> im_rate_rel(
         new SimpleRateRelationship(im_rate_function));
     
-    shared_ptr<DeterministicFunction> mu_edp(
+    shared_ptr<DeterministicFn> mu_edp(
         new PowerLawParametricCurve(0.1, 1.5));
 
-    shared_ptr<DeterministicFunction> sigma_edp(
+    shared_ptr<DeterministicFn> sigma_edp(
         new PowerLawParametricCurve(0.5, 0.0));
 
-    shared_ptr<ProbabilisticFunction> edp_im_relationship(
-        new LogNormalFunction(mu_edp, LogNormalFunction::MEDIAN_X, sigma_edp, LogNormalFunction::SIGMA_LN_X));
+    shared_ptr<ProbabilisticFn> edp_im_relationship(
+        new LogNormalFn(mu_edp, LogNormalFn::MEDIAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X));
 
     CompoundRateRelationship rel(im_rate_rel, edp_im_relationship);
 

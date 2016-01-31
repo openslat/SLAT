@@ -21,25 +21,25 @@ namespace python = boost::python;
 
 namespace SLAT {
 
-    class DeterministicFunctionWrapper {
+    class DeterministicFnWrapper {
     public:
-        DeterministicFunctionWrapper() : function(NULL) {};
-        DeterministicFunctionWrapper(std::shared_ptr<DeterministicFunction> f)
+        DeterministicFnWrapper() : function(NULL) {};
+        DeterministicFnWrapper(std::shared_ptr<DeterministicFn> f)
         {
             function = f;
         }
         double ValueAt(double v) {
             return function->ValueAt(v);
         }
-        std::shared_ptr<DeterministicFunction> function;
+        std::shared_ptr<DeterministicFn> function;
     private:
     };
 
     enum FUNCTION_TYPE { NLH, PLC, LIN, LOGLOG };
     
-    DeterministicFunctionWrapper *factory(FUNCTION_TYPE t, python::list params)
+    DeterministicFnWrapper *factory(FUNCTION_TYPE t, python::list params)
     {
-        DeterministicFunction *result = NULL;
+        DeterministicFn *result = NULL;
     
         switch (t) {
         case PLC:
@@ -73,7 +73,7 @@ namespace SLAT {
                 y_data[size - i - 1] = y;
             }
             
-            result = new LinearInterpolatedFunction(x_data, y_data, size);
+            result = new LinearInterpolatedFn(x_data, y_data, size);
             break;
         }
         case LOGLOG:
@@ -92,20 +92,20 @@ namespace SLAT {
                 y_data[size - i - 1] = y;
             }
             
-            result = new LogLogInterpolatedFunction(x_data, y_data, size);
+            result = new LogLogInterpolatedFn(x_data, y_data, size);
             break;
         }
         default:
             std::cout << "Unrecognised function type" << std::endl;
         }
-        std::shared_ptr<DeterministicFunction> ptr(result);
-        return new DeterministicFunctionWrapper(ptr);
+        std::shared_ptr<DeterministicFn> ptr(result);
+        return new DeterministicFnWrapper(ptr);
     }
 
-    class ProbabilisticFunctionWrapper {
+    class ProbabilisticFnWrapper {
     public:
-        ProbabilisticFunctionWrapper() : function(NULL) {};
-        ProbabilisticFunctionWrapper(std::shared_ptr<ProbabilisticFunction> f)
+        ProbabilisticFnWrapper() : function(NULL) {};
+        ProbabilisticFnWrapper(std::shared_ptr<ProbabilisticFn> f)
         {
             function = f;
         }
@@ -115,19 +115,19 @@ namespace SLAT {
         double X_at_exceedence(double x, double p) {
             return function->X_at_exceedence(x, p);
         };
-        std::shared_ptr<ProbabilisticFunction> function;
+        std::shared_ptr<ProbabilisticFn> function;
     private:
     };
 
-    ProbabilisticFunctionWrapper *MakeLogNormalProbabilisticFunction(
-        DeterministicFunctionWrapper mu,
-        DeterministicFunctionWrapper sigma)
+    ProbabilisticFnWrapper *MakeLogNormalProbabilisticFn(
+        DeterministicFnWrapper mu,
+        DeterministicFnWrapper sigma)
     {
-        std::shared_ptr<ProbabilisticFunction> function(
-            new LogNormalFunction(
-                std::shared_ptr<DeterministicFunction>(mu.function), LogNormalFunction::MEAN_LN_X, 
-                std::shared_ptr<DeterministicFunction>(sigma.function), LogNormalFunction::SIGMA_LN_X));
-        return new ProbabilisticFunctionWrapper(function);
+        std::shared_ptr<ProbabilisticFn> function(
+            new LogNormalFn(
+                std::shared_ptr<DeterministicFn>(mu.function), LogNormalFn::MEAN_LN_X, 
+                std::shared_ptr<DeterministicFn>(sigma.function), LogNormalFn::SIGMA_LN_X));
+        return new ProbabilisticFnWrapper(function);
     };
 
     class RateRelationshipWrapper {
@@ -153,7 +153,7 @@ namespace SLAT {
         std::shared_ptr<RateRelationship> relationship;
     };
     
-    RateRelationshipWrapper *MakeSimpleRelationship(DeterministicFunctionWrapper f)
+    RateRelationshipWrapper *MakeSimpleRelationship(DeterministicFnWrapper f)
     {
         std::shared_ptr<SimpleRateRelationship> relationship(
             new SimpleRateRelationship(f.function));
@@ -162,7 +162,7 @@ namespace SLAT {
 
     RateRelationshipWrapper *MakeCompoundRelationship(
         RateRelationshipWrapper base_rate,
-        ProbabilisticFunctionWrapper dependent_rate)
+        ProbabilisticFnWrapper dependent_rate)
     {
         std::shared_ptr<CompoundRateRelationship> relationship(
             new CompoundRateRelationship(base_rate.relationship,
@@ -177,18 +177,18 @@ namespace SLAT {
     BOOST_PYTHON_MODULE(pyslat)
     {
         python::def("factory", factory, python::return_value_policy<python::manage_new_object>());
-        python::class_<DeterministicFunctionWrapper>("DeterministicFunction", 
+        python::class_<DeterministicFnWrapper>("DeterministicFn", 
                                                       python::no_init)
-            .def("ValueAt", &DeterministicFunctionWrapper::ValueAt)
+            .def("ValueAt", &DeterministicFnWrapper::ValueAt)
             ;
 
-        python::def("MakeLogNormalProbabilisticFunction",
-                    MakeLogNormalProbabilisticFunction,
+        python::def("MakeLogNormalProbabilisticFn",
+                    MakeLogNormalProbabilisticFn,
                     python::return_value_policy<python::manage_new_object>());
 
-        python::class_<ProbabilisticFunctionWrapper>("ProbabilisticFunction", python::no_init)
-            .def("P_exceedence", &ProbabilisticFunctionWrapper::P_exceedence)
-            .def("X_at_exceedence", &ProbabilisticFunctionWrapper::X_at_exceedence)
+        python::class_<ProbabilisticFnWrapper>("ProbabilisticFn", python::no_init)
+            .def("P_exceedence", &ProbabilisticFnWrapper::P_exceedence)
+            .def("X_at_exceedence", &ProbabilisticFnWrapper::X_at_exceedence)
             ;
 
         python::def("MakeSimpleRelationship",

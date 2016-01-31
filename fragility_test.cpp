@@ -34,26 +34,26 @@ BOOST_AUTO_TEST_CASE(Fragility_Constructor)
     BOOST_CHECK_THROW(
         {   
             FragilityFunction fragFn({
-                    LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0230, 0.4),
-                        LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0062, 0.4)});
+                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
+                        LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4)});
         }, std::invalid_argument);
 
     BOOST_CHECK_THROW(
         {   
             FragilityFunction fragFn({
-                    LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0062, 0.4),
-                        LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0440, 0.4),
-                        LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.00230, 0.4)});
+                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
+                        LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
+                        LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.00230, 0.4)});
         }, std::invalid_argument);
 
     BOOST_CHECK_THROW(
         {
             FragilityFunction fragFn({
-                    LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0062, 0.4),
-                        LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0230, 0.4),
-                        LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0440, 0.4),
-                        LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0564, 0.4),
-                        LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
+                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
+                        LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
+                        LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
+                        LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4),
+                        LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
             }, std::invalid_argument);
 
     /*
@@ -61,10 +61,10 @@ BOOST_AUTO_TEST_CASE(Fragility_Constructor)
      */  
     {
         FragilityFunction fragFn({
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0062, 0.1),
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0230, 0.2),
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0440, 0.3),
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.1),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.2),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.3),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
     }
 }
 
@@ -74,10 +74,10 @@ BOOST_AUTO_TEST_CASE(Fragility_Initialisation)
  *  Make sure the values are stored correctly.
  */  
     FragilityFunction fragFn({
-            LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0062, 0.1),
-            LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0230, 0.2),
-            LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0440, 0.3),
-            LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
+            LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.1),
+            LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.2),
+            LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.3),
+            LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
     BOOST_CHECK_EQUAL(fragFn.n_states(), 4);
 }
 
@@ -89,10 +89,10 @@ BOOST_AUTO_TEST_CASE(Fragility_Probability)
      * mean_lnX and sigma_lnX:
      */
     FragilityFunction fragFn({
-            LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0062, 0.4),
-            LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0230, 0.4),
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0440, 0.4),
-                LognormalFunction::Lognormal_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
+            LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
+            LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
     
     /*
      * At EDP=0, the probability for eall damage states will be zero:

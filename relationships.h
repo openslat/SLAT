@@ -131,7 +131,7 @@ namespace SLAT {
          * 
          * @param func A shared pointer to the function defining the relationship.
          */
-        SimpleRateRelationship(std::shared_ptr<DeterministicFunction> func);
+        SimpleRateRelationship(std::shared_ptr<DeterministicFn> func);
         ~SimpleRateRelationship() { }; /**< Destructor does not need to do
                                         * anything. */
         /** 
@@ -145,7 +145,7 @@ namespace SLAT {
 
         virtual std::string ToString(void) const;
     protected:
-        std::shared_ptr<DeterministicFunction> f; /**< Function describing the
+        std::shared_ptr<DeterministicFn> f; /**< Function describing the
                                                    * relationship. */
     };
 
@@ -189,7 +189,7 @@ namespace SLAT {
          * @return 
          */
         CompoundRateRelationship(std::shared_ptr<RateRelationship> base_rate,
-                                 std::shared_ptr<ProbabilisticFunction> dependent_rate);
+                                 std::shared_ptr<ProbabilisticFn> dependent_rate);
 
         ~CompoundRateRelationship() { }; /**< Destructor; does nothing. */
 
@@ -210,7 +210,7 @@ namespace SLAT {
         virtual std::string ToString(void) const;
     protected:
         std::shared_ptr<RateRelationship> base_rate; /**< Base rate relationship */
-        std::shared_ptr<ProbabilisticFunction> dependent_rate; /**< Dependent function */
+        std::shared_ptr<ProbabilisticFn> dependent_rate; /**< Dependent function */
 
         double tolerance;
         unsigned int max_evaluations;

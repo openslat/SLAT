@@ -5,7 +5,7 @@
  * 
  * @brief  Classes representing lognormal functions.
  * 
- * This file part of SLAT (the Seismic Lognormal Assessment Tool).
+ * This file part of SLAT (the Seismic Loss Assessment Tool).
  *
  * ©2015 Canterbury University
  */
@@ -15,14 +15,14 @@
 #include <vector>
 
 namespace SLAT {
-    class LognormalFunction {
+    class LogNormalDist {
     public:
-        LognormalFunction();
-        static const LognormalFunction Lognormal_from_mu_lnX_and_sigma_lnX(double mu_lnX, double sigma_lnX);
-        static const LognormalFunction Lognormal_from_mean_X_and_sigma_lnX(double mean_X, double sigma_lnX);
-        static const LognormalFunction Lognormal_from_median_X_and_sigma_lnX(double median_X, double sigma_lnX);
-        static const LognormalFunction Lognormal_from_mean_X_and_sigma_X(double mean_X, double sigma_X);
-        ~LognormalFunction() {};
+        LogNormalDist();
+        static const LogNormalDist LogNormalDist_from_mu_lnX_and_sigma_lnX(double mu_lnX, double sigma_lnX);
+        static const LogNormalDist LogNormalDist_from_mean_X_and_sigma_lnX(double mean_X, double sigma_lnX);
+        static const LogNormalDist LogNormalDist_from_median_X_and_sigma_lnX(double median_X, double sigma_lnX);
+        static const LogNormalDist LogNormalDist_from_mean_X_and_sigma_X(double mean_X, double sigma_X);
+        ~LogNormalDist() {};
 
         double p_at_least(double x) const;
         double p_at_most(double x) const;
@@ -35,8 +35,8 @@ namespace SLAT {
         double get_sigma_lnX(void) const;
         double get_sigma_X(void) const;
 
-        static LognormalFunction AddWeightedDistributions(
-            const std::vector<LognormalFunction> distributions, 
+        static LogNormalDist AddWeightedDistributions(
+            const std::vector<LogNormalDist> distributions, 
             const std::vector<double> weights);
     private:
         double mu_lnX;
