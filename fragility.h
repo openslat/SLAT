@@ -16,11 +16,11 @@
 #include <vector>
 
 namespace SLAT {
-    class FragilityFunction {
+    class FragilityFn {
     public:
-        FragilityFunction(std::vector<LogNormalDist> onsets);
+        FragilityFn(std::vector<LogNormalDist> onsets);
         
-        ~FragilityFunction();
+        ~FragilityFn();
         std::size_t n_states(void);
         
         std::vector<double> pExceeded(double edp);

@@ -148,7 +148,7 @@ int main(int argc, char **argv)
     }
 
 
-    FragilityFunction fragFn(
+    FragilityFn fragFn(
         { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
@@ -177,7 +177,7 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "DS-DSP table written.";
     }
 
-    LossFunction lossFn(
+    LossFn lossFn(
         { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
@@ -193,7 +193,7 @@ int main(int argc, char **argv)
         for (int i=1; i < 200; i++) {
             double edp = i / 1000.;
             LogNormalDist ln_fn = LogNormalDist::AddWeightedDistributions(
-                lossFn.LossFunctions(), fragFn.pHighest(edp));
+                lossFn.LossFns(), fragFn.pHighest(edp));
             outfile << setw(10) << edp << setw(12) << ln_fn.get_mean_X() 
                     << setw(12) << ln_fn.get_sigma_lnX() << endl;
         }

@@ -16,7 +16,7 @@
 using namespace std;
 
 namespace SLAT {
-    FragilityFunction::FragilityFunction(std::vector<LogNormalDist> onsets)
+    FragilityFn::FragilityFn(std::vector<LogNormalDist> onsets)
     {
         if (onsets.size() == 0) {
             throw std::invalid_argument("onsets");
@@ -35,16 +35,16 @@ namespace SLAT {
         }
     };
 
-    FragilityFunction::~FragilityFunction()
+    FragilityFn::~FragilityFn()
     {
     };
 
-    std::size_t FragilityFunction::n_states(void)
+    std::size_t FragilityFn::n_states(void)
     {
         return damage_states.size();
     };
 
-    std::vector<double> FragilityFunction::pExceeded(double edp)
+    std::vector<double> FragilityFn::pExceeded(double edp)
     {
         std::vector<double> result(n_states());
         for (size_t i=0; i < n_states(); i++) {
@@ -53,7 +53,7 @@ namespace SLAT {
         return result;
     }
 
-    std::vector<double> FragilityFunction::pHighest(double edp)
+    std::vector<double> FragilityFn::pHighest(double edp)
     {
         std::vector<double> result = pExceeded(edp);
         for (size_t i=1; i < n_states(); i++) {

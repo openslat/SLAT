@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE(Fragility_Constructor)
      */
     BOOST_CHECK_THROW(
         {   
-            FragilityFunction fragFn({});
+            FragilityFn fragFn({});
         }, std::invalid_argument);
 
     /*
@@ -33,14 +33,14 @@ BOOST_AUTO_TEST_CASE(Fragility_Constructor)
      */
     BOOST_CHECK_THROW(
         {   
-            FragilityFunction fragFn({
+            FragilityFn fragFn({
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
                         LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4)});
         }, std::invalid_argument);
 
     BOOST_CHECK_THROW(
         {   
-            FragilityFunction fragFn({
+            FragilityFn fragFn({
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
                         LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
                         LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.00230, 0.4)});
@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(Fragility_Constructor)
 
     BOOST_CHECK_THROW(
         {
-            FragilityFunction fragFn({
+            FragilityFn fragFn({
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
                         LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
                         LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
@@ -60,7 +60,7 @@ BOOST_AUTO_TEST_CASE(Fragility_Constructor)
      * This should succeed:
      */  
     {
-        FragilityFunction fragFn({
+        FragilityFn fragFn({
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.1),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.2),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.3),
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(Fragility_Initialisation)
 /*
  *  Make sure the values are stored correctly.
  */  
-    FragilityFunction fragFn({
+    FragilityFn fragFn({
             LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.1),
             LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.2),
             LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.3),
@@ -88,7 +88,7 @@ BOOST_AUTO_TEST_CASE(Fragility_Probability)
      * values in the paper represent mean_X and sigma_lnX, so convert to
      * mean_lnX and sigma_lnX:
      */
-    FragilityFunction fragFn({
+    FragilityFn fragFn({
             LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
             LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
