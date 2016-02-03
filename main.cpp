@@ -5,6 +5,7 @@
 #include "fragility.h"
 #include "lognormaldist.h"
 #include "loss_functions.h"
+#include "comp_group.h"
 #include <chrono>
 
 using namespace std;
@@ -81,7 +82,7 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "IM-EDP table done.";
     }
 
-    CompoundRateRelationship rel(im_rate_rel, edp_im_relationship);
+    std::shared_ptr<CompoundRateRelationship> rel(new CompoundRateRelationship(im_rate_rel, edp_im_relationship));
     for (int i=0; i < 5; i++) 
     {
         //std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -92,7 +93,7 @@ int main(int argc, char **argv)
         outfile << setprecision(6) << fixed;
         for (int i=1; i < 150; i++) {
             double edp = i / 1000.0;
-            outfile << setw(10) << edp << setw(12) << rel.lambda(edp) << endl;
+            outfile << setw(10) << edp << setw(12) << rel->lambda(edp) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "EDP-RATE table written.";
@@ -101,12 +102,12 @@ int main(int argc, char **argv)
     }
 
 
-    std::cout << rel << std::endl;
+    std::cout << *rel << std::endl;
     shared_ptr<DeterministicFn> new_im_rate_function(
         new NonLinearHyperbolicLaw(12.21, 29.8, 62.2));
     std::cout << "Replacing im_rate_function" << std::endl;
     im_rate_function->replace(new_im_rate_function);
-    std::cout << rel << std::endl;
+    std::cout << *rel << std::endl;
     for (int i=0; i < 5; i++) 
     {
         //std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -117,7 +118,7 @@ int main(int argc, char **argv)
         outfile << setprecision(6) << fixed;
         for (int i=1; i < 150; i++) {
             double edp = i / 1000.0;
-            outfile << setw(10) << edp << setw(12) << rel.lambda(edp) << endl;
+            outfile << setw(10) << edp << setw(12) << rel->lambda(edp) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "EDP-RATE table written.";
@@ -128,7 +129,7 @@ int main(int argc, char **argv)
     std::cout << "Replacing new_im_rate_function" << std::endl;
     new_im_rate_function->replace(std::shared_ptr<DeterministicFn>(new NonLinearHyperbolicLaw(1221, 29.8, 62.2)));
 
-    std::cout << rel << std::endl;
+    std::cout << *rel << std::endl;
     for (int i=0; i < 5; i++) 
     {
         //std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -139,7 +140,7 @@ int main(int argc, char **argv)
         outfile << setprecision(6) << fixed;
         for (int i=1; i < 150; i++) {
             double edp = i / 1000.0;
-            outfile << setw(10) << edp << setw(12) << rel.lambda(edp) << endl;
+            outfile << setw(10) << edp << setw(12) << rel->lambda(edp) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "EDP-RATE table written.";
@@ -148,11 +149,11 @@ int main(int argc, char **argv)
     }
 
 
-    FragilityFn fragFn(
+    std::shared_ptr<FragilityFn> fragFn(new FragilityFn(
         { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
-                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)}));
     {
         BOOST_LOG(logger) << "Writing DS-EDP table";
         ofstream outfile("ds_edp.dat");
@@ -167,7 +168,7 @@ int main(int argc, char **argv)
             double edp = i / 1000.0;
             outfile << setw(10) << edp;
 
-            std::vector<double> damage = fragFn.pExceeded(edp);
+            std::vector<double> damage = fragFn->pExceeded(edp);
             for (int j=0; j<4; j++) {
                 outfile << setw(12) << damage[j];
             }
@@ -177,25 +178,25 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "DS-DSP table written.";
     }
 
-    LossFn lossFn(
+    std::shared_ptr<LossFn> lossFn(new LossFn(
         { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
-                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)});
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
     
     {
-        BOOST_LOG(logger) << "Writing LOSS-EDP table";
+        CompGroup  component_group(rel, fragFn, lossFn, 1);
         ofstream outfile("loss_edp.dat");
     
         outfile << setw(10) << "EDP" << setw(12) << "Loss"
-                << setw(12) << "SD" << endl;
-        
+                << setw(12) << "SD(ln)" << endl;
+
         for (int i=1; i < 200; i++) {
             double edp = i / 1000.;
-            LogNormalDist ln_fn = LogNormalDist::AddWeightedDistributions(
-                lossFn.LossFns(), fragFn.pHighest(edp));
-            outfile << setw(10) << edp << setw(12) << ln_fn.get_mean_X() 
-                    << setw(12) << ln_fn.get_sigma_lnX() << endl;
+            component_group.E_loss_EDP(edp);
+
+            outfile << setw(10) << edp << setw(12) << component_group.E_loss_EDP(edp)
+                    << setw(12) << component_group.SD_ln_loss_EDP(edp) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-EDP table written." << endl;
