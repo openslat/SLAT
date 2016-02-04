@@ -130,7 +130,9 @@ namespace SLAT {
          * @param alpha   Equation parameter
          */
         NonLinearHyperbolicLaw(double v_asy, double IM_asy, double alpha);
-        ~NonLinearHyperbolicLaw() { }; /**< Default destructor; do nothing. */
+        ~NonLinearHyperbolicLaw() {
+            std::cout << "Destroying NonLinearHyperbolicLaw: " << this << std::endl;
+        }; /**< Default destructor; do nothing. */
 
         /** 
          * Evaluate the function at x.
@@ -458,5 +460,63 @@ namespace SLAT {
         ~LogNormalFn() { }; /**< Destructor; doesn't need to do anything. */
         virtual std::string ToString(void) const;
     };
+
+
+    class wrapped_DeterministicFn
+    {
+    private:
+    protected:
+        std::shared_ptr<DeterministicFn> function;
+        wrapped_DeterministicFn() : function() {};
+    public:
+        ~wrapped_DeterministicFn(void) {
+            std::cout << "Destroying wrapped_DeterministicFn: " 
+                      << this << "; " << function << " [" << function.use_count() << "]"
+                      << std::endl;
+        };
+
+        wrapped_DeterministicFn(const wrapped_DeterministicFn &other) {
+            this->function = other.function;
+            std::cout << "Copy Constructor: " << this << " [" << this->function << "], " 
+                      << &other << "[" << other.function << "]" << std::endl;
+            std::cout << this->function.use_count() << ", " << other.function.use_count() << std::endl;
+        }
+
+        /** 
+         * Evaluate the function at a given input. This is the public interface,
+         * which will invoke Evaluate() to perform the calculation. The class is
+         * structured this way to facilitate instrumenting or caching all
+         * DeterministicFn objects without having to change any of the
+         * subclasses.
+         * 
+         * @param x  The input at which to evaluate the function.
+         * 
+         * @return The result of evaluating the function at x.
+         */
+        double ValueAt(double x) const;
+
+        /** 
+         * Return the derivative of the function at a given input. This is used when
+         * integrating Exceedance curves.  The default implementation uses the Gnu
+         * Scientific Library to determine the derivative, but subclasses can
+         * override this method to perform their own calculations.
+         * 
+         * @param x  The input at which to evaluate the derivative.
+         * 
+         * @return  The derivative of the function at x.
+         */
+        double DerivativeAt(double x) const;
+
+        friend std::ostream& operator<<(std::ostream& out, const DeterministicFn& o);
+
+        std::string ToString(void) const;
+    };
+
+    class wrapped_NonLinearHyperbolicLaw : public wrapped_DeterministicFn
+    {
+    public:
+        wrapped_NonLinearHyperbolicLaw(double v_asy, double IM_asy, double alpha);
+    };
 }
+
 #endif

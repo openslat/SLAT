@@ -127,6 +127,7 @@ namespace SLAT {
 
     NonLinearHyperbolicLaw::NonLinearHyperbolicLaw(double v_asy, double IM_asy, double alpha)
     {
+        std::cout << "Creating NonLinearHyperbolicLaw: " << this << std::endl;
         this->v_asy = v_asy;
         this->IM_asy = IM_asy;
         this->alpha = alpha;
@@ -348,4 +349,12 @@ namespace SLAT {
         LogNormalDist result = LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(mean_lnX(x), sigma_lnX(x));
         return result;
     }
+
+
+    wrapped_NonLinearHyperbolicLaw::wrapped_NonLinearHyperbolicLaw(
+        double v_asy, double IM_asy, double alpha)
+    {
+        std::cout << "wrapped_NonLinearHyperbolicLaw constructor" << std::endl;
+        this->function = std::make_shared<NonLinearHyperbolicLaw>(v_asy, IM_asy, alpha);
+   }
 }

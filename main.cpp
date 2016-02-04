@@ -201,4 +201,10 @@ int main(int argc, char **argv)
         outfile.close();
         BOOST_LOG(logger) << "LOSS-EDP table written." << endl;
     }
+
+    {
+        std::cout << "-----" << std::endl;
+        wrapped_NonLinearHyperbolicLaw fn(1221, 29.8, 62.2);
+        std::cout << "-----" << std::endl;
+   }
 }
