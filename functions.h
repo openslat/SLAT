@@ -130,9 +130,7 @@ namespace SLAT {
          * @param alpha   Equation parameter
          */
         NonLinearHyperbolicLaw(double v_asy, double IM_asy, double alpha);
-        ~NonLinearHyperbolicLaw() {
-            std::cout << "Destroying NonLinearHyperbolicLaw: " << this << std::endl;
-        }; /**< Default destructor; do nothing. */
+        ~NonLinearHyperbolicLaw() {}; /**< Default destructor; do nothing. */
 
         /** 
          * Evaluate the function at x.
@@ -462,24 +460,17 @@ namespace SLAT {
     };
 
 
-    class wrapped_DeterministicFn
+    class wrapped_DeterministicFn : public wrapped_Replaceable<wrapped_DeterministicFn>
     {
     private:
     protected:
         std::shared_ptr<DeterministicFn> function;
-        wrapped_DeterministicFn() : function() {};
     public:
-        ~wrapped_DeterministicFn(void) {
-            std::cout << "Destroying wrapped_DeterministicFn: " 
-                      << this << "; " << function << " [" << function.use_count() << "]"
-                      << std::endl;
-        };
+        wrapped_DeterministicFn() : function() {};
+        ~wrapped_DeterministicFn(void) {};
 
         wrapped_DeterministicFn(const wrapped_DeterministicFn &other) {
             this->function = other.function;
-            std::cout << "Copy Constructor: " << this << " [" << this->function << "], " 
-                      << &other << "[" << other.function << "]" << std::endl;
-            std::cout << this->function.use_count() << ", " << other.function.use_count() << std::endl;
         }
 
         /** 
@@ -507,7 +498,7 @@ namespace SLAT {
          */
         double DerivativeAt(double x) const;
 
-        friend std::ostream& operator<<(std::ostream& out, const DeterministicFn& o);
+        friend std::ostream& operator<<(std::ostream& out, const wrapped_DeterministicFn& o);
 
         std::string ToString(void) const;
     };
@@ -516,6 +507,24 @@ namespace SLAT {
     {
     public:
         wrapped_NonLinearHyperbolicLaw(double v_asy, double IM_asy, double alpha);
+    };
+
+    class wrapped_PowerLawParametricCurve : public wrapped_DeterministicFn
+    {
+    public:
+        wrapped_PowerLawParametricCurve(double a, double b);
+    };
+
+    class wrapped_LinearInterpolatedFn : public wrapped_DeterministicFn
+    {
+    public:
+        wrapped_LinearInterpolatedFn(double x[], double y[], size_t size);
+    };
+
+    class wrapped_LogLogInterpolatedFn : public wrapped_DeterministicFn
+    {
+    public:
+        wrapped_LogLogInterpolatedFn(double x[], double y[], size_t size);
     };
 }
 

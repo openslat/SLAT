@@ -18,8 +18,7 @@ using namespace SLAT;
 
 BOOST_AUTO_TEST_CASE(comp_group_test)
 {
-    shared_ptr<DeterministicFn> im_rate_function(
-        new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
+    wrapped_NonLinearHyperbolicLaw im_rate_function(1221, 29.8, 62.2);
     shared_ptr<RateRelationship> im_rate_rel(
         new SimpleRateRelationship(im_rate_function));
 

@@ -1,4 +1,4 @@
-all: main unit_tests pyslat.so doc 
+all: main unit_tests #pyslat.so doc 
 
 clean:
 	rm -f *.so *.o main unit_tests

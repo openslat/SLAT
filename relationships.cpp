@@ -85,15 +85,15 @@ namespace SLAT {
         return (*f)(x);
     }
 
-    SimpleRateRelationship::SimpleRateRelationship(
-        std::shared_ptr<DeterministicFn> func) : RateRelationship(false)
+    SimpleRateRelationship::SimpleRateRelationship(wrapped_DeterministicFn &func)
+        : RateRelationship(false)
     {
         f = func;
-        callback_id = f->add_callbacks(
+        callback_id = f.add_callbacks(
             [this] (void) {
                 this->notify_change();
             },
-            [this] (std::shared_ptr<DeterministicFn> new_f) {
+            [this] (wrapped_DeterministicFn &new_f) {
                 this->f = new_f;
                 this->notify_change();
             });
@@ -102,7 +102,7 @@ namespace SLAT {
 
     double SimpleRateRelationship::calc_lambda(double x)
     {
-        return f->ValueAt(x);
+        return f.ValueAt(x);
     }
 
     std::string RateRelationship::ToString(void) const 
@@ -112,7 +112,7 @@ namespace SLAT {
 
     std::string SimpleRateRelationship::ToString(void) const 
     {
-        return "Simple(" + f->ToString() + ")";
+        return "Simple(" + f.ToString() + ")";
     }
 
     std::string CompoundRateRelationship::ToString(void) const 

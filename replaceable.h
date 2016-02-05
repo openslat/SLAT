@@ -35,6 +35,13 @@ namespace SLAT {
             return id_counter++;
         }
 
+        int add_wrapped_callbacks(std::function<void (void)> changed,
+                          std::function<void (T)> replace)
+        {
+            callbacks[id_counter] = {changed, replace};
+            return id_counter++;
+        }
+
         void remove_callbacks(int id) {
             callbacks.erase(id);
         }
@@ -47,6 +54,44 @@ namespace SLAT {
 
         void replace(std::shared_ptr<T> replacement) {
             replacement->callbacks = callbacks;
+            for (auto it=callbacks.begin(); it != callbacks.end();) {
+                it->second.replace_cb(replacement);
+                it = callbacks.erase(it);
+            }
+        }
+    };
+    
+    template <class T> class wrapped_Replaceable {
+    private:
+        typedef struct {std::function<void (void)> changed_cb;
+            std::function<void (T&)> replace_cb;
+        } callback_struct;
+        std::map<int, callback_struct> callbacks;
+        int id_counter;
+    public:
+        wrapped_Replaceable() { 
+            id_counter = 0;
+        };
+        
+        int add_callbacks(std::function<void (void)> changed,
+                          std::function<void (T&)> replace)
+        {
+            callbacks[id_counter] = {changed, replace};
+            return id_counter++;
+        }
+
+        void remove_callbacks(int id) {
+            callbacks.erase(id);
+        }
+
+        void notify_change(void) {
+            for (auto it=callbacks.begin(); it != callbacks.end(); it++) {
+                it->second.changed_cb();
+            }
+        }
+
+        void replace(T replacement) {
+            replacement.callbacks = callbacks;
             for (auto it=callbacks.begin(); it != callbacks.end();) {
                 it->second.replace_cb(replacement);
                 it = callbacks.erase(it);

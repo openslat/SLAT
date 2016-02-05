@@ -34,8 +34,7 @@ int main(int argc, char **argv)
 
     cout << "Welcome to SLAT" << endl;
     
-    shared_ptr<DeterministicFn> im_rate_function(
-        new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
+    wrapped_NonLinearHyperbolicLaw im_rate_function(1221, 29.8, 62.2);
 
     shared_ptr<RateRelationship> im_rate_rel(
         new SimpleRateRelationship(im_rate_function));
@@ -103,10 +102,9 @@ int main(int argc, char **argv)
 
 
     std::cout << *rel << std::endl;
-    shared_ptr<DeterministicFn> new_im_rate_function(
-        new NonLinearHyperbolicLaw(12.21, 29.8, 62.2));
+    wrapped_NonLinearHyperbolicLaw new_im_rate_function(12.21, 29.8, 62.2);
     std::cout << "Replacing im_rate_function" << std::endl;
-    im_rate_function->replace(new_im_rate_function);
+    im_rate_function.replace(new_im_rate_function);
     std::cout << *rel << std::endl;
     for (int i=0; i < 5; i++) 
     {
@@ -127,7 +125,7 @@ int main(int argc, char **argv)
     }
 
     std::cout << "Replacing new_im_rate_function" << std::endl;
-    new_im_rate_function->replace(std::shared_ptr<DeterministicFn>(new NonLinearHyperbolicLaw(1221, 29.8, 62.2)));
+    new_im_rate_function.replace(wrapped_NonLinearHyperbolicLaw(1221, 29.8, 62.2));
 
     std::cout << *rel << std::endl;
     for (int i=0; i < 5; i++) 
@@ -201,10 +199,4 @@ int main(int argc, char **argv)
         outfile.close();
         BOOST_LOG(logger) << "LOSS-EDP table written." << endl;
     }
-
-    {
-        std::cout << "-----" << std::endl;
-        wrapped_NonLinearHyperbolicLaw fn(1221, 29.8, 62.2);
-        std::cout << "-----" << std::endl;
-   }
 }

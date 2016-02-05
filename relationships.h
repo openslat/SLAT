@@ -131,7 +131,7 @@ namespace SLAT {
          * 
          * @param func A shared pointer to the function defining the relationship.
          */
-        SimpleRateRelationship(std::shared_ptr<DeterministicFn> func);
+        SimpleRateRelationship(wrapped_DeterministicFn &func);
         ~SimpleRateRelationship() { }; /**< Destructor does not need to do
                                         * anything. */
         /** 
@@ -145,8 +145,7 @@ namespace SLAT {
 
         virtual std::string ToString(void) const;
     protected:
-        std::shared_ptr<DeterministicFn> f; /**< Function describing the
-                                                   * relationship. */
+        wrapped_DeterministicFn f; /**< Function describing the relationship. */
     };
 
 /**

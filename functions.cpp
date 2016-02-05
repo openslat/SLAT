@@ -127,7 +127,6 @@ namespace SLAT {
 
     NonLinearHyperbolicLaw::NonLinearHyperbolicLaw(double v_asy, double IM_asy, double alpha)
     {
-        std::cout << "Creating NonLinearHyperbolicLaw: " << this << std::endl;
         this->v_asy = v_asy;
         this->IM_asy = IM_asy;
         this->alpha = alpha;
@@ -350,11 +349,39 @@ namespace SLAT {
         return result;
     }
 
+    double wrapped_DeterministicFn::ValueAt(double x) const
+    {
+        return function->ValueAt(x);
+    }
+
+    std::ostream& operator<<(std::ostream& out, const wrapped_DeterministicFn& o)
+    {
+        return operator<<(out, o.function);
+    }
+    
+    std::string wrapped_DeterministicFn::ToString(void) const 
+    {
+        return function->ToString();
+    }
 
     wrapped_NonLinearHyperbolicLaw::wrapped_NonLinearHyperbolicLaw(
         double v_asy, double IM_asy, double alpha)
     {
-        std::cout << "wrapped_NonLinearHyperbolicLaw constructor" << std::endl;
         this->function = std::make_shared<NonLinearHyperbolicLaw>(v_asy, IM_asy, alpha);
+   }
+
+    wrapped_PowerLawParametricCurve::wrapped_PowerLawParametricCurve(double a, double b)
+    {
+        this->function = std::make_shared<PowerLawParametricCurve>(a, b);
+   }
+
+    wrapped_LinearInterpolatedFn::wrapped_LinearInterpolatedFn(double x[], double y[], size_t size)
+    {
+        this->function = std::make_shared<LinearInterpolatedFn>(x, y, size);
+   }
+
+    wrapped_LogLogInterpolatedFn::wrapped_LogLogInterpolatedFn(double x[], double y[], size_t size)
+    {
+        this->function = std::make_shared<LogLogInterpolatedFn>(x, y, size);
    }
 }

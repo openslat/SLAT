@@ -22,8 +22,7 @@ BOOST_AUTO_TEST_CASE( Simple_Rate_Relationship_Test )
      * Test against the IM used in the simplified bridge example, as calculated
      * by the original SLAT program.
      */
-    shared_ptr<DeterministicFn> im_rate_function(
-        new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
+    wrapped_NonLinearHyperbolicLaw im_rate_function(1221, 29.8, 62.2);
 
     
     SimpleRateRelationship im_rate_rel(im_rate_function);
@@ -75,12 +74,11 @@ BOOST_AUTO_TEST_CASE( Simple_Rate_Relationship_Test )
 
 BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
 {
-    shared_ptr<DeterministicFn> im_rate_function(
-        new PowerLawParametricCurve(1.6E-4, -2.74));
+    wrapped_PowerLawParametricCurve im_rate_function(1.6E-4, -2.74);
 
     shared_ptr<RateRelationship> im_rate_rel(
         new SimpleRateRelationship(im_rate_function));
-    
+     
     shared_ptr<DeterministicFn> mu_edp(
         new PowerLawParametricCurve(0.1, 1.5));
 
@@ -197,8 +195,7 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
 
 BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
 {
-    shared_ptr<DeterministicFn> im_rate_function(
-        new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
+    wrapped_NonLinearHyperbolicLaw im_rate_function(1221, 29.8, 62.2);
 
     shared_ptr<RateRelationship> im_rate_rel(
         new SimpleRateRelationship(im_rate_function));
