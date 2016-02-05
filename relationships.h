@@ -219,5 +219,48 @@ namespace SLAT {
         static double default_tolerance;
         static unsigned int default_max_evaluations;
     };
+
+    class wrapped_RateRelationship : public wrapped_Replaceable<wrapped_RateRelationship>
+    {
+    public:
+        wrapped_RateRelationship() {};
+        
+        double DerivativeAt(double x) { return relationship->DerivativeAt(x); };
+
+        /**
+         * Returns class integration settings:
+         */
+        static Integration::IntegrationSettings &Get_Class_Integration_Settings(void)
+        {
+            return RateRelationship::Get_Class_Integration_Settings(); 
+        };
+
+        /**
+         * Returns object integration settings:
+         */
+        Integration::IntegrationSettings &Get_Integration_Settings(void)
+        {
+            return relationship->Get_Integration_Settings();
+        };
+
+        std::string ToString(void) const { return relationship->ToString(); };
+            
+        friend std::ostream& operator<<(std::ostream& out, const wrapped_RateRelationship o)
+        {
+            return operator<<(out, o.relationship);
+        };
+    protected:
+        std::shared_ptr<RateRelationship> relationship;
+    };
+
+    class wrapped_SimpleRateRelationship : public wrapped_RateRelationship
+    {
+    public:
+        wrapped_SimpleRateRelationship(wrapped_DeterministicFn &func)
+        {
+            relationship = std::make_shared<SimpleRateRelationship>(func);
+        }
+    };
+
 }
 #endif
