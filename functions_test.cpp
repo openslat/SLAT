@@ -129,8 +129,8 @@ BOOST_AUTO_TEST_CASE( Log_Log_Interp_Test_1 )
 
 BOOST_AUTO_TEST_CASE(Log_Normal_Function_Test)
 {
-    shared_ptr<DeterministicFn> mu_func(new PowerLawParametricCurve(0.1, 1.5));
-    shared_ptr<DeterministicFn> sigma_func(new PowerLawParametricCurve(0.5, 0));
+    wrapped_PowerLawParametricCurve mu_func(0.1, 1.5);
+    wrapped_PowerLawParametricCurve sigma_func(0.5, 0);
 
     LogNormalFn edp_im(mu_func, LogNormalFn::MEDIAN_X, sigma_func, LogNormalFn::SIGMA_LN_X);
     

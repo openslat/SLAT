@@ -41,7 +41,7 @@ namespace SLAT {
     DeterministicFn(void) : Replaceable<DeterministicFn>() {
             /* callback_id = this->add_callbacks( */
             /*     [this] (void) { this->notify_change(); }, */
-            /*     [this] (std::shared_ptr<DeterministicFn> f) { */
+            /*     [this] (wrapped_DeterministicFn &f) { */
             /*         this->replace(f); */
             /*     }); */
         };
@@ -306,159 +306,6 @@ namespace SLAT {
         gsl_interp_accel *accel;
     };
 
-/**
- * @brief Probalistic Functions
- * 
- * This is the base class for functions which accept a single (double-precision)
- * argument, and return a single (double-precision) result. The result will not
- * always be the same, but varies pseudo-randomly according to a probality
- * distribution set when the object is created.
- *
- * This contrasts with deterministic functions, which always return the same
- * value for a given input.
- */
-    class ProbabilisticFn : public Replaceable<ProbabilisticFn>
-    {
-    public:
-        /** 
-         * @brief General constructor
-         *
-         * This constructor takes two shared pointers to deterministic functions, which
-         * define the distribution of the function result for a given input value.
-         *
-         * @param mu_function     A function describing the 'mu' of the distribution.
-         * @param sigma_function  A function describing the 'sigma' of the distribution.
-         */
-        ProbabilisticFn(std::shared_ptr<DeterministicFn> mu_function,
-                              std::shared_ptr<DeterministicFn> sigma_function);
-
-        ProbabilisticFn ProbabilisticFn_mu_lnX_sigma_lnX(std::shared_ptr<DeterministicFn> mu_function,
-                                               std::shared_ptr<DeterministicFn> sigma_function);
-
-
-        /** 
-         * @brief Probability of Exceedence 
-         * 
-         * Returns the probability (from zero to one) that the result of the
-         * function at input x will be at least min_y.
-         * 
-         * @param x      The input point at which to evaluate the function.
-         * @param min_y  The minimum result we're interested in.
-         * 
-         * @return The probability that f(x) >= min_y.
-         */
-        virtual double P_exceedence(double x, double min_y) const { return NAN; };
-
-        /** 
-         * @brief Inverse Exceedence
-         * 
-         * Given an input value 'x' and a probability 'p', returns the output value
-         * 'y' such that f(x) <= y with probability p. For example, if p == 0.10, 
-         * then we'll return a value y such that f(x) <= y 10% of the time.
-         *
-         * @param x The input point at which to evaluate the function.
-         * @param p The probability we're interested in.
-         * 
-         * @return y, such that f(x) <= y with probability p.
-         */
-        virtual double X_at_exceedence(double x, double p) const { return NAN; };
-
-        /** 
-         * @brief Mean Exceedence
-         * 
-         * Given an input value 'x',  returns the mean of f(x).
-          *
-         * @param x The input point at which to evaluate the function.
-         * 
-         * @return mean(f(x))
-         */
-        virtual double Mean(double x) const { return NAN; };
-
-        ~ProbabilisticFn();
-        
-        friend std::ostream& operator<<(std::ostream& out, const ProbabilisticFn& o);
-        virtual std::string ToString(void) const { return "ProbabilisticFn"; };
-    protected:
-        /**
-         * Shared pointer to the mu function.
-         */
-        std::shared_ptr<DeterministicFn> mu_function;
-
-        /**
-         * Shared pointer to the sigma function.
-         */
-        std::shared_ptr<DeterministicFn> sigma_function;
-
-        int mu_function_callback_id, sigma_function_callback_id;
-    };
-
-
-/**
- * @brief Log Normal Probabilistic Function
- *
- * This class represents a probabilistic function that follows a log-normal
- * distribution.
- */
-    class LogNormalFn : public ProbabilisticFn
-    {
-    private:
-        std::function<double (double)> mean_X, mean_lnX, median_X, sigma_X, sigma_lnX;
-        LogNormalDist distribution(double x) const;
-    public:
-        typedef enum { MEAN_X, MEAN_LN_X, MEDIAN_X } M_TYPE;
-        typedef enum { SIGMA_X, SIGMA_LN_X } S_TYPE;
-        
-        /** 
-         * Constructor for a log-normal probabilistic function.
-         * 
-         * @param mu_function     Shared pointer to the mu function.
-         * @param sigma_function  Shared pointer to the sigma function.
-         */
-        LogNormalFn(std::shared_ptr<DeterministicFn> mu_function, M_TYPE m_type,
-                          std::shared_ptr<DeterministicFn> sigma_function, S_TYPE s_type);
-
-        /** 
-         * @brief Probability of Exceedence 
-         * 
-         * Returns the probability (from zero to one) that the result of the
-         * function at input x will be at least min_y.
-         * 
-         * @param x      The input point at which to evaluate the function.
-         * @param min_y  The minimum result we're interested in.
-         * 
-         * @return The probability that f(x) >= min_y.
-         */
-        virtual double P_exceedence(double x, double min_y) const;
-
-        /** 
-         * @brief Inverse Exceedence
-         * 
-         * Given an input value 'x' and a probability 'p', returns the output value
-         * 'y' such that f(x) <= y with probability p. For example, if p == 0.10,
-         * then we'll return a value y such that f(x) <= y 10% of the time.
-         *
-         * @param x The input point at which to evaluate the function.
-         * @param p The probability we're interested in.
-         * 
-         * @return y, such that f(x) <= y with probability p.
-         */
-        virtual double X_at_exceedence(double x, double p) const;
-
-        /** 
-         * @brief Mean Exceedence
-         * 
-         * Given an input value 'x',  returns the mean of f(x).
-         *
-         * @param x The input point at which to evaluate the function.
-         * 
-         * @return mean(f(x))
-         */
-        virtual double Mean(double x) const;
-
-        ~LogNormalFn() { }; /**< Destructor; doesn't need to do anything. */
-        virtual std::string ToString(void) const;
-    };
-
 
     class wrapped_DeterministicFn : public wrapped_Replaceable<wrapped_DeterministicFn>
     {
@@ -525,6 +372,237 @@ namespace SLAT {
     {
     public:
         wrapped_LogLogInterpolatedFn(double x[], double y[], size_t size);
+    };
+    
+
+/**
+ * @brief Probalistic Functions
+ * 
+ * This is the base class for functions which accept a single (double-precision)
+ * argument, and return a single (double-precision) result. The result will not
+ * always be the same, but varies pseudo-randomly according to a probality
+ * distribution set when the object is created.
+ *
+ * This contrasts with deterministic functions, which always return the same
+ * value for a given input.
+ */
+    class ProbabilisticFn : public Replaceable<ProbabilisticFn>
+    {
+    public:
+        /** 
+         * @brief General constructor
+         *
+         * This constructor takes two shared pointers to deterministic functions, which
+         * define the distribution of the function result for a given input value.
+         *
+         * @param mu_function     A function describing the 'mu' of the distribution.
+         * @param sigma_function  A function describing the 'sigma' of the distribution.
+         */
+        ProbabilisticFn(wrapped_DeterministicFn &mu_function,
+                        wrapped_DeterministicFn &sigma_function);
+
+        ProbabilisticFn ProbabilisticFn_mu_lnX_sigma_lnX(wrapped_DeterministicFn &mu_function,
+                                               wrapped_DeterministicFn &sigma_function);
+
+
+        /** 
+         * @brief Probability of Exceedence 
+         * 
+         * Returns the probability (from zero to one) that the result of the
+         * function at input x will be at least min_y.
+         * 
+         * @param x      The input point at which to evaluate the function.
+         * @param min_y  The minimum result we're interested in.
+         * 
+         * @return The probability that f(x) >= min_y.
+         */
+        virtual double P_exceedence(double x, double min_y) const { return NAN; };
+
+        /** 
+         * @brief Inverse Exceedence
+         * 
+         * Given an input value 'x' and a probability 'p', returns the output value
+         * 'y' such that f(x) <= y with probability p. For example, if p == 0.10, 
+         * then we'll return a value y such that f(x) <= y 10% of the time.
+         *
+         * @param x The input point at which to evaluate the function.
+         * @param p The probability we're interested in.
+         * 
+         * @return y, such that f(x) <= y with probability p.
+         */
+        virtual double X_at_exceedence(double x, double p) const { return NAN; };
+
+        /** 
+         * @brief Mean Exceedence
+         * 
+         * Given an input value 'x',  returns the mean of f(x).
+          *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return mean(f(x))
+         */
+        virtual double Mean(double x) const { return NAN; };
+
+        ~ProbabilisticFn();
+        
+        friend std::ostream& operator<<(std::ostream& out, const ProbabilisticFn& o);
+        virtual std::string ToString(void) const { return "ProbabilisticFn"; };
+    protected:
+        /**
+         * Shared pointer to the mu function.
+         */
+        wrapped_DeterministicFn mu_function;
+
+        /**
+         * Shared pointer to the sigma function.
+         */
+        wrapped_DeterministicFn sigma_function;
+
+        int mu_function_callback_id, sigma_function_callback_id;
+    };
+
+
+/**
+ * @brief Log Normal Probabilistic Function
+ *
+ * This class represents a probabilistic function that follows a log-normal
+ * distribution.
+ */
+    class LogNormalFn : public ProbabilisticFn
+    {
+    private:
+        std::function<double (double)> mean_X, mean_lnX, median_X, sigma_X, sigma_lnX;
+        LogNormalDist distribution(double x) const;
+    public:
+        typedef enum { MEAN_X, MEAN_LN_X, MEDIAN_X } M_TYPE;
+        typedef enum { SIGMA_X, SIGMA_LN_X } S_TYPE;
+        
+        /** 
+         * Constructor for a log-normal probabilistic function.
+         * 
+         * @param mu_function     Shared pointer to the mu function.
+         * @param sigma_function  Shared pointer to the sigma function.
+         */
+        LogNormalFn(wrapped_DeterministicFn &mu_function, M_TYPE m_type,
+                          wrapped_DeterministicFn &sigma_function, S_TYPE s_type);
+
+        /** 
+         * @brief Probability of Exceedence 
+         * 
+         * Returns the probability (from zero to one) that the result of the
+         * function at input x will be at least min_y.
+         * 
+         * @param x      The input point at which to evaluate the function.
+         * @param min_y  The minimum result we're interested in.
+         * 
+         * @return The probability that f(x) >= min_y.
+         */
+        virtual double P_exceedence(double x, double min_y) const;
+
+        /** 
+         * @brief Inverse Exceedence
+         * 
+         * Given an input value 'x' and a probability 'p', returns the output value
+         * 'y' such that f(x) <= y with probability p. For example, if p == 0.10,
+         * then we'll return a value y such that f(x) <= y 10% of the time.
+         *
+         * @param x The input point at which to evaluate the function.
+         * @param p The probability we're interested in.
+         * 
+         * @return y, such that f(x) <= y with probability p.
+         */
+        virtual double X_at_exceedence(double x, double p) const;
+
+        /** 
+         * @brief Mean Exceedence
+         * 
+         * Given an input value 'x',  returns the mean of f(x).
+         *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return mean(f(x))
+         */
+        virtual double Mean(double x) const;
+
+        ~LogNormalFn() { }; /**< Destructor; doesn't need to do anything. */
+        virtual std::string ToString(void) const;
+    };
+
+    class wrapped_ProbabilisticFn : public wrapped_Replaceable<wrapped_ProbabilisticFn>
+    {
+    public:
+        /** 
+         * @brief General constructor
+         *
+         * This constructor takes two shared pointers to deterministic functions, which
+         * define the distribution of the function result for a given input value.
+         *
+         * @param mu_function     A function describing the 'mu' of the distribution.
+         * @param sigma_function  A function describing the 'sigma' of the distribution.
+         */
+        wrapped_ProbabilisticFn(wrapped_DeterministicFn &mu_function,
+                        wrapped_DeterministicFn &sigma_function);
+        
+        wrapped_ProbabilisticFn wrapped_ProbabilisticFn_mu_lnX_sigma_lnX(wrapped_DeterministicFn &mu_function,
+                                                                         wrapped_DeterministicFn &sigma_function);
+
+
+        /** 
+         * @brief Probability of Exceedence 
+         * 
+         * Returns the probability (from zero to one) that the result of the
+         * function at input x will be at least min_y.
+         * 
+         * @param x      The input point at which to evaluate the function.
+         * @param min_y  The minimum result we're interested in.
+         * 
+         * @return The probability that f(x) >= min_y.
+         */
+        double P_exceedence(double x, double min_y) const { return function->P_exceedence(x, min_y); };
+
+        /** 
+         * @brief Inverse Exceedence
+         * 
+         * Given an input value 'x' and a probability 'p', returns the output value
+         * 'y' such that f(x) <= y with probability p. For example, if p == 0.10, 
+         * then we'll return a value y such that f(x) <= y 10% of the time.
+         *
+         * @param x The input point at which to evaluate the function.
+         * @param p The probability we're interested in.
+         * 
+         * @return y, such that f(x) <= y with probability p.
+         */
+        double X_at_exceedence(double x, double p) const { return function->X_at_exceedence(x, p); };
+        
+        /** 
+         * @brief Mean Exceedence
+         * 
+         * Given an input value 'x',  returns the mean of f(x).
+          *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return mean(f(x))
+         */
+        double Mean(double x) const { return function->Mean(x); }
+
+        ~wrapped_ProbabilisticFn() {};
+        
+        friend std::ostream& operator<<(std::ostream& out, const wrapped_ProbabilisticFn& o);
+        std::string ToString(void) const { return "ProbabilisticFn"; };
+        wrapped_ProbabilisticFn() {};
+    protected:
+        std::shared_ptr<ProbabilisticFn> function;
+        int mu_function_callback_id, sigma_function_callback_id;
+    };
+
+    class wrapped_LogNormalFn : public wrapped_ProbabilisticFn
+    {
+    public:
+        typedef enum { MEAN_X, MEAN_LN_X, MEDIAN_X } M_TYPE;
+        typedef enum { SIGMA_X, SIGMA_LN_X } S_TYPE;
+
+        wrapped_LogNormalFn(wrapped_DeterministicFn &mu_function, M_TYPE m_type,
+                            wrapped_DeterministicFn &sigma_function, S_TYPE s_type);
     };
 }
 

@@ -48,7 +48,7 @@ maq_test.o: maq_test.cpp maq.h relationships.h functions.h replaceable.h
 	g++ -c $(CFLAGS) -o $@ $<
 fragility_test.o: fragility_test.cpp fragility.h
 	g++ -c $(CFLAGS) -o $@ $<
-comp_group_test.o: comp_group_test.cpp comp_group.h 
+comp_group_test.o: comp_group_test.cpp comp_group.h relationships.h fragility.h loss_functions.h
 	g++ -c $(CFLAGS) -o $@ $<
 unit_test.o: unit_test.cpp
 	g++ -c $(CFLAGS) -o $@ $<

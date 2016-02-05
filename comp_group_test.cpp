@@ -22,12 +22,9 @@ BOOST_AUTO_TEST_CASE(comp_group_test)
     shared_ptr<RateRelationship> im_rate_rel(
         new SimpleRateRelationship(im_rate_function));
 
-    shared_ptr<DeterministicFn> mu_edp(
-        new PowerLawParametricCurve(0.1, 1.5));
-    shared_ptr<DeterministicFn> sigma_edp(
-        new PowerLawParametricCurve(0.5, 0.0));
-    shared_ptr<ProbabilisticFn> edp_im_relationship(
-        new LogNormalFn(mu_edp, LogNormalFn::MEAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X));
+    wrapped_PowerLawParametricCurve mu_edp(0.1, 1.5);
+    wrapped_PowerLawParametricCurve sigma_edp(0.5, 0.0);
+    wrapped_LogNormalFn edp_im_relationship(mu_edp, wrapped_LogNormalFn::MEAN_X, sigma_edp, wrapped_LogNormalFn::SIGMA_LN_X);
 
     std::shared_ptr<CompoundRateRelationship> rel(new CompoundRateRelationship(im_rate_rel, edp_im_relationship));
 

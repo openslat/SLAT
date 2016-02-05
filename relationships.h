@@ -188,7 +188,7 @@ namespace SLAT {
          * @return 
          */
         CompoundRateRelationship(std::shared_ptr<RateRelationship> base_rate,
-                                 std::shared_ptr<ProbabilisticFn> dependent_rate);
+                                 wrapped_ProbabilisticFn &dependent_rate);
 
         ~CompoundRateRelationship() { }; /**< Destructor; does nothing. */
 
@@ -209,7 +209,7 @@ namespace SLAT {
         virtual std::string ToString(void) const;
     protected:
         std::shared_ptr<RateRelationship> base_rate; /**< Base rate relationship */
-        std::shared_ptr<ProbabilisticFn> dependent_rate; /**< Dependent function */
+        wrapped_ProbabilisticFn dependent_rate; /**< Dependent function */
 
         double tolerance;
         unsigned int max_evaluations;

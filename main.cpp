@@ -52,14 +52,10 @@ int main(int argc, char **argv)
     }
 
     
-    shared_ptr<DeterministicFn> mu_edp(
-        new PowerLawParametricCurve(0.1, 1.5));
+    wrapped_PowerLawParametricCurve mu_edp(0.1, 1.5);
+    wrapped_PowerLawParametricCurve sigma_edp(0.5, 0.0);
 
-    shared_ptr<DeterministicFn> sigma_edp(
-        new PowerLawParametricCurve(0.5, 0.0));
-
-    shared_ptr<ProbabilisticFn> edp_im_relationship(
-        new LogNormalFn(mu_edp, LogNormalFn::MEAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X));
+    wrapped_LogNormalFn edp_im_relationship(mu_edp, wrapped_LogNormalFn::MEAN_X, sigma_edp, wrapped_LogNormalFn::SIGMA_LN_X);
 
     {
         BOOST_LOG(logger) << "Writing IM-EDP table";
@@ -72,9 +68,9 @@ int main(int argc, char **argv)
         for (int i=0; i < 100; i++) {
             double im = i / 100.0;
             outfile << setw(10) << im
-                    << setw(12) << edp_im_relationship->X_at_exceedence(im, 0.16)
-                    << setw(12) << edp_im_relationship->Mean(im)
-                    << setw(12) << edp_im_relationship->X_at_exceedence(im, 0.84)
+                    << setw(12) << edp_im_relationship.X_at_exceedence(im, 0.16)
+                    << setw(12) << edp_im_relationship.Mean(im)
+                    << setw(12) << edp_im_relationship.X_at_exceedence(im, 0.84)
                     << endl;
         }
         outfile.close();

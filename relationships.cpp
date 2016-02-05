@@ -118,7 +118,7 @@ namespace SLAT {
     std::string CompoundRateRelationship::ToString(void) const 
     {
         return "Compound(" + base_rate->ToString()
-            + ", " + dependent_rate->ToString() + ")";
+            + ", " + dependent_rate.ToString() + ")";
     }
 
     std::ostream& operator<<(std::ostream& out, const RateRelationship& o)
@@ -159,7 +159,7 @@ namespace SLAT {
 
     CompoundRateRelationship::CompoundRateRelationship(
         std::shared_ptr<RateRelationship> base_rate,
-        std::shared_ptr<ProbabilisticFn> dependent_rate)
+        wrapped_ProbabilisticFn &dependent_rate)
         : RateRelationship(true)
     {
         this->base_rate = base_rate;
@@ -176,12 +176,12 @@ namespace SLAT {
                 this->notify_change();
             });
 
-        dependent_rate_callback_id = dependent_rate->add_callbacks(
+        dependent_rate_callback_id = dependent_rate.add_callbacks(
             [this] (void) {
                 this->lambda.ClearCache();
                 this->notify_change();
             },
-            [this] (std::shared_ptr<ProbabilisticFn> new_dependent_rate) {
+            [this] (wrapped_ProbabilisticFn &new_dependent_rate) {
                 this->lambda.ClearCache();
                 this->dependent_rate = new_dependent_rate;
                 this->notify_change();
@@ -198,7 +198,7 @@ namespace SLAT {
                     result = 0;
                 } else {
                     double d = this->base_rate->DerivativeAt(x2);
-                    double p = this->dependent_rate->P_exceedence(x2, min_y);
+                    double p = this->dependent_rate.P_exceedence(x2, min_y);
                     result = p * std::abs(d);
                 }
                 return result;

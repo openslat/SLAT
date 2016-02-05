@@ -57,8 +57,8 @@ namespace SLAT {
 
     std::string LogNormalFn::ToString(void) const 
     {
-        return "LogNormal(" + mu_function->ToString() + ", " + 
-            sigma_function->ToString() + ")";
+        return "LogNormal(" + mu_function.ToString() + ", " + 
+            sigma_function.ToString() + ")";
 
     }
 
@@ -251,26 +251,26 @@ namespace SLAT {
     }
 
 
-    ProbabilisticFn::ProbabilisticFn(std::shared_ptr<DeterministicFn> mu_function,
-                                                 std::shared_ptr<DeterministicFn> sigma_function)
+    ProbabilisticFn::ProbabilisticFn(wrapped_DeterministicFn &mu_function,
+                                     wrapped_DeterministicFn &sigma_function)
     {
         this->mu_function = mu_function;
         this->sigma_function = sigma_function;
 
-        mu_function_callback_id = mu_function->add_callbacks(
+        mu_function_callback_id = mu_function.add_callbacks(
             [this] (void) {
                 this->notify_change();
             },
-            [this] (std::shared_ptr<DeterministicFn> new_mu_function) {
+            [this] (wrapped_DeterministicFn &new_mu_function) {
                 this->mu_function = new_mu_function;
                 this->notify_change();
             });
 
-        sigma_function_callback_id = sigma_function->add_callbacks(
+        sigma_function_callback_id = sigma_function.add_callbacks(
             [this] (void) {
                 this->notify_change();
             },
-            [this] (std::shared_ptr<DeterministicFn> new_sigma_function) {
+            [this] (wrapped_DeterministicFn &new_sigma_function) {
                 this->sigma_function = new_sigma_function;
                 this->notify_change();
             });
@@ -278,31 +278,31 @@ namespace SLAT {
 
     ProbabilisticFn::~ProbabilisticFn() 
     {
-        mu_function->remove_callbacks(mu_function_callback_id);
-        sigma_function->remove_callbacks(sigma_function_callback_id);
+        mu_function.remove_callbacks(mu_function_callback_id);
+        sigma_function.remove_callbacks(sigma_function_callback_id);
     }
 
-    LogNormalFn::LogNormalFn(std::shared_ptr<DeterministicFn> mu_function, M_TYPE m_type,
-                                         std::shared_ptr<DeterministicFn> sigma_function, S_TYPE s_type)
+    LogNormalFn::LogNormalFn(wrapped_DeterministicFn &mu_function, M_TYPE m_type,
+                             wrapped_DeterministicFn &sigma_function, S_TYPE s_type)
         : ProbabilisticFn(mu_function, sigma_function)
     {
         switch (m_type) {
         case MEAN_LN_X:
-            mean_lnX = [this] (double x) -> double { return this->mu_function->ValueAt(x); };
+            mean_lnX = [this] (double x) -> double { return this->mu_function.ValueAt(x); };
             median_X = [this] (double x) -> double { return exp(this->mean_lnX(x)); };
             mean_X = [this] (double x) -> double { 
                 return exp(this->mean_lnX(x) + this->sigma_lnX(x) * this->sigma_lnX(x) / 2);
             };
             break;
         case MEAN_X:
-            mean_X = [this] (double x) -> double { return this->mu_function->ValueAt(x); };
+            mean_X = [this] (double x) -> double { return this->mu_function.ValueAt(x); };
             mean_lnX = [this] (double x) -> double {
                 return log(this->mean_X(x)) - this->sigma_lnX(x) * this->sigma_lnX(x) / 2; 
             };
             median_X = [this] (double x) -> double { return exp(this->mean_lnX(x)); };
             break;
         case MEDIAN_X:
-            median_X = [this] (double x) -> double { return this->mu_function->ValueAt(x); };
+            median_X = [this] (double x) -> double { return this->mu_function.ValueAt(x); };
             mean_lnX = [this] (double x) -> double { return log(this->median_X(x)); };
             mean_X = [this] (double x) -> double { 
                 return exp(this->mean_lnX(x) + this->sigma_lnX(x) * this->sigma_lnX(x) /2);
@@ -312,13 +312,13 @@ namespace SLAT {
         
         switch (s_type) {
         case SIGMA_LN_X:
-            sigma_lnX = [this] (double x) -> double{ return this->sigma_function->ValueAt(x); };
+            sigma_lnX = [this] (double x) -> double{ return this->sigma_function.ValueAt(x); };
             sigma_X = [this] (double x) -> double{
                 return this->mean_X(x) * sqrt(exp(this->sigma_lnX(x) * this->sigma_lnX(x)) - 1); 
             };
             break;
         case SIGMA_X:
-            sigma_X = [this] (double x) -> double { return this->sigma_function->ValueAt(x); };
+            sigma_X = [this] (double x) -> double { return this->sigma_function.ValueAt(x); };
             sigma_lnX = [this] (double x) -> double { 
                 double sd = this->sigma_X(x);
                 double mean = this->mean_X(x);
@@ -384,4 +384,16 @@ namespace SLAT {
     {
         this->function = std::make_shared<LogLogInterpolatedFn>(x, y, size);
    }
+
+    wrapped_LogNormalFn::wrapped_LogNormalFn(wrapped_DeterministicFn &mu_function, 
+                                             wrapped_LogNormalFn::M_TYPE m_type,
+                                             wrapped_DeterministicFn &sigma_function, 
+                                             wrapped_LogNormalFn::S_TYPE s_type) : wrapped_ProbabilisticFn()
+    {
+        this->function = std::make_shared<LogNormalFn>(
+            mu_function, 
+            (LogNormalFn::M_TYPE)m_type, 
+            sigma_function, 
+            (LogNormalFn::S_TYPE)s_type);
+    }
 }
