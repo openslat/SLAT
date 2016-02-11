@@ -208,6 +208,8 @@ namespace SLAT {
         virtual double calc_lambda(double x);
 
         virtual std::string ToString(void) const;
+
+        double P_exceedence(double base_value, double min_dependent_value) const;
     protected:
         std::shared_ptr<RateRelationship> base_rate; /**< Base rate relationship */
         std::shared_ptr<ProbabilisticFn> dependent_rate; /**< Dependent function */

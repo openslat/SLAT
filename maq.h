@@ -51,6 +51,7 @@ namespace SLAT {
 
             unsigned int Get_Effective_Max_Evals(void) const;
             double Get_Effective_Tolerance(void) const;
+            IntegrationSettings();
         private:
             IntegrationSettings(const IntegrationSettings &other);
             static const unsigned int EVALUATIONS_UNSPECIFIED=0;
@@ -63,7 +64,6 @@ namespace SLAT {
             unsigned int max_evals;
             double tolerance;
 
-            IntegrationSettings();
             static IntegrationSettings default_settings;
         protected:
             static src::logger_mt settings_logger;

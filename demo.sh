@@ -54,7 +54,15 @@ rm *.png *.dat
 	  -m 3 -W 0.005 <(tail -n +4 ~/Downloads/SLATv1.15_Public/example1_output_gcc/example1_Loss-EDP-1 | awk -e '{print $1, $3}') \
 	  > sigma_loss_edp.png
 
-    qiv -Dft im_rate.png edp_im.png edp_rate.png ds_edp.png loss_edp.png sigma_loss_edp.png
+        graph -T png -C \
+	  -L "LOSS-IM Relationship" \
+	  -X "IM" \
+	  -Y "LOSS" \
+	  -m 1 -W 0.01 <(tail -n +2 loss_im.dat | awk -e '{ if ($2 !~ /nan/) print $1, $2}') \
+	  -m 3 -W 0.005 <(tail -n +4 ~/Downloads/SLATv1.15_Public/example1_output_gcc/example1_Loss-IM-1 | awk -e '{print $1, $2}') \
+	  > loss_im.png
+
+    qiv -Dft loss_im.png im_rate.png edp_im.png edp_rate.png ds_edp.png loss_edp.png sigma_loss_edp.png loss_im.png
 fi
 
 LD_LIBRARY_PATH=. ./unit_tests

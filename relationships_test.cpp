@@ -25,7 +25,6 @@ BOOST_AUTO_TEST_CASE( Simple_Rate_Relationship_Test )
     shared_ptr<DeterministicFn> im_rate_function(
         new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
 
-    
     SimpleRateRelationship im_rate_rel(im_rate_function);
 
     struct { double im, rate; } test_data[] = {
@@ -58,6 +57,27 @@ BOOST_AUTO_TEST_CASE( Simple_Rate_Relationship_Test )
 
     for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
         double rate = test_data[i].rate > 1.0 ? 1.0 : test_data[i].rate;
+        BOOST_CHECK_CLOSE( rate, im_rate_rel.lambda(test_data[i].im), 0.5);
+
+        /*
+         * Do a quick sanity check on the derivative function:
+         */
+        {
+            double deriv = im_rate_rel.DerivativeAt(test_data[i].im);
+            double epsilon = 1E-4;
+            BOOST_CHECK_CLOSE( rate + deriv * epsilon, 
+                               im_rate_rel.lambda(test_data[i].im + epsilon),
+                               0.5);
+        }
+    }
+
+    {
+        shared_ptr<DeterministicFn> double_im_rate_function(
+            new NonLinearHyperbolicLaw(2 * 1221, 29.8, 62.2));
+        im_rate_function->replace(double_im_rate_function);
+    }
+    for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
+        double rate = test_data[i].rate > 0.5 ? 1.0 : 2.0 * test_data[i].rate;
         BOOST_CHECK_CLOSE( rate, im_rate_rel.lambda(test_data[i].im), 0.5);
 
         /*

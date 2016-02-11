@@ -83,6 +83,12 @@ BOOST_AUTO_TEST_CASE(comp_group_test)
         { 0.1470, 0.9963, 0.4035 }, { 0.1485, 0.9966, 0.4033 }, { 0.1500, 0.9968, 0.4031 }, 
     };
 
+
+    {
+        im_rate_function->replace(std::make_shared<NonLinearHyperbolicLaw>(2 * 1221, 29.8, 62.2));
+        mu_edp->replace(std::make_shared<PowerLawParametricCurve>(0.2, 1.5));
+    }
+    
     for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
         BOOST_CHECK_CLOSE(component_group.E_loss_EDP(test_data[i].edp), 
                           test_data[i].mu_loss,

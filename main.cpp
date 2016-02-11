@@ -200,5 +200,14 @@ int main(int argc, char **argv)
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-EDP table written." << endl;
+
+        outfile = ofstream("loss_im.dat");
+        outfile << setw(10) << "IM" << setw(12) << "Loss" << endl;
+        for (int i=0; i < 2500; i++) {
+            double im = (i + 1)/ 1000.;
+            outfile << setw(10) << im << setw(12) << component_group.E_loss_IM(im) << endl;
+        }
+        outfile.close();
+        BOOST_LOG(logger) << "LOSS-IM table written." << endl;
     }
 }

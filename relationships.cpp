@@ -210,4 +210,12 @@ namespace SLAT {
             return NAN;
         };
     }
+
+    double CompoundRateRelationship::P_exceedence(double base_value, double min_dependent_value) const
+    {
+        return dependent_rate->P_exceedence(base_value, min_dependent_value);
+    }
+
 }
+
+
