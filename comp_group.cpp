@@ -94,7 +94,6 @@ namespace SLAT {
                 return result.integral;
             } else {
                 // Log error
-                std::cout << "< CompGroup::E_loss_IM(" << im << ") unsuccessful" << std::endl;
                 return NAN;
             };
         }

@@ -54,13 +54,12 @@ BOOST_AUTO_TEST_CASE( Non_Linear_Hyberbolic_Curve )
             expected = 0;
         } else {
             expected = 1221 * exp(62.2 / log(x/29.8));
-            if (expected > 1.0) expected = 1.0;
         }
 
         double actual = curve.ValueAt(x);
 
         BOOST_CHECK_EQUAL(actual, expected);
-        {
+        if (x > 0) {
             double derivative = (curve.ValueAt(x + 1E-6) - curve.ValueAt(x)) / 1E-6;
             BOOST_CHECK_CLOSE(curve.DerivativeAt(x), derivative, 1);
         }

@@ -193,9 +193,10 @@ int main(int argc, char **argv)
 
         for (int i=1; i < 200; i++) {
             double edp = i / 1000.;
-            component_group.E_loss_EDP(edp);
+            double loss = component_group.E_loss_EDP(edp);
+            //if (std::isnan(loss)) loss = 0.0;
 
-            outfile << setw(10) << edp << setw(12) << component_group.E_loss_EDP(edp)
+            outfile << setw(10) << edp << setw(12) << loss
                     << setw(12) << component_group.SD_ln_loss_EDP(edp) << endl;
         }
         outfile.close();

@@ -62,7 +62,7 @@ rm *.png *.dat
 	  -m 3 -W 0.005 <(tail -n +4 ~/Downloads/SLATv1.15_Public/example1_output_gcc/example1_Loss-IM-1 | awk -e '{print $1, $2}') \
 	  > loss_im.png
 
-    qiv -Dft loss_im.png im_rate.png edp_im.png edp_rate.png ds_edp.png loss_edp.png sigma_loss_edp.png loss_im.png
+    qiv -Dft im_rate.png edp_im.png edp_rate.png ds_edp.png loss_edp.png sigma_loss_edp.png loss_im.png
 fi
 
 LD_LIBRARY_PATH=. ./unit_tests

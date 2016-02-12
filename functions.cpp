@@ -138,14 +138,10 @@ namespace SLAT {
  */
     double NonLinearHyperbolicLaw::Evaluate(double x) const
     {
-        if (x <= 0) {
-            return 1;
-        } else if (x >= this->IM_asy) {
+        if (x >= this->IM_asy) {
             return 0;
         } else {
-            double result = v_asy * exp(alpha / log(x / IM_asy));
-            if (result > 1.0) result = 1.0;
-            return result;
+            return v_asy * exp(alpha / log(x / IM_asy));
         }
     }
 

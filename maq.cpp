@@ -152,6 +152,7 @@ namespace SLAT {
                 }
 
                 if (fc <= std::numeric_limits<double>::epsilon()) {
+                    //std::cout << fc << ", " << std::numeric_limits<double>::epsilon() << std::endl;
                     return {NAN, NAN, evaluations};
                 }
             }

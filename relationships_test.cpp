@@ -56,7 +56,7 @@ BOOST_AUTO_TEST_CASE( Simple_Rate_Relationship_Test )
     };
 
     for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
-        double rate = test_data[i].rate > 1.0 ? 1.0 : test_data[i].rate;
+        double rate = test_data[i].rate;
         BOOST_CHECK_CLOSE( rate, im_rate_rel.lambda(test_data[i].im), 0.5);
 
         /*
@@ -77,7 +77,7 @@ BOOST_AUTO_TEST_CASE( Simple_Rate_Relationship_Test )
         im_rate_function->replace(double_im_rate_function);
     }
     for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
-        double rate = test_data[i].rate > 0.5 ? 1.0 : 2.0 * test_data[i].rate;
+        double rate = 2.0 * test_data[i].rate;
         BOOST_CHECK_CLOSE( rate, im_rate_rel.lambda(test_data[i].im), 0.5);
 
         /*
