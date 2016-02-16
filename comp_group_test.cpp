@@ -16,7 +16,7 @@
 using namespace std;
 using namespace SLAT;
 
-BOOST_AUTO_TEST_CASE(comp_group_test)
+BOOST_AUTO_TEST_CASE(comp_group_edp_test)
 {
     shared_ptr<DeterministicFn> im_rate_function(
         new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
@@ -97,5 +97,16 @@ BOOST_AUTO_TEST_CASE(comp_group_test)
                           test_data[i].sd_loss,
                           0.5);
     }
+
+    // component_group = CompGroup(rel, fragFn, lossFn, 2);
+    // for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
+    //     BOOST_CHECK_CLOSE(component_group.E_loss_EDP(test_data[i].edp), 
+    //                       2.0 * test_data[i].mu_loss,
+    //                       0.1);
+    //    BOOST_CHECK_CLOSE(component_group.SD_ln_loss_EDP(test_data[i].edp), 
+    //                      2.0 * test_data[i].sd_loss,
+    //                       0.5);
+    // }
+
 }
 

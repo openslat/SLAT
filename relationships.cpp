@@ -54,6 +54,7 @@ namespace SLAT {
 
     RateRelationship::RateRelationship(bool activate_cache) :
         local_settings(&class_settings),
+        callback_id(0),
         lambda([this] (double x) { return this->calc_lambda(x); }, activate_cache)
     {
     };

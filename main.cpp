@@ -82,7 +82,7 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "IM-EDP table done.";
     }
 
-    std::shared_ptr<CompoundRateRelationship> rel(new CompoundRateRelationship(im_rate_rel, edp_im_relationship));
+    std::shared_ptr<CompoundRateRelationship> rel = std::make_shared<CompoundRateRelationship>(im_rate_rel, edp_im_relationship);
     for (int i=0; i < 5; i++) 
     {
         //std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
@@ -103,8 +103,7 @@ int main(int argc, char **argv)
 
 
     std::cout << *rel << std::endl;
-    shared_ptr<DeterministicFn> new_im_rate_function(
-        new NonLinearHyperbolicLaw(12.21, 29.8, 62.2));
+    shared_ptr<DeterministicFn> new_im_rate_function = std::make_shared<NonLinearHyperbolicLaw>(12.21, 29.8, 62.2);
     std::cout << "Replacing im_rate_function" << std::endl;
     im_rate_function->replace(new_im_rate_function);
     std::cout << *rel << std::endl;
@@ -127,7 +126,7 @@ int main(int argc, char **argv)
     }
 
     std::cout << "Replacing new_im_rate_function" << std::endl;
-    new_im_rate_function->replace(std::shared_ptr<DeterministicFn>(new NonLinearHyperbolicLaw(1221, 29.8, 62.2)));
+    new_im_rate_function->replace(std::make_shared<NonLinearHyperbolicLaw>(1221, 29.8, 62.2));
 
     std::cout << *rel << std::endl;
     for (int i=0; i < 5; i++) 
@@ -149,11 +148,11 @@ int main(int argc, char **argv)
     }
 
 
-    std::shared_ptr<FragilityFn> fragFn(new FragilityFn(
-        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
+    std::vector<LogNormalDist> fragility_distributions({ LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
-                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)}));
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
+    std::shared_ptr<FragilityFn> fragFn = std::make_shared<FragilityFn>(fragility_distributions);
     {
         BOOST_LOG(logger) << "Writing DS-EDP table";
         ofstream outfile("ds_edp.dat");
@@ -178,12 +177,12 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "DS-DSP table written.";
     }
 
-    std::shared_ptr<LossFn> lossFn(new LossFn(
-        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
-                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
-                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
-                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
-    
+    std::shared_ptr<LossFn> lossFn = std::make_shared<LossFn>(
+        std::vector<LogNormalDist>({ LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
+                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
+                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
+                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
+
     {
         CompGroup  component_group(rel, fragFn, lossFn, 1);
         ofstream outfile("loss_edp.dat");

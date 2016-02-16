@@ -16,7 +16,7 @@
 #include <iostream>
 
 namespace SLAT {
-    template <class T> class Replaceable {
+    template <class T> class Replaceable /*: public std::enable_shared_from_this<T>*/ {
     private:
         typedef struct {std::function<void (void)> changed_cb;
             std::function<void (std::shared_ptr<T>)> replace_cb;
@@ -24,15 +24,16 @@ namespace SLAT {
         std::map<int, callback_struct> callbacks;
         int id_counter;
     public:
-        Replaceable() { 
+        Replaceable()  { 
             id_counter = 0;
         };
         
         int add_callbacks(std::function<void (void)> changed,
                           std::function<void (std::shared_ptr<T>)> replace)
         {
+            id_counter++;
             callbacks[id_counter] = {changed, replace};
-            return id_counter++;
+            return id_counter;
         }
 
         void remove_callbacks(int id) {

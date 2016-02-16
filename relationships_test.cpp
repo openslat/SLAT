@@ -75,6 +75,7 @@ BOOST_AUTO_TEST_CASE( Simple_Rate_Relationship_Test )
         shared_ptr<DeterministicFn> double_im_rate_function(
             new NonLinearHyperbolicLaw(2 * 1221, 29.8, 62.2));
         im_rate_function->replace(double_im_rate_function);
+        im_rate_function = double_im_rate_function;
     }
     for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
         double rate = 2.0 * test_data[i].rate;
@@ -217,20 +218,16 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
 
 BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
 {
-    shared_ptr<DeterministicFn> im_rate_function(
-        new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
+    shared_ptr<DeterministicFn> im_rate_function = std::make_shared<NonLinearHyperbolicLaw>(1221, 29.8, 62.2);
 
-    shared_ptr<RateRelationship> im_rate_rel(
-        new SimpleRateRelationship(im_rate_function));
+    shared_ptr<RateRelationship> im_rate_rel = std::make_shared<SimpleRateRelationship>(im_rate_function);
     
-    shared_ptr<DeterministicFn> mu_edp(
-        new PowerLawParametricCurve(0.1, 1.5));
+    shared_ptr<DeterministicFn> mu_edp = std::make_shared<PowerLawParametricCurve>(0.1, 1.5);
 
-    shared_ptr<DeterministicFn> sigma_edp(
-        new PowerLawParametricCurve(0.5, 0.0));
+    shared_ptr<DeterministicFn> sigma_edp = std::make_shared<PowerLawParametricCurve>(0.5, 0.0);
 
-    shared_ptr<ProbabilisticFn> edp_im_relationship(
-        new LogNormalFn(mu_edp, LogNormalFn::MEAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X));
+    shared_ptr<ProbabilisticFn> edp_im_relationship = 
+        std::make_shared<LogNormalFn>(mu_edp, LogNormalFn::MEAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X);
 
     CompoundRateRelationship rel(im_rate_rel, edp_im_relationship);
 
@@ -272,22 +269,62 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
         for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
             BOOST_CHECK_CLOSE(rel_ptr->lambda(test_data[i].edp), test_data[i].rate, 0.2);
         }
+        shared_ptr<DeterministicFn> double_im_rate_function = 
+            std::make_shared<NonLinearHyperbolicLaw>(1 * 1221, 29.8, 62.2);
+        im_rate_function->replace(double_im_rate_function);
+        im_rate_function = double_im_rate_function;
     }
 
     {
-        std::shared_ptr<RateRelationship> rel_ptr(
-            new CompoundRateRelationship(im_rate_rel, edp_im_relationship));
+        std::shared_ptr<RateRelationship> rel_ptr = std::make_shared<CompoundRateRelationship>(im_rate_rel, edp_im_relationship);
 
         for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
             BOOST_REQUIRE_CLOSE(rel_ptr->lambda(test_data[i].edp), test_data[i].rate, 0.2);
         }
     }
+
     {
         RateRelationship *rel_ptr = new CompoundRateRelationship(im_rate_rel, edp_im_relationship);
 
         for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
             BOOST_REQUIRE_CLOSE(rel_ptr->lambda(test_data[i].edp), test_data[i].rate, 0.2);
         }
+        delete(rel_ptr);
     }
+
+    {
+        shared_ptr<DeterministicFn> new_im_rate_function = std::make_shared<NonLinearHyperbolicLaw>(1221, 29.8, 62.2);
+
+        shared_ptr<RateRelationship> new_im_rate_rel = std::make_shared<SimpleRateRelationship>(new_im_rate_function);
+    
+        shared_ptr<DeterministicFn> new_mu_edp = std::make_shared<PowerLawParametricCurve>(0.1, 1.5);
+
+        shared_ptr<DeterministicFn> new_sigma_edp = std::make_shared<PowerLawParametricCurve>(0.5, 0.0);
+
+        shared_ptr<ProbabilisticFn> new_edp_im_relationship = 
+            std::make_shared<LogNormalFn>(new_mu_edp, LogNormalFn::MEAN_X, new_sigma_edp, LogNormalFn::SIGMA_LN_X);
+
+         CompoundRateRelationship new_rel(new_im_rate_rel, new_edp_im_relationship);
+        {
+            shared_ptr<DeterministicFn> double_im_rate_function = 
+                std::make_shared<NonLinearHyperbolicLaw>(2 * 1221, 29.8, 62.2);
+           im_rate_function->replace(double_im_rate_function);
+           im_rate_function = double_im_rate_function;
+       }
+        {
+            shared_ptr<DeterministicFn> x_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
+            shared_ptr<DeterministicFn> y_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
+            shared_ptr<RateRelationship> x_im_rate = std::make_shared<SimpleRateRelationship>(x_rate_fn);
+            {
+                shared_ptr<RateRelationship> y_im_rate = std::make_shared<SimpleRateRelationship>(x_rate_fn);
+            }
+            x_rate_fn->replace(y_rate_fn);
+        }
+  //       Caching::Clear_Caches();
+  //       for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
+  //           BOOST_CHECK_CLOSE(rel.lambda(test_data[i].edp), 2.0 * test_data[i].rate, 0.2);
+  //      }
+  }
 }
+
 

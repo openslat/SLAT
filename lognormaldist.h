@@ -18,10 +18,10 @@ namespace SLAT {
     class LogNormalDist {
     public:
         LogNormalDist();
-        static const LogNormalDist LogNormalDist_from_mu_lnX_and_sigma_lnX(double mu_lnX, double sigma_lnX);
-        static const LogNormalDist LogNormalDist_from_mean_X_and_sigma_lnX(double mean_X, double sigma_lnX);
-        static const LogNormalDist LogNormalDist_from_median_X_and_sigma_lnX(double median_X, double sigma_lnX);
-        static const LogNormalDist LogNormalDist_from_mean_X_and_sigma_X(double mean_X, double sigma_X);
+        static LogNormalDist LogNormalDist_from_mu_lnX_and_sigma_lnX(double mu_lnX, double sigma_lnX);
+        static LogNormalDist LogNormalDist_from_mean_X_and_sigma_lnX(double mean_X, double sigma_lnX);
+        static LogNormalDist LogNormalDist_from_median_X_and_sigma_lnX(double median_X, double sigma_lnX);
+        static LogNormalDist LogNormalDist_from_mean_X_and_sigma_X(double mean_X, double sigma_X);
         ~LogNormalDist() {};
 
         double p_at_least(double x) const;

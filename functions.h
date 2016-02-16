@@ -32,19 +32,11 @@ namespace SLAT {
  */
     class DeterministicFn : public Replaceable<DeterministicFn>
     {
-    private:
-        int callback_id;
     protected:
         /** 
          * Default constructor; does nothing.
          */     
-    DeterministicFn(void) : Replaceable<DeterministicFn>() {
-            /* callback_id = this->add_callbacks( */
-            /*     [this] (void) { this->notify_change(); }, */
-            /*     [this] (std::shared_ptr<DeterministicFn> f) { */
-            /*         this->replace(f); */
-            /*     }); */
-        };
+    DeterministicFn(void) : Replaceable<DeterministicFn>() {};
 
         /** 
          * Evalue the function at the given input. Subclasses will override this
@@ -57,7 +49,6 @@ namespace SLAT {
         virtual double Evaluate(double x) const { return NAN; };
     public:
         ~DeterministicFn(void) { 
-            /* thisremove_callbacks->callback_id(); */
         };
 
         /** 
@@ -104,7 +95,8 @@ namespace SLAT {
     {
     protected:
         FormulaFn() {};   /**< Default constructor; does nothing. */
-        ~FormulaFn() { }; /**< Default destructor; does nothing. */
+        ~FormulaFn() {             
+        }; /**< Default destructor; does nothing. */
     };
 
 /**
@@ -130,7 +122,8 @@ namespace SLAT {
          * @param alpha   Equation parameter
          */
         NonLinearHyperbolicLaw(double v_asy, double IM_asy, double alpha);
-        ~NonLinearHyperbolicLaw() { }; /**< Default destructor; do nothing. */
+        ~NonLinearHyperbolicLaw() {
+        }; /**< Default destructor; do nothing. */
 
         /** 
          * Evaluate the function at x.
@@ -167,7 +160,8 @@ namespace SLAT {
          * @return 
          */
         PowerLawParametricCurve(double a, double b);
-        ~PowerLawParametricCurve() { }; /**< Default destructor; do nothing. */
+        ~PowerLawParametricCurve() {
+        }; /**< Default destructor; do nothing. */
 
         /** 
          * Evaluate the function at x.
@@ -204,7 +198,8 @@ namespace SLAT {
          * The default constructor takes arrays of corresponding input and output values.
          */
         InterpolatedFn(double x[], double y[], size_t size);
-        ~InterpolatedFn() { };  /**< Default destructor; does nothing. */
+        ~InterpolatedFn() {
+        };  /**< Default destructor; does nothing. */
 
         /** 
          * Subclasses will override this method to perform interpolation.
@@ -455,7 +450,8 @@ namespace SLAT {
          */
         virtual double Mean(double x) const;
 
-        ~LogNormalFn() { }; /**< Destructor; doesn't need to do anything. */
+        ~LogNormalFn() {
+        }; /**< Destructor; doesn't need to do anything. */
         virtual std::string ToString(void) const;
     };
 }

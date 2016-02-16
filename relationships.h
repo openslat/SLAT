@@ -30,6 +30,7 @@ namespace SLAT {
             std::function<T (V)> func;
             std::unordered_map<V, T> cache;
             bool cache_active;
+            CachedFunction() {};
         public:
             CachedFunction(std::function<T (V)> base_func, bool activate_cache=true) { 
                 cache_active = activate_cache;
@@ -68,9 +69,10 @@ namespace SLAT {
     class RateRelationship : public Replaceable<RateRelationship>
     {
     public:
+        virtual ~RateRelationship() {
+        };   /**< Default destructor; does nothing. */
     protected:
         RateRelationship(bool activate_cache);
-        ~RateRelationship() { };   /**< Default destructor; does nothing. */
         Integration::IntegrationSettings local_settings;
         static Integration::IntegrationSettings class_settings;
         int callback_id;
@@ -132,7 +134,9 @@ namespace SLAT {
          * @param func A shared pointer to the function defining the relationship.
          */
         SimpleRateRelationship(std::shared_ptr<DeterministicFn> func);
-        ~SimpleRateRelationship() { }; /**< Destructor does not need to do
+        ~SimpleRateRelationship() {
+            f->remove_callbacks(callback_id);
+        }; /**< Destructor does not need to do
                                         * anything. */
         /** 
          * Return the probability of exceeding a given value.
@@ -191,7 +195,10 @@ namespace SLAT {
         CompoundRateRelationship(std::shared_ptr<RateRelationship> base_rate,
                                  std::shared_ptr<ProbabilisticFn> dependent_rate);
 
-        ~CompoundRateRelationship() { }; /**< Destructor; does nothing. */
+        ~CompoundRateRelationship() {
+            base_rate->remove_callbacks(base_rate_callback_id);
+            dependent_rate->remove_callbacks(dependent_rate_callback_id);
+        }; /**< Destructor; does nothing. */
 
 
         /** 

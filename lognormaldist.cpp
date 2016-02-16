@@ -37,7 +37,7 @@ namespace SLAT {
         sigma_lnX = NAN;
     }
 
-    const LogNormalDist LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(double mean_lnX, double sigma_lnX)
+    LogNormalDist LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(double mean_lnX, double sigma_lnX)
     {
         LogNormalDist result;
         result.mu_lnX = mu_lnX_from_mean_X_and_sigma_lnX(mean_lnX, sigma_lnX);
@@ -45,7 +45,7 @@ namespace SLAT {
         return result;
     };
 
-    const LogNormalDist LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(double mean_X, double sigma_X)
+    LogNormalDist LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(double mean_X, double sigma_X)
     {
         LogNormalDist result;
         result.sigma_lnX = sigma_lnX_from_mean_X_and_sigma_X(mean_X, sigma_X);
@@ -53,7 +53,7 @@ namespace SLAT {
         return result;
     };
 
-    const LogNormalDist LogNormalDist::LogNormalDist_from_median_X_and_sigma_lnX(double median_X, double sigma_lnX)
+    LogNormalDist LogNormalDist::LogNormalDist_from_median_X_and_sigma_lnX(double median_X, double sigma_lnX)
     {
         LogNormalDist result;
         result.sigma_lnX = sigma_lnX;
@@ -61,7 +61,7 @@ namespace SLAT {
         return result;
     };
 
-    const LogNormalDist LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(double mu_lnX, double sigma_lnX)
+    LogNormalDist LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(double mu_lnX, double sigma_lnX)
     {
         LogNormalDist result;
         result.mu_lnX = mu_lnX;
