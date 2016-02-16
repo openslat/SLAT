@@ -29,20 +29,29 @@ namespace SLAT {
          * Add a cached function to the list.
          */
         void Add_Cache(void *cache, std::function<void (void)> clear_func) {
+            std::cout << "Add_Cache: " << cache << std::endl;
+            std::cout << caches.size() << std::endl;
             caches[cache] = clear_func;
+            std::cout << caches.size() << std::endl;
+            std::cout << "Add_Cache done" << std::endl;
         }
 
         /**
          * Remove a cached function from the list.
          */
         void Remove_Cache(void *cache) {
+            std::cout << "Remove_Cache" << cache << std::endl;
+            std::cout << caches.size() << std::endl;
             caches.erase(cache);
+            std::cout << caches.size() << std::endl;
+            std::cout << "Remove_Cache done" << cache << std::endl;
         }
 
         /**
          * Clear all (registered) function caches.
          */
         void Clear_Caches(void) {
+            std::cout << "clearing " << caches.size() << " caches" << std::endl;
             for (auto it=caches.begin(); it != caches.end(); it++) {
                 it->second();
             }
@@ -54,6 +63,7 @@ namespace SLAT {
 
     RateRelationship::RateRelationship(bool activate_cache) :
         local_settings(&class_settings),
+        callback_id(0),
         lambda([this] (double x) { return this->calc_lambda(x); }, activate_cache)
     {
     };
@@ -91,9 +101,11 @@ namespace SLAT {
         f = func;
         callback_id = f->add_callbacks(
             [this] (void) {
+                std::cout << "SimpleRateRelationship change callback" << std::endl;
                 this->notify_change();
             },
             [this] (std::shared_ptr<DeterministicFn> new_f) {
+                std::cout << "SimpleRateRelationship replace callback" << std::endl;
                 this->f = new_f;
                 this->notify_change();
             });
@@ -107,16 +119,21 @@ namespace SLAT {
 
     std::string RateRelationship::ToString(void) const 
     {
+        std::cout << "RateRelationship::ToString()" << std::endl;
         return "Rate Relationship: ";
     }
 
     std::string SimpleRateRelationship::ToString(void) const 
     {
+        std::cout << "SimpleRateRelationship::ToString()" << std::endl;
         return "Simple(" + f->ToString() + ")";
     }
 
     std::string CompoundRateRelationship::ToString(void) const 
     {
+        std::cout << "CompoundRateRelationship::ToString()" << std::endl;
+        std::cout << "Base Rate: " << base_rate << std::endl;
+        std::cout << "Dependent Rate: " << dependent_rate << std::endl;
         return "Compound(" + base_rate->ToString()
             + ", " + dependent_rate->ToString() + ")";
     }
@@ -167,24 +184,34 @@ namespace SLAT {
 
         base_rate_callback_id = base_rate->add_callbacks(
             [this] (void) {
+                std::cout << "> CompoundRateRelationship base_rate change callback" << std::endl;
                 this->lambda.ClearCache();
+                std::cout << "(cache cleared)" << std::endl;
                 this->notify_change();
+                std::cout << "(change notified)" << std::endl;
+                std::cout << "< CompoundRateRelationship base_rate change callback" << std::endl;
             },
             [this] (std::shared_ptr<RateRelationship> new_base_rate) {
+                std::cout << "> CompoundRateRelationship base_rate replace callback" << std::endl;
                 this->lambda.ClearCache();
                 this->base_rate = new_base_rate;
                 this->notify_change();
+                std::cout << "< CompoundRateRelationship base_rate replace callback" << std::endl;
             });
 
         dependent_rate_callback_id = dependent_rate->add_callbacks(
             [this] (void) {
+                std::cout << "> CompoundRateRelationship dependent_rate change callback" << std::endl;
                 this->lambda.ClearCache();
                 this->notify_change();
+                std::cout << "< CompoundRateRelationship dependent_rate change callback" << std::endl;
             },
             [this] (std::shared_ptr<ProbabilisticFn> new_dependent_rate) {
+                std::cout << "> CompoundRateRelationship dependent_rate replace callback" << std::endl;
                 this->lambda.ClearCache();
                 this->dependent_rate = new_dependent_rate;
                 this->notify_change();
+                std::cout << "< CompoundRateRelationship dependent_rate replace callback" << std::endl;
             });
     }
 

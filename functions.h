@@ -33,7 +33,7 @@ namespace SLAT {
     class DeterministicFn : public Replaceable<DeterministicFn>
     {
     private:
-        int callback_id;
+//        int callback_id;
     protected:
         /** 
          * Default constructor; does nothing.
@@ -57,6 +57,7 @@ namespace SLAT {
         virtual double Evaluate(double x) const { return NAN; };
     public:
         ~DeterministicFn(void) { 
+            std::cout << "~DeterministicFn() " << this << std::endl;
             /* thisremove_callbacks->callback_id(); */
         };
 
@@ -104,7 +105,9 @@ namespace SLAT {
     {
     protected:
         FormulaFn() {};   /**< Default constructor; does nothing. */
-        ~FormulaFn() { }; /**< Default destructor; does nothing. */
+        ~FormulaFn() {             
+            std::cout << "~FormulaFn() " << this << std::endl;
+        }; /**< Default destructor; does nothing. */
     };
 
 /**
@@ -130,7 +133,9 @@ namespace SLAT {
          * @param alpha   Equation parameter
          */
         NonLinearHyperbolicLaw(double v_asy, double IM_asy, double alpha);
-        ~NonLinearHyperbolicLaw() { }; /**< Default destructor; do nothing. */
+        ~NonLinearHyperbolicLaw() {
+                    std::cout << "~NonLinearHyperbolicLawFn() " << this << std::endl;
+        }; /**< Default destructor; do nothing. */
 
         /** 
          * Evaluate the function at x.
@@ -167,7 +172,9 @@ namespace SLAT {
          * @return 
          */
         PowerLawParametricCurve(double a, double b);
-        ~PowerLawParametricCurve() { }; /**< Default destructor; do nothing. */
+        ~PowerLawParametricCurve() {
+            std::cout << "~PowerLawParametricCurve() " << this << std::endl;
+        }; /**< Default destructor; do nothing. */
 
         /** 
          * Evaluate the function at x.
@@ -204,7 +211,9 @@ namespace SLAT {
          * The default constructor takes arrays of corresponding input and output values.
          */
         InterpolatedFn(double x[], double y[], size_t size);
-        ~InterpolatedFn() { };  /**< Default destructor; does nothing. */
+        ~InterpolatedFn() {
+            std::cout << "~InterpolatedFn() " << this << std::endl;
+        };  /**< Default destructor; does nothing. */
 
         /** 
          * Subclasses will override this method to perform interpolation.
@@ -455,7 +464,9 @@ namespace SLAT {
          */
         virtual double Mean(double x) const;
 
-        ~LogNormalFn() { }; /**< Destructor; doesn't need to do anything. */
+        ~LogNormalFn() {
+            std::cout << "~LogNormalFn() " << this << std::endl;
+        }; /**< Destructor; doesn't need to do anything. */
         virtual std::string ToString(void) const;
     };
 }
