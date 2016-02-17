@@ -308,12 +308,8 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
         {
             shared_ptr<DeterministicFn> double_im_rate_function = 
                 std::make_shared<NonLinearHyperbolicLaw>(2 * 1221, 29.8, 62.2);
-            std::cout << im_rate_function << ", " << double_im_rate_function << std::endl;
-            std::cout << im_rate_function.use_count() << ", " << double_im_rate_function.use_count() << std::endl;
            im_rate_function->replace(double_im_rate_function);
-            std::cout << im_rate_function.use_count() << ", " << double_im_rate_function.use_count() << std::endl;
            im_rate_function = double_im_rate_function;
-            std::cout << im_rate_function.use_count() << ", " << double_im_rate_function.use_count() << std::endl;
        }
         {
             shared_ptr<DeterministicFn> x_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);

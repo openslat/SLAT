@@ -31,7 +31,6 @@ namespace SLAT {
         int add_callbacks(std::function<void (void)> changed,
                           std::function<void (std::shared_ptr<T>)> replace)
         {
-            std::cout << "add_callbacks to " << this << std::endl;
             id_counter++;
             callbacks[id_counter] = {changed, replace};
             return id_counter;
@@ -42,21 +41,17 @@ namespace SLAT {
         }
 
         void notify_change(void) {
-            std::cout << "notify_change(" << this << "); " << callbacks.size() << " callbacks." << std::endl;
             for (auto it=callbacks.begin(); it != callbacks.end(); it++) {
                 it->second.changed_cb();
             }
-            std::cout << "notify_change(" << this << ") done" << std::endl;
         }
 
         void replace(std::shared_ptr<T> replacement) {
-            std::cout << "replacement(" << this << "); " << callbacks.size() << " callbacks." << std::endl;
             replacement->callbacks = callbacks;
             for (auto it=callbacks.begin(); it != callbacks.end();) {
                 it->second.replace_cb(replacement);
                 it = callbacks.erase(it);
             }
-            std::cout << "replacement(" << this << ") done" << std::endl;
         }
     };
 }
