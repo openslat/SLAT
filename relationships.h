@@ -70,7 +70,6 @@ namespace SLAT {
     {
     public:
         virtual ~RateRelationship() {
-            std::cout << "~RateRelationship(" << this << ", " << *this << ")" << std::endl;
         };   /**< Default destructor; does nothing. */
     protected:
         RateRelationship(bool activate_cache);
@@ -136,7 +135,6 @@ namespace SLAT {
          */
         SimpleRateRelationship(std::shared_ptr<DeterministicFn> func);
         ~SimpleRateRelationship() {
-            std::cout << "~SimpleRateRelationship(" << this << ", " << *this << ")" << std::endl;
             f->remove_callbacks(callback_id);
         }; /**< Destructor does not need to do
                                         * anything. */
@@ -200,7 +198,6 @@ namespace SLAT {
         ~CompoundRateRelationship() {
             base_rate->remove_callbacks(base_rate_callback_id);
             dependent_rate->remove_callbacks(dependent_rate_callback_id);
-            std::cout << "~CompoundRateRelationship(" << this << ", " << *this << ")" << std::endl;
         }; /**< Destructor; does nothing. */
 
 

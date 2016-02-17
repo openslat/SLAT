@@ -92,11 +92,9 @@ namespace SLAT {
         f = func;
         callback_id = f->add_callbacks(
             [this] (void) {
-                std::cout << "simple_rate_change [" << this << ", " << *this << ", " << callback_id << "]" << std::endl;
                 this->notify_change();
             },
             [this] (std::shared_ptr<DeterministicFn> new_f) {
-                std::cout << "simple_rate_replacement [" << this << ", " << *this << ", " << callback_id << "]" << std::endl;
                 this->f = new_f;
                 this->notify_change();
             });
@@ -170,12 +168,10 @@ namespace SLAT {
 
         base_rate_callback_id = base_rate->add_callbacks(
             [this] (void) {
-                std::cout << "base_rate_change [" << this << ", " << *this << ", " << base_rate_callback_id << "]" << std::endl;
                 this->lambda.ClearCache();
                 this->notify_change();
             },
             [this] (std::shared_ptr<RateRelationship> new_base_rate) {
-                std::cout << "base_rate_replacement [" << this << ", " << *this << ", " << base_rate_callback_id << "]" << std::endl;
                 this->lambda.ClearCache();
                 this->base_rate = new_base_rate;
                 this->notify_change();
@@ -183,12 +179,10 @@ namespace SLAT {
 
         dependent_rate_callback_id = dependent_rate->add_callbacks(
             [this] (void) {
-                std::cout << "dependent_rate_change [" << this << ", "<< *this << ", "  << dependent_rate_callback_id << "]" << std::endl;
                 this->lambda.ClearCache();
                 this->notify_change();
             },
             [this] (std::shared_ptr<ProbabilisticFn> new_dependent_rate) {
-                std::cout << "dependent_rate_replacement [" << this << ", " << *this << ", " << dependent_rate_callback_id << "]" << std::endl;
                 this->lambda.ClearCache();
                 this->dependent_rate = new_dependent_rate;
                 this->notify_change();
