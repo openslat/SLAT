@@ -30,24 +30,16 @@ namespace SLAT {
             std::function<T (V)> func;
             std::unordered_map<V, T> cache;
             bool cache_active;
-            CachedFunction() {
-                std::cout << std::endl << std::endl << "CONSTRUCTOR" << std::endl << std::endl;
-            };
+            CachedFunction() {};
         public:
             CachedFunction(std::function<T (V)> base_func, bool activate_cache=true) { 
-                std::cout << std::endl << std::endl << "CONSTRUCTOR base_func activate" << std::endl << std::endl;
                 cache_active = activate_cache;
                 func = base_func; 
-                std:: cout << cache.size() << std::endl;
                 Add_Cache(this, [this] (void) { 
                         this->ClearCache(); });
-                std:: cout << cache.size() << std::endl;
-                std::cout << std::endl << std::endl;
             };
             ~CachedFunction() {
-                std::cout << "~CachedFunction " << this << std::endl;
                 Remove_Cache(this);
-                std::cout << "~CachedFunction " << this << " done" << std::endl;
             }
             T operator()(V v) { 
                 if (cache_active) {
@@ -63,16 +55,7 @@ namespace SLAT {
                 }
             }
             void ClearCache(void) {
-                std::cout << "Clearing cache " << this << std::endl;
-                std::cout << "cache: " << &cache << std::endl;
-                std::cout << "size: " << cache.size() << std::endl;
-                if (cache.size() >= 0 && cache.size() < 100) {
-                    cache.clear(); 
-                } else {
-                    std::cout << "AAAAARRRRGGGHHHH" << std::endl;
-                }
-                std::cout << "size: " << cache.size() << std::endl;
-                std::cout << "Cache Cleared " << this << std::endl;
+                cache.clear(); 
             };
         };
     }
@@ -87,7 +70,7 @@ namespace SLAT {
     {
     public:
         virtual ~RateRelationship() {
-            std::cout << "~RateRelationship() " << this << " " << callback_id << std::endl;
+            std::cout << "~RateRelationship(" << this << ", " << *this << ")" << std::endl;
         };   /**< Default destructor; does nothing. */
     protected:
         RateRelationship(bool activate_cache);
@@ -153,7 +136,8 @@ namespace SLAT {
          */
         SimpleRateRelationship(std::shared_ptr<DeterministicFn> func);
         ~SimpleRateRelationship() {
-            std::cout << "~SimpleRateRelationship() " << this << " " << callback_id << std::endl;
+            std::cout << "~SimpleRateRelationship(" << this << ", " << *this << ")" << std::endl;
+            f->remove_callbacks(callback_id);
         }; /**< Destructor does not need to do
                                         * anything. */
         /** 
@@ -214,7 +198,9 @@ namespace SLAT {
                                  std::shared_ptr<ProbabilisticFn> dependent_rate);
 
         ~CompoundRateRelationship() {
-            std::cout << "~CompoundRelationship() " << this << " " << callback_id << std::endl;
+            base_rate->remove_callbacks(base_rate_callback_id);
+            dependent_rate->remove_callbacks(dependent_rate_callback_id);
+            std::cout << "~CompoundRateRelationship(" << this << ", " << *this << ")" << std::endl;
         }; /**< Destructor; does nothing. */
 
 

@@ -14,9 +14,8 @@ LIBSRCS=functions.cpp relationships.cpp maq.cpp fragility.cpp lognormaldist.cpp 
 	comp_group.cpp 
 LIBOBJS=$(LIBSRCS:.cpp=.o)
 
-UNIT_SRCS = unit_test.cpp functions_test.cpp relationships_test.cpp
-# maq_test.cpp \
-#	fragility_test.cpp lognormaldist_test.cpp comp_group_test.cpp
+UNIT_SRCS = unit_test.cpp functions_test.cpp relationships_test.cpp maq_test.cpp \
+	fragility_test.cpp lognormaldist_test.cpp comp_group_test.cpp
 UNIT_OBJS = $(UNIT_SRCS:.cpp=.o)
 
 functions.o: functions.cpp functions.h replaceable.h

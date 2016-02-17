@@ -26,14 +26,15 @@ namespace SLAT {
     public:
         Replaceable()  { 
             id_counter = 0;
-            std::cout << "Replaceable() " << callbacks.size() << std::endl;
         };
         
         int add_callbacks(std::function<void (void)> changed,
                           std::function<void (std::shared_ptr<T>)> replace)
         {
+            std::cout << "add_callbacks to " << this << std::endl;
+            id_counter++;
             callbacks[id_counter] = {changed, replace};
-            return id_counter++;
+            return id_counter;
         }
 
         void remove_callbacks(int id) {
@@ -41,30 +42,21 @@ namespace SLAT {
         }
 
         void notify_change(void) {
-            std::cout << "> notify_change() " << this << std::endl;
-            std::cout << callbacks.size() << std::endl;
+            std::cout << "notify_change(" << this << "); " << callbacks.size() << " callbacks." << std::endl;
             for (auto it=callbacks.begin(); it != callbacks.end(); it++) {
-                std::cout << "<" << std::endl;
-                std::cout << it->first << std::endl;
-
-                
-                std::cout << &(it->second.replace_cb) << std::endl;
                 it->second.changed_cb();
-                std::cout << ">" << std::endl;
             }
-            std::cout << "> notify_change() " << this << std::endl;
+            std::cout << "notify_change(" << this << ") done" << std::endl;
         }
 
         void replace(std::shared_ptr<T> replacement) {
-            std::cout << "replace<>() " << this << " with " << replacement << std::endl;
+            std::cout << "replacement(" << this << "); " << callbacks.size() << " callbacks." << std::endl;
             replacement->callbacks = callbacks;
-            std::cout << callbacks.size() << " callbacks" << std::endl;
             for (auto it=callbacks.begin(); it != callbacks.end();) {
-                std::cout << ". " << std::endl;
                 it->second.replace_cb(replacement);
                 it = callbacks.erase(it);
             }
-            std::cout << "==== replacing done ====" << std::endl;
+            std::cout << "replacement(" << this << ") done" << std::endl;
         }
     };
 }

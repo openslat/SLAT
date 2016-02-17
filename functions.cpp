@@ -191,7 +191,6 @@ namespace SLAT {
  */
     LinearInterpolatedFn::~LinearInterpolatedFn()
     {
-        std::cout << "~LinearInterpolatedFn() " << this  << std::endl;
         gsl_spline_free(interp);
         gsl_interp_accel_free(accel);
     }
@@ -232,7 +231,6 @@ namespace SLAT {
  */
     LogLogInterpolatedFn::~LogLogInterpolatedFn()
     {
-        std::cout << "~LogLogInterpolatedFn() " << this << std::endl;
         gsl_spline_free(interp);
         gsl_interp_accel_free(accel);
     }
@@ -276,7 +274,6 @@ namespace SLAT {
 
     ProbabilisticFn::~ProbabilisticFn() 
     {
-        std::cout << "~ProbabilisticFn() " << this << std::endl;
         mu_function->remove_callbacks(mu_function_callback_id);
         sigma_function->remove_callbacks(sigma_function_callback_id);
     }

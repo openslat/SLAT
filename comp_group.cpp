@@ -47,56 +47,38 @@ namespace SLAT {
 
     double CompGroup::E_loss_IM(double im)
     {
-        //std::cout << "> CompGroup::E_loss_IM(" << im << ")..." << std::endl;
-        if (false) {
-            double result = 0;
-            const double low_edp = 0;
-            const double high_edp = 10;
-            const int steps = 10000;
-            const double edp_step = (high_edp - low_edp) / steps;
-            for (int i = 0; i < steps; i++) {
-                double edp = low_edp + edp_step * i;
-                double loss = this->E_loss_EDP(edp + edp_step / 2);
-                double prob = this->edp->P_exceedence(im, edp) - this->edp->P_exceedence(im, edp + edp_step);
-                
-                result = result + loss * prob;
-            }
-            //std::cout << " --> " << result << std::endl;
-            return result;
-        } else {
-            Integration::MAQ_RESULT result;
-            result =  Integration::MAQ(
-                [this, im] (double edp) -> double {
-                    double result;
-                    if (edp == 0) {
-                        result = 0;
-                    } else {
-                        std::function<double (double, void*)> local_lambda = [this, im] (double x, void *) {
-                            double result = this->edp->P_exceedence(im, x);
-                            return result;
-                        };
-                        gsl_function F;
-                        F.function = (double (*)(double, void *))wrapper;
-                        F.params = &local_lambda;
-                        double deriv, abserror;
-                        gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
-                        if (isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
-                        if (isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+        Integration::MAQ_RESULT result;
+        result =  Integration::MAQ(
+            [this, im] (double edp) -> double {
+                double result;
+                if (edp == 0) {
+                    result = 0;
+                } else {
+                    std::function<double (double, void*)> local_lambda = [this, im] (double x, void *) {
+                        double result = this->edp->P_exceedence(im, x);
+                        return result;
+                    };
+                    gsl_function F;
+                    F.function = (double (*)(double, void *))wrapper;
+                    F.params = &local_lambda;
+                    double deriv, abserror;
+                    gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                    if (isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                    if (isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
 
-                        double d = deriv;
-                        //double d = this->edp->P_exceedence(im, edp);
-                        double p = this->E_loss_EDP(edp);
-                        result = p * std::abs(d);
-                    }
-                    return result;
-                }, local_settings); 
-            if (result.successful) {
-                return result.integral;
-            } else {
-                // Log error
-                return NAN;
-            };
-        }
+                    double d = deriv;
+                    //double d = this->edp->P_exceedence(im, edp);
+                    double p = this->E_loss_EDP(edp);
+                    result = p * std::abs(d);
+                }
+                return result;
+            }, local_settings); 
+        if (result.successful) {
+            return result.integral;
+        } else {
+            // Log error
+            return NAN;
+        };
     }
 
     double CompGroup::SD_ln_loss_IM(double im)

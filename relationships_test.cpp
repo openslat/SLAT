@@ -263,15 +263,6 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
     }
 
     {
-        std::cout << "im_rate_function: " << im_rate_function  << std::endl
-                  << "im_rate_rel: " << im_rate_rel << std::endl
-                  << "mu_edp: " << mu_edp << std::endl
-                  << "sigma_edp: " << sigma_edp << std::endl
-                  << "edp_im_relationship: " << edp_im_relationship << std::endl
-                  << "rel: " << &rel << std::endl;
-    }
-
-    {
         std::shared_ptr<CompoundRateRelationship> rel_ptr(
             new CompoundRateRelationship(im_rate_rel, edp_im_relationship));
         
@@ -280,20 +271,12 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
         }
         shared_ptr<DeterministicFn> double_im_rate_function = 
             std::make_shared<NonLinearHyperbolicLaw>(1 * 1221, 29.8, 62.2);
-        std::cout << "double_im_rate_function: " << double_im_rate_function << std::endl;
-        std::cout << im_rate_function << std::endl;
         im_rate_function->replace(double_im_rate_function);
         im_rate_function = double_im_rate_function;
     }
 
     {
         std::shared_ptr<RateRelationship> rel_ptr = std::make_shared<CompoundRateRelationship>(im_rate_rel, edp_im_relationship);
-        std::cout << "*** " << rel_ptr.use_count() << " ***" << std::endl;
-        {
-            std::shared_ptr<RateRelationship> ptr2 = rel_ptr;
-            std::cout << "*** " << rel_ptr.use_count() << ", " << ptr2.use_count() << " ***" << std::endl;
-        }
-        std::cout << "*** " << rel_ptr.use_count() << " ***" << std::endl;
 
         for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
             BOOST_REQUIRE_CLOSE(rel_ptr->lambda(test_data[i].edp), test_data[i].rate, 0.2);
@@ -309,7 +292,6 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
         delete(rel_ptr);
     }
 
-    std::cout << ">>>> im_rate_function: " << im_rate_function << std::endl;
     {
         shared_ptr<DeterministicFn> new_im_rate_function = std::make_shared<NonLinearHyperbolicLaw>(1221, 29.8, 62.2);
 
@@ -326,23 +308,27 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
         {
             shared_ptr<DeterministicFn> double_im_rate_function = 
                 std::make_shared<NonLinearHyperbolicLaw>(2 * 1221, 29.8, 62.2);
-            std::cout << *im_rate_function << ", " << *double_im_rate_function << std::endl;
+            std::cout << im_rate_function << ", " << double_im_rate_function << std::endl;
+            std::cout << im_rate_function.use_count() << ", " << double_im_rate_function.use_count() << std::endl;
            im_rate_function->replace(double_im_rate_function);
+            std::cout << im_rate_function.use_count() << ", " << double_im_rate_function.use_count() << std::endl;
            im_rate_function = double_im_rate_function;
-            std::cout << "***********" << std::endl;
-            std::cout << im_rate_function << std::endl;
-           std::cout << double_im_rate_function << std::endl;
+            std::cout << im_rate_function.use_count() << ", " << double_im_rate_function.use_count() << std::endl;
        }
-        std::cout << "-------------" << std::endl;
-        std::cout << rel << std::endl;
-        std::cout << "-------------" << std::endl;
-        Caching::Clear_Caches();
-        for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
-            BOOST_CHECK_CLOSE(rel.lambda(test_data[i].edp), 2.0 * test_data[i].rate, 0.2);
-       }
-        std::cout << "+++++" << std::endl;
+        {
+            shared_ptr<DeterministicFn> x_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
+            shared_ptr<DeterministicFn> y_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
+            shared_ptr<RateRelationship> x_im_rate = std::make_shared<SimpleRateRelationship>(x_rate_fn);
+            {
+                shared_ptr<RateRelationship> y_im_rate = std::make_shared<SimpleRateRelationship>(x_rate_fn);
+            }
+            x_rate_fn->replace(y_rate_fn);
+        }
+  //       Caching::Clear_Caches();
+  //       for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
+  //           BOOST_CHECK_CLOSE(rel.lambda(test_data[i].edp), 2.0 * test_data[i].rate, 0.2);
+  //      }
   }
-        std::cout << "+++++" << std::endl;
 }
 
 
