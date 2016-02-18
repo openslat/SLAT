@@ -136,8 +136,7 @@ namespace SLAT {
         SimpleRateRelationship(std::shared_ptr<DeterministicFn> func);
         ~SimpleRateRelationship() {
             f->remove_callbacks(callback_id);
-        }; /**< Destructor does not need to do
-                                        * anything. */
+        }; /**< Destructor; uninstall callbacks */
         /** 
          * Return the probability of exceeding a given value.
          * 
@@ -198,7 +197,7 @@ namespace SLAT {
         ~CompoundRateRelationship() {
             base_rate->remove_callbacks(base_rate_callback_id);
             dependent_rate->remove_callbacks(dependent_rate_callback_id);
-        }; /**< Destructor; does nothing. */
+        }; /**< Destructor; unregister callbacks */
 
 
         /** 

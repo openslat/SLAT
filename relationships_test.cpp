@@ -293,38 +293,45 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
     }
 
     {
-        shared_ptr<DeterministicFn> new_im_rate_function = std::make_shared<NonLinearHyperbolicLaw>(1221, 29.8, 62.2);
-
-        shared_ptr<RateRelationship> new_im_rate_rel = std::make_shared<SimpleRateRelationship>(new_im_rate_function);
-    
-        shared_ptr<DeterministicFn> new_mu_edp = std::make_shared<PowerLawParametricCurve>(0.1, 1.5);
-
-        shared_ptr<DeterministicFn> new_sigma_edp = std::make_shared<PowerLawParametricCurve>(0.5, 0.0);
-
-        shared_ptr<ProbabilisticFn> new_edp_im_relationship = 
-            std::make_shared<LogNormalFn>(new_mu_edp, LogNormalFn::MEAN_X, new_sigma_edp, LogNormalFn::SIGMA_LN_X);
-
-         CompoundRateRelationship new_rel(new_im_rate_rel, new_edp_im_relationship);
-        {
-            shared_ptr<DeterministicFn> double_im_rate_function = 
-                std::make_shared<NonLinearHyperbolicLaw>(2 * 1221, 29.8, 62.2);
-           im_rate_function->replace(double_im_rate_function);
-           im_rate_function = double_im_rate_function;
+        shared_ptr<DeterministicFn> double_im_rate_function = 
+            std::make_shared<NonLinearHyperbolicLaw>(2 * 1221, 29.8, 62.2);
+        im_rate_function->replace(double_im_rate_function);
+        for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
+            BOOST_CHECK_CLOSE(rel.lambda(test_data[i].edp), 2.0 * test_data[i].rate, 0.2);
        }
-        {
-            shared_ptr<DeterministicFn> x_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
-            shared_ptr<DeterministicFn> y_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
-            shared_ptr<RateRelationship> x_im_rate = std::make_shared<SimpleRateRelationship>(x_rate_fn);
-            {
-                shared_ptr<RateRelationship> y_im_rate = std::make_shared<SimpleRateRelationship>(x_rate_fn);
-            }
-            x_rate_fn->replace(y_rate_fn);
-        }
-  //       Caching::Clear_Caches();
-  //       for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
-  //           BOOST_CHECK_CLOSE(rel.lambda(test_data[i].edp), 2.0 * test_data[i].rate, 0.2);
-  //      }
-  }
+    }
+}
+
+
+BOOST_AUTO_TEST_CASE( Callbacks )
+{
+    /*
+     * Create a two simple relationships, using the same function. Destroy one
+     * by letting it go out of scope, then replace the underlying function. This will cause a memory 
+     * problem if the callbacks for the second function have not been cleaned up correctly.
+     */
+    shared_ptr<DeterministicFn> x_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
+    shared_ptr<DeterministicFn> y_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
+    shared_ptr<RateRelationship> x_im_rate = std::make_shared<SimpleRateRelationship>(x_rate_fn);
+    {
+        shared_ptr<RateRelationship> y_im_rate = std::make_shared<SimpleRateRelationship>(x_rate_fn);
+    }
+    x_rate_fn->replace(y_rate_fn);
+    
+    /*
+     * Do pretty much the same but using compound relationships:
+     */
+    shared_ptr<DeterministicFn> x_mu_edp = std::make_shared<PowerLawParametricCurve>(0.1, 1.5);
+    shared_ptr<DeterministicFn> x_sigma_edp = std::make_shared<PowerLawParametricCurve>(0.5, 0.0);
+    shared_ptr<ProbabilisticFn> x_edp_im_fn = 
+        std::make_shared<LogNormalFn>(x_mu_edp, LogNormalFn::MEAN_LN_X,  x_sigma_edp, LogNormalFn::SIGMA_LN_X);
+    shared_ptr<RateRelationship> x_edp_im_rel = std::make_shared<CompoundRateRelationship>(x_im_rate, x_edp_im_fn); 
+    {
+        shared_ptr<RateRelationship> y_edp_im_rel = std::make_shared<CompoundRateRelationship>(x_im_rate, x_edp_im_fn); 
+    }
+    y_rate_fn->replace(x_rate_fn);
+    x_mu_edp->replace(x_sigma_edp);
+    x_sigma_edp->replace(x_mu_edp);
 }
 
 
