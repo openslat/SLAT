@@ -193,7 +193,6 @@ int main(int argc, char **argv)
         for (int i=1; i < 200; i++) {
             double edp = i / 1000.;
             double loss = component_group.E_loss_EDP(edp);
-            //if (std::isnan(loss)) loss = 0.0;
 
             outfile << setw(10) << edp << setw(12) << loss
                     << setw(12) << component_group.SD_ln_loss_EDP(edp) << endl;
@@ -202,10 +201,13 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "LOSS-EDP table written." << endl;
 
         outfile = ofstream("loss_im.dat");
-        outfile << setw(10) << "IM" << setw(12) << "Loss" << endl;
-        for (int i=0; i < 2500; i++) {
+        outfile << setw(10) << "IM" << setw(12) << "Loss"
+                << setw(12) << "SD(ln)" << endl;
+        for (int i=-1; i < 2500; i++) {
             double im = (i + 1)/ 1000.;
-            outfile << setw(10) << im << setw(12) << component_group.E_loss_IM(im) << endl;
+            if (i < 0) im = 0.0598;
+            outfile << setw(10) << im << setw(12) << component_group.E_loss_IM(im)
+                    << setw(12) << component_group.SD_ln_loss_IM(im) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-IM table written." << endl;

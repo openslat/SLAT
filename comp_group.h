@@ -26,6 +26,7 @@ namespace SLAT {
                   std::shared_ptr<LossFn> loss_fn, int count);
         double E_loss_EDP(double edp);
         double SD_ln_loss_EDP(double edp);
+        double SD_loss_EDP(double edp);
 
         double E_loss_IM(double im);
         double SD_ln_loss_IM(double im);
