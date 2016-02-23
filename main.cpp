@@ -203,13 +203,20 @@ int main(int argc, char **argv)
         outfile = ofstream("loss_im.dat");
         outfile << setw(10) << "IM" << setw(12) << "Loss"
                 << setw(12) << "SD(ln)" << endl;
-        for (int i=-1; i < 2500; i++) {
+        for (int i=0; i < 2500; i++) {
             double im = (i + 1)/ 1000.;
-            if (i < 0) im = 0.0598;
             outfile << setw(10) << im << setw(12) << component_group.E_loss_IM(im)
                     << setw(12) << component_group.SD_ln_loss_IM(im) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-IM table written." << endl;
+
+        std::cout << "Expected Annual Loss: " << component_group.E_annual_loss() << std::endl;
+        
+        outfile = ofstream("annual_loss.dat");
+        outfile << setw(10) << "Year" << setw(12) << "Loss" << endl;
+        for (int year=0; year <= 100; year++) {
+            outfile << setw(10) << year << setw(12) << component_group.E_loss(year, 0.06) << endl;
+        }
     }
 }
