@@ -83,7 +83,7 @@ namespace SLAT {
         if (result.successful) {
             return result.integral;
         } else {
-            return 0; //NAN;
+            return 0; //NAN;;
         };
     }
 
@@ -122,7 +122,7 @@ namespace SLAT {
             double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
             return sigma_lnx;
         } else {
-            return 0; //NAN;
+            return 0; //NAN;;
         };
     };
 
@@ -138,7 +138,7 @@ namespace SLAT {
         if (result.successful) {
             return result.integral;
         } else {
-            return 0; //NAN;
+            return 0; //NAN;;
         }
     }
     double CompGroup::E_loss(int years, double discount_rate)
@@ -146,4 +146,22 @@ namespace SLAT {
         return ((1.0 - exp(-discount_rate * years)) / discount_rate) * E_annual_loss();
     }
     
+
+    double CompGroup::lambda_loss(double loss) 
+    {
+        Integration::MAQ_RESULT result;
+        result = Integration::MAQ(
+            [this, loss] (double im) -> double {
+                double mean_x = E_loss_IM(im);
+                double sd_ln_x = SD_ln_loss_IM(im);
+                LogNormalDist ln_fn = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mean_x, sd_ln_x);
+                
+                return ln_fn.p_at_least(loss) * std::abs(edp->Base_Rate()->DerivativeAt(im));
+            }, local_settings);
+        if (result.successful) {
+            return result.integral;
+        } else {
+            return 0; //NAN;
+        }
+    }
 }

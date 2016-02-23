@@ -251,7 +251,7 @@ namespace SLAT {
                 double q2 = r2 + r3;
 
                 double abserr = std::abs(q2 - q1);
-                if (abserr < std::abs(tol * q2) || abserr < std::abs(tol * integral)) {
+                if (abserr <= std::abs(tol * q2) || abserr <= std::abs(tol * integral)) {
                     integral = integral + q2 + (q2 - q1)/15;
                 } else if (std::abs(r2) > std::abs(r3)) {
                     // cout << "Push: " << c << ", " << b << ", " << e << "; " 

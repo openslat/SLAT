@@ -33,6 +33,7 @@ namespace SLAT {
 
         double E_annual_loss(void);
         double E_loss(int years, double discount_rate);
+        double lambda_loss(double loss);
         ~CompGroup() {};
         Integration::IntegrationSettings local_settings;
         static Integration::IntegrationSettings class_settings;
