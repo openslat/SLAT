@@ -17,38 +17,6 @@
 #include "maq.h"
 
 namespace SLAT {
-    namespace Caching {
-        /**
-         * Maintaina map of all cached functions, so we can clear all caches
-         * with a single function call (e.g., when changing the integration
-         * method or parameters).
-         */
-        std::unordered_map<void *, std::function<void (void)>> caches;
-        
-        /**
-         * Add a cached function to the list.
-         */
-        void Add_Cache(void *cache, std::function<void (void)> clear_func) {
-            caches[cache] = clear_func;
-        }
-
-        /**
-         * Remove a cached function from the list.
-         */
-        void Remove_Cache(void *cache) {
-            caches.erase(cache);
-        }
-
-        /**
-         * Clear all (registered) function caches.
-         */
-        void Clear_Caches(void) {
-            for (auto it=caches.begin(); it != caches.end(); it++) {
-                it->second();
-            }
-        }
-    };
-        
     Integration::IntegrationSettings RateRelationship::class_settings(
         Integration::IntegrationSettings::Get_Global_Settings());
 

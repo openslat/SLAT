@@ -11,16 +11,18 @@ LDFLAGS=-lgsl -lgslcblas -lm -lboost_log -lboost_thread -lboost_system -lpthread
 #LDFLAGS+=-Wl,-rpath,.
 
 LIBSRCS=functions.cpp relationships.cpp maq.cpp fragility.cpp lognormaldist.cpp loss_functions.cpp \
-	comp_group.cpp 
+	comp_group.cpp caching.cpp
 LIBOBJS=$(LIBSRCS:.cpp=.o)
 
 UNIT_SRCS = unit_test.cpp functions_test.cpp relationships_test.cpp maq_test.cpp \
 	fragility_test.cpp lognormaldist_test.cpp comp_group_test.cpp
 UNIT_OBJS = $(UNIT_SRCS:.cpp=.o)
 
+caching.o: caching.cpp caching.h 
+	g++ -c $(CFLAGS) -o $@ $<
 functions.o: functions.cpp functions.h replaceable.h
 	g++ -c $(CFLAGS) -o $@ $<
-relationships.o: relationships.cpp relationships.h functions.h maq.h replaceable.h
+relationships.o: relationships.cpp relationships.h functions.h maq.h replaceable.h caching.h
 	g++ -c $(CFLAGS) -o $@ $<
 maq.o: maq.cpp maq.h 
 	g++ -c $(CFLAGS) -o $@ $<
@@ -32,7 +34,7 @@ loss_functions.o: loss_functions.cpp loss_functions.h
 	g++ -c $(CFLAGS) -o $@ $<
 comp_group.o: comp_group.cpp comp_group.h 
 	g++ -c $(CFLAGS) -o $@ $<
-libslat.so: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_functions.o comp_group.o
+libslat.so: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_functions.o comp_group.o caching.o
 	g++ -fPIC -shared -Wl,-soname,libslat.so -o libslat.so $(LIBOBJS) ${LDFLAGS}
 
 main.o: main.cpp functions.h relationships.h maq.h libslat.so replaceable.h fragility.h lognormaldist.h loss_functions.h

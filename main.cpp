@@ -200,7 +200,7 @@ int main(int argc, char **argv)
         outfile.close();
         BOOST_LOG(logger) << "LOSS-EDP table written." << endl;
 
-        outfile = ofstream("loss_im.dat");
+        outfile.open("loss_im.dat");
         outfile << setw(10) << "IM" << setw(12) << "Loss"
                 << setw(12) << "SD(ln)" << endl;
         for (int i=0; i < 250; i++) {
@@ -213,7 +213,7 @@ int main(int argc, char **argv)
 
         std::cout << "Expected Annual Loss: " << component_group.E_annual_loss() << std::endl;
         
-        outfile = ofstream("annual_loss.dat");
+        outfile.open("annual_loss.dat");
         outfile << setw(10) << "Year" << setw(12) << "Loss" << endl;
         for (int year=0; year <= 100; year++) {
             outfile << setw(10) << year << setw(12) << component_group.E_loss(year, 0.06) << endl;
@@ -221,7 +221,7 @@ int main(int argc, char **argv)
         outfile.close();
         BOOST_LOG(logger) << "annual loss table written." << endl;
 
-        outfile = ofstream("loss_rate.dat");
+        outfile.open("loss_rate.dat");
         outfile << setw(10) << "Loss" << setw(12) << "Rate" << std::endl;
         for (int i=0; i < 250; i++) {
             double loss = 1E-4 + i * (1.2 - 1E-4) / 250;
