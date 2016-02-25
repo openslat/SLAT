@@ -19,32 +19,61 @@ namespace SLAT {
                          std::shared_ptr<FragilityFn> frag_fn, 
                          std::shared_ptr<LossFn> loss_fn,
                          int count)
+        : loss_EDP_dist([this] (double edp) {
+                return LogNormalDist::AddWeightedDistributions(this->loss_fn->LossFns(), 
+                                                               this->frag_fn->pHighest(edp)); 
+            }, true)//,
+          // E_loss_IM([this] (double im) {
+          //         return this->E_loss_IM_calc(im);
+          //     }, true)//,
+          // SD_ln_loss_IM([this] (double im) {
+          //         return this->SD_ln_loss_IM_calc(im);
+          //     }, true),
+          // E_annual_loss([this] (void) {
+          //         return this->E_annual_loss();
+          //     }),
+          // lambda_loss([this] (double loss) {
+          //         return this->lambda_loss_calc(loss);
+          //     }, true)
     {
         this->edp = edp;
         this->frag_fn = frag_fn;
         this->loss_fn = loss_fn;
         this->count = count;
+
+        E_loss_IM.func = [this] (double im) {
+            return this->E_loss_IM_calc(im);
+        };
+        E_loss_IM.cache_active = true;
+        
+        SD_ln_loss_IM.func = [this] (double im) {
+            return this->SD_ln_loss_IM_calc(im);
+        };
+        SD_ln_loss_IM.cache_active = true;
+
+        E_annual_loss.func = [this] (void) {
+            return this->E_annual_loss_calc();
+        };
+
+        lambda_loss.func = [this] (double loss) {
+            return this->lambda_loss_calc(loss);
+        };
+        lambda_loss.cache_active = true;
     };
 
     double CompGroup::E_loss_EDP(double edp)
     {
-        LogNormalDist ln_fn = LogNormalDist::AddWeightedDistributions(
-            loss_fn->LossFns(), frag_fn->pHighest(edp));
-        return ln_fn.get_mean_X();
+        return loss_EDP_dist(edp).get_mean_X();
     }
 
     double CompGroup::SD_ln_loss_EDP(double edp)
     {
-        LogNormalDist ln_fn = LogNormalDist::AddWeightedDistributions(
-            loss_fn->LossFns(), frag_fn->pHighest(edp));
-        return ln_fn.get_sigma_lnX();
+        return loss_EDP_dist(edp).get_sigma_lnX();
     }
 
     double CompGroup::SD_loss_EDP(double edp)
     {
-        LogNormalDist ln_fn = LogNormalDist::AddWeightedDistributions(
-            loss_fn->LossFns(), frag_fn->pHighest(edp));
-        return ln_fn.get_sigma_X();
+        return loss_EDP_dist(edp).get_sigma_X();
     }
 
     static double wrapper(double x,  std::function<double (double)> *f)
@@ -52,7 +81,7 @@ namespace SLAT {
         return (*f)(x);
     }
 
-    double CompGroup::E_loss_IM(double im)
+    double CompGroup::E_loss_IM_calc(double im)
     {
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
@@ -87,7 +116,7 @@ namespace SLAT {
         };
     }
 
-    double CompGroup::SD_ln_loss_IM(double im)
+    double CompGroup::SD_ln_loss_IM_calc(double im)
     {
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
@@ -126,7 +155,7 @@ namespace SLAT {
         };
     };
 
-    double CompGroup::E_annual_loss(void)
+    double CompGroup::E_annual_loss_calc(void)
     {
         Integration::MAQ_RESULT result;
         result = Integration::MAQ(
@@ -147,7 +176,7 @@ namespace SLAT {
     }
     
 
-    double CompGroup::lambda_loss(double loss) 
+    double CompGroup::lambda_loss_calc(double loss) 
     {
         Integration::MAQ_RESULT result;
         result = Integration::MAQ(

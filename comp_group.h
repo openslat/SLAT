@@ -16,6 +16,7 @@
 #include "relationships.h"
 #include "fragility.h"
 #include "loss_functions.h"
+#include "caching.h"
 
 namespace SLAT {
     class CompGroup {
@@ -28,20 +29,27 @@ namespace SLAT {
         double SD_ln_loss_EDP(double edp);
         double SD_loss_EDP(double edp);
 
-        double E_loss_IM(double im);
-        double SD_ln_loss_IM(double im);
-
-        double E_annual_loss(void);
-        double E_loss(int years, double discount_rate);
-        double lambda_loss(double loss);
         ~CompGroup() {};
         Integration::IntegrationSettings local_settings;
         static Integration::IntegrationSettings class_settings;
+        
+        Caching::CachedFunction<double, double> E_loss_IM;
+        Caching::CachedFunction<double, double> SD_ln_loss_IM;
+        Caching::CachedValue<double> E_annual_loss;
+        Caching::CachedFunction<double, double> lambda_loss;
+        Caching::CachedFunction<LogNormalDist, double> loss_EDP_dist;
+        double E_loss(int years, double discount_rate);
     private:
         std::shared_ptr<CompoundRateRelationship> edp;
         std::shared_ptr<FragilityFn> frag_fn;
         std::shared_ptr<LossFn> loss_fn;
         int count;
+
+        double E_loss_IM_calc(double im);
+        double SD_ln_loss_IM_calc(double im);
+
+        double E_annual_loss_calc(void);
+        double lambda_loss_calc(double loss);
     };
 }
 #endif
