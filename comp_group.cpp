@@ -19,46 +19,28 @@ namespace SLAT {
                          std::shared_ptr<FragilityFn> frag_fn, 
                          std::shared_ptr<LossFn> loss_fn,
                          int count)
-        : loss_EDP_dist([this] (double edp) {
-                return LogNormalDist::AddWeightedDistributions(this->loss_fn->LossFns(), 
-                                                               this->frag_fn->pHighest(edp)); 
-            }, true)//,
-          // E_loss_IM([this] (double im) {
-          //         return this->E_loss_IM_calc(im);
-          //     }, true)//,
-          // SD_ln_loss_IM([this] (double im) {
-          //         return this->SD_ln_loss_IM_calc(im);
-          //     }, true),
-          // E_annual_loss([this] (void) {
-          //         return this->E_annual_loss();
-          //     }),
-          // lambda_loss([this] (double loss) {
-          //         return this->lambda_loss_calc(loss);
-          //     }, true)
+        :E_loss_IM([this] (double im) {
+                return this->E_loss_IM_calc(im);
+            }, true),
+          SD_ln_loss_IM([this] (double im) {
+                  return this->SD_ln_loss_IM_calc(im);
+              }, true),
+          E_annual_loss([this] (void) {
+
+                  return this->E_annual_loss_calc();
+              }),
+          lambda_loss([this] (double loss) {
+                  return this->lambda_loss_calc(loss);
+              }, true),
+          loss_EDP_dist([this] (double edp) {
+                  return LogNormalDist::AddWeightedDistributions(this->loss_fn->LossFns(), 
+                                                                 this->frag_fn->pHighest(edp)); 
+              }, true),
+         edp(edp),
+         frag_fn(frag_fn),
+         loss_fn(loss_fn),
+         count(count)
     {
-        this->edp = edp;
-        this->frag_fn = frag_fn;
-        this->loss_fn = loss_fn;
-        this->count = count;
-
-        E_loss_IM.func = [this] (double im) {
-            return this->E_loss_IM_calc(im);
-        };
-        E_loss_IM.cache_active = true;
-        
-        SD_ln_loss_IM.func = [this] (double im) {
-            return this->SD_ln_loss_IM_calc(im);
-        };
-        SD_ln_loss_IM.cache_active = true;
-
-        E_annual_loss.func = [this] (void) {
-            return this->E_annual_loss_calc();
-        };
-
-        lambda_loss.func = [this] (double loss) {
-            return this->lambda_loss_calc(loss);
-        };
-        lambda_loss.cache_active = true;
     };
 
     double CompGroup::E_loss_EDP(double edp)

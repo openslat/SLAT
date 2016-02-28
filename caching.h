@@ -56,7 +56,7 @@ namespace SLAT {
         };
 
         template <class T> class CachedValue {
-        public:
+        private:
             std::function<T (void)> func;
             T cached_value;
             bool cache_valid;
