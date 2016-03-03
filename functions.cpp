@@ -304,6 +304,9 @@ namespace SLAT {
                 return exp(this->mean_lnX(x) + this->sigma_lnX(x) * this->sigma_lnX(x) /2);
             };
             break;
+        case MEAN_INVALID:
+        default:
+            throw std::invalid_argument("MEAN");
         };
         
         switch (s_type) {
@@ -321,6 +324,9 @@ namespace SLAT {
                 return sqrt(log(1.0 + (sd * sd)/(mean * mean))); 
             };
             break;
+        case SIGMA_INVALID:
+        default:
+            throw std::invalid_argument("SIGMA");
         };
     }
 

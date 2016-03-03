@@ -400,8 +400,8 @@ namespace SLAT {
         std::function<double (double)> mean_X, mean_lnX, median_X, sigma_X, sigma_lnX;
         LogNormalDist distribution(double x) const;
     public:
-        typedef enum { MEAN_X, MEAN_LN_X, MEDIAN_X } M_TYPE;
-        typedef enum { SIGMA_X, SIGMA_LN_X } S_TYPE;
+        typedef enum { MEAN_INVALID, MEAN_X, MEAN_LN_X, MEDIAN_X } M_TYPE;
+        typedef enum { SIGMA_INVALID, SIGMA_X, SIGMA_LN_X } S_TYPE;
         
         /** 
          * Constructor for a log-normal probabilistic function.

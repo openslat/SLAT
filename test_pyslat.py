@@ -4,6 +4,7 @@
 
 # Import the pyslat library, and other libraries needed to plot 
 # the results:
+import os
 import pyslat
 import matplotlib.pyplot as plt
 import numpy as np
@@ -13,33 +14,54 @@ import numpy as np
 im = pyslat.factory(pyslat.FUNCTION_TYPE.NLH, [1221, 29.8, 62.2])
 im_rate = pyslat.MakeSimpleRelationship(im)
 
-# Use the numpy and matplotlib libraries to reproduce the IM-Rate
-# diagram from example 1:
-t = np.arange(0.0, 1.001, 0.001)
-s = list(map(im_rate.getlambda, t))
-plt.loglog(t, s)
-plt.xlabel('IM (PGA)')
-plt.ylabel('Probability of Exceedence')
-plt.title('IM-Rate Relation')
-plt.grid(True)
-plt.savefig("im-rate.png")
-plt.show()
+old_slat_path = os.path.expanduser("~") + "/Downloads/SLATv1.15_Public/example1_output_gcc/"
+if True:
+    im_rate_GCC = np.loadtxt(old_slat_path + "example1_IM-rate-1", skiprows=3, unpack=True)
+    old_slat_line, = plt.loglog(im_rate_GCC[0], im_rate_GCC[1])
+    old_slat_line.set_label("Old SLAT")
+    old_slat_line.set_linewidth(1)
+
+    # Use the numpy and matplotlib libraries to reproduce the IM-Rate
+    # diagram from example 1:
+    t = np.arange(0.0, 1.001, 0.001)
+    s = list(map(im_rate.getlambda, t))
+    pyslat_line, = plt.loglog(t, s)
+    pyslat_line.set_label("pyslat")
+    pyslat_line.set_linewidth(6)
+    pyslat_line.set_linestyle(":")
+    plt.xlabel('IM (PGA)')
+    plt.ylabel('Probability of Exceedence')
+    plt.title('IM-Rate Relation')
+    plt.grid(True)
+    plt.savefig("im-rate.png")
+    plt.legend()
+    plt.show()
 
 
 # Create power law functions, and combine them into a lognormal probabilistic
 # function, representing the EDP-IM relation from example 1:
 edp_mu = pyslat.factory(pyslat.FUNCTION_TYPE.PLC, [0.1, 1.5])
 edp_sigma = pyslat.factory(pyslat.FUNCTION_TYPE.PLC, [0.5, 0.0])
-edp_im = pyslat.MakeLogNormalProbabilisticFunction(edp_mu, edp_sigma)
+edp_im = pyslat.new_MakeLogNormalProbabilisticFn({pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:edp_mu,
+                                                  pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:edp_sigma} )
+
+edp_im_GCC = np.loadtxt(old_slat_path + "example1_EDP-IM-1", skiprows=3, unpack=True)
+old_slat_line, = plt.plot(edp_im_GCC[0], edp_im_GCC[1])
+old_slat_line.set_label("Old SLAT (mean)")
+old_slat_line.set_linewidth(1)
 
 # Use the numpy and matplotlib libraries to reproduce the EDP-IM relationship
 # diagram from example 1:
 t = np.arange(0.0, 2.51, 0.01)
 s50 = list(map(edp_im.X_at_exceedence, t, map(lambda x:0.50, t)))
+smean = list(map(edp_im.Mean, t))
 s16 = list(map(edp_im.X_at_exceedence, t, map(lambda x:0.16, t)))
 s84 = list(map(edp_im.X_at_exceedence, t, map(lambda x:0.84, t)))
 plt.plot(t, s16, 'k--', label='16%')
 plt.plot(t, s50, 'k:', label='50%')
+pyslat_line, = plt.plot(t, smean, 'k:', label='Mean')
+pyslat_line.set_linewidth(6)
+pyslat_line.set_linestyle(":")
 plt.plot(t, s84, 'k', label='84%')
 legend=plt.legend(loc='upper center', shadow=True)
 legend.get_frame().set_facecolor('#00FFCC')
@@ -53,6 +75,10 @@ plt.show()
 # Use the functions defined above to describe the relationship between EDP and
 # rate:
 edp_rate = pyslat.MakeCompoundRelationship(im_rate, edp_im)
+edp_rate_GCC = np.loadtxt(old_slat_path + "example1_EDP-rate-1", skiprows=3, unpack=True)
+old_slat_line, = plt.loglog(edp_rate_GCC[0], edp_rate_GCC[1])
+old_slat_line.set_label("Old SLAT (mean)")
+old_slat_line.set_linewidth(1)
 
 # Finally, use the numpy and matplotlib libraries to reproduce the EDP-Rate
 # relationship diagram from example 1:
@@ -62,9 +88,13 @@ plt.xlabel('EDP (Deck Drift)')
 plt.ylabel('Probability of Exceedence')
 plt.title('EDP-Rate Relationship')
 plt.grid(True)
-plt.loglog(t, s)
+pyslat_line, = plt.loglog(t, s, label="pyslat")
+pyslat_line.set_linewidth(6)
+pyslat_line.set_linestyle(":")
 plt.xticks([0.001, 0.005, 0.01, 0.05, 0.10, 0.15], ["0.1%", "0.5%", "1%", "5%", "10%", "15%"])
 plt.axis([0.0, 0.15, 1E-5, 1E-1])
+legend=plt.legend(loc='upper center', shadow=True)
+legend.get_frame().set_facecolor('#00FFCC')
 plt.savefig("edp-rate.png")
 plt.show()
 

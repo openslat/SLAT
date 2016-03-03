@@ -11,6 +11,7 @@
  */
 #include <memory>
 #include <boost/python.hpp>
+#include <boost/python/stl_iterator.hpp>
 #include <string>
 #include "functions.h"
 #include "relationships.h"
@@ -36,6 +37,7 @@ namespace SLAT {
     };
 
     enum FUNCTION_TYPE { NLH, PLC, LIN, LOGLOG };
+    enum LOGNORMAL_PARAM_TYPE { MEAN_X, MEDIAN_X, MEAN_LN_X, SD_X, SD_LN_X };
     
     DeterministicFnWrapper *factory(FUNCTION_TYPE t, python::list params)
     {
@@ -115,19 +117,102 @@ namespace SLAT {
         double X_at_exceedence(double x, double p) {
             return function->X_at_exceedence(x, p);
         };
+
+        double Mean(double x) {
+            return function->Mean(x);
+        };
         std::shared_ptr<ProbabilisticFn> function;
     private:
     };
 
     ProbabilisticFnWrapper *MakeLogNormalProbabilisticFn(
-        DeterministicFnWrapper mu,
-        DeterministicFnWrapper sigma)
+        DeterministicFnWrapper mu, LOGNORMAL_PARAM_TYPE placement,
+        DeterministicFnWrapper sigma, LOGNORMAL_PARAM_TYPE spread)
     {
         std::shared_ptr<ProbabilisticFn> function(
             new LogNormalFn(
-                std::shared_ptr<DeterministicFn>(mu.function), LogNormalFn::MEAN_LN_X, 
+                std::shared_ptr<DeterministicFn>(mu.function), LogNormalFn::MEDIAN_X, 
                 std::shared_ptr<DeterministicFn>(sigma.function), LogNormalFn::SIGMA_LN_X));
         return new ProbabilisticFnWrapper(function);
+    };
+
+    ProbabilisticFnWrapper *new_MakeLogNormalProbabilisticFn(python::dict parameters)
+    {
+        // std::shared_ptr<ProbabilisticFn> function(
+        //     new LogNormalFn(
+        //         std::shared_ptr<DeterministicFn>(MEAN_X.function), LogNormalFn::MEDIAN_X, 
+        //         std::shared_ptr<DeterministicFn>(SD_X.function), LogNormalFn::SIGMA_LN_X));
+        // return new ProbabilisticFnWrapper(function);
+
+        // Check for valid parameters:
+        int num_placements = parameters.keys().count(LOGNORMAL_PARAM_TYPE::MEAN_X) + 
+            parameters.keys().count(LOGNORMAL_PARAM_TYPE::MEDIAN_X) +
+            parameters.keys().count(LOGNORMAL_PARAM_TYPE::MEAN_LN_X);
+        int num_spreads = parameters.keys().count(LOGNORMAL_PARAM_TYPE::SD_X) + 
+            parameters.keys().count(LOGNORMAL_PARAM_TYPE::SD_LN_X);
+
+        
+        if (num_placements == 0) {
+            std::cerr << "Must have at least one placement parameter." << std::endl;
+            return (ProbabilisticFnWrapper *)0;
+        } else if (num_placements > 1) {
+            std::cerr << "Must have only one placement parameter." << std::endl;
+            return (ProbabilisticFnWrapper *)0;
+        }
+
+        if (num_spreads == 0) {
+            std::cerr << "Must have at least one spread parameter." << std::endl;
+            return (ProbabilisticFnWrapper *)0;
+        } else if (num_spreads > 1) {
+            std::cerr << "Must have only one spread parameter." << std::endl;
+            return (ProbabilisticFnWrapper *)0;
+        }
+        
+        LogNormalFn::M_TYPE m_type = LogNormalFn::M_TYPE::MEAN_INVALID;
+        LogNormalFn::S_TYPE s_type = LogNormalFn::S_TYPE::SIGMA_INVALID;
+        DeterministicFnWrapper mu_function, sigma_function;
+        {
+            python::stl_input_iterator<int> iter(parameters.keys());
+            while (iter != python::stl_input_iterator<int>()) {
+                python::object key(*iter);
+                python::object value = parameters.get(key);
+
+                if (!value.is_none()) {
+                    DeterministicFnWrapper fn = python::extract<DeterministicFnWrapper>(value);
+                    switch (*iter) {
+                    case LOGNORMAL_PARAM_TYPE::MEAN_X:
+                        m_type = LogNormalFn::M_TYPE::MEAN_X;
+                        mu_function = fn;
+                        break;
+                    case LOGNORMAL_PARAM_TYPE::MEDIAN_X:
+                        m_type = LogNormalFn::M_TYPE::MEDIAN_X;
+                        mu_function = fn;
+                        break;
+                    case LOGNORMAL_PARAM_TYPE::MEAN_LN_X:
+                        m_type = LogNormalFn::M_TYPE::MEAN_LN_X;
+                        mu_function = fn;
+                        break;
+                    case LOGNORMAL_PARAM_TYPE::SD_X:
+                        s_type = LogNormalFn::S_TYPE::SIGMA_X;
+                        sigma_function = fn;
+                        break;
+                    case LOGNORMAL_PARAM_TYPE::SD_LN_X:
+                        s_type = LogNormalFn::S_TYPE::SIGMA_LN_X;
+                        sigma_function = fn;
+                        break;
+                    default:
+                        std::cout << "----INVALID----" << std::endl;
+                    };
+                    std::cout << *iter << " --> " << *fn.function << std::endl;
+                }
+                iter++;
+            }
+            std::shared_ptr<ProbabilisticFn> function(
+                new LogNormalFn(
+                    std::shared_ptr<DeterministicFn>(mu_function.function), m_type,
+                    std::shared_ptr<DeterministicFn>(sigma_function.function), s_type));
+            return new ProbabilisticFnWrapper(function);
+        }
     };
 
     class RateRelationshipWrapper {
@@ -186,9 +271,14 @@ namespace SLAT {
                     MakeLogNormalProbabilisticFn,
                     python::return_value_policy<python::manage_new_object>());
 
+        python::def("new_MakeLogNormalProbabilisticFn",
+                    new_MakeLogNormalProbabilisticFn, 
+                    python::return_value_policy<python::manage_new_object>());
+
         python::class_<ProbabilisticFnWrapper>("ProbabilisticFn", python::no_init)
             .def("P_exceedence", &ProbabilisticFnWrapper::P_exceedence)
             .def("X_at_exceedence", &ProbabilisticFnWrapper::X_at_exceedence)
+            .def("Mean", &ProbabilisticFnWrapper::Mean)
             ;
 
         python::def("MakeSimpleRelationship",
@@ -208,6 +298,14 @@ namespace SLAT {
             .value("PLC", PLC)
             .value("LIN", LIN)
             .value("LOGLOG", LOGLOG)
+            ;
+
+        python::enum_<LOGNORMAL_PARAM_TYPE>("LOGNORMAL_PARAM_TYPE")
+            .value("MEAN_X", MEAN_X)
+            .value("MEDIAN_X", MEDIAN_X)
+            .value("MEAN_LN_X", MEAN_LN_X)
+            .value("SD_X", SD_X)
+            .value("SD_LN_X", SD_LN_X)
             ;
     }
 }
