@@ -118,8 +118,30 @@ print("SIGMA_X: ", SIGMA_X, " --> ", dist.get_sigma_X())
 
 
 fragility = pyslat.MakeFragilityFn([
-    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X: 0.0062, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
-    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X: 0.0230, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
-    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X: 0.0440, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
-    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X: 0.0564, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4}])
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 0.0062, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 0.0230, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 0.0440, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 0.0564, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4}])
+
+
+edp_data = list()
+fragility_data = list()
+for i in range(fragility.n_states()):
+    fragility_data.append(list())
+    
+for i in range(200):
+    edp =  i / 1000.
+    edp_data.append(edp)
+    data = fragility.pExceeded(edp)
+    for j in range(len(data)):
+        fragility_data[j].append(data[j])
+
+for i in fragility_data:
+    plt.plot(edp_data, i)
+plt.xlabel('EDP')
+plt.ylabel('Probability')
+plt.title('Fragility Functions')
+plt.grid(True)
+plt.savefig("fragility.png")
+plt.show()
 

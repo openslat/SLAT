@@ -203,7 +203,6 @@ namespace SLAT {
                     default:
                         throw std::invalid_argument("INVALID");
                     };
-                    std::cout << *iter << " --> " << *fn.function << std::endl;
                 }
                 iter++;
             }
@@ -279,8 +278,6 @@ namespace SLAT {
 
     LogNormalDistWrapper *MakeLogNormalDist(python::dict parameters)
     {
-        std::cout << "MakeLogNormalDist: ";
-        
         LogNormalFn::M_TYPE m_type = LogNormalFn::M_TYPE::MEAN_INVALID;
         LogNormalFn::S_TYPE s_type = LogNormalFn::S_TYPE::SIGMA_INVALID;
         double mu_param, sigma_param;
@@ -357,7 +354,6 @@ namespace SLAT {
             throw std::invalid_argument("mu, sigma combination not supported");
         }
 
-        std::cout << "[" << m_type << ": " << mu_param << "; " << s_type << ": " << sigma_param << "]" << std::endl;
         return new LogNormalDistWrapper(dist);
     };
 
@@ -365,21 +361,43 @@ namespace SLAT {
     class FragilityFnWrapper {
     public:
         FragilityFnWrapper(std::shared_ptr<FragilityFn> function) { fragility = function; }
+        python::list pExceeded(double edp);
+        python::list pHighest(double edp);
+        int n_states() { return fragility->n_states(); };
     private:
         std::shared_ptr<FragilityFn> fragility;
     };
+
+    python::list FragilityFnWrapper::pExceeded(double edp)
+    {
+        std::vector<double> probabilities = fragility->pExceeded(edp);
+        python::list result;
+        for (std::vector<double>::iterator i = probabilities.begin(); i != probabilities.end(); i++) {
+            result.append(*i);
+        }
+        return result;
+    }
+
+    python::list FragilityFnWrapper::pHighest(double edp)
+    {
+        std::vector<double> probabilities = fragility->pHighest(edp);
+        python::list result;
+        for (std::vector<double>::iterator i = probabilities.begin(); i != probabilities.end(); i++) {
+            result.append(*i);
+        }
+        return result;
+    }
 
     FragilityFnWrapper *MakeFragilityFn(python::list parameters)
     {
         std::vector<LogNormalDist> distributions;
 
-        std::cout << "MakeFragilityFn()" << std::endl;
         python::stl_input_iterator<python::dict> iter(parameters), end;
         while (iter != end) {
             distributions.push_back(*MakeLogNormalDist(*iter)->dist);
             iter++;
         }
-        return (FragilityFnWrapper *)0;
+        return new FragilityFnWrapper(std::make_shared<FragilityFn>(distributions));
     }
 
 
@@ -443,6 +461,12 @@ namespace SLAT {
             .def("get_mean_X", &LogNormalDistWrapper::get_mean_X)
             .def("get_sigma_lnX", &LogNormalDistWrapper::get_sigma_lnX)
             .def("get_sigma_X", &LogNormalDistWrapper::get_sigma_X)
+            ;
+
+        python::class_<FragilityFnWrapper>("FragilityFn", python::no_init)
+            .def("pExceeded", &FragilityFnWrapper::pExceeded)
+            .def("pHighest", &FragilityFnWrapper::pHighest)
+            .def("n_states", &FragilityFnWrapper::n_states)
             ;
 
         python::def("MakeFragilityFn", 
