@@ -8,6 +8,7 @@ import os
 import pyslat
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 
 # Create a non-linear hyperbolic function, as used in example 1, and use it as
 # the base function for an IM-Rate relationship:
@@ -42,7 +43,7 @@ if True:
 # function, representing the EDP-IM relation from example 1:
 edp_mu = pyslat.factory(pyslat.FUNCTION_TYPE.PLC, [0.1, 1.5])
 edp_sigma = pyslat.factory(pyslat.FUNCTION_TYPE.PLC, [0.5, 0.0])
-edp_im = pyslat.new_MakeLogNormalProbabilisticFn({pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:edp_mu,
+edp_im = pyslat.MakeLogNormalProbabilisticFn({pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:edp_mu,
                                                   pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:edp_sigma} )
 
 edp_im_GCC = np.loadtxt(old_slat_path + "example1_EDP-IM-1", skiprows=3, unpack=True)
@@ -97,5 +98,23 @@ legend=plt.legend(loc='upper center', shadow=True)
 legend.get_frame().set_facecolor('#00FFCC')
 plt.savefig("edp-rate.png")
 plt.show()
+
+
+# Make a LogNormalDistribution, as part of developing the class interface:
+dist = pyslat.MakeLogNormalDist({pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X: 10.0,
+                                 pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:1.5})
+
+MU_LN_X = 10.0
+SIGMA_LN_X = 1.5
+MEDIAN_X = math.exp(MU_LN_X)
+MEAN_X = math.exp(MU_LN_X + SIGMA_LN_X * SIGMA_LN_X / 2.0)
+SIGMA_X = MEAN_X * math.sqrt(math.exp(SIGMA_LN_X * SIGMA_LN_X) - 1.0)
+
+print("MU_LN_X: ", MU_LN_X, " --> ", dist.get_mu_lnX())
+print("SIGMA_LN_X: " , SIGMA_LN_X, " --> ", dist.get_sigma_lnX())
+print("MEDIAN_X: ", MEDIAN_X, " --> ", dist.get_median_X())
+print("MEAN_X: ", MEAN_X, " --> ", dist.get_mean_X())
+print("SIGMA_X: ", SIGMA_X, " --> ", dist.get_sigma_X())
+
 
 

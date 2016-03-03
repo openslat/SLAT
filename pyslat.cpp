@@ -15,6 +15,7 @@
 #include <string>
 #include "functions.h"
 #include "relationships.h"
+#include "lognormaldist.h"
 #include <iostream>
 using namespace SLAT;
 
@@ -125,25 +126,8 @@ namespace SLAT {
     private:
     };
 
-    ProbabilisticFnWrapper *MakeLogNormalProbabilisticFn(
-        DeterministicFnWrapper mu, LOGNORMAL_PARAM_TYPE placement,
-        DeterministicFnWrapper sigma, LOGNORMAL_PARAM_TYPE spread)
+    ProbabilisticFnWrapper *MakeLogNormalProbabilisticFn(python::dict parameters)
     {
-        std::shared_ptr<ProbabilisticFn> function(
-            new LogNormalFn(
-                std::shared_ptr<DeterministicFn>(mu.function), LogNormalFn::MEDIAN_X, 
-                std::shared_ptr<DeterministicFn>(sigma.function), LogNormalFn::SIGMA_LN_X));
-        return new ProbabilisticFnWrapper(function);
-    };
-
-    ProbabilisticFnWrapper *new_MakeLogNormalProbabilisticFn(python::dict parameters)
-    {
-        // std::shared_ptr<ProbabilisticFn> function(
-        //     new LogNormalFn(
-        //         std::shared_ptr<DeterministicFn>(MEAN_X.function), LogNormalFn::MEDIAN_X, 
-        //         std::shared_ptr<DeterministicFn>(SD_X.function), LogNormalFn::SIGMA_LN_X));
-        // return new ProbabilisticFnWrapper(function);
-
         // Check for valid parameters:
         int num_placements = parameters.keys().count(LOGNORMAL_PARAM_TYPE::MEAN_X) + 
             parameters.keys().count(LOGNORMAL_PARAM_TYPE::MEDIAN_X) +
@@ -181,27 +165,42 @@ namespace SLAT {
                     DeterministicFnWrapper fn = python::extract<DeterministicFnWrapper>(value);
                     switch (*iter) {
                     case LOGNORMAL_PARAM_TYPE::MEAN_X:
+                        if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
+                            throw std::invalid_argument("MEAN_X");
+                        } 
                         m_type = LogNormalFn::M_TYPE::MEAN_X;
                         mu_function = fn;
                         break;
                     case LOGNORMAL_PARAM_TYPE::MEDIAN_X:
+                        if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
+                            throw std::invalid_argument("MEAN_INVALID");
+                        } 
                         m_type = LogNormalFn::M_TYPE::MEDIAN_X;
                         mu_function = fn;
                         break;
                     case LOGNORMAL_PARAM_TYPE::MEAN_LN_X:
+                        if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
+                            throw std::invalid_argument("MEAN_LN_X");
+                        } 
                         m_type = LogNormalFn::M_TYPE::MEAN_LN_X;
                         mu_function = fn;
                         break;
                     case LOGNORMAL_PARAM_TYPE::SD_X:
+                        if (s_type != LogNormalFn::S_TYPE::SIGMA_INVALID) {
+                            throw std::invalid_argument("SIGMA_X");
+                        } 
                         s_type = LogNormalFn::S_TYPE::SIGMA_X;
                         sigma_function = fn;
                         break;
                     case LOGNORMAL_PARAM_TYPE::SD_LN_X:
+                        if (s_type != LogNormalFn::S_TYPE::SIGMA_INVALID) {
+                            throw std::invalid_argument("SIGMA_LN_X");
+                        } 
                         s_type = LogNormalFn::S_TYPE::SIGMA_LN_X;
                         sigma_function = fn;
                         break;
                     default:
-                        std::cout << "----INVALID----" << std::endl;
+                        throw std::invalid_argument("INVALID");
                     };
                     std::cout << *iter << " --> " << *fn.function << std::endl;
                 }
@@ -256,6 +255,105 @@ namespace SLAT {
         return result;
     }
 
+    class LogNormalDistWrapper {
+    public:
+        LogNormalDistWrapper(std::shared_ptr<LogNormalDist> dist) { this->dist = dist; };
+        double p_at_least(double x) const { return dist->p_at_least(x); }
+        double p_at_most(double x) const { return dist->p_at_most(x); }
+
+        double x_at_p(double p) const { return dist->x_at_p(p); };
+
+        double get_mu_lnX(void) const { return dist->get_mu_lnX(); }
+        double get_median_X(void) const { return dist->get_median_X(); };
+        double get_mean_X(void) const { return dist->get_mean_X(); }
+        double get_sigma_lnX(void) const {return dist->get_sigma_lnX(); }
+        double get_sigma_X(void) const {return dist->get_sigma_X(); }
+    private:
+        std::shared_ptr<LogNormalDist> dist;
+    };
+
+    LogNormalDistWrapper *MakeLogNormalDist(python::dict parameters)
+    {
+        std::cout << "MakeLogNormalDist" << std::endl;
+        
+        LogNormalFn::M_TYPE m_type = LogNormalFn::M_TYPE::MEAN_INVALID;
+        LogNormalFn::S_TYPE s_type = LogNormalFn::S_TYPE::SIGMA_INVALID;
+        double mu_param, sigma_param;
+        {
+            python::stl_input_iterator<int> iter(parameters.keys());
+            while (iter != python::stl_input_iterator<int>()) {
+                python::object key(*iter);
+                python::object value = parameters.get(key);
+
+                if (!value.is_none()) {
+                    double parameter = python::extract<double>(value);
+                    switch (*iter) {
+                    case LOGNORMAL_PARAM_TYPE::MEAN_X:
+                        if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
+                            throw std::invalid_argument("MEAN_X");
+                        } 
+                        m_type = LogNormalFn::M_TYPE::MEAN_X;
+                        mu_param = parameter;
+                        break;
+                    case LOGNORMAL_PARAM_TYPE::MEDIAN_X:
+                        if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
+                            throw std::invalid_argument("MEDIAN_X");
+                        } 
+                        m_type = LogNormalFn::M_TYPE::MEDIAN_X;
+                        mu_param = parameter;
+                        break;
+                    case LOGNORMAL_PARAM_TYPE::MEAN_LN_X:
+                        if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
+                            throw std::invalid_argument("MEAN_LN_X");
+                        } 
+                        m_type = LogNormalFn::M_TYPE::MEAN_LN_X;
+                        mu_param = parameter;
+                        break;
+                    case LOGNORMAL_PARAM_TYPE::SD_X:
+                        if (s_type != LogNormalFn::S_TYPE::SIGMA_INVALID) {
+                            throw std::invalid_argument("SIGMA_X");
+                        } 
+                        s_type = LogNormalFn::S_TYPE::SIGMA_X;
+                        sigma_param = parameter;
+                        break;
+                    case LOGNORMAL_PARAM_TYPE::SD_LN_X:
+                        if (s_type != LogNormalFn::S_TYPE::SIGMA_INVALID) {
+                            throw std::invalid_argument("SIGMA_LN_X");
+                        } 
+                        s_type = LogNormalFn::S_TYPE::SIGMA_LN_X;
+                        sigma_param = parameter;
+                        break;
+                    default:
+                        throw std::invalid_argument("unknown");
+                    };
+                        }
+                iter++;
+            }
+        };
+        std::shared_ptr<LogNormalDist> dist;
+            
+        if (m_type == LogNormalFn::M_TYPE::MEAN_LN_X &&
+            s_type == LogNormalFn::S_TYPE::SIGMA_LN_X)
+        {
+            dist = std::make_shared<LogNormalDist>(LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(mu_param, sigma_param));
+        } else if (m_type == LogNormalFn::M_TYPE::MEAN_X &&
+            s_type == LogNormalFn::S_TYPE::SIGMA_LN_X)
+        {
+            dist = std::make_shared<LogNormalDist>(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mu_param, sigma_param));
+        } else if (m_type == LogNormalFn::M_TYPE::MEDIAN_X &&
+            s_type == LogNormalFn::S_TYPE::SIGMA_LN_X)
+        {
+            dist = std::make_shared<LogNormalDist>(LogNormalDist::LogNormalDist_from_median_X_and_sigma_lnX(mu_param, sigma_param));
+        } else if (m_type == LogNormalFn::M_TYPE::MEAN_X &&
+            s_type == LogNormalFn::S_TYPE::SIGMA_X)
+        {
+            dist = std::make_shared<LogNormalDist>(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(mu_param, sigma_param));
+        } else {
+            throw std::invalid_argument("mu, sigma combination not supported");
+        }
+
+        return new LogNormalDistWrapper(dist);
+    };
 
 // Python requires an exported function called init<module-name> in every
 // extension module. This is where we build the module contents.
@@ -268,11 +366,7 @@ namespace SLAT {
             ;
 
         python::def("MakeLogNormalProbabilisticFn",
-                    MakeLogNormalProbabilisticFn,
-                    python::return_value_policy<python::manage_new_object>());
-
-        python::def("new_MakeLogNormalProbabilisticFn",
-                    new_MakeLogNormalProbabilisticFn, 
+                    MakeLogNormalProbabilisticFn, 
                     python::return_value_policy<python::manage_new_object>());
 
         python::class_<ProbabilisticFnWrapper>("ProbabilisticFn", python::no_init)
@@ -306,6 +400,21 @@ namespace SLAT {
             .value("MEAN_LN_X", MEAN_LN_X)
             .value("SD_X", SD_X)
             .value("SD_LN_X", SD_LN_X)
+            ;
+
+        python::def("MakeLogNormalDist", 
+                    MakeLogNormalDist,
+                    python::return_value_policy<python::manage_new_object>());
+        
+        python::class_<LogNormalDistWrapper>("LogNormalDist", python::no_init)
+            .def("p_at_least", &LogNormalDistWrapper::p_at_least)
+            .def("p_at_most", &LogNormalDistWrapper::p_at_most)
+            .def("x_at_p", &LogNormalDistWrapper::x_at_p)
+            .def("get_mu_lnX", &LogNormalDistWrapper::get_mu_lnX)
+            .def("get_median_X", &LogNormalDistWrapper::get_median_X)
+            .def("get_mean_X", &LogNormalDistWrapper::get_mean_X)
+            .def("get_sigma_lnX", &LogNormalDistWrapper::get_sigma_lnX)
+            .def("get_sigma_X", &LogNormalDistWrapper::get_sigma_X)
             ;
     }
 }
