@@ -125,18 +125,33 @@ fragility = pyslat.MakeFragilityFn([
 
 
 edp_data = list()
-fragility_data = list()
+fragility_prob = list()
+fragility_high = list()
 for i in range(fragility.n_states()):
-    fragility_data.append(list())
+    fragility_prob.append(list())
+    fragility_high.append(list())
     
 for i in range(200):
     edp =  i / 1000.
     edp_data.append(edp)
     data = fragility.pExceeded(edp)
     for j in range(len(data)):
-        fragility_data[j].append(data[j])
+        fragility_prob[j].append(data[j])
 
-for i in fragility_data:
+    data = fragility.pHighest(edp)
+    for j in range(len(data)):
+        fragility_high[j].append(data[j])
+
+for i in fragility_prob:
+    plt.plot(edp_data, i)
+plt.xlabel('EDP')
+plt.ylabel('Probability')
+plt.title('Fragility Functions')
+plt.grid(True)
+plt.savefig("fragility.png")
+plt.show()
+
+for i in fragility_high:
     plt.plot(edp_data, i)
 plt.xlabel('EDP')
 plt.ylabel('Probability')
