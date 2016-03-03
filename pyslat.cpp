@@ -16,6 +16,7 @@
 #include "functions.h"
 #include "relationships.h"
 #include "lognormaldist.h"
+#include "fragility.h"
 #include <iostream>
 using namespace SLAT;
 
@@ -255,6 +256,9 @@ namespace SLAT {
         return result;
     }
 
+
+    class FragilityFnWrapper;
+    
     class LogNormalDistWrapper {
     public:
         LogNormalDistWrapper(std::shared_ptr<LogNormalDist> dist) { this->dist = dist; };
@@ -270,11 +274,12 @@ namespace SLAT {
         double get_sigma_X(void) const {return dist->get_sigma_X(); }
     private:
         std::shared_ptr<LogNormalDist> dist;
+        friend FragilityFnWrapper *MakeFragilityFn(python::list);
     };
 
     LogNormalDistWrapper *MakeLogNormalDist(python::dict parameters)
     {
-        std::cout << "MakeLogNormalDist" << std::endl;
+        std::cout << "MakeLogNormalDist: ";
         
         LogNormalFn::M_TYPE m_type = LogNormalFn::M_TYPE::MEAN_INVALID;
         LogNormalFn::S_TYPE s_type = LogNormalFn::S_TYPE::SIGMA_INVALID;
@@ -352,8 +357,31 @@ namespace SLAT {
             throw std::invalid_argument("mu, sigma combination not supported");
         }
 
+        std::cout << "[" << m_type << ": " << mu_param << "; " << s_type << ": " << sigma_param << "]" << std::endl;
         return new LogNormalDistWrapper(dist);
     };
+
+
+    class FragilityFnWrapper {
+    public:
+        FragilityFnWrapper(std::shared_ptr<FragilityFn> function) { fragility = function; }
+    private:
+        std::shared_ptr<FragilityFn> fragility;
+    };
+
+    FragilityFnWrapper *MakeFragilityFn(python::list parameters)
+    {
+        std::vector<LogNormalDist> distributions;
+
+        std::cout << "MakeFragilityFn()" << std::endl;
+        python::stl_input_iterator<python::dict> iter(parameters), end;
+        while (iter != end) {
+            distributions.push_back(*MakeLogNormalDist(*iter)->dist);
+            iter++;
+        }
+        return (FragilityFnWrapper *)0;
+    }
+
 
 // Python requires an exported function called init<module-name> in every
 // extension module. This is where we build the module contents.
@@ -416,5 +444,11 @@ namespace SLAT {
             .def("get_sigma_lnX", &LogNormalDistWrapper::get_sigma_lnX)
             .def("get_sigma_X", &LogNormalDistWrapper::get_sigma_X)
             ;
+
+        python::def("MakeFragilityFn", 
+                    MakeFragilityFn,
+                    python::return_value_policy<python::manage_new_object>());
+        
+        
     }
 }

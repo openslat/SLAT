@@ -117,4 +117,9 @@ print("MEAN_X: ", MEAN_X, " --> ", dist.get_mean_X())
 print("SIGMA_X: ", SIGMA_X, " --> ", dist.get_sigma_X())
 
 
+fragility = pyslat.MakeFragilityFn([
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X: 0.0062, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X: 0.0230, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X: 0.0440, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X: 0.0564, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4}])
 

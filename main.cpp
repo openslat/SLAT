@@ -174,7 +174,7 @@ int main(int argc, char **argv)
             outfile << endl;            
         }
         outfile.close();
-        BOOST_LOG(logger) << "DS-DSP table written.";
+        BOOST_LOG(logger) << "DS-EDP table written.";
     }
 
     std::shared_ptr<LossFn> lossFn = std::make_shared<LossFn>(
