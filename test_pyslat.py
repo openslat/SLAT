@@ -142,21 +142,23 @@ for i in range(200):
     for j in range(len(data)):
         fragility_high[j].append(data[j])
 
-for i in fragility_prob:
-    plt.plot(edp_data, i)
+for i in range(fragility.n_states()):
+    plt.plot(edp_data, fragility_prob[i], label=i)
 plt.xlabel('EDP')
 plt.ylabel('Probability')
 plt.title('Fragility Functions')
 plt.grid(True)
+plt.legend()
 plt.savefig("fragility.png")
 plt.show()
 
-for i in fragility_high:
-    plt.plot(edp_data, i)
+for i in range(fragility.n_states()):
+    plt.plot(edp_data, fragility_high[i], label=i)
 plt.xlabel('EDP')
 plt.ylabel('Probability')
 plt.title('Fragility Functions')
 plt.grid(True)
+plt.legend()
 plt.savefig("fragility.png")
 plt.show()
 
