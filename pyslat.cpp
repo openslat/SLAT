@@ -17,6 +17,7 @@
 #include "relationships.h"
 #include "lognormaldist.h"
 #include "fragility.h"
+#include "loss_functions.h"
 #include <iostream>
 using namespace SLAT;
 
@@ -257,6 +258,7 @@ namespace SLAT {
 
 
     class FragilityFnWrapper;
+    class LossFnWrapper;
     
     class LogNormalDistWrapper {
     public:
@@ -274,6 +276,7 @@ namespace SLAT {
     private:
         std::shared_ptr<LogNormalDist> dist;
         friend FragilityFnWrapper *MakeFragilityFn(python::list);
+        friend LossFnWrapper *MakeLossFn(python::list);        
     };
 
     LogNormalDistWrapper *MakeLogNormalDist(python::dict parameters)
@@ -400,6 +403,25 @@ namespace SLAT {
         return new FragilityFnWrapper(std::make_shared<FragilityFn>(distributions));
     }
 
+    class LossFnWrapper {
+    public:
+        LossFnWrapper(std::shared_ptr<LossFn> function) { loss = function; }
+        int n_states() { return loss->n_states(); };
+    private:
+        std::shared_ptr<LossFn> loss;
+    };
+
+    LossFnWrapper *MakeLossFn(python::list parameters)
+    {
+        std::vector<LogNormalDist> distributions;
+
+        python::stl_input_iterator<python::dict> iter(parameters), end;
+        while (iter != end) {
+            distributions.push_back(*MakeLogNormalDist(*iter)->dist);
+            iter++;
+        }
+        return new LossFnWrapper(std::make_shared<LossFn>(distributions));
+    }
 
 // Python requires an exported function called init<module-name> in every
 // extension module. This is where we build the module contents.
@@ -471,6 +493,14 @@ namespace SLAT {
 
         python::def("MakeFragilityFn", 
                     MakeFragilityFn,
+                    python::return_value_policy<python::manage_new_object>());
+        
+        python::class_<LossFnWrapper>("LossFn", python::no_init)
+            .def("n_states", &LossFnWrapper::n_states)
+            ;
+
+        python::def("MakeLossFn", 
+                    MakeLossFn,
                     python::return_value_policy<python::manage_new_object>());
         
         
