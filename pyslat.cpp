@@ -18,13 +18,17 @@
 #include "lognormaldist.h"
 #include "fragility.h"
 #include "loss_functions.h"
+#include "comp_group.h"
 #include <iostream>
 using namespace SLAT;
 
 namespace python = boost::python;
 
 namespace SLAT {
-
+    class CompGroupWrapper;
+    class FragilityFnWrapper;
+    class LossFnWrapper;
+    
     class DeterministicFnWrapper {
     public:
         DeterministicFnWrapper() : function(NULL) {};
@@ -238,6 +242,27 @@ namespace SLAT {
         std::shared_ptr<RateRelationship> relationship;
     };
     
+    class CompoundRateRelationshipWrapper {
+    public:
+        CompoundRateRelationshipWrapper() : relationship(NULL) {};
+        CompoundRateRelationshipWrapper(std::shared_ptr<CompoundRateRelationship> r)
+        {
+            relationship = r;
+        }
+        double lambda(double x) 
+        {
+            return relationship->lambda(x);
+        }
+        python::list lambda_l(python::list l) 
+        {
+            return l;
+        }
+    public:
+        std::shared_ptr<CompoundRateRelationship> relationship;
+        friend CompGroupWrapper *MakeCompGroup(CompoundRateRelationshipWrapper edp, FragilityFnWrapper frag_fn,
+                                                LossFnWrapper loss_fn, int count);
+    };
+    
     RateRelationshipWrapper *MakeSimpleRelationship(DeterministicFnWrapper f)
     {
         std::shared_ptr<SimpleRateRelationship> relationship(
@@ -245,14 +270,14 @@ namespace SLAT {
         return new RateRelationshipWrapper(relationship);
     }
 
-    RateRelationshipWrapper *MakeCompoundRelationship(
+    CompoundRateRelationshipWrapper *MakeCompoundRelationship(
         RateRelationshipWrapper base_rate,
         ProbabilisticFnWrapper dependent_rate)
     {
         std::shared_ptr<CompoundRateRelationship> relationship(
             new CompoundRateRelationship(base_rate.relationship,
                                          dependent_rate.function));
-        RateRelationshipWrapper *result = new RateRelationshipWrapper(relationship);
+        CompoundRateRelationshipWrapper *result = new CompoundRateRelationshipWrapper(relationship);
         return result;
     }
 
@@ -369,6 +394,8 @@ namespace SLAT {
         int n_states() { return fragility->n_states(); };
     private:
         std::shared_ptr<FragilityFn> fragility;
+        friend CompGroupWrapper *MakeCompGroup(CompoundRateRelationshipWrapper edp, FragilityFnWrapper frag_fn,
+                                                LossFnWrapper loss_fn, int count);
     };
 
     python::list FragilityFnWrapper::pExceeded(double edp)
@@ -409,6 +436,8 @@ namespace SLAT {
         int n_states() { return loss->n_states(); };
     private:
         std::shared_ptr<LossFn> loss;
+        friend CompGroupWrapper *MakeCompGroup(CompoundRateRelationshipWrapper edp, FragilityFnWrapper frag_fn,
+                                                LossFnWrapper loss_fn, int count);
     };
 
     LossFnWrapper *MakeLossFn(python::list parameters)
@@ -421,6 +450,23 @@ namespace SLAT {
             iter++;
         }
         return new LossFnWrapper(std::make_shared<LossFn>(distributions));
+    }
+
+    class CompGroupWrapper {
+    public:
+        CompGroupWrapper(std::shared_ptr<CompGroup> group) { wrapper = group; };
+        double E_Loss_EDP(double edp) { return wrapper->E_loss_EDP(edp); };
+    private:
+        std::shared_ptr<CompGroup> wrapper;
+    };
+    
+    CompGroupWrapper *MakeCompGroup(CompoundRateRelationshipWrapper edp, FragilityFnWrapper frag_fn, LossFnWrapper loss_fn, int count)
+    {
+        return new CompGroupWrapper(std::make_shared<CompGroup>( 
+                                        edp.relationship, 
+                                        frag_fn.fragility,
+                                        loss_fn.loss, 
+                                        count));
     }
 
 // Python requires an exported function called init<module-name> in every
@@ -453,6 +499,10 @@ namespace SLAT {
 
         python::class_<RateRelationshipWrapper>("RateRelationship", python::no_init)
             .def("getlambda", &RateRelationshipWrapper::lambda)
+            ;
+
+        python::class_<CompoundRateRelationshipWrapper>("CompoundRateRelationship", python::no_init)
+            .def("getlambda", &CompoundRateRelationshipWrapper::lambda)
             ;
 
         python::enum_<FUNCTION_TYPE>("FUNCTION_TYPE")
@@ -501,6 +551,14 @@ namespace SLAT {
 
         python::def("MakeLossFn", 
                     MakeLossFn,
+                    python::return_value_policy<python::manage_new_object>());
+        
+        python::class_<CompGroupWrapper>("CompGroup", python::no_init)
+            .def("E_Loss_EDP", &CompGroupWrapper::E_Loss_EDP)
+            ;
+
+        python::def("MakeCompGroup", 
+                    MakeCompGroup,
                     python::return_value_policy<python::manage_new_object>());
         
         
