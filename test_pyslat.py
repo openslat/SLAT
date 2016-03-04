@@ -149,7 +149,7 @@ plt.ylabel('Probability')
 plt.title('Fragility Functions')
 plt.grid(True)
 plt.legend()
-plt.savefig("fragility.png")
+plt.savefig("fragility-prob.png")
 plt.show()
 
 for i in range(fragility.n_states()):
@@ -159,6 +159,52 @@ plt.ylabel('Probability')
 plt.title('Fragility Functions')
 plt.grid(True)
 plt.legend()
-plt.savefig("fragility.png")
+plt.savefig("fragility-high.png")
 plt.show()
 
+loss_fn = pyslat.MakeLossFn([
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 0.03, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 0.08, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 0.25, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4},
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 1.00, pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.4}])
+
+
+compgroup = pyslat.MakeCompGroup(edp_rate, fragility, loss_fn, 1);
+edp_data = list()
+mean_loss_data = list()
+sd_ln_loss_data = list()
+for i in range(1, 200):
+    edp = i / 1000.
+    edp_data.append(edp)
+    mean_loss_data.append(compgroup.E_Loss_EDP(edp))
+    sd_ln_loss_data.append(compgroup.SD_ln_loss_EDP(edp))
+
+mean_loss_GCC = np.loadtxt(old_slat_path + "example1_Loss-EDP-1", skiprows=3, unpack=True)
+old_slat_line, = plt.plot(mean_loss_GCC[0], mean_loss_GCC[1])
+old_slat_line.set_label("Old SLAT (mean)")
+old_slat_line.set_linewidth(1)
+
+pyslat_line, =plt.plot(edp_data, mean_loss_data, label="Mean Loss")
+pyslat_line.set_linewidth(6)
+pyslat_line.set_linestyle(":")
+plt.xlabel('EDP')
+plt.ylabel('Mean Loss')
+plt.title('Loss vs. EDP')
+plt.grid(True)
+plt.legend()
+plt.savefig("mean-loss.png")
+plt.show()
+
+old_slat_line, = plt.plot(mean_loss_GCC[0], mean_loss_GCC[2])
+old_slat_line.set_label("Old SLAT (sd)")
+old_slat_line.set_linewidth(1)
+pyslat_line, = plt.plot(edp_data, sd_ln_loss_data, label="SD ln(loss)")
+pyslat_line.set_linewidth(6)
+pyslat_line.set_linestyle(":")
+plt.xlabel('EDP')
+plt.ylabel('SD ln(Loss)')
+plt.title('Loss vs. EDP')
+plt.grid(True)
+plt.legend()
+plt.savefig("sd-loss.png")
+plt.show()

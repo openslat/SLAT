@@ -456,6 +456,7 @@ namespace SLAT {
     public:
         CompGroupWrapper(std::shared_ptr<CompGroup> group) { wrapper = group; };
         double E_Loss_EDP(double edp) { return wrapper->E_loss_EDP(edp); };
+        double SD_ln_loss_EDP(double edp) { return wrapper->SD_ln_loss_EDP(edp); };
     private:
         std::shared_ptr<CompGroup> wrapper;
     };
@@ -555,6 +556,7 @@ namespace SLAT {
         
         python::class_<CompGroupWrapper>("CompGroup", python::no_init)
             .def("E_Loss_EDP", &CompGroupWrapper::E_Loss_EDP)
+            .def("SD_ln_loss_EDP", &CompGroupWrapper::SD_ln_loss_EDP)
             ;
 
         python::def("MakeCompGroup", 
