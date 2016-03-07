@@ -285,3 +285,24 @@ plt.grid(True)
 plt.legend()
 plt.savefig("expected-annual-loss-per-year.png")
 plt.show()
+
+
+
+mean_rate_GCC = np.loadtxt(old_slat_path + "example1_Loss-rate-1", skiprows=3, unpack=True)
+old_slat_line, = plt.loglog(mean_rate_GCC[0], mean_rate_GCC[1])
+old_slat_line.set_label("Old SLAT")
+old_slat_line.set_linewidth(1)
+rate = list()
+for loss in mean_rate_GCC[0]:
+    rate.append(compgroup.lambda_loss(loss))
+    
+pyslat_line, = plt.loglog(mean_rate_GCC[0], rate, label="Loss Rate")
+pyslat_line.set_linewidth(6)
+pyslat_line.set_linestyle(":")
+plt.xlabel('Loss')
+plt.ylabel('Rate')
+plt.title('Loss Rate')
+plt.grid(True)
+plt.legend()
+plt.savefig("loss-rate.png")
+plt.show()

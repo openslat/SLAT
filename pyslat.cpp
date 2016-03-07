@@ -461,6 +461,7 @@ namespace SLAT {
         double SD_ln_loss_IM(double edp) { return wrapper->SD_ln_loss_IM(edp); };
         double E_annual_loss(void) { return wrapper->E_annual_loss(); };
         double E_loss(int years, double discount_rate) { return wrapper->E_loss(years, discount_rate); };
+        double lambda_loss(double loss) { return wrapper->lambda_loss(loss); };
     private:
         std::shared_ptr<CompGroup> wrapper;
     };
@@ -565,6 +566,7 @@ namespace SLAT {
             .def("SD_ln_loss_IM", &CompGroupWrapper::SD_ln_loss_IM)
             .def("E_annual_loss", &CompGroupWrapper::E_annual_loss)
             .def("E_loss", &CompGroupWrapper::E_loss)
+            .def("lambda_loss", &CompGroupWrapper::lambda_loss)
             ;
 
         python::def("MakeCompGroup", 
