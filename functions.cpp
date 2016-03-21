@@ -165,6 +165,9 @@ namespace SLAT {
     InterpolatedFn::InterpolatedFn(double x[], double y[], size_t size) : 
         DeterministicFn()
     {
+        min_x = std::pair<double, double>(x[0], y[0]);
+        max_x = std::pair<double, double>(x[size - 1], y[size - 1]);
+        
         for (unsigned int i=0; i < size; i++) {
             data.push_back(std::pair<double, double>(x[i], y[i]));
         }
@@ -242,8 +245,16 @@ namespace SLAT {
     double LogLogInterpolatedFn::Evaluate(double x) const
     {
         double y;
-        (void)gsl_spline_eval_e(interp, log(x), accel, &y);
-        return exp(y);
+        if (x < min_x.first) {
+            y = min_x.second;
+        } else if (x > max_x.first) {
+            y = max_x.second;
+        } else {
+            (void)gsl_spline_eval_e(interp, log(x), accel, &y);
+            y = exp(y);
+
+        }
+        return y;
     }
 
 

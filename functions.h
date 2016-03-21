@@ -193,6 +193,7 @@ namespace SLAT {
          * debugging. None of the subclasses need this data beyond their constructor.
          */
         std::vector<std::pair<double, double> > data; 
+        std::pair<double, double> min_x, max_x;
     public:
         /**
          * The default constructor takes arrays of corresponding input and output values.
