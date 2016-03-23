@@ -18,7 +18,7 @@ RPAREN : ')';
 COMMENT :   '#' ~[\r\n]*;
 script : (WS | command)*;
 
-command : (title_command | detfn_command | probfn_command | im_command | edp_command | fragfn_command | lossfn_command | compgroup_command | print_command | integration_command | recorder_command | analyze_command) ';' ;
+command : (title_command | detfn_command | probfn_command | im_command | edp_command | fragfn_command | lossfn_command | compgroup_command | print_command | integration_command | recorder_command | analyze_command | set_command) ';' ;
 
 title_command : 'title' STRING;
 
@@ -105,8 +105,9 @@ fragfn_command : 'fragfn' ID
 fragfn_db_params : (('--db' FILE_NAME)? ('--stdfunc' db_key)?) |
 		   ('--stdfunc' db_key '--db' FILE_NAME) ;
 		 
-fragfn_user_defined_params : lognormal_options
-		  '[' scalar2 ']' (',' '[' scalar2 ']')*;
+fragfn_user_defined_params : 
+		  '[' scalar2 ']' (',' '[' scalar2 ']')*
+                  lognormal_options;
 mu_option : '--mu' ('mean_ln_x' | 'median_x' | 'mean_x');
 sd_option : '--sd' ('sd_ln_x' | 'sd_x');
 lognormal_options : (mu_option? sd_option?) | (sd_option mu_option);
@@ -123,7 +124,7 @@ FILE_NAME : [a-zA-Z_.0-9]+;
 db_key :  ID;
 
 lossfn_command : 'lossfn' ID simple_loss_command;
-simple_loss_command : 'simple'? LBRACKET scalar2 RBRACKET (',' LBRACKET scalar2 RBRACKET)* lognormal_options;
+simple_loss_command : ('--type' 'simple')? LBRACKET scalar2 RBRACKET (',' LBRACKET scalar2 RBRACKET)* lognormal_options;
 
 lossfn_heading : 'cost' | 'disp' | 'upper_cost' | 'lower_cost' | 'lower_n' | 'upper_n' | 'mean_uncert' | 'var_uncert';
 lossfn_headings : LPAREN lossfn_heading (',' lossfn_heading)* RPAREN;
@@ -161,3 +162,5 @@ non_paren_expression: ('=' | '/' | '+' | '*' | '-' | ~LPAREN)+;
 balanced_paren_expression : LPAREN ('=' | ~RPAREN)* RPAREN;
 
 analyze_command : 'analyze';
+
+set_command : 'set' ID (python_script | var_ref | parameters);
