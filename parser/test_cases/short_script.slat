@@ -1,0 +1,3 @@
+title 'This is a title';
+detfn DETFN1 hyperbolic 1, -2, .2;
+probfn PROBFN1 lognormal MU, SIGMA;

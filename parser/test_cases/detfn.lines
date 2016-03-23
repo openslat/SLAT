@@ -1,0 +1,7 @@
+detfn DETFN1 hyperbolic 1.0, 2, -3e10;
+detfn DETFN1 hyperbolic 1, -2, $(1 + 2);
+detfn DETFN1 hyperbolic 1, -2, $(1 / 2);
+detfn DETFN1 hyperbolic 1, -2, $(1 - 2);
+detfn DETFN1 hyperbolic 1, -2, $(1 * 2);
+detfn DEFTFN1 powerlaw 0.2, 0.5;
+detfn DEFTFN1 powerlaw $a_value, $b_value;

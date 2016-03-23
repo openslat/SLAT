@@ -1,0 +1,11 @@
+%% This is a comment; ignore it
+title 'This is a title';
+title 'This title has a quote\' in it.';
+title 'This title has a double quote" in it.';
+title 'This title has a backslash\\ in it.';
+title 'This title has a quote\' and a backslash \\ in it.';
+title "This is a title in double quotes";
+title "This is a title in double quotes, with a ' single quote";
+title "This title has double quotes, and a backslash\\.";
+title "This title has double quotes, and a double quote\".";
+

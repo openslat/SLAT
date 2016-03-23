@@ -1,0 +1,5 @@
+# This file starts with a comment.
+title 'This is a title';   # This comment goes to the end of the line
+detfn DETFN1 hyperbolic 1, -2, .2; # Another comment
+probfn PROBFN1 lognormal MU_FUNC_ID, SD_FUNC_ID  # A comment inside the command
+       --sd sd_x --mu mean_x;

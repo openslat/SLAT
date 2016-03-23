@@ -1,0 +1,8 @@
+probfn PROBFN1 lognormal MU_FUNC_ID, SD_FUNC_ID;
+probfn PROBFN1 lognormal MU_FUNC_ID, SD_FUNC_ID --mu mean_x;
+probfn PROBFN1 lognormal MU_FUNC_ID, SD_FUNC_ID --sd sd_ln_x;
+probfn PROBFN1 lognormal MU_FUNC_ID, SD_FUNC_ID --mu median_x --sd sd_ln_x;
+probfn PROBFN1 lognormal MU_FUNC_ID, SD_FUNC_ID --mu mean_ln_x --sd sd_ln_x;
+probfn PROBFN1 lognormal MU_FUNC_ID, SD_FUNC_ID --mu mean_x --sd sd_x;
+probfn PROBFN1 lognormal MU_FUNC_ID, SD_FUNC_ID --sd sd_x --mu mean_x;
+

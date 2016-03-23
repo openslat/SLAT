@@ -1,0 +1,4 @@
+# Can we use mean_x as an identifier?
+probfn MEAN_X lognormal MU, SIGMA;
+probfn MEAN_X lognormal mean_x, SIGMA;
+probfn mean_x lognormal MU, SIGMA;

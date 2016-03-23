@@ -1,0 +1,8 @@
+# Default type; data is per-unit cost and dispersion for each state.
+lossfn LOSS1 [0.03,0.4], [0.08, 0.4], [0.25, 0.4], [1.00, 0.4];
+# Specifying "simple" type is optional:
+lossfn LOSS1 simple [0.03,0.4], [0.08, 0.4], [0.25, 0.4], [1.00, 0.4];
+lossfn LOSS1 simple [0.03,0.4], [0.08, 0.4], [0.25, 0.4], [$var, 0.4];
+lossfn LOSS1 simple [0.03,0.4], [0.08, 0.4], [0.25, $(4./10)], [$var, 0.4];
+lossfn LOSS1 simple [0.03,0.4], [0.08, 0.4], [0.25, 0.4], [1.00, 0.4] --mu mean_x --sd sd_ln_x;
+

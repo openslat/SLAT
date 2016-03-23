@@ -1,0 +1,6 @@
+integration maq 1E-3 100;
+integration maq 0.001 100;
+integration maq $var 100;
+integration maq $(1 / 1000.) 100;
+integration maq 0.001 $var;
+integration maq 0.001 $(10 * 10);

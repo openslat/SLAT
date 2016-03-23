@@ -1,0 +1,55 @@
+# This is an example file
+title 'Example File';
+
+# Define the IM function:
+#                        v_asy, alpha, IM_asy
+detfn IM_FUNC hyperbolic 1221,   62.2,  29.8; 
+
+# Define the EDP-IM function:
+#                       a    b
+detfn MU_EDP powerlaw 0.1, 1.5;
+#                          a    b
+detfn SIGMA_EDP powerlaw 0.5, 0.0;
+probfn EDP_IM lognormal MU_EDP, SIGMA_EDP;
+probfn EDP_IM lognormal MU_EDP, SIGMA_EDP --mu mean_x --sd sd_ln_x;
+
+# Define relationships:
+im IM_1 IM_FUNC;
+edp EDP_1 IM_1 EDP_IM;
+
+# Fragility, loss, component group:
+fragfn FRAG_1 --mu mean_ln_x --sd sd_ln_x [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4];
+lossfn LOSS_1 simple [0.03,0.4], [0.08, 0.4], [0.25, 0.4], [1.00, 0.4] --mu mean_x --sd sd_ln_x;
+compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 1;
+
+print message 'Example 1' example1_out.txt --new;
+print detfn IM_FUNC example1_out.txt --append;
+print detfn MU_EDP example1_out.txt --append;
+print detfn SIGMA_EDP example1_out.txt --append;
+print probfn EDP_IM example1_out.txt --append;      
+print im IM_1 example1_out.txt --append;      
+print edp EDP_1 example1_out.txt --append;      
+print fragfn FRAG_1 example1_out.txt --append;      
+print lossfn LOSS_1 example1_out.txt --append;      
+print compgroup COMPGROUP_1 example1_out.txt --append;      
+print message '-- End of Input Functions --' example1_out.txt --append;
+
+# Set up integration parameters:
+integration maq 0.01 1024;
+
+# Set up recorders:
+recorder detfn IM_FUNC 0.01:0.01:1.00 example1_out.txt --append;
+recorder probfn EDP_IM 0:0.01:1.00 --cols 0.16, mean_x, 0.84 example1_out.txt --append;
+recorder imrate IM_1 0.01:0.01:1.00 example1_out.txt --append;
+recorder edpim EDP_1 0:0.01:1.00 --cols mean_x, sd_x example1_out.txt --append;
+recorder edprate EDP_1 0.001:0.001:0.15  example1_out.txt --append;
+recorder dsedp COMPGROUP_1 0.0:0.001:0.200  example1_out.txt --append;
+recorder dsrate COMPGROUP_1;
+recorder lossedp COMPGROUP_1 0.001:0.001:0.200 --cols mean_x, sd_ln_x example1_out.txt --append;
+recorder lossim COMPGROUP_1 0.001:0.01:2.5  --cols mean_x, sd_x example1_out.txt --append;
+
+print message '(Before analysis)' example1_out.txt --append;
+analyze;
+print message '(After analysis)' example1_out.txt --append;
+
+

@@ -1,0 +1,11 @@
+print message;
+print message "This is a message string.";
+print message 'This is a message string.' MESSAGE.TXT --new;
+print  message 'This is a message string.' MESSAGE.TXT --append;
+print detfn IM_FUNC INPUT_DEFS.TXT --new;
+print probfn EDP_FN INPUT_DEFS.TXT --append;
+print im IM1 INPUT_DEFS.TXT --append;
+print edp EDP1 INPUT_DEFS.TXT --append;
+print fragfn FRAG1 INPUT_DEFS.TXT --append;
+print lossfn LOSS1 INPUT_DEFS.TXT --append;
+print compgroup PG1 INPUT_DEFS.TXT --append;
