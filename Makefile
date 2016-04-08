@@ -69,7 +69,8 @@ hellomain.o: hellomain.cpp hello.h
 	$(CC) -c $(CFLAGS) -o $@ $<
 hellomain: hellomain.o libhello.dll
 	$(CC) hellomain.o -o hellomain \
-	-L. -lhello
+	-L. -lhello \
+	-L/c/Program\ Files\ \(x86\)/GnuWin32/lib -lgsl -lgslcblas
 
 main.o: main.cpp functions.h relationships.h maq.h replaceable.h fragility.h lognormaldist.h loss_functions.h
 	$(CC) -c $(CFLAGS) -o $@ $<
