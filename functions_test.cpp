@@ -178,7 +178,7 @@ BOOST_AUTO_TEST_CASE(Log_Normal_Function_Test)
      */
     std::shared_ptr<ProbabilisticFn> f(new LogNormalFn(mu_func, LogNormalFn::MEDIAN_X, 
                                                                    sigma_func, LogNormalFn::SIGMA_LN_X));
-    for (uint i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
+    for (unsigned int i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
         double im = test_data[i].im;
         double expected_pct = test_data[i].pct;
         double expected_edp = test_data[i].edp;

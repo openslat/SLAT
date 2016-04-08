@@ -23,7 +23,7 @@ namespace SLAT {
         } else {
             damage_states.resize(onsets.size());
             double mean = NAN;
-            for (uint i=0; i < onsets.size(); i++) {
+            for (unsigned int i=0; i < onsets.size(); i++) {
                 if (onsets[i].get_mu_lnX() <= mean) {
                     throw std::invalid_argument("onsets");
                     break;

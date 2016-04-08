@@ -9,6 +9,7 @@
  *
  * ©2015 Canterbury University
  */
+#include <math.h>
 #include <memory>
 #include <boost/python.hpp>
 #include <boost/python/stl_iterator.hpp>
