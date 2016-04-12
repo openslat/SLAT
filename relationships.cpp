@@ -71,7 +71,6 @@ namespace SLAT {
 
     double SimpleRateRelationship::calc_lambda(double x)
     {
-        //std::cout << "SimpleRateRelationship::calc_lambda(" << x << ")" << std::endl;
         return f->ValueAt(x);
     }
 
@@ -101,9 +100,6 @@ namespace SLAT {
  */
     double RateRelationship::DerivativeAt(double x)
     {
-        if (x == 0.142857) {
-            std::cout << "*******" << this->lambda(x) << "*******" << std::endl;
-        }
         /*
          * Encapsulate the function in a lambda, that we can pass to the GSL through
          * the function 'wrapper()' (above).
@@ -127,9 +123,6 @@ namespace SLAT {
          */
         double result, abserror;
         gsl_deriv_forward(&F, x, 1E-8, &result, &abserror);
-        if (x == 0.142857) {
-            std::cout << "[" << result << ", " << abserror << "]" << std::endl;
-        }
         return result;
     }
 
@@ -166,7 +159,6 @@ namespace SLAT {
 
     double CompoundRateRelationship::calc_lambda(double min_y) 
     {
-        std::cout << "CompoundRateRelationship::calc_lambda(" << min_y << ")" << std::endl;
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
             [this, min_y] (double x2) -> double {

@@ -40,26 +40,11 @@ namespace SLAT {
             }
             T operator()(V v) { 
                 if (cache_active) {
-                    std::cout << "Evaluating cached function at " << v << std::endl;
-                    try {
-                        std::cout << "...." << std::endl;
-                        try {
-                            T result = cache.at(v);
-                            std::cout << "...." << std::endl;
-                            std::cout << "Found: " << std::endl;
-                            return result;
-                        } catch (const std::out_of_range& oor) {
-                            std::cerr << "Out of Range error: " << oor.what() << '\n';
-                            throw std::invalid_argument("???");
-                        }
-                    } catch (...) {
-                        std::cout << "Not found" << std::endl;
+                    if (cache.count(v) == 0) {
                         cache[v] = func(v); 
-                        std::cout << "(evaluated)" << std::endl;
-                        return cache[v];
-                    };
+                    }
+                    return cache[v];
                 } else {
-                    //std::cout << "cache inactive" << std::endl;
                     return func(v);
                 }
             }
