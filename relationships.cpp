@@ -71,6 +71,7 @@ namespace SLAT {
 
     double SimpleRateRelationship::calc_lambda(double x)
     {
+        //std::cout << "SimpleRateRelationship::calc_lambda(" << x << ")" << std::endl;
         return f->ValueAt(x);
     }
 
@@ -165,6 +166,7 @@ namespace SLAT {
 
     double CompoundRateRelationship::calc_lambda(double min_y) 
     {
+        std::cout << "CompoundRateRelationship::calc_lambda(" << min_y << ")" << std::endl;
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
             [this, min_y] (double x2) -> double {

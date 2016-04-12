@@ -52,7 +52,6 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "IM-RATE table written";
     }
 
-    
     shared_ptr<DeterministicFn> mu_edp(
         new PowerLawParametricCurve(0.1, 1.5));
 
@@ -93,14 +92,20 @@ int main(int argc, char **argv)
         outfile << setprecision(6) << fixed;
         for (int i=1; i < 150; i++) {
             double edp = i / 1000.0;
-            outfile << setw(10) << edp << setw(12) << rel->lambda(edp) << endl;
+            // std::cout << i << ", " << edp << std::endl;
+            // std::cout << rel->lambda(edp) << std::endl;
+            // std::cout << "HERE I AM" << std::endl;
+            try {
+                outfile << setw(10) << edp << setw(12) << rel->lambda(edp) << endl;
+            } catch (...) {
+                std::cout << "CAUGHT" << std::endl;
+            }
         }
         outfile.close();
         BOOST_LOG(logger) << "EDP-RATE table written.";
         //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         //std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
     }
-
 
     std::cout << *rel << std::endl;
     shared_ptr<DeterministicFn> new_im_rate_function = std::make_shared<NonLinearHyperbolicLaw>(12.21, 29.8, 62.2);
@@ -146,7 +151,6 @@ int main(int argc, char **argv)
         //std::chrono::steady_clock::time_point end = std::chrono::steady_clock::now();
         //std::cout << std::chrono::duration_cast<std::chrono::microseconds>(end - start).count() << std::endl;
     }
-
 
     std::vector<LogNormalDist> fragility_distributions({ LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
