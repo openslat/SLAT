@@ -62,7 +62,7 @@ namespace SLAT {
 
     static double wrapper(double x,  std::function<double (double)> *f)
     {
-        return (*f)(x);
+      return (*f)(x);
     }
 
     double CompGroup::E_loss_IM_calc(double im)
@@ -74,7 +74,7 @@ namespace SLAT {
                 if (edp == 0) {
                     result = 0;
                 } else {
-                    std::function<double (double, void*)> local_lambda = [this, im] (double x, void *) {
+                    std::function<double (double)> local_lambda = [this, im] (double x) {
                         double result = this->edp->P_exceedence(im, x);
                         return result;
                     };
@@ -109,7 +109,7 @@ namespace SLAT {
                 if (edp == 0) {
                     result = 0;
                 } else {
-                    std::function<double (double, void*)> local_lambda = [this, im] (double x, void *) {
+  		  std::function<double (double)> local_lambda = [this, im] (double x) {
                         double result = this->edp->P_exceedence(im, x);
                         return result;
                     };

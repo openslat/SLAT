@@ -1,3 +1,4 @@
+
 /**
  * @file   relationships.cpp
  * @author Michael Gauland <michael.gauland@canterbury.ac.nz>
@@ -49,10 +50,10 @@ namespace SLAT {
  * 
  * @return The value of f(x).
  */
-    static double wrapper(double x,  std::function<double (double)> *f)
-    {
-        return (*f)(x);
-    }
+  double wrapper(double x,  std::function<double (double)> *f)
+  {
+    return (*f)(x);
+  }
 
     SimpleRateRelationship::SimpleRateRelationship(
         std::shared_ptr<DeterministicFn> func) : RateRelationship(false)
@@ -71,7 +72,7 @@ namespace SLAT {
 
     double SimpleRateRelationship::calc_lambda(double x)
     {
-        return f->ValueAt(x);
+      return f->ValueAt(x);
     }
 
     std::string RateRelationship::ToString(void) const 
@@ -104,9 +105,9 @@ namespace SLAT {
          * Encapsulate the function in a lambda, that we can pass to the GSL through
          * the function 'wrapper()' (above).
          */
-        std::function<double (double, void*)> local_lambda = [this] (double x, void *) {
-            double result = this->lambda(x);
-            return result;
+        std::function<double (double)> local_lambda = [this] (double x) {
+	  double result = this->lambda(x);
+	  return result;
         };
 
         /*

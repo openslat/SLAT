@@ -6,7 +6,7 @@ clean:
 CC=g++
 #GSLROOT=/c/Program\ Files\ \(x86\)/GnuWIN32
 GSLROOT=/usr/local
-CFLAGS=-g -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK \
+CFLAGS=-g -Wall -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK \
 	-shared-libgcc \
 	-I/usr/local/include \
 	-I$(GSLROOT)/include \
@@ -16,13 +16,13 @@ CFLAGS=-g -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK \
 LDFLAGS=-L/usr/local/lib \
 	-L$(GSLROOT)/lib \
 	-L. \
-	-lgsl.dll\
+	-lgsl.dll -lgslcblas.dll \
 	-lgcc_s \
-	-lboost_log-mgw49-mt-1_60 \
-	-lboost_thread-mgw49-mt-1_60 \
-	-lboost_system-mgw49-mt-1_60 \
-	-lboost_filesystem-mgw49-mt-1_60 \
-	-lboost_unit_test_framework-mgw49-mt-1_60 \
+	-lboost_log \
+	-lboost_thread \
+	-lboost_system \
+	-lboost_filesystem \
+	-lboost_unit_test_framework \
 	-L/c/windows \
 	-L/c/Python34/libs \
 	 -lpthread -lm 
@@ -65,7 +65,8 @@ libslat.dll: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_
 	$(LDFLAGS)
 
 gsl_test: gsl_test.cpp 
-	$(CC) -g -fbounds-check -Warray-bounds -std=gnu++11 \
+	$(CC) -g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 \
+	-static \
 	gsl_test.cpp \
 	-I$(GSLROOT)/include \
 	-L$(GSLROOT)/lib \
@@ -96,13 +97,13 @@ main: main.o libslat.dll
 	-L/usr/local/lib \
 	 $(CFLAGS) \
 	-L$(GSLROOT)/lib -lgsl \
-	-lboost_system-mgw49-mt-1_60 \
-	-lboost_log-mgw49-mt-1_60 \
-	-lboost_filesystem-mgw49-mt-1_60 \
-	-lboost_log_setup-mgw49-mt-1_60 \
+	-lboost_system \
+	-lboost_log \
+	-lboost_filesystem \
+	-lboost_log_setup \
 	-lpthread -lm \
-	-lboost_thread-mgw49-mt-1_60 \
-        -lboost_unit_test_framework-mgw49-mt-1_60
+	-lboost_thread \
+        -lboost_unit_test_framework
 
 main2: main.cpp $(LIBSRCS) $(LIBHDRS)
 	$(CC) -static main.cpp $(LIBSRCS) \
@@ -115,12 +116,12 @@ main2: main.cpp $(LIBSRCS) $(LIBHDRS)
 	-I/c/Python34/include \
 	-L. \
 	-L$(GSLROOT)/lib \
-	-lboost_system-mgw49-mt-1_60 \
-	-lboost_log-mgw49-mt-1_60 \
-	-lboost_filesystem-mgw49-mt-1_60 \
-	-lboost_log_setup-mgw49-mt-1_60 \
+	-lboost_system \
+	-lboost_log \
+	-lboost_filesystem \
+	-lboost_log_setup \
 	-lpthread -lm \
-	-lboost_thread-mgw49-mt-1_60 \
+	-lboost_thread \
 	 -lgsl -lgslcblas 
 
 
@@ -137,11 +138,11 @@ temp: temp.o
 	$(CC)  -o temp 	temp.o \
 	-L. \
 	-L/usr/local/lib \
-	-lboost_log-mgw49-mt-1_60 \
-	-lboost_log_setup-mgw49-mt-1_60 \
-	-lboost_thread-mgw49-mt-1_60 \
-	-lboost_system-mgw49-mt-1_60 \
-	-lboost_filesystem-mgw49-mt-1_60 \
+	-lboost_log \
+	-lboost_log_setup \
+	-lboost_thread \
+	-lboost_system \
+	-lboost_filesystem \
 	# -L/usr/local/lib \
 	#   -lpthread -lm \
 	#  -lgsl -lgslcblas 
@@ -162,7 +163,7 @@ comp_group_test.o: comp_group_test.cpp comp_group.h
 unit_test.o: unit_test.cpp
 	$(CC) -c $(CFLAGS) -o $@ $<
 unit_tests: unit_test.o $(UNIT_OBJS) libslat.a 
-	$(CC) $(UNIT_OBJS) -L. -lslat -o unit_tests ${LDFLAGS} -lboost_unit_test_framework-mgw49-mt-1_60
+	$(CC) $(UNIT_OBJS) -L. -lslat -o unit_tests ${LDFLAGS} -lboost_unit_test_framework
 
 pyslat.o: pyslat.cpp $(LIBHDRS)
 	$(CC) -c $(CFLAGS) -o $@ $<
@@ -175,7 +176,7 @@ pyslat.pyd: pyslat.o libslat.dll
 	-Wl,--out-implib,pyslat.a \
 	-L. -lslat \
 	${LDFLAGS} \
-	-lpython34 -lboost_python3-mgw49-mt-1_60
+	-lpython34 -lboost_python3
 # pyslat.o: 
 # pyslat.pyd: pyslat.cpp $(LIBSRCS) $(LIBHDRS)
 # 	$(CC) -shared $(CFLAGS) pyslat.cpp \
@@ -186,7 +187,7 @@ pyslat.pyd: pyslat.o libslat.dll
 # 	-Wl,--dll \
 # 	-Wl,--export-all-symbols \
 # 	-Wl,--out-implib,pyslat.a \
-# 	-lpython34 -lboost_python3-mgw49-mt-1_60
+# 	-lpython34 -lboost_python3
 
 doc: $(OBJS) $(HEADERS)
 	doxygen
