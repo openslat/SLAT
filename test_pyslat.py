@@ -16,6 +16,7 @@ im = pyslat.factory(pyslat.FUNCTION_TYPE.NLH, [1221, 29.8, 62.2])
 im_rate = pyslat.MakeSimpleRelationship(im)
 
 old_slat_path = os.path.expanduser("~") + "/Downloads/SLATv1.15_Public/example1_output_gcc/"
+old_slat_path = "paleo-SLAT-data/"
 if True:
     im_rate_GCC = np.loadtxt(old_slat_path + "example1_IM-rate-1", skiprows=3, unpack=True)
     old_slat_line, = plt.loglog(im_rate_GCC[0], im_rate_GCC[1])
