@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#! /mingw64/bin/python3
 
 # This script demonstrates the current state of the pyslat library.
 

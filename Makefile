@@ -2,29 +2,38 @@ all: main unit_tests pyslat.pyd doc
 
 clean:
 	rm -f *.a *.o main unit_tests
-
-CC=g++
+#PYVER=35
+#PYPATH=/c/Users/mag109/AppData/Local/Programs/Python/Python35
+#PYINC=$(PYPATH)/include
+#PYLIB=$(PYLIB)/lib
+##PYVER=3.5m
+##PYINC=/mingw64/include/python3.5m
+##PYLIB=python3.5m
+PYINC=/c/Users/mag109/AppData/Local/Continuum/Anaconda3/include
+PYLIB=/c/Users/mag109/AppData/Local/Continuum/Anaconda3
+PYVER=3
+CC=/mingw64/bin/g++
 #GSLROOT=/c/Program\ Files\ \(x86\)/GnuWIN32
 GSLROOT=/usr/local
-CFLAGS=-g -Wall -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK \
+CFLAGS= -g -Wall -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK \
 	-shared-libgcc \
-	-I/usr/local/include \
-	-I$(GSLROOT)/include \
-	-I/usr/local/include/boost-1_60 \
-	-I/c/Python34/include
+	-D__x86_64__ \
+	-I$(PYINC) \
+	-I/mingw64/include \
+	-I/usr/local/include
 
-LDFLAGS=-L/usr/local/lib \
-	-L$(GSLROOT)/lib \
+LDFLAGS=-L$(PYLIB) \
+	-L/mingw64/lib \
+	-lpython35 \
+	-L/usr/local/lib \
 	-L. \
 	-lgsl.dll -lgslcblas.dll \
-	-lgcc_s \
-	-lboost_log \
-	-lboost_thread \
-	-lboost_system \
-	-lboost_filesystem \
-	-lboost_unit_test_framework \
+	-lboost_log-mt \
+	-lboost_thread-mt \
+	-lboost_system-mt \
+	-lboost_filesystem-mt \
+	-lboost_unit_test_framework-mt \
 	-L/c/windows \
-	-L/c/Python34/libs \
 	 -lpthread -lm 
 # Uncomment the next line to add the current directory to the search path. This is *NOT*
 # generally recommended, but saves on from specifying 'LD_LIBRARY_PATH=.':
@@ -65,11 +74,10 @@ libslat.dll: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_
 	$(LDFLAGS)
 
 gsl_test: gsl_test.cpp 
-	$(CC) -g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 \
-	-static \
+	$(CC) -g -Wall -fbounds-check -Warray-bounds -std=gnu++11 \
+	-static -D__int64=__int64_t \
 	gsl_test.cpp \
-	-I$(GSLROOT)/include \
-	-L$(GSLROOT)/lib \
+	-I$(PYINC) \
         -lgsl.dll -lm \
 	 -o gsl_test
 
@@ -86,7 +94,7 @@ hellomain.o: hellomain.cpp hello.h
 	$(CC) -c $(CFLAGS) -o $@ $<
 hellomain: hellomain.o libhello.dll 
 	$(CC) hellomain.o -o hellomain \
-	-L$(GSLROOT)/lib -lgsl.dll \
+	-lgsl.dll \
 	-L. -lhello \
 
 main.o: main.cpp functions.h relationships.h maq.h replaceable.h fragility.h lognormaldist.h loss_functions.h
@@ -96,14 +104,14 @@ main: main.o libslat.dll
 	-lslat \
 	-L/usr/local/lib \
 	 $(CFLAGS) \
-	-L$(GSLROOT)/lib -lgsl \
-	-lboost_system \
-	-lboost_log \
-	-lboost_filesystem \
-	-lboost_log_setup \
+	-lgsl \
+	-lboost_system-mt \
+	-lboost_log-mt \
+	-lboost_filesystem-mt \
+	-lboost_log_setup-mt \
 	-lpthread -lm \
-	-lboost_thread \
-        -lboost_unit_test_framework
+	-lboost_thread-mt \
+        -lboost_unit_test_framework-mt
 
 main2: main.cpp $(LIBSRCS) $(LIBHDRS)
 	$(CC) -static main.cpp $(LIBSRCS) \
@@ -111,11 +119,9 @@ main2: main.cpp $(LIBSRCS) $(LIBHDRS)
 	-Wl,--dll-verbose \
 	-g -fbounds-check -Warray-bounds -std=gnu++11 \
 	-I/usr/local/include \
-	-I$(GSLROOT)/include \
 	-I/usr/local/include/boost-1_60 \
-	-I/c/Python34/include \
+	-I$(PYINC) \
 	-L. \
-	-L$(GSLROOT)/lib \
 	-lboost_system \
 	-lboost_log \
 	-lboost_filesystem \
@@ -126,23 +132,20 @@ main2: main.cpp $(LIBSRCS) $(LIBHDRS)
 
 
 temp.o: temp.cpp
-	$(CC) -c -g -fbounds-check -Warray-bounds -std=gnu++11 \
-	-DBOOST_ALL_DYN_LINK \
-	-DBOOST_LOG_USE_NATIVE_SYSLOG \
-	-I/usr/local/include \
-	-I/usr/local/include/boost-1_60 \
-	-I/c/Python34/include \
-	-o $@ $< \
+	$(CC) -c $(CFLAGS) -o $@ $<
 
 temp: temp.o
 	$(CC)  -o temp 	temp.o \
 	-L. \
+	-L/mingw64/lib \
+	-L/mingw64/lib/python3.5 \
 	-L/usr/local/lib \
-	-lboost_log \
-	-lboost_log_setup \
-	-lboost_thread \
-	-lboost_system \
-	-lboost_filesystem \
+	-lboost_log-mt \
+	-lboost_log_setup-mt \
+	-lboost_thread-mt \
+	-lboost_system-mt \
+	-lboost_filesystem-mt \
+	-lpython3.5m \
 	# -L/usr/local/lib \
 	#   -lpthread -lm \
 	#  -lgsl -lgslcblas 
@@ -163,20 +166,20 @@ comp_group_test.o: comp_group_test.cpp comp_group.h
 unit_test.o: unit_test.cpp
 	$(CC) -c $(CFLAGS) -o $@ $<
 unit_tests: unit_test.o $(UNIT_OBJS) libslat.a 
-	$(CC) $(UNIT_OBJS) -L. -lslat -o unit_tests ${LDFLAGS} -lboost_unit_test_framework
+	$(CC) $(UNIT_OBJS) -L. -lslat -o unit_tests ${LDFLAGS} -lboost_unit_test_framework-mt
 
 pyslat.o: pyslat.cpp $(LIBHDRS)
-	$(CC) -c $(CFLAGS) -o $@ $<
+	$(CC) -c $(CFLAGS) -dD -o $@ $<
 pyslat.pyd: pyslat.o libslat.dll
 	$(CC) -shared pyslat.o \
 	-shared -o pyslat.pyd \
-	-I/usr/include/python3.4m \
 	-Wl,--dll \
 	-Wl,--export-all-symbols \
 	-Wl,--out-implib,pyslat.a \
 	-L. -lslat \
 	${LDFLAGS} \
-	-lpython34 -lboost_python3
+        -L$(PYLIB) \
+	-lpython3.5 -lboost_python3-mt
 # pyslat.o: 
 # pyslat.pyd: pyslat.cpp $(LIBSRCS) $(LIBHDRS)
 # 	$(CC) -shared $(CFLAGS) pyslat.cpp \

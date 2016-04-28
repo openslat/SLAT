@@ -1,3 +1,5 @@
+#include <limits.h>
+#include <pyconfig.h>
 #include <iostream>
 #include <gsl/gsl_cdf.h>
 #include <gsl/gsl_deriv.h>
@@ -76,7 +78,7 @@ int main(int argc, char **argv)
     F.params = &tc;
     
     std::cout << "addr: " << &tc.local_func << ", "
-	      << &F << ", " << (long)wrapper << std::endl;
+	      << &F << ", " << (long long)wrapper << std::endl;
 
     for (int i=0; i < 1; i++) {
       double result, abserror;
@@ -93,7 +95,7 @@ int main(int argc, char **argv)
     F.params = &tc;
     
     std::cout << "addr: " << &tc.local_func << ", "
-	      << &F << ", " << (long)wrapper << std::endl;
+	      << &F << ", " << (long long)wrapper << std::endl;
 
     for (int i=0; i < 1; i++) {
       double result, abserror;
