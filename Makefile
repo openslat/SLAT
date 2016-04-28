@@ -6,12 +6,9 @@ clean:
 #PYPATH=/c/Users/mag109/AppData/Local/Programs/Python/Python35
 #PYINC=$(PYPATH)/include
 #PYLIB=$(PYLIB)/lib
-##PYVER=3.5m
-##PYINC=/mingw64/include/python3.5m
-##PYLIB=python3.5m
-PYINC=/c/Users/mag109/AppData/Local/Continuum/Anaconda3/include
-PYLIB=/c/Users/mag109/AppData/Local/Continuum/Anaconda3
-PYVER=3
+PYVER=3.5m
+PYINC=/mingw64/include/python$(PYVER)
+PYLIB=python$(PYVER)
 CC=/mingw64/bin/g++
 #GSLROOT=/c/Program\ Files\ \(x86\)/GnuWIN32
 GSLROOT=/usr/local
@@ -24,7 +21,7 @@ CFLAGS= -g -Wall -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
 
 LDFLAGS=-L$(PYLIB) \
 	-L/mingw64/lib \
-	-lpython35 \
+	-lpython$(PYVER) \
 	-L/usr/local/lib \
 	-L. \
 	-lgsl.dll -lgslcblas.dll \
@@ -145,7 +142,7 @@ temp: temp.o
 	-lboost_thread-mt \
 	-lboost_system-mt \
 	-lboost_filesystem-mt \
-	-lpython3.5m \
+	-lpython3.5 \
 	# -L/usr/local/lib \
 	#   -lpthread -lm \
 	#  -lgsl -lgslcblas 

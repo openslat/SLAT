@@ -100,7 +100,7 @@ namespace SLAT {
          * Encapsulate the function in a lambda, that we can pass to the GSL through
          * the function 'wrapper()' (above).
          */
-        std::function<double (double, void*)> local_lambda = [this] (double x, void *) {
+        std::function<double (double)> local_lambda = [this] (double x) {
             double result = this->ValueAt(x);
             return result;
         };
