@@ -42,11 +42,11 @@ int main(int argc, char **argv)
     {
         BOOST_LOG(logger) << "Writing IM-RATE table";
         ofstream outfile("im_rate.dat");
-        outfile << setw(10) << "IM" << setw(12) << "RATE" << endl;
+        outfile << setw(10) << "IM" << setw(15) << "RATE" << endl;
         outfile << setprecision(6) << fixed;
         for (int i=1; i < 100; i++) {
             double im = i / 100.0;
-            outfile << setw(10) << im << setw(12) << im_rate_rel->lambda(im) << endl;
+            outfile << setw(10) << im << setw(15) << im_rate_rel->lambda(im) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "IM-RATE table written";
@@ -66,16 +66,16 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "Writing IM-EDP table";
         ofstream outfile("im_edp.dat");
 
-        outfile << setw(10) << "IM" << setw(12) << "EDP16"
-                << setw(12) << "EDP50" << setw(12) << "EDP84" << endl;
+        outfile << setw(10) << "IM" << setw(15) << "EDP16"
+                << setw(15) << "EDP50" << setw(15) << "EDP84" << endl;
         outfile << setprecision(6) << fixed;
 
         for (int i=0; i < 100; i++) {
             double im = i / 100.0;
             outfile << setw(10) << im
-                    << setw(12) << edp_im_relationship->X_at_exceedence(im, 0.16)
-                    << setw(12) << edp_im_relationship->Mean(im)
-                    << setw(12) << edp_im_relationship->X_at_exceedence(im, 0.84)
+                    << setw(15) << edp_im_relationship->X_at_exceedence(im, 0.16)
+                    << setw(15) << edp_im_relationship->Mean(im)
+                    << setw(15) << edp_im_relationship->X_at_exceedence(im, 0.84)
                     << endl;
         }
         outfile.close();
@@ -89,11 +89,11 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "Writing EDP-RATE table";
         ofstream outfile("edp_rate.dat");
         
-        outfile << setw(10) << "EDP" << setw(12) << "RATE" << endl;
+        outfile << setw(10) << "EDP" << setw(15) << "RATE" << endl;
         outfile << setprecision(6) << fixed;
         for (int i=1; i < 150; i++) {
             double edp = i / 1000.0;
-            outfile << setw(10) << edp << setw(12) << rel->lambda(edp) << endl;
+            outfile << setw(10) << edp << setw(15) << rel->lambda(edp) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "EDP-RATE table written.";
@@ -113,11 +113,11 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "Writing EDP-RATE table";
         ofstream outfile("edp_rate.dat");
         
-        outfile << setw(10) << "EDP" << setw(12) << "RATE" << endl;
+        outfile << setw(10) << "EDP" << setw(15) << "RATE" << endl;
         outfile << setprecision(6) << fixed;
         for (int i=1; i < 150; i++) {
             double edp = i / 1000.0;
-            outfile << setw(10) << edp << setw(12) << rel->lambda(edp) << endl;
+            outfile << setw(10) << edp << setw(15) << rel->lambda(edp) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "EDP-RATE table written.";
@@ -135,11 +135,11 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "Writing EDP-RATE table";
         ofstream outfile("edp_rate.dat");
         
-        outfile << setw(10) << "EDP" << setw(12) << "RATE" << endl;
+        outfile << setw(10) << "EDP" << setw(15) << "RATE" << endl;
         outfile << setprecision(6) << fixed;
         for (int i=1; i < 150; i++) {
             double edp = i / 1000.0;
-            outfile << setw(10) << edp << setw(12) << rel->lambda(edp) << endl;
+            outfile << setw(10) << edp << setw(15) << rel->lambda(edp) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "EDP-RATE table written.";
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
 
             std::vector<double> damage = fragFn->pExceeded(edp);
             for (int j=0; j<4; j++) {
-                outfile << setw(12) << damage[j];
+                outfile << setw(15) << damage[j];
             }
             outfile << endl;            
         }
@@ -187,26 +187,26 @@ int main(int argc, char **argv)
         CompGroup  component_group(rel, fragFn, lossFn, 1);
         ofstream outfile("loss_edp.dat");
     
-        outfile << setw(10) << "EDP" << setw(12) << "Loss"
-                << setw(12) << "SD(ln)" << endl;
+        outfile << setw(10) << "EDP" << setw(15) << "Loss"
+                << setw(15) << "SD(ln)" << endl;
 
         for (int i=1; i < 200; i++) {
             double edp = i / 1000.;
             double loss = component_group.E_loss_EDP(edp);
 
-            outfile << setw(10) << edp << setw(12) << loss
-                    << setw(12) << component_group.SD_ln_loss_EDP(edp) << endl;
+            outfile << setw(10) << edp << setw(15) << loss
+                    << setw(15) << component_group.SD_ln_loss_EDP(edp) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-EDP table written." << endl;
 
         outfile.open("loss_im.dat");
-        outfile << setw(10) << "IM" << setw(12) << "Loss"
-                << setw(12) << "SD(ln)" << endl;
+        outfile << setw(10) << "IM" << setw(15) << "Loss"
+                << setw(15) << "SD(ln)" << endl;
         for (int i=0; i < 250; i++) {
             double im = (i + 1)/ 100.;
-            outfile << setw(10) << im << setw(12) << component_group.E_loss_IM(im)
-                    << setw(12) << component_group.SD_ln_loss_IM(im) << endl;
+            outfile << setw(10) << im << setw(15) << component_group.E_loss_IM(im)
+                    << setw(15) << component_group.SD_ln_loss_IM(im) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-IM table written." << endl;
@@ -214,18 +214,18 @@ int main(int argc, char **argv)
         std::cout << "Expected Annual Loss: " << component_group.E_annual_loss() << std::endl;
         
         outfile.open("annual_loss.dat");
-        outfile << setw(10) << "Year" << setw(12) << "Loss" << endl;
+        outfile << setw(10) << "Year" << setw(15) << "Loss" << endl;
         for (int year=0; year <= 100; year++) {
-            outfile << setw(10) << year << setw(12) << component_group.E_loss(year, 0.06) << endl;
+            outfile << setw(10) << year << setw(15) << component_group.E_loss(year, 0.06) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "annual loss table written." << endl;
 
         outfile.open("loss_rate.dat");
-        outfile << setw(10) << "Loss" << setw(12) << "Rate" << std::endl;
+        outfile << setw(10) << "Loss" << setw(15) << "Rate" << std::endl;
         for (int i=0; i < 250; i++) {
             double loss = 1E-4 + i * (1.2 - 1E-4) / 250;
-            outfile << setw(10) << loss << setw(12) << component_group.lambda_loss(loss) << std::endl;
+            outfile << setw(10) << loss << setw(15) << component_group.lambda_loss(loss) << std::endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-RATE table written." << endl;
