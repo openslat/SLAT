@@ -53,7 +53,7 @@ pyslat.o: pyslat.cpp functions.h relationships.h replaceable.h
 	$(CC) -c $(CFLAGS) `pkg-config --cflags python3` -o $@ $<
 pyslat.so: pyslat.o libslat.so
 	$(CC) -fPIC -shared -Wl,-soname,pyslat.so -o pyslat.so pyslat.o ${LDFLAGS} -L. -lslat \
-	`pkg-config --libs python3`
+	`pkg-config --libs python3` -lboost_python-py34
 
 doc: $(OBJS) $(HEADERS)
 	doxygen
