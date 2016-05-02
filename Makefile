@@ -1,4 +1,4 @@
-all: main unit_tests pyslat.pyd doc 
+all: main unit_tests pyslat.so doc 
 
 clean:
 	rm -f *.a *.o main unit_tests
@@ -63,16 +63,16 @@ pyslat.so: pyslat.o libslat.so
 	$(CC) -fPIC -shared -Wl,-soname,pyslat.so -o pyslat.so pyslat.o ${LDFLAGS} -L. -lslat \
 	`pkg-config --libs python3` -lboost_python-py34
 
-pyslat.pyd: pyslat.o libslat.dll
-	$(CC) -shared pyslat.o \
-	-shared -o pyslat.pyd \
-	-Wl,--dll \
-	-Wl,--export-all-symbols \
-	-Wl,--out-implib,pyslat.a \
-	-L. -lslat \
-	${LDFLAGS} \
-        -L$(PYLIB) \
-	-lpython3.5 -lboost_python3-mt
+# pyslat.pyd: pyslat.o libslat.dll
+# 	$(CC) -shared pyslat.o \
+# 	-shared -o pyslat.pyd \
+# 	-Wl,--dll \
+# 	-Wl,--export-all-symbols \
+# 	-Wl,--out-implib,pyslat.a \
+# 	-L. -lslat \
+# 	${LDFLAGS} \
+#         -L$(PYLIB) \
+# 	-lpython3.5 -lboost_python3-mt
 
 doc: $(OBJS) $(HEADERS)
 	doxygen

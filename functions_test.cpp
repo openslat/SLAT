@@ -106,8 +106,8 @@ BOOST_AUTO_TEST_CASE( Log_Log_Interp_Test_1 )
     }
     LogLogInterpolatedFn f(x, y, size);
 
-    BOOST_REQUIRE(std::isnan(f.ValueAt(0.0)));
-    BOOST_REQUIRE(std::isnan(f.ValueAt(30.0)));
+    BOOST_CHECK_CLOSE(f.ValueAt(0.0), h.ValueAt(x[0]), 0.01);
+    BOOST_CHECK_SMALL(f.ValueAt(30.0), 1E-5);
 
     for (int i=0; i <= 20; i++) {
         double x = double(i)/20 * 28;
