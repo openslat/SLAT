@@ -14,6 +14,8 @@
 #include <vector>
 #include <gsl/gsl_deriv.h>
 
+using namespace std;
+
 namespace SLAT {
     CompGroup::CompGroup(std::shared_ptr<CompoundRateRelationship> edp,
                          std::shared_ptr<FragilityFn> frag_fn, 
@@ -60,7 +62,7 @@ namespace SLAT {
 
     static double wrapper(double x,  std::function<double (double)> *f)
     {
-        return (*f)(x);
+      return (*f)(x);
     }
 
     double CompGroup::E_loss_IM_calc(double im)
@@ -72,7 +74,7 @@ namespace SLAT {
                 if (edp == 0) {
                     result = 0;
                 } else {
-                    std::function<double (double, void*)> local_lambda = [this, im] (double x, void *) {
+                    std::function<double (double)> local_lambda = [this, im] (double x) {
                         double result = this->edp->P_exceedence(im, x);
                         return result;
                     };
@@ -81,8 +83,8 @@ namespace SLAT {
                     F.params = &local_lambda;
                     double deriv, abserror;
                     gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
-                    if (isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
-                    if (isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+                    if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                    if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
 
                     double d = deriv;
                     //double d = this->edp->P_exceedence(im, edp);
@@ -107,7 +109,7 @@ namespace SLAT {
                 if (edp == 0) {
                     result = 0;
                 } else {
-                    std::function<double (double, void*)> local_lambda = [this, im] (double x, void *) {
+  		  std::function<double (double)> local_lambda = [this, im] (double x) {
                         double result = this->edp->P_exceedence(im, x);
                         return result;
                     };
@@ -116,8 +118,8 @@ namespace SLAT {
                     F.params = &local_lambda;
                     double deriv, abserror;
                     gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
-                    if (isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
-                    if (isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+                    if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                    if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
 
                     double d = deriv;
                     //double d = this->edp->P_exceedence(im, edp);

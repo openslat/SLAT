@@ -9,9 +9,14 @@
  *
  * ©2015 Canterbury University
  */
-#include <memory>
+//#include <time.h>
+//#include <w32api/windows.h>
+#include <limits.h>
+#include <boost/math/special_functions.hpp>
 #include <boost/python.hpp>
 #include <boost/python/stl_iterator.hpp>
+#include <math.h>
+#include <memory>
 #include <string>
 #include "functions.h"
 #include "relationships.h"

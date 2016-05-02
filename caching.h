@@ -14,6 +14,7 @@
 
 #include <unordered_map>
 #include <functional>
+#include <iostream>
 
 namespace SLAT {
     namespace Caching {
@@ -39,13 +40,10 @@ namespace SLAT {
             }
             T operator()(V v) { 
                 if (cache_active) {
-                    try {
-                        T result = cache.at(v);
-                        return result;
-                    } catch (...) {
+                    if (cache.count(v) == 0) {
                         cache[v] = func(v); 
-                        return cache[v];
-                    };
+                    }
+                    return cache[v];
                 } else {
                     return func(v);
                 }

@@ -1,8 +1,14 @@
-all: main unit_tests pyslat.so doc 
+all: main unit_tests pyslat.pyd doc 
 
 clean:
-	rm -f *.so *.o main unit_tests
-
+	rm -f *.a *.o main unit_tests
+#PYVER=35
+#PYPATH=/c/Users/mag109/AppData/Local/Programs/Python/Python35
+#PYINC=$(PYPATH)/include
+#PYLIB=$(PYLIB)/lib
+PYVER=3.5m
+PYINC=/mingw64/include/python$(PYVER)
+PYLIB=python$(PYVER)
 CC=g++
 CFLAGS=-g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11  -fPIC -DBOOST_ALL_DYN_LINK
 CFLAGS += `pkg-config --cflags gsl`
@@ -16,6 +22,7 @@ LDFLAGS += `pkg-config --libs gsl`
 
 LIBSRCS=functions.cpp relationships.cpp maq.cpp fragility.cpp lognormaldist.cpp loss_functions.cpp \
 	comp_group.cpp caching.cpp
+LIBHDRS=$(LIBSRCS:.cpp=.h)
 LIBOBJS=$(LIBSRCS:.cpp=.o)
 
 UNIT_SRCS = unit_test.cpp functions_test.cpp relationships_test.cpp maq_test.cpp \
@@ -46,6 +53,7 @@ maq_test.o: maq_test.cpp maq.h relationships.h functions.h replaceable.h
 fragility_test.o: fragility_test.cpp fragility.h
 comp_group_test.o: comp_group_test.cpp comp_group.h 
 unit_test.o: unit_test.cpp
+
 unit_tests: unit_test.o $(UNIT_OBJS) libslat.so 
 	$(CC) -fPIC $(UNIT_OBJS) -L. -lslat -o unit_tests ${LDFLAGS} -lboost_unit_test_framework
 
@@ -55,5 +63,17 @@ pyslat.so: pyslat.o libslat.so
 	$(CC) -fPIC -shared -Wl,-soname,pyslat.so -o pyslat.so pyslat.o ${LDFLAGS} -L. -lslat \
 	`pkg-config --libs python3` -lboost_python-py34
 
+pyslat.pyd: pyslat.o libslat.dll
+	$(CC) -shared pyslat.o \
+	-shared -o pyslat.pyd \
+	-Wl,--dll \
+	-Wl,--export-all-symbols \
+	-Wl,--out-implib,pyslat.a \
+	-L. -lslat \
+	${LDFLAGS} \
+        -L$(PYLIB) \
+	-lpython3.5 -lboost_python3-mt
+
 doc: $(OBJS) $(HEADERS)
 	doxygen
+

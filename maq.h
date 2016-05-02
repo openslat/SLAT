@@ -14,7 +14,6 @@
 
 #include <cmath>
 #include <functional>
-#include <boost/shared_ptr.hpp>
 
 #include <boost/move/utility.hpp>
 #include <boost/log/sources/logger.hpp>
