@@ -72,9 +72,9 @@ DIGIT_SEQUENCE : Digit+;
 fragment
 EXPONENT : ('e' | 'E') SIGN? DIGIT_SEQUENCE;
 
-detfn_command : 'detfn' ID 
-	      (('hyperbolic' scalar3) |
-	       ('powerlaw' scalar2));
+detfn_command : 'detfn' ID (hyperbolic_args | powerlaw_args);
+hyperbolic_args : 'hyperbolic' scalar3;
+powerlaw_args : 'powerlaw' scalar2;
 
 scalar :  STRING | INTEGER| FLOAT_VAL | python_script | var_ref;
 scalar2 : scalar ',' scalar;
