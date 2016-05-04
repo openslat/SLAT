@@ -16,6 +16,17 @@ LPAREN : '(';
 RPAREN : ')';
 
 COMMENT :   '#' ~[\r\n]*;
+PRINT : 'print';
+DETFN : 'detfn';
+PROBFN : 'probfn';
+IM : 'im';
+EDP : 'edp';
+FRAGFN: 'fragfn';
+LOSSFN: 'lossfn';
+COMPGROUP : 'compgroup';
+APPEND_OPTION : '--append';
+NEW_OPTION : '--new';
+
 script : (WS | command)*;
 
 command : (title_command | detfn_command | probfn_command | im_command | edp_command | fragfn_command | lossfn_command | compgroup_command | print_command | integration_command | recorder_command | analyze_command | set_command) ';' ;
@@ -72,7 +83,7 @@ DIGIT_SEQUENCE : Digit+;
 fragment
 EXPONENT : ('e' | 'E') SIGN? DIGIT_SEQUENCE;
 
-detfn_command : 'detfn' ID (hyperbolic_args | powerlaw_args);
+detfn_command : DETFN ID (hyperbolic_args | powerlaw_args);
 hyperbolic_args : 'hyperbolic' scalar3;
 powerlaw_args : 'powerlaw' scalar2;
 
@@ -93,14 +104,14 @@ parameter_dictionary : LPAREN dictionary_entry (',' dictionary_entry)* RPAREN;
 
 dictionary_entry : (ID | STRING) ':' parameters;
 
-probfn_command : 'probfn' ID 'lognormal' (ID | var_ref) ',' (ID | var_ref) lognormal_options;
+probfn_command : PROBFN ID 'lognormal' (ID | var_ref) ',' (ID | var_ref) lognormal_options;
 
 
-im_command : 'im' ID ID;
-edp_command : 'edp' ID ID ID;
+im_command : IM ID ID;
+edp_command : EDP ID ID ID;
 
 
-fragfn_command : 'fragfn' ID 
+fragfn_command : FRAGFN ID 
 	       (fragfn_db_params | fragfn_user_defined_params);
 fragfn_db_params : (('--db' FILE_NAME)? ('--stdfunc' db_key)?) |
 		   ('--stdfunc' db_key '--db' FILE_NAME) ;
@@ -123,7 +134,7 @@ array_array : LBRACKET parameter_array (',' parameter_array)* RBRACKET;
 FILE_NAME : [a-zA-Z_.0-9]+;
 db_key :  ID;
 
-lossfn_command : 'lossfn' ID simple_loss_command;
+lossfn_command : LOSSFN ID simple_loss_command;
 simple_loss_command : ('--type' 'simple')? LBRACKET scalar2 RBRACKET (',' LBRACKET scalar2 RBRACKET)* lognormal_options;
 
 lossfn_heading : 'cost' | 'disp' | 'upper_cost' | 'lower_cost' | 'lower_n' | 'upper_n' | 'mean_uncert' | 'var_uncert';
@@ -132,23 +143,13 @@ lossfn_anon_array : LBRACKET parameter_array (',' parameter_array)* RBRACKET;
 lossfn_dict : LPAREN lossfn_heading ':' parameter (',' lossfn_heading ':' parameter)* RPAREN;
 lossfn_named_array : LBRACKET lossfn_dict (',' lossfn_dict)* RBRACKET;
 
-compgroup_command : 'compgroup' ID ID ID ID INTEGER;
+compgroup_command : COMPGROUP ID ID ID ID INTEGER;
 
-print_command : (print_message | print_detfn | print_probfn | 
-	        print_im | print_edp | print_fragfn | print_lossfn |
-		print_compgroup) print_options?;
+print_command : (print_message | print_function) print_options?;
 
-print_message : 'print' 'message' STRING?;
-print_detfn : 'print' 'detfn' ID;
-print_probfn : 'print' 'probfn' ID;
-print_im : 'print' 'im' ID;
-print_edp : 'print' 'edp' ID;
-print_fragfn : 'print' 'fragfn' ID;
-print_lossfn : 'print' 'lossfn' ID;
-print_compgroup : 'print' 'compgroup' ID;
-
-APPEND_OPTION : '--append';
-NEW_OPTION : '--new';
+print_message : PRINT 'message' STRING?;
+print_function_type: DETFN | PROBFN | IM | EDP | FRAGFN | LOSSFN | COMPGROUP;
+print_function: PRINT print_function_type ID;
 
 print_options : FILE_NAME (APPEND_OPTION | NEW_OPTION)?;
 
@@ -156,7 +157,7 @@ integration_command : 'integration' integration_method numerical_scalar (INTEGER
 integration_method : 'maq';
 
 recorder_command : 'recorder' ((recorder_type ID recorder_at recorder_cols?) | ('dsrate' ID)) print_options?;
-recorder_type : 'detfn' | 'probfn' | 'imrate' | 'edpim' | 'edprate' | 'dsedp'
+recorder_type : DETFN | PROBFN | 'imrate' | 'edpim' | 'edprate' | 'dsedp'
 	      | 'dsim' | 'lossds' | 'lossedp' | 'lossim';
 recorder_at : (float_array | (FLOAT_VAL ':' FLOAT_VAL ':' FLOAT_VAL) | python_script | var_ref);
 float_array : FLOAT_VAL (',' FLOAT_VAL)*;
