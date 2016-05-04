@@ -190,7 +190,6 @@ class mySlatListener(slatListener):
         
     # Exit a parse tree produced by slatParser#fragfn_command.
     def exitFragfn_command(self, ctx:slatParser.Fragfn_commandContext):
-        print("< Fragfn_command")
         id = ctx.ID().getText()
         db_params = ctx.fragfn_db_params()
         if db_params:
@@ -202,7 +201,8 @@ class mySlatListener(slatListener):
             else:
                 dbfile = "the standard database"
                 
-            print("--> using key", dbkey, "in", dbfile, ".")
+            print("Define the fragility function named [" + id + 
+                  "] using the key [" + dbkey + "] in", dbfile, ".")
         else:
             params = ctx.fragfn_user_defined_params()
             options = params.lognormal_options()
@@ -217,7 +217,6 @@ class mySlatListener(slatListener):
                     mu = "mean of X"
             else:
                 mu = "(default)"
-            print("...mu: ", mu)
             
             if options.sd_option():
                 if options.sd_option().getTokens(slatParser.SD_LN_X):
@@ -226,52 +225,54 @@ class mySlatListener(slatListener):
                     sd = "standard deviation of X"
             else:
                 sd = "(default)"
-            print("...sd: ", sd)
             
-            print("...parameters:")
+            print("Define the fragility function named [" + id + 
+                  "] using the parameters below to represent ",
+                  "mu of", mu, "and sd of", sd, ":")
+                  
             for s in scalars:
                 print("......", self._scalar2_value(s))
-        
+                
 
     # Enter a parse tree produced by slatParser#fragfn_db_params.
     def enterFragfn_db_params(self, ctx:slatParser.Fragfn_db_paramsContext):
-        print("> Fragfn_db_params")
+        pass #print("> Fragfn_db_params")
 
     # Exit a parse tree produced by slatParser#fragfn_db_params.
     def exitFragfn_db_params(self, ctx:slatParser.Fragfn_db_paramsContext):
-        print("< Fragfn_db_params")
+        pass #print("< Fragfn_db_params")
 
     # Enter a parse tree produced by slatParser#fragfn_user_defined_params.
     def enterFragfn_user_defined_params(self, ctx:slatParser.Fragfn_user_defined_paramsContext):
-        print("> Fragfn_user_defined_params")
+        pass #print("> Fragfn_user_defined_params")
 
     # Exit a parse tree produced by slatParser#fragfn_user_defined_params.
     def exitFragfn_user_defined_params(self, ctx:slatParser.Fragfn_user_defined_paramsContext):
-        print("< Fragfn_user_defined_params")
+        pass #print("< Fragfn_user_defined_params")
 
     # Enter a parse tree produced by slatParser#mu_option.
     def enterMu_option(self, ctx:slatParser.Mu_optionContext):
-        print("> Mu_option")
+        pass #print("> Mu_option")
 
     # Exit a parse tree produced by slatParser#mu_option.
     def exitMu_option(self, ctx:slatParser.Mu_optionContext):
-        print("< Mu_option")
+        pass #print("< Mu_option")
 
     # Enter a parse tree produced by slatParser#sd_option.
     def enterSd_option(self, ctx:slatParser.Sd_optionContext):
-        print("> Sd_option")
+        pass #print("> Sd_option")
 
     # Exit a parse tree produced by slatParser#sd_option.
     def exitSd_option(self, ctx:slatParser.Sd_optionContext):
-        print("< Sd_option")
+        pass #print("< Sd_option")
 
     # Enter a parse tree produced by slatParser#lognormal_options.
     def enterLognormal_options(self, ctx:slatParser.Lognormal_optionsContext):
-        print("> Lognormal_options")
+        pass #print("> Lognormal_options")
 
     # Exit a parse tree produced by slatParser#lognormal_options.
     def exitLognormal_options(self, ctx:slatParser.Lognormal_optionsContext):
-        print("< Lognormal_options")
+        pass #print("< Lognormal_options")
 
     # Enter a parse tree produced by slatParser#placement_type.
     def enterPlacement_type(self, ctx:slatParser.Placement_typeContext):
@@ -315,11 +316,11 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#db_key.
     def enterDb_key(self, ctx:slatParser.Db_keyContext):
-        print("> Db_key")
+        pass #print("> Db_key")
 
     # Exit a parse tree produced by slatParser#db_key.
     def exitDb_key(self, ctx:slatParser.Db_keyContext):
-        print("< Db_key")
+        pass #print("< Db_key")
 
     # Enter a parse tree produced by slatParser#lossfn_command.
     def enterLossfn_command(self, ctx:slatParser.Lossfn_commandContext):
