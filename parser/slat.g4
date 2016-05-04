@@ -27,6 +27,13 @@ COMPGROUP : 'compgroup';
 APPEND_OPTION : '--append';
 NEW_OPTION : '--new';
 
+MEAN_LN_X: 'mean_ln_x';
+MEDIAN_X: 'median_x';
+MEAN_X: 'mean_x';
+
+SD_LN_X: 'sd_ln_x';
+SD_X: 'sd_x';
+
 script : (WS | command)*;
 
 command : (title_command | detfn_command | probfn_command | im_command | edp_command | fragfn_command | lossfn_command | compgroup_command | print_command | integration_command | recorder_command | analyze_command | set_command) ';' ;
@@ -113,19 +120,19 @@ edp_command : EDP ID ID ID;
 
 fragfn_command : FRAGFN ID 
 	       (fragfn_db_params | fragfn_user_defined_params);
-fragfn_db_params : (('--db' FILE_NAME)? ('--stdfunc' db_key)?) |
+fragfn_db_params : (('--db' FILE_NAME)? '--stdfunc' db_key) |
 		   ('--stdfunc' db_key '--db' FILE_NAME) ;
 		 
 fragfn_user_defined_params : 
 		  '[' scalar2 ']' (',' '[' scalar2 ']')*
                   lognormal_options;
-mu_option : '--mu' ('mean_ln_x' | 'median_x' | 'mean_x');
-sd_option : '--sd' ('sd_ln_x' | 'sd_x');
+mu_option : '--mu' (MEAN_LN_X | MEDIAN_X | MEAN_X);
+sd_option : '--sd' (SD_LN_X | SD_X);
 lognormal_options : (mu_option? sd_option?) | (sd_option mu_option);
 	
 
-placement_type : 'mean_ln_x' | 'mean_x' | 'median_x';
-spread_type : 'sd_x' | 'sd_ln_x';
+placement_type : MEAN_LN_X | MEDIAN_X | MEAN_X;
+spread_type : (SD_LN_X | SD_X);
 
 lognormal_dist : scalar2 lognormal_options;
 

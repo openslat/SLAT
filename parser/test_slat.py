@@ -10,7 +10,7 @@ from slatListener import slatListener
 # http://www.antlr.org/download/antlr-3.1.3.jar
 class mySlatListener(slatListener):
     def _scalar_value(self, ctx:slatParser.ScalarContext):
-        return (ctx.INTEGER() or ctx.FLOAT_VAL()).getText()
+        return float((ctx.INTEGER() or ctx.FLOAT_VAL()).getText())
 
     def _scalar2_value(self, ctx:slatParser.Scalar2Context):
         return [ self._scalar_value(ctx.scalar(0)),
@@ -22,30 +22,34 @@ class mySlatListener(slatListener):
     
     # Enter a parse tree produced by slatParser#script.
     def enterScript(self, ctx:slatParser.ScriptContext):
-        print("> script")
+        pass #print("> script")
 
     # Exit a parse tree produced by slatParser#script.
     def exitScript(self, ctx:slatParser.ScriptContext):
-        print("< script")
+        pass #print("< script")
 
     # Enter a parse tree produced by slatParser#command.
     def enterCommand(self, ctx:slatParser.CommandContext):
-        print("> Command")
+        pass #print("> Command")
 
     # Exit a parse tree produced by slatParser#command.
     def exitCommand(self, ctx:slatParser.CommandContext):
-        print("< Command")
+        pass #print("< Command")
 
     # Enter a parse tree produced by slatParser#title_command.
     def enterTitle_command(self, ctx:slatParser.Title_commandContext):
-        print("TitleCommand: ", ctx.STRING())
+        pass #print("TitleCommand: ", ctx.STRING())
 
     # Exit a parse tree produced by slatParser#title_command.
     def exitTitle_command(self, ctx:slatParser.Title_commandContext):
-        print("< TitleCommand")
+        print("Set the title to [" + ctx.STRING().getText().strip('\'"') + "].")
 
     # Enter a parse tree produced by slatParser#detfn_command.
     def enterDetfn_command(self, ctx:slatParser.Detfn_commandContext):
+        pass
+    
+    # Exit a parse tree produced by slatParser#detfn_command.
+    def exitDetfn_command(self, ctx:slatParser.Detfn_commandContext):
         if ctx.powerlaw_args():
             type = "power law"
             value = self._scalar2_value(ctx.powerlaw_args().scalar2())
@@ -53,52 +57,50 @@ class mySlatListener(slatListener):
             type = "hyperbolic"
             value = self._scalar3_value(ctx.hyperbolic_args().scalar3())
 
-        print("> detfn_command: ", type, value)
+        print("Create a ", type, " function named ", ctx.ID(), 
+              ", using the parameters: ", value)
 
-    # Exit a parse tree produced by slatParser#detfn_command.
-    def exitDetfn_command(self, ctx:slatParser.Detfn_commandContext):
-        print("< detfn_command")
 
     # Enter a parse tree produced by slatParser#hyperbolic_args.
     def enterHyperbolic_args(self, ctx:slatParser.Hyperbolic_argsContext):
-        print("> Hyperbolic_args")
+        pass #print("> Hyperbolic_args")
 
     # Exit a parse tree produced by slatParser#hyperbolic_args.
     def exitHyperbolic_args(self, ctx:slatParser.Hyperbolic_argsContext):
-        print("< Hyperbolic_args")
+        pass #print("< Hyperbolic_args")
 
 
     # Enter a parse tree produced by slatParser#powerlaw_args.
     def enterPowerlaw_args(self, ctx:slatParser.Powerlaw_argsContext):
-        print("> Powerlaw_args")
+        pass #print("> Powerlaw_args")
 
     # Exit a parse tree produced by slatParser#powerlaw_args.
     def exitPowerlaw_args(self, ctx:slatParser.Powerlaw_argsContext):
-        print("< Powerlaw_args")
+        pass #print("< Powerlaw_args")
 
     # Enter a parse tree produced by slatParser#scalar2.
     def enterScalar(self, ctx:slatParser.ScalarContext):
-        print("> scalar: ", self._scalar_value(ctx))
+        pass #print("> scalar: ", self._scalar_value(ctx))
 
     # Exit a parse tree produced by slatParser#scalar.
     def exitScalar(self, ctx:slatParser.ScalarContext):
-        print("< scalar: ", self._scalar_value(ctx))
+        pass #print("< scalar: ", self._scalar_value(ctx))
 
     # Enter a parse tree produced by slatParser#scalar2.
     def enterScalar2(self, ctx:slatParser.Scalar2Context):
-        print("> Scalar2: ", self._scalar2_value(ctx))
+        pass #print("> Scalar2: ", self._scalar2_value(ctx))
 
     # Exit a parse tree produced by slatParser#scalar2.
     def exitScalar2(self, ctx:slatParser.Scalar2Context):
-        print("< Scalar2: ", self._scalar2_value(ctx))
+        pass #print("< Scalar2: ", self._scalar2_value(ctx))
 
     # Enter a parse tree produced by slatParser#scalar3.
     def enterScalar3(self, ctx:slatParser.Scalar3Context):
-        print("> Scalar3: ", self._scalar3_value(ctx))
+        pass #print("> Scalar3: ", self._scalar3_value(ctx))
 
     # Exit a parse tree produced by slatParser#scalar3.
     def exitScalar3(self, ctx:slatParser.Scalar3Context):
-        print("< Scalar3: ", self._scalar3_value(ctx))
+        pass #print("< Scalar3: ", self._scalar3_value(ctx))
 
     # Enter a parse tree produced by slatParser#var_ref.
     def enterVar_ref(self, ctx:slatParser.Var_refContext):
@@ -184,11 +186,52 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#fragfn_command.
     def enterFragfn_command(self, ctx:slatParser.Fragfn_commandContext):
-        print("> Fragfn_command")
-
+        pass #print("> Fragfn_command")
+        
     # Exit a parse tree produced by slatParser#fragfn_command.
     def exitFragfn_command(self, ctx:slatParser.Fragfn_commandContext):
         print("< Fragfn_command")
+        id = ctx.ID().getText()
+        db_params = ctx.fragfn_db_params()
+        if db_params:
+            dbkey = db_params.db_key().ID().getText().strip('\'"')
+
+            if db_params.FILE_NAME():
+                dbfile = "the database [" + db_params.FILE_NAME().getText().strip('\'"') \
+                         + "]"
+            else:
+                dbfile = "the standard database"
+                
+            print("--> using key", dbkey, "in", dbfile, ".")
+        else:
+            params = ctx.fragfn_user_defined_params()
+            options = params.lognormal_options()
+            scalars = params.scalar2()
+
+            if options.mu_option():
+                if options.mu_option().getTokens(slatParser.MEAN_LN_X):
+                    mu = "mean of the log of X"
+                elif options.mu_option().getTokens(slatParser.MEDIAN_X):
+                    mu = "median of X"
+                elif options.mu_option().getTokens(slatParser.MEAN_X):
+                    mu = "mean of X"
+            else:
+                mu = "(default)"
+            print("...mu: ", mu)
+            
+            if options.sd_option():
+                if options.sd_option().getTokens(slatParser.SD_LN_X):
+                    sd = "standard deviation of the log of X"
+                elif options.sd_option().getTokens(slatParser.SD_X):
+                    sd = "standard deviation of X"
+            else:
+                sd = "(default)"
+            print("...sd: ", sd)
+            
+            print("...parameters:")
+            for s in scalars:
+                print("......", self._scalar2_value(s))
+        
 
     # Enter a parse tree produced by slatParser#fragfn_db_params.
     def enterFragfn_db_params(self, ctx:slatParser.Fragfn_db_paramsContext):
@@ -538,7 +581,14 @@ def main(argv):
                    'title \'This is a title with a \\\' quote and a \\\\ backslash.\';',
                    'detfn detfn1 hyperbolic 1.0, 2, -.5;',
                    'detfn detfn1 powerlaw 0.5, 1.2;',
+                   'fragfn FRAGID --stdfunc FRAG_KEY;',
+                   'fragfn FRAGID --db FILENAME.EXT --stdfunc FRAG_KEY;',
+                   'fragfn FRAGID --stdfunc FRAG_KEY --db FILENAME.EXT;',
+                   'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4];',
                    'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --mu mean_ln_x;',
+                   'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --sd sd_ln_x;',
+                   'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --mu mean_ln_x --sd sd_ln_x;',
+                   'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --sd sd_ln_x  --mu median_x;',
                    'print message;',
                    'print message "This is a message string.";',
                    "print message 'This is a message string.' MESSAGE.TXT --new;",
