@@ -345,18 +345,96 @@ class mySlatListener(slatListener):
     # Enter a parse tree produced by slatParser#print_command.
     def enterPrint_command(self, ctx:slatParser.Print_commandContext):
         print("> Print_command")
+        #print("> Print_command: ", ctx.STRING(), " #", ctx.getChildCount())
+        if False:
+            for c in ctx.getChildren():
+                print("    ", c)
+            for i in range(100):
+                for t in ctx.getTokens(i):
+                    print(i, "    ", t)
 
     # Exit a parse tree produced by slatParser#print_command.
     def exitPrint_command(self, ctx:slatParser.Print_commandContext):
-        print("< Print_command")
+        print("< Print_command: ")
+        #print("< Print_command: ", ctx.STRING())
+
+    # Enter a parse tree produced by slatParser#print_message.
+    def enterPrint_message(self, ctx:slatParser.Print_messageContext):
+        print("> Print_message: ", ctx.STRING())
+
+    # Exit a parse tree produced by slatParser#print_message.
+    def exitPrint_message(self, ctx:slatParser.Print_messageContext):
+        print("< Print_message: ", ctx.STRING())
+
+    # Enter a parse tree produced by slatParser#print_detfn.
+    def enterPrint_detfn(self, ctx:slatParser.Print_detfnContext):
+        print("> print_detfn: ", ctx.ID())
+
+    # Exit a parse tree produced by slatParser#print_detfn.
+    def exitPrint_detfn(self, ctx:slatParser.Print_detfnContext):
+        print("< print_detfn: ", ctx.ID())
+
+
+    # Enter a parse tree produced by slatParser#print_probfn.
+    def enterPrint_probfn(self, ctx:slatParser.Print_probfnContext):
+        print("> print_probfn: ", ctx.ID())
+
+    # Exit a parse tree produced by slatParser#print_probfn.
+    def exitPrint_probfn(self, ctx:slatParser.Print_probfnContext):
+        print("< print_probfn: ", ctx.ID())
+
+
+    # Enter a parse tree produced by slatParser#print_im.
+    def enterPrint_im(self, ctx:slatParser.Print_imContext):
+        print("> print_im: ", ctx.ID())
+
+    # Exit a parse tree produced by slatParser#print_im.
+    def exitPrint_im(self, ctx:slatParser.Print_imContext):
+        print("< print_im: ", ctx.ID())
+
+    # Enter a parse tree produced by slatParser#print_edp.
+    def enterPrint_edp(self, ctx:slatParser.Print_edpContext):
+        print("> print_edp: ", ctx.ID())
+
+    # Exit a parse tree produced by slatParser#print_edp.
+    def exitPrint_edp(self, ctx:slatParser.Print_edpContext):
+        print("< print_edp: ", ctx.ID())
+
+
+    # Enter a parse tree produced by slatParser#print_fragfn.
+    def enterPrint_fragfn(self, ctx:slatParser.Print_fragfnContext):
+        print("> print_fragfn: ", ctx.ID())
+
+    # Exit a parse tree produced by slatParser#print_fragfn.
+    def exitPrint_fragfn(self, ctx:slatParser.Print_fragfnContext):
+        print("< print_fragfn: ", ctx.ID())
+
+
+    # Enter a parse tree produced by slatParser#print_lossfn.
+    def enterPrint_lossfn(self, ctx:slatParser.Print_lossfnContext):
+        print("> print_lossfn: ", ctx.ID())
+
+    # Exit a parse tree produced by slatParser#print_lossfn.
+    def exitPrint_lossfn(self, ctx:slatParser.Print_lossfnContext):
+        print("< print_lossfn: ", ctx.ID())
+
+
+    # Enter a parse tree produced by slatParser#print_compgroup.
+    def enterPrint_compgroup(self, ctx:slatParser.Print_compgroupContext):
+        print("> print_compgroup: ", ctx.ID())
+
+    # Exit a parse tree produced by slatParser#print_compgroup.
+    def exitPrint_compgroup(self, ctx:slatParser.Print_compgroupContext):
+        print("< print_compgroup: ", ctx.ID())
+
 
     # Enter a parse tree produced by slatParser#print_options.
     def enterPrint_options(self, ctx:slatParser.Print_optionsContext):
-        print("> Print_options")
+        print("> Print_options: ", ctx.FILE_NAME(), ", ", ctx.APPEND_OPTION(), ", ", ctx.NEW_OPTION())
 
     # Exit a parse tree produced by slatParser#print_options.
     def exitPrint_options(self, ctx:slatParser.Print_optionsContext):
-        print("< Print_options")
+        print("< Print_options: ", ctx.FILE_NAME(), ", ", ctx.APPEND_OPTION(), ", ", ctx.NEW_OPTION())
 
     # Enter a parse tree produced by slatParser#integration_command.
     def enterIntegration_command(self, ctx:slatParser.Integration_commandContext):
@@ -468,10 +546,22 @@ def main(argv):
                    'title \'This is a title with a \\\\ backslash.\';',
                    'title \'This is a title with a \\\' quote and a \\\\ backslash.\';',
                    'detfn detfn1 hyperbolic 1.0, 2, -.5;',
-                   'detfn detfn1 powerlaw 0.5, 1.2;'
-                   'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --mu mean_ln_x;'
+                   'detfn detfn1 powerlaw 0.5, 1.2;',
+                   'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --mu mean_ln_x;',
+                   'print message;',
+                   'print message "This is a message string.";',
+                   "print message 'This is a message string.' MESSAGE.TXT --new;",
+                   "print  message 'This is a message string.' MESSAGE.TXT --append;",
+                   'print detfn IM_FUNC INPUT_DEFS.TXT --new;',
+                   'print probfn EDP_FN INPUT_DEFS.TXT --append;',
+                   'print im IM1 INPUT_DEFS.TXT --append;',
+                   'print edp EDP1 INPUT_DEFS.TXT --append;',
+                   'print fragfn FRAG1 INPUT_DEFS.TXT --append;',
+                   'print lossfn LOSS1 INPUT_DEFS.TXT --append;',
+                   'print compgroup PG1 INPUT_DEFS.TXT --append;'
     ]
     for test_case in test_cases:
+        print()
         print("'",test_case, "' --> ", sep='', end='')
         input = InputStream(test_case)
         lexer = slatLexer(input)

@@ -134,16 +134,23 @@ lossfn_named_array : LBRACKET lossfn_dict (',' lossfn_dict)* RBRACKET;
 
 compgroup_command : 'compgroup' ID ID ID ID INTEGER;
 
-print_command : 'print' (('message' STRING?) |
-	      ('detfn' ID) |
-	      ('probfn' ID) |
-	      ('im' ID) |
-	      ('edp' ID) |
-	      ('fragfn' ID) |
-	      ('lossfn' ID) |
-	      ('compgroup' ID)
-	      )  print_options?;
-print_options : FILE_NAME ('--append' | '--new')?;
+print_command : (print_message | print_detfn | print_probfn | 
+	        print_im | print_edp | print_fragfn | print_lossfn |
+		print_compgroup) print_options?;
+
+print_message : 'print' 'message' STRING?;
+print_detfn : 'print' 'detfn' ID;
+print_probfn : 'print' 'probfn' ID;
+print_im : 'print' 'im' ID;
+print_edp : 'print' 'edp' ID;
+print_fragfn : 'print' 'fragfn' ID;
+print_lossfn : 'print' 'lossfn' ID;
+print_compgroup : 'print' 'compgroup' ID;
+
+APPEND_OPTION : '--append';
+NEW_OPTION : '--new';
+
+print_options : FILE_NAME (APPEND_OPTION | NEW_OPTION)?;
 
 integration_command : 'integration' integration_method numerical_scalar (INTEGER | var_ref | python_script);
 integration_method : 'maq';
