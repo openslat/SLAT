@@ -24,6 +24,14 @@ EDP : 'edp';
 FRAGFN: 'fragfn';
 LOSSFN: 'lossfn';
 COMPGROUP : 'compgroup';
+IMRATE : 'imrate';
+EDPIM : 'edpim';
+EDPRATE : 'edprate';
+DSEDP : 'dsedp';
+DSIM : 'dsim';
+LOSSDS : 'lossds';
+LOSSEDP : 'lossedp';
+LOSSIM : 'lossim';
 APPEND_OPTION : '--append';
 NEW_OPTION : '--new';
 DOLLARS : '$';
@@ -165,8 +173,8 @@ integration_command : 'integration' integration_method numerical_scalar (INTEGER
 integration_method : 'maq';
 
 recorder_command : 'recorder' ((recorder_type ID recorder_at recorder_cols?) | ('dsrate' ID)) print_options?;
-recorder_type : DETFN | PROBFN | 'imrate' | 'edpim' | 'edprate' | 'dsedp'
-	      | 'dsim' | 'lossds' | 'lossedp' | 'lossim';
+recorder_type : DETFN | PROBFN | IMRATE | EDPIM | EDPRATE | DSEDP
+	      | DSIM | LOSSDS | LOSSEDP | LOSSIM;
 recorder_at : (float_array | (FLOAT_VAL ':' FLOAT_VAL ':' FLOAT_VAL) | python_script | var_ref);
 float_array : FLOAT_VAL (',' FLOAT_VAL)*;
 

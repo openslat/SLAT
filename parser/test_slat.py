@@ -317,19 +317,19 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#placement_type.
     def enterPlacement_type(self, ctx:slatParser.Placement_typeContext):
-        print("> placement_type")
+        pass #print("> placement_type")
 
     # Exit a parse tree produced by slatParser#placement_type.
     def exitPlacement_type(self, ctx:slatParser.Placement_typeContext):
-        print("< placement_type")
+        pass #print("< placement_type")
 
     # Enter a parse tree produced by slatParser#spread_type.
     def enterSpread_type(self, ctx:slatParser.Spread_typeContext):
-        print("> Spread_type")
+        pass #print("> Spread_type")
 
     # Exit a parse tree produced by slatParser#spread_type.
     def exitSpread_type(self, ctx:slatParser.Spread_typeContext):
-        print("< Spread_type")
+        pass #print("< Spread_type")
 
     # Enter a parse tree produced by slatParser#lognormal_dist.
     def enterLognormal_dist(self, ctx:slatParser.Lognormal_distContext):
@@ -556,51 +556,143 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#recorder_command.
     def enterRecorder_command(self, ctx:slatParser.Recorder_commandContext):
-        print("> Recorder_command")
+        pass #print("> Recorder_command")
         
     # Exit a parse tree produced by slatParser#recorder_command.
     def exitRecorder_command(self, ctx:slatParser.Recorder_commandContext):
-        print("< Recorder_command")
+
+        message = "Record the "
+        type = ctx.recorder_type()
+        if type:
+            if type.DETFN():
+                message = message + "deterministic function"
+            elif type.PROBFN():
+                message = message + "probabilistic function"
+            elif type.IMRATE():
+                message = message + "IM-rate relationship"
+            elif type.EDPIM():
+                message = message + "EDP-IM relationship"
+            elif type.EDPRATE():
+                message = message + "EDP-rate relationship"
+            elif type.DSEDP():
+                message = message + "DS-EDP relationship"
+            elif type.DSIM():
+                message = message + "DS-IM relationship"
+            elif type.LOSSDS():
+                message = message + "LOSS-DS relationship"
+            elif type.LOSSEDP():
+                message = message + "LOSS-EDP relationship"
+            elif type.LOSSIM():
+                message = message + "LOSS-IM relationship"
+            else:
+                print(" ERROR")
+                return
+        else:
+            message = message + "DS-rate relationship"
+            return
+        
+        id = ctx.ID().getText()
+        message = message + " known as " + id
+        
+        options = ctx.print_options()
+        if options:
+            destination = "standard output"
+            if options.FILE_NAME:
+                destination = "the file [" + options.FILE_NAME().getText().strip('\'"') + "]"
+                
+            if options.APPEND_OPTION():
+                special = ", appending to the file if it exists"
+            elif options.NEW_OPTION():
+                special = ", overwriting the file it it exists"
+            else:
+                special = "."
+            message = "{} to {}{}".format(message, destination, special)
+        else:
+            message = message + " to standard output"
+        
+        at = ctx.recorder_at()
+        if at:
+            message = message + ","
+            if at.float_array():
+                floats = []
+                for f in at.float_array().FLOAT_VAL():
+                    floats.append(float(f.getText()))
+                message = "{} at the values {}".format(message, floats)
+            if at.python_script():
+                message = ("{} at the values specified by evaluating " +
+                           "the Python expression '{}'").format(message,
+                                        at.python_script().python_expression().getText())
+            if at.var_ref():
+                message = "{} at the value specifed by the variable '{}'".format(
+                    message, 
+                    at.var_ref().ID().getText())
+            if at.FLOAT_VAL():
+                floats = at.FLOAT_VAL()
+                if len(floats) != 3:
+                    print("NEED EXACTLY THREE VALUES")
+                    return
+                else:
+                    start = float(floats[0].getText())
+                    incr = float(floats[1].getText())
+                    end = float(floats[2].getText())
+                    message = "{} from {} to {}, incrementing by {},".format(
+                        message, start, end, incr)
+
+            cols = ctx.recorder_cols() and ctx.recorder_cols().col_spec()
+            if cols:
+                message = message + " to the columns: "
+                for col in cols:
+                    if col.placement_type():
+                        message = "{} {}".format(message, col.placement_type().getText())
+                    if col.spread_type():
+                        message = "{} {}".format(message, col.spread_type().getText())
+                    if col.scalar():
+                        message = "{} {}".format(message,  self._scalar_value(col.scalar()))
+            else:
+                message = message + " to the default columns."
+        else:
+            message = message + "."
+        print(message)
 
     # Enter a parse tree produced by slatParser#recorder_type.
     def enterRecorder_type(self, ctx:slatParser.Recorder_typeContext):
-        print("> Recorder_type")
+        pass#print("> Recorder_type")
 
     # Exit a parse tree produced by slatParser#recorder_type.
     def exitRecorder_type(self, ctx:slatParser.Recorder_typeContext):
-        print("< Recorder_type")
+        pass#print("< Recorder_type")
 
     # Enter a parse tree produced by slatParser#recorder_at.
     def enterRecorder_at(self, ctx:slatParser.Recorder_atContext):
-        print("> Recorder_at")
+        pass#print("> Recorder_at")
 
     # Exit a parse tree produced by slatParser#recorder_at.
     def exitRecorder_at(self, ctx:slatParser.Recorder_atContext):
-        print("< Recorder_at")
+        pass#print("< Recorder_at")
 
     # Enter a parse tree produced by slatParser#float_array.
     def enterFloat_array(self, ctx:slatParser.Float_arrayContext):
-        print("> Float_array")
+        pass#print("> Float_array")
 
     # Exit a parse tree produced by slatParser#float_array.
     def exitFloat_array(self, ctx:slatParser.Float_arrayContext):
-        print("< Float_array")
+        pass#print("< Float_array")
 
     # Enter a parse tree produced by slatParser#col_spec.
     def enterCol_spec(self, ctx:slatParser.Col_specContext):
-        print("> Col_spec")
+        pass #print("> Col_spec")
 
     # Exit a parse tree produced by slatParser#col_spec.
     def exitCol_spec(self, ctx:slatParser.Col_specContext):
-        print("< Col_spec")
+        pass #print("< Col_spec")
 
     # Enter a parse tree produced by slatParser#recorder_cols.
     def enterRecorder_cols(self, ctx:slatParser.Recorder_colsContext):
-        print("> Recorder_cols")
+        pass #print("> Recorder_cols")
 
     # Exit a parse tree produced by slatParser#recorder_cols.
     def exitRecorder_cols(self, ctx:slatParser.Recorder_colsContext):
-        print("< Recorder_cols")
+        pass #print("< Recorder_cols")
 
     # Enter a parse tree produced by slatParser#python_script.
     def enterPython_script(self, ctx:slatParser.Python_scriptContext):
@@ -608,7 +700,7 @@ class mySlatListener(slatListener):
 
     # Exit a parse tree produced by slatParser#python_script.
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
-        print("Python_script:", ctx.getText())
+        pass#print("Python_script:", ctx.getText())
 
     # Enter a parse tree produced by slatParser#non_paren_expression.
     def enterNon_paren_expression(self, ctx:slatParser.Non_paren_expressionContext):
