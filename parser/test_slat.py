@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#! /usr/bin/env python3
 import sys
 import io
 import re
@@ -20,7 +20,7 @@ class mySlatListener(slatListener):
         if ctx.var_ref():
             return "The value of the variable '" + ctx.var_ref().ID().getText() + "'"
         if ctx.python_script():
-            return "The value of the Python expression '" + ctx.python_script().getText() + "'"
+            return "The value of the Python expression '" + ctx.python_script().python_expression().getText() + "'"
         return 0
 
     def _scalar2_value(self, ctx:slatParser.Scalar2Context):
@@ -30,6 +30,36 @@ class mySlatListener(slatListener):
         result = self._scalar2_value(ctx.scalar2())
         result.append(self._scalar_value(ctx.scalar()))
         return result
+
+    def _parameter_value(self, ctx:slatParser.ParameterContext):
+        if ctx.ID():
+            return ctx.ID().getText()
+        if ctx.STRING():
+            return ctx.STRING().getText()
+        if ctx.INTEGER():
+            return int(ctx.INTEGER().getText())
+        if ctx.FLOAT_VAL():
+            return float(ctx.FLOAT_VAL().getText())
+        return "parameter"
+        
+    def _parameters_value(self, ctx:slatParser.ParametersContext):
+        if ctx.parameter():
+            return self._parameter_value(ctx.parameter())
+        if ctx.parameter_array():
+            values = ctx.parameter_array().parameter()
+            result = []
+            for value in values:
+                result.append(self._parameter_value(value))
+            return result
+        if ctx.parameter_dictionary():
+            values = ctx.parameter_dictionary().dictionary_entry()
+            result = dict()
+            for value in values:
+                key = (value.ID() or value.STRING).getText()
+                value = self._parameters_value(value.parameters())
+                result[key] = value
+            return result
+        return "UNKNOWN"
     
     # Enter a parse tree produced by slatParser#script.
     def enterScript(self, ctx:slatParser.ScriptContext):
@@ -115,11 +145,11 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#var_ref.
     def enterVar_ref(self, ctx:slatParser.Var_refContext):
-        print("> var_ref")
+        pass #print("> var_ref")
 
     # Exit a parse tree produced by slatParser#var_ref.
     def exitVar_ref(self, ctx:slatParser.Var_refContext):
-        print("< var_ref")
+        pass #print("< var_ref")
 
 
     # Enter a parse tree produced by slatParser#numerical_scalar.
@@ -157,19 +187,19 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#parameter_dictionary.
     def enterParameter_dictionary(self, ctx:slatParser.Parameter_dictionaryContext):
-        print("> Parameter_dictionary")
+        pass #print("> Parameter_dictionary")
 
     # Exit a parse tree produced by slatParser#parameter_dictionary.
     def exitParameter_dictionary(self, ctx:slatParser.Parameter_dictionaryContext):
-        print("< Parameter_dictionary")
+        pass #print("< Parameter_dictionary")
 
     # Enter a parse tree produced by slatParser#dictionary_entry.
     def enterDictionary_entry(self, ctx:slatParser.Dictionary_entryContext):
-        print("> Dictionary_entry")
+        pass #print("> Dictionary_entry")
 
     # Exit a parse tree produced by slatParser#dictionary_entry.
     def exitDictionary_entry(self, ctx:slatParser.Dictionary_entryContext):
-        print("< Dictionary_entry")
+        pass #print("< Dictionary_entry")
 
     # Enter a parse tree produced by slatParser#probfn_command.
     def enterProbfn_command(self, ctx:slatParser.Probfn_commandContext):
@@ -610,7 +640,14 @@ class mySlatListener(slatListener):
 
     # Exit a parse tree produced by slatParser#set_command.
     def exitSet_command(self, ctx:slatParser.Set_commandContext):
-        pass #print("< Set_command")
+        id = ctx.ID().getText()
+        if ctx.python_script():
+            value = "the value to the Python script '" + ctx.python_script().python_expression().getText() + "'"
+        elif ctx.var_ref():
+            value = "the value of the variable '" + ctx.var_ref().ID().getText() + "'"
+        elif ctx.parameters():
+            value = "PARAMETERS: {}".format(self._parameters_value(ctx.parameters()))
+        print("Set the variable '" + id + "' to", value + ".")
 
 def main(argv):
     for file in glob.glob('test_cases/*.lines'):
