@@ -237,19 +237,25 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#im_command.
     def enterIm_command(self, ctx:slatParser.Im_commandContext):
-        print("> Im_command")
+        pass#print("> Im_command")
 
     # Exit a parse tree produced by slatParser#im_command.
     def exitIm_command(self, ctx:slatParser.Im_commandContext):
-        print("< Im_command")
+        im_id = ctx.ID(0).getText()
+        fn_id = ctx.ID(1).getText()
+        print(("Create an impulse measurement '{}' from the deterministic function '{}'.").format(im_id, fn_id))
 
     # Enter a parse tree produced by slatParser#edp_command.
     def enterEdp_command(self, ctx:slatParser.Edp_commandContext):
-        print("> Edp_command")
+        pass#print("> Edp_command")
 
     # Exit a parse tree produced by slatParser#edp_command.
     def exitEdp_command(self, ctx:slatParser.Edp_commandContext):
-        print("< Edp_command")
+        edp_id = ctx.ID(0).getText()
+        im_id = ctx.ID(1).getText()
+        fn_id = ctx.ID(2).getText()
+        print(("Create an engineering demand parameter '{}' from the impulse response '{}'" +
+               " and the deterministic function '{}'.").format(edp_id, im_id, fn_id))
 
     # Enter a parse tree produced by slatParser#fragfn_command.
     def enterFragfn_command(self, ctx:slatParser.Fragfn_commandContext):
