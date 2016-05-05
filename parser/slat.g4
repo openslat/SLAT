@@ -26,6 +26,8 @@ LOSSFN: 'lossfn';
 COMPGROUP : 'compgroup';
 APPEND_OPTION : '--append';
 NEW_OPTION : '--new';
+DOLLARS : '$';
+PYTHON_ESCAPE : '$('; 
 
 MEAN_LN_X: 'mean_ln_x';
 MEDIAN_X: 'median_x';
@@ -97,7 +99,7 @@ powerlaw_args : 'powerlaw' scalar2;
 scalar :  STRING | INTEGER| FLOAT_VAL | python_script | var_ref;
 scalar2 : scalar ',' scalar;
 scalar3 : scalar2 ',' scalar;
-var_ref : '$' ID;
+var_ref : DOLLARS ID;
 
 numerical_scalar : INTEGER | FLOAT_VAL | python_script | var_ref;
 
@@ -155,8 +157,7 @@ compgroup_command : COMPGROUP ID ID ID ID INTEGER;
 print_command : (print_message | print_function) print_options?;
 
 print_message : PRINT 'message' STRING?;
-print_function_type: DETFN | PROBFN | IM | EDP | FRAGFN | LOSSFN | COMPGROUP;
-print_function: PRINT print_function_type ID;
+print_function: PRINT (DETFN | PROBFN | IM | EDP | FRAGFN | LOSSFN | COMPGROUP) ID;
 
 print_options : FILE_NAME (APPEND_OPTION | NEW_OPTION)?;
 
@@ -172,10 +173,12 @@ float_array : FLOAT_VAL (',' FLOAT_VAL)*;
 col_spec : placement_type | spread_type | scalar;
 recorder_cols : '--cols' col_spec (',' col_spec)*;
 
-python_script : '$' LPAREN (non_paren_expression | balanced_paren_expression)* RPAREN;
-non_paren_expression: ('=' | '/' | '+' | '*' | '-' | ~LPAREN)+;
-balanced_paren_expression : LPAREN ('=' | ~RPAREN)* RPAREN;
+
+python_script : PYTHON_ESCAPE (non_paren_expression | balanced_paren_expression)* RPAREN;
+non_paren_expression:  .+?;
+balanced_paren_expression : LPAREN non_paren_expression* RPAREN;
 
 analyze_command : 'analyze';
 
 set_command : 'set' ID (python_script | var_ref | parameters);
+OTHER: .+?;

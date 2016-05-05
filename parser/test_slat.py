@@ -1,16 +1,23 @@
 #!/usr/bin/env python3
 import sys
 import io
+import re
 from antlr4 import *
 from slatLexer import slatLexer
 from slatParser import slatParser
 from slatListener import slatListener
+import glob
+from distutils import text_file
 
 # http://www.antlr.org/wiki/display/ANTLR3/Python+runtime
 # http://www.antlr.org/download/antlr-3.1.3.jar
 class mySlatListener(slatListener):
     def _scalar_value(self, ctx:slatParser.ScalarContext):
-        return float((ctx.INTEGER() or ctx.FLOAT_VAL()).getText())
+        if ctx.INTEGER():
+            return float(ctx.INTEGER().getText())
+        if ctx.FLOAT_VAL():
+            return float(ctx.FLOAT_VAL().getText())
+        return 0
 
     def _scalar2_value(self, ctx:slatParser.Scalar2Context):
         return [ self._scalar_value(ctx.scalar(0)),
@@ -22,7 +29,7 @@ class mySlatListener(slatListener):
     
     # Enter a parse tree produced by slatParser#script.
     def enterScript(self, ctx:slatParser.ScriptContext):
-        pass #print("> script")
+        print("> script")
 
     # Exit a parse tree produced by slatParser#script.
     def exitScript(self, ctx:slatParser.ScriptContext):
@@ -31,7 +38,7 @@ class mySlatListener(slatListener):
     # Enter a parse tree produced by slatParser#command.
     def enterCommand(self, ctx:slatParser.CommandContext):
         pass #print("> Command")
-
+    
     # Exit a parse tree produced by slatParser#command.
     def exitCommand(self, ctx:slatParser.CommandContext):
         pass #print("< Command")
@@ -400,7 +407,7 @@ class mySlatListener(slatListener):
                 object = "a blank line"
                 
         elif ctx.print_function():
-            fntype = ctx.print_function().print_function_type()
+            fntype = ctx.print_function()
             if fntype.DETFN():
                 object = 'deterministic function'
             elif fntype.PROBFN():
@@ -445,14 +452,6 @@ class mySlatListener(slatListener):
     # Exit a parse tree produced by slatParser#print_message.
     def exitPrint_message(self, ctx:slatParser.Print_messageContext):
         pass #print("< Print_message: ", ctx.STRING())
-
-    # Enter a parse tree produced by slatParser#print_function_type.
-    def enterPrint_function_type(self, ctx:slatParser.Print_function_typeContext):
-        pass
-
-    # Exit a parse tree produced by slatParser#print_function_type.
-    def exitPrint_function_type(self, ctx:slatParser.Print_function_typeContext):
-        pass #print("< print_function_type: ", ctx.getText())
 
         
     # Enter a parse tree produced by slatParser#print_function.
@@ -576,44 +575,26 @@ class mySlatListener(slatListener):
         print("< Set_command")
 
 def main(argv):
-    test_cases = [ 'title \'This is a title\';',
-                   'title \'This is a title with a \\\' quote inside.\';',
-                   'title \'This is a title with a \\\\ backslash.\';',
-                   'title \'This is a title with a \\\' quote and a \\\\ backslash.\';',
-                   'detfn detfn1 hyperbolic 1.0, 2, -.5;',
-                   'detfn detfn1 powerlaw 0.5, 1.2;',
-                   'fragfn FRAGID --stdfunc FRAG_KEY;',
-                   'fragfn FRAGID --db FILENAME.EXT --stdfunc FRAG_KEY;',
-                   'fragfn FRAGID --stdfunc FRAG_KEY --db FILENAME.EXT;',
-                   'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4];',
-                   'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --mu mean_ln_x;',
-                   'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --sd sd_ln_x;',
-                   'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --mu mean_ln_x --sd sd_ln_x;',
-                   'fragfn FRAGID [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --sd sd_ln_x  --mu median_x;',
-                   'print message;',
-                   'print message "This is a message string.";',
-                   "print message 'This is a message string.' MESSAGE.TXT --new;",
-                   "print  message 'This is a message string.' MESSAGE.TXT --append;",
-                   'print detfn IM_FUNC INPUT_DEFS.TXT --new;',
-                   'print probfn EDP_FN INPUT_DEFS.TXT --append;',
-                   'print im IM1 INPUT_DEFS.TXT --append;',
-                   'print edp EDP1 INPUT_DEFS.TXT --append;',
-                   'print fragfn FRAG1 INPUT_DEFS.TXT --append;',
-                   'print lossfn LOSS1 INPUT_DEFS.TXT --append;',
-                   'print compgroup PG1 INPUT_DEFS.TXT --append;'
-    ]
-    for test_case in test_cases:
-        print()
-        print("'",test_case, "' --> ", sep='', end='')
-        input = InputStream(test_case)
-        lexer = slatLexer(input)
-        stream = CommonTokenStream(lexer)
-        parser = slatParser(stream)
-        tree = parser.script()
-        print(tree.toStringTree(recog=parser))
-        listener = mySlatListener()
-        walker = ParseTreeWalker()
-        walker.walk(listener, tree)
+    for file in glob.glob('test_cases/*.lines'):
+        print("-----------")
+        print("File:", file)
+        for test_case in text_file.TextFile(file).readlines():
+            if not re.search('^%%', test_case):
+                print()
+                print("INPUT:", test_case)
+
+                if False and re.search('\$\(', test_case):
+                    print("SKIP")
+                else:
+                    input = InputStream(test_case)
+                    lexer = slatLexer(input)
+                    stream = CommonTokenStream(lexer)
+                    parser = slatParser(stream)
+                    tree = parser.script()
+                    print(tree.toStringTree(recog=parser))
+                    listener = mySlatListener()
+                    walker = ParseTreeWalker()
+                    walker.walk(listener, tree)
 
 if __name__ == '__main__':
     main(sys.argv)
