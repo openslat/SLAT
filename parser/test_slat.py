@@ -17,6 +17,10 @@ class mySlatListener(slatListener):
             return float(ctx.INTEGER().getText())
         if ctx.FLOAT_VAL():
             return float(ctx.FLOAT_VAL().getText())
+        if ctx.var_ref():
+            return "The value of the variable '" + ctx.var_ref().ID().getText() + "'"
+        if ctx.python_script():
+            return "The value of the Python expression '" + ctx.python_script().getText() + "'"
         return 0
 
     def _scalar2_value(self, ctx:slatParser.Scalar2Context):
@@ -29,7 +33,7 @@ class mySlatListener(slatListener):
     
     # Enter a parse tree produced by slatParser#script.
     def enterScript(self, ctx:slatParser.ScriptContext):
-        print("> script")
+        pass #print("> script")
 
     # Exit a parse tree produced by slatParser#script.
     def exitScript(self, ctx:slatParser.ScriptContext):
@@ -128,28 +132,28 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#parameters.
     def enterParameters(self, ctx:slatParser.ParametersContext):
-        print("> Parameters")
+        pass #print("> Parameters")
 
     # Exit a parse tree produced by slatParser#parameters.
     def exitParameters(self, ctx:slatParser.ParametersContext):
-        print("< Parameters")
+        pass #print("< Parameters")
 
 
     # Enter a parse tree produced by slatParser#parameter.
     def enterParameter(self, ctx:slatParser.ParameterContext):
-        print("> Parameter")
+        pass #print("> Parameter")
 
     # Exit a parse tree produced by slatParser#parameter.
     def exitParameter(self, ctx:slatParser.ParameterContext):
-        print("< Parameter")
+        pass #print("< Parameter")
 
     # Enter a parse tree produced by slatParser#parameter_array.
     def enterParameter_array(self, ctx:slatParser.Parameter_arrayContext):
-        print("> Parameter_array")
+        pass #print("> Parameter_array")
 
     # Exit a parse tree produced by slatParser#parameter_array.
     def exitParameter_array(self, ctx:slatParser.Parameter_arrayContext):
-        print("< Parameter_array")
+        pass #print("< Parameter_array")
 
     # Enter a parse tree produced by slatParser#parameter_dictionary.
     def enterParameter_dictionary(self, ctx:slatParser.Parameter_dictionaryContext):
@@ -331,19 +335,46 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#lossfn_command.
     def enterLossfn_command(self, ctx:slatParser.Lossfn_commandContext):
-        print("> Lossfn_command")
-
+        pass #print("> Lossfn_command")
+        
     # Exit a parse tree produced by slatParser#lossfn_command.
     def exitLossfn_command(self, ctx:slatParser.Lossfn_commandContext):
-        print("< Lossfn_command")
+        id = ctx.ID().getText()
+        simple_command = ctx.simple_loss_command()
+        scalars = simple_command.scalar2()
+        options = simple_command.lognormal_options()
+        mu_option = options.mu_option()
+        if mu_option:
+            if mu_option.MEAN_LN_X():
+                mu_option = "Mean(ln(x))"
+            elif mu_option.MEDIAN_X():
+                mu_option = "Median(x)"
+            elif mu_option.MEAN_X():
+                mu_option = "Mean(x)"
+        else:
+            mu_option = "(default)"
+
+        sd_option = options.sd_option()
+        if sd_option:
+            if sd_option.SD_LN_X():
+                sd_option = "standard deviation(ln(x))"
+            elif sd_option.SD_X():
+                sd_option = "standard deviation(x)"
+        else:
+            sd_option = "(default)"
+
+        print("Create a loss function called '" + id + "' from the following data,",
+              "with mu=" + mu_option + ", and sd=" + sd_option + ":")
+        for s in scalars:
+            print("    ", self._scalar2_value(s))
 
     # Enter a parse tree produced by slatParser#simple_loss_command.
     def enterSimple_loss_command(self, ctx:slatParser.Simple_loss_commandContext):
-        print("> Simple_loss_command")
+        pass #print("> Simple_loss_command")
 
     # Exit a parse tree produced by slatParser#simple_loss_command.
     def exitSimple_loss_command(self, ctx:slatParser.Simple_loss_commandContext):
-        print("< Simple_loss_command")
+        pass #print("< Simple_loss_command")
 
     # Enter a parse tree produced by slatParser#lossfn_heading.
     def enterLossfn_heading(self, ctx:slatParser.Lossfn_headingContext):
@@ -387,11 +418,18 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#compgroup_command.
     def enterCompgroup_command(self, ctx:slatParser.Compgroup_commandContext):
-        print("> Compgroup_command")
+        pass #print("> Compgroup_command")
 
     # Exit a parse tree produced by slatParser#compgroup_command.
     def exitCompgroup_command(self, ctx:slatParser.Compgroup_commandContext):
-        print("< Compgroup_command")
+        compgroup_id = ctx.ID(0).getText()
+        edp_id =  ctx.ID(1).getText()
+        frag_id =  ctx.ID(2).getText()
+        loss_id =  ctx.ID(3).getText()
+        count = int(ctx.INTEGER().getText())
+        print("Create a group of", count, "components, called '" + compgroup_id +
+              "', using the EDP '" + edp_id + "',", "the Fragility Function '" +
+              frag_id + "', and the Loss Function '" + loss_id + "'.")
 
     # Enter a parse tree produced by slatParser#print_command.
     def enterPrint_command(self, ctx:slatParser.Print_commandContext):
@@ -536,27 +574,27 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#python_script.
     def enterPython_script(self, ctx:slatParser.Python_scriptContext):
-        print("> Python_script")
+        pass #print("> Python_script:", ctx.getText())
 
     # Exit a parse tree produced by slatParser#python_script.
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
-        print("< Python_script")
+        print("Python_script:", ctx.getText())
 
     # Enter a parse tree produced by slatParser#non_paren_expression.
     def enterNon_paren_expression(self, ctx:slatParser.Non_paren_expressionContext):
-        print("> Non_paren_expressoin")
+        pass #print("> Non_paren_expressoin")
 
     # Exit a parse tree produced by slatParser#non_paren_expression.
     def exitNon_paren_expression(self, ctx:slatParser.Non_paren_expressionContext):
-        print("< Non_paren_expressoin")
+        pass #print("< Non_paren_expressoin")
 
     # Enter a parse tree produced by slatParser#balanced_paren_expression.
     def enterBalanced_paren_expression(self, ctx:slatParser.Balanced_paren_expressionContext):
-        print("> Balanced_paren_expression")
+        pass #print("> Balanced_paren_expression")
 
     # Exit a parse tree produced by slatParser#balanced_paren_expression.
     def exitBalanced_paren_expression(self, ctx:slatParser.Balanced_paren_expressionContext):
-        print("< Balanced_paren_expression")
+        pass #print("< Balanced_paren_expression")
 
     # Enter a parse tree produced by slatParser#analyze_command.
     def enterAnalyze_command(self, ctx:slatParser.Analyze_commandContext):
@@ -568,11 +606,11 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#set_command.
     def enterSet_command(self, ctx:slatParser.Set_commandContext):
-        print("> Set_command")
+        pass #print("> Set_command")
 
     # Exit a parse tree produced by slatParser#set_command.
     def exitSet_command(self, ctx:slatParser.Set_commandContext):
-        print("< Set_command")
+        pass #print("< Set_command")
 
 def main(argv):
     for file in glob.glob('test_cases/*.lines'):
