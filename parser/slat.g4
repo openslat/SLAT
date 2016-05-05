@@ -121,8 +121,8 @@ parameter_dictionary : LPAREN dictionary_entry (',' dictionary_entry)* RPAREN;
 
 dictionary_entry : (ID | STRING) ':' parameters;
 
-probfn_command : PROBFN ID 'lognormal' (ID | var_ref) ',' (ID | var_ref) lognormal_options;
-
+probfn_command : PROBFN ID 'lognormal' function_ref ',' function_ref lognormal_options;
+function_ref : ID | var_ref;
 
 im_command : IM ID ID;
 edp_command : EDP ID ID ID;

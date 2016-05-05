@@ -203,11 +203,37 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#probfn_command.
     def enterProbfn_command(self, ctx:slatParser.Probfn_commandContext):
-        print("> Probfn_command")
+        pass#print("> Probfn_command")
 
     # Exit a parse tree produced by slatParser#probfn_command.
     def exitProbfn_command(self, ctx:slatParser.Probfn_commandContext):
-        print("< Probfn_command")
+        id = ctx.ID()
+        refs = ctx.function_ref()
+        mufn = (refs[0].ID() or refs[0].var_ref()).getText() 
+        sigmafn = (refs[1].ID() or refs[1].var_ref()).getText()
+        options = ctx.lognormal_options()
+       
+        if options.mu_option():
+            if options.mu_option().getTokens(slatParser.MEAN_LN_X):
+                mu = "mean of the log of X"
+            elif options.mu_option().getTokens(slatParser.MEDIAN_X):
+                mu = "median of X"
+            elif options.mu_option().getTokens(slatParser.MEAN_X):
+                mu = "mean of X"
+        else:
+            mu = "(default)"
+                
+        if options.sd_option():
+            if options.sd_option().getTokens(slatParser.SD_LN_X):
+                sd = "standard deviation of the log of X"
+            elif options.sd_option().getTokens(slatParser.SD_X):
+                sd = "standard deviation of X"
+        else:
+            sd = "(default)"
+
+        print(("Create a probabilistic function '{}', using the "+
+               "function '{}' for mu ({}), and the function " +
+               "'{}' for sigma ({}).").format(id, mufn, mu, sigmafn, sd))
 
     # Enter a parse tree produced by slatParser#im_command.
     def enterIm_command(self, ctx:slatParser.Im_commandContext):
