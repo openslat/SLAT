@@ -44,6 +44,8 @@ MEAN_X: 'mean_x';
 SD_LN_X: 'sd_ln_x';
 SD_X: 'sd_x';
 
+MAQ: 'maq';
+
 script : (WS | command)*;
 
 command : (title_command | detfn_command | probfn_command | im_command | edp_command | fragfn_command | lossfn_command | compgroup_command | print_command | integration_command | recorder_command | analyze_command | set_command) ';' ;
@@ -104,7 +106,7 @@ detfn_command : DETFN ID (hyperbolic_args | powerlaw_args);
 hyperbolic_args : 'hyperbolic' scalar3;
 powerlaw_args : 'powerlaw' scalar2;
 
-scalar :  STRING | INTEGER| FLOAT_VAL | python_script | var_ref;
+scalar :  STRING | numerical_scalar;
 scalar2 : scalar ',' scalar;
 scalar3 : scalar2 ',' scalar;
 var_ref : DOLLARS ID;
@@ -133,9 +135,7 @@ fragfn_command : FRAGFN ID
 fragfn_db_params : (('--db' FILE_NAME)? '--stdfunc' db_key) |
 		   ('--stdfunc' db_key '--db' FILE_NAME) ;
 		 
-fragfn_user_defined_params : 
-		  '[' scalar2 ']' (',' '[' scalar2 ']')*
-                  lognormal_options;
+fragfn_user_defined_params : scalar2_sequence lognormal_options;
 mu_option : '--mu' (MEAN_LN_X | MEDIAN_X | MEAN_X);
 sd_option : '--sd' (SD_LN_X | SD_X);
 lognormal_options : (mu_option? sd_option?) | (sd_option mu_option);
@@ -152,7 +152,8 @@ FILE_NAME : [a-zA-Z_.0-9]+;
 db_key :  ID;
 
 lossfn_command : LOSSFN ID simple_loss_command;
-simple_loss_command : ('--type' 'simple')? LBRACKET scalar2 RBRACKET (',' LBRACKET scalar2 RBRACKET)* lognormal_options;
+simple_loss_command : ('--type' 'simple')? scalar2_sequence lognormal_options;
+scalar2_sequence: LBRACKET scalar2 RBRACKET (',' LBRACKET scalar2 RBRACKET)*;
 
 lossfn_heading : 'cost' | 'disp' | 'upper_cost' | 'lower_cost' | 'lower_n' | 'upper_n' | 'mean_uncert' | 'var_uncert';
 lossfn_headings : LPAREN lossfn_heading (',' lossfn_heading)* RPAREN;
@@ -170,7 +171,7 @@ print_function: PRINT (DETFN | PROBFN | IM | EDP | FRAGFN | LOSSFN | COMPGROUP) 
 print_options : FILE_NAME (APPEND_OPTION | NEW_OPTION)?;
 
 integration_command : 'integration' integration_method numerical_scalar (INTEGER | var_ref | python_script);
-integration_method : 'maq';
+integration_method : MAQ;
 
 recorder_command : 'recorder' ((recorder_type ID recorder_at recorder_cols?) | ('dsrate' ID)) print_options?;
 recorder_type : DETFN | PROBFN | IMRATE | EDPIM | EDPRATE | DSEDP
