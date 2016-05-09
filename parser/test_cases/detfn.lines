@@ -1,7 +1,12 @@
 detfn DETFN1 hyperbolic 1.0, 2, -3e10;
-detfn DETFN1 hyperbolic 1, -2, $(3 + 4);
-detfn DETFN1 hyperbolic 1, -2, $(1 / 2);
-detfn DETFN1 hyperbolic 1, -2, $(1 - 2);
-detfn DETFN1 hyperbolic 1, -2, $(1 * 2);
-detfn DEFTFN1 powerlaw 0.2, 0.5;
+detfn DETFN2 hyperbolic 1, -2, $(3 + 4);
+detfn DETFN3 hyperbolic 1, -2, $(1 / 2);
+detfn DETFN4 hyperbolic 1, -2, $(1 - 2);
+detfn DETFN5 hyperbolic 1, -2, $(1 * 2);
+detfn DEFTFN6 powerlaw 0.2, 0.5;
+set a_value 0.1;
+set b_value 0.3;
+
+print detfn DETFN1;
 detfn DEFTFN1 powerlaw $a_value, $b_value;
+print detfn DETFN1;

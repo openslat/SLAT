@@ -20,6 +20,14 @@ class mySlatListener(slatListener):
         self._stack = []
         self._stack_stack = []
         self._variables = dict()
+        self._detfns = dict()
+        self._probfns = dict()
+        self._ims = dict()
+        self._edps = dict()
+        self._fragfns = dict()
+        self._lossnfs = dict()
+        self._compgroups = dict()
+        self._recorders = []
 
     def _push_stack(self):
         self._stack_stack.append(self._stack)
@@ -67,12 +75,16 @@ class mySlatListener(slatListener):
     def exitDetfn_command(self, ctx:slatParser.Detfn_commandContext):
         if ctx.powerlaw_args():
             type = "power law"
+            fntype = pyslat.FUNCTION_TYPE.PLC
         else:
             type = "hyperbolic"
+            fntype = pyslat.FUNCTION_TYPE.NLH
         value = self._stack.pop()
 
         print("    Create a ", type, " function named ", ctx.ID(), 
               ", using the parameters: ", value)
+        self._detfns[ctx.ID().getText()] = pyslat.factory(fntype, value)
+        print(self._detfns)
 
 
     # Enter a parse tree produced by slatParser#hyperbolic_args.
@@ -225,6 +237,10 @@ class mySlatListener(slatListener):
         print(("    Create a probabilistic function '{}', using the "+
                "function '{}' for mu ({}), and the function " +
                "'{}' for sigma ({}).").format(id, mufn, mu, sigmafn, sd))
+        self._probfns[ctx.ID().getText()] = pyslat.MakeLogNormalProbabilisticFn({mu: self._detfns.get(mufn),
+                                                                                 sd: self._detfns.get(sigmafn)})
+        print(self._probfns)
+
 
     # Enter a parse tree produced by slatParser#im_command.
     def enterIm_command(self, ctx:slatParser.Im_commandContext):
@@ -235,6 +251,8 @@ class mySlatListener(slatListener):
         im_id = ctx.ID(0).getText()
         fn_id = ctx.ID(1).getText()
         print(("    Create an impulse measurement '{}' from the deterministic function '{}'.").format(im_id, fn_id))
+        self._ims[im_id] = pyslat.MakeSimpleRelationship(self._detfns.get(fn_id))
+        print(self._ims)
 
     # Enter a parse tree produced by slatParser#edp_command.
     def enterEdp_command(self, ctx:slatParser.Edp_commandContext):
@@ -247,6 +265,8 @@ class mySlatListener(slatListener):
         fn_id = ctx.ID(2).getText()
         print(("    Create an engineering demand parameter '{}' from the impulse response '{}'" +
                " and the deterministic function '{}'.").format(edp_id, im_id, fn_id))
+        self._edps[edp_id] = pyslat.MakeCompoundRelationship(self._ims.get(im_id), self._probfns.get(fn_id))
+        print(self._edps)
 
     # Enter a parse tree produced by slatParser#fragfn_command.
     def enterFragfn_command(self, ctx:slatParser.Fragfn_commandContext):
@@ -320,24 +340,30 @@ class mySlatListener(slatListener):
         if ctx.mu_option():
             if ctx.mu_option().MEAN_LN_X():
                 mu = "mean(ln(x))"
+                mu = pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X
             elif ctx.mu_option().MEDIAN_X():
                 mu = "median(x)"
+                mu = pyslat.LOGNORMAL_PARAM_TYPE.MEDIAN_X
             elif ctx.mu_option().MEAN_X():
                 mu = "mean(x)"
+                mu = pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X
             else:
                 mu = "ERROR"
         else:
-            mu = "default"
+            mu = pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X
+
 
         if ctx.sd_option():
             if ctx.sd_option().SD_X():
                 sd = "sd(x)"
+                sd = pyslat.LOGNORMAL_PARAM_TYPE.SD_X
             elif ctx.sd_option().SD_LN_X():
                 sd = "sd(ln(x))"
+                sd = pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X
             else:
                 sd = "ERROR"
         else:
-            sd = "default"
+            sd = pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X
             
         self._stack.append({"mu": mu, "sd":sd})
         pass
@@ -499,24 +525,33 @@ class mySlatListener(slatListener):
             object = self._stack.pop()
             print("MESSAGE: {}".format(object))
         elif ctx.print_function():
+            id = ctx.print_function().ID().getText()
+            
             fntype = ctx.print_function()
             if fntype.DETFN():
-                object = 'deterministic function'
+                object = self._detfns.get(id)
+                if not object == None:
+                    print("  ----> ", object.ValueAt(0.1))
             elif fntype.PROBFN():
-                object = 'probabilistic function'
+                object = self._probfns.get(id)
             elif fntype.IM():
-                object = 'intensity measure'
+                object = self._ims.get(id)
             elif fntype.EDP():
-                object = 'engineering demand parameter'
+                object = self._edps.get(id)
             elif fntype.FRAGFN():
-                object = 'fragility function'
+                object = self._fragfns.get(id)
             elif fntype.LOSSFN():
-                object = 'loss function'
+                object = self._lossnfs.get(id)
             elif fntype.COMPGROUP():
-                object = 'component group'
+                object = self._compgroups.get(id)
             else:
                 object = 'unknown'
-            object = 'the ' + object + " known as " + ctx.print_function().ID().getText()
+
+            if object == None:
+                object = "<undefined DETFN '{}'>".format(id)
+
+                
+            object = 'the {} known as {} '.format(object, ctx.print_function().ID().getText())
 
         print("    Print ", object, " to ", destination)
                 
@@ -645,7 +680,7 @@ class mySlatListener(slatListener):
             message = message + " "
 
         message = message + destination + columns + "."
-
+        self._recorders.append(message)
         print(message)
 
     # Enter a parse tree produced by slatParser#recorder_type.
@@ -762,8 +797,9 @@ class mySlatListener(slatListener):
 
     # Exit a parse tree produced by slatParser#analyze_command.
     def exitAnalyze_command(self, ctx:slatParser.Analyze_commandContext):
-        print("Perform analysis")
-        pass
+        print("Perform analysis:")
+        for rec in self._recorders:
+            print("    RUN {}".format(rec))
 
     # Enter a parse tree produced by slatParser#set_command.
     def enterSet_command(self, ctx:slatParser.Set_commandContext):
