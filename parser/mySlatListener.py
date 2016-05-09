@@ -15,6 +15,16 @@ class mySlatListener(slatListener):
     def __init__(self):
         super().__init__()
         self._stack = []
+        self._stack_stack = []
+
+    def _push_stack(self):
+        self._stack_stack.append(self._stack)
+        self._stack = []
+
+    def _pop_stack(self):
+        result = self._stack
+        self._stack = self._stack_stack.pop()
+        return result
         
     # Enter a parse tree produced by slatParser#script.
     def enterScript(self, ctx:slatParser.ScriptContext):
@@ -33,7 +43,9 @@ class mySlatListener(slatListener):
     # Exit a parse tree produced by slatParser#command.
     def exitCommand(self, ctx:slatParser.CommandContext):
         if len(self._stack) > 0:
-            print("Stack: ", self._stack)
+            print("Error--stack not empty: ", self._stack)
+        if len(self._stack_stack) > 0:
+            print("Error--stack stack not empty: ", self._stack_stack)
 
     # Enter a parse tree produced by slatParser#title_command.
     def enterTitle_command(self, ctx:slatParser.Title_commandContext):
@@ -161,29 +173,23 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#parameter_array.
     def enterParameter_array(self, ctx:slatParser.Parameter_arrayContext):
-        self._stack.append("<START>")
+        self._push_stack()
 
     # Exit a parse tree produced by slatParser#parameter_array.
     def exitParameter_array(self, ctx:slatParser.Parameter_arrayContext):
-        values = []
-        value = self._stack.pop()
-        while value != "<START>":
-            values.append(value)
-            value = self._stack.pop()
-        values.reverse()
+        values = self._pop_stack()
         self._stack.append(values)
 
     # Enter a parse tree produced by slatParser#parameter_dictionary.
     def enterParameter_dictionary(self, ctx:slatParser.Parameter_dictionaryContext):
-        self._stack.append("<START>")
+        self._push_stack()
 
     # Exit a parse tree produced by slatParser#parameter_dictionary.
     def exitParameter_dictionary(self, ctx:slatParser.Parameter_dictionaryContext):
         values = dict()
-        value = self._stack.pop()
-        while value != "<START>":
+        for value in self._stack:
             values[value[0]] = value[1]
-            value = self._stack.pop()
+        self._pop_stack()
         self._stack.append(values)
 
     # Enter a parse tree produced by slatParser#dictionary_entry.
@@ -278,7 +284,7 @@ class mySlatListener(slatListener):
     # Enter a parse tree produced by slatParser#fragfn_user_defined_params.
     def enterFragfn_user_defined_params(self, ctx:slatParser.Fragfn_user_defined_paramsContext):
         pass
-
+    
     # Exit a parse tree produced by slatParser#fragfn_user_defined_params.
     def exitFragfn_user_defined_params(self, ctx:slatParser.Fragfn_user_defined_paramsContext):
         pass
@@ -400,17 +406,11 @@ class mySlatListener(slatListener):
     
     # Enter a parse tree produced by slatParser#scalar2_sequence.
     def enterScalar2_sequence(self, ctx:slatParser.Scalar2_sequenceContext):
-        self._stack.append("<START>")
-        pass
+        self._push_stack()
 
     # Exit a parse tree produced by slatParser#scalar2_sequence.
     def exitScalar2_sequence(self, ctx:slatParser.Scalar2_sequenceContext):
-        values = []
-        value = self._stack.pop()
-        while value != "<START>":
-            values.append(value)
-            value = self._stack.pop()
-        values.reverse()
+        values = self._pop_stack()
         self._stack.append(values)
 
     # Enter a parse tree produced by slatParser#lossfn_heading.
@@ -710,16 +710,11 @@ class mySlatListener(slatListener):
 
     # Enter a parse tree produced by slatParser#recorder_cols.
     def enterRecorder_cols(self, ctx:slatParser.Recorder_colsContext):
-        self._stack.append("<START>")
+        self._push_stack()
 
     # Exit a parse tree produced by slatParser#recorder_cols.
     def exitRecorder_cols(self, ctx:slatParser.Recorder_colsContext):
-        values = []
-        value = self._stack.pop()
-        while value != "<START>":
-            values.append(value)
-            value = self._stack.pop()
-        values.reverse()
+        values = self._pop_stack()
         self._stack.append(values)
 
     # Enter a parse tree produced by slatParser#python_script.
@@ -753,6 +748,7 @@ class mySlatListener(slatListener):
 
     # Exit a parse tree produced by slatParser#analyze_command.
     def exitAnalyze_command(self, ctx:slatParser.Analyze_commandContext):
+        print("Perform analysis")
         pass
 
     # Enter a parse tree produced by slatParser#set_command.
