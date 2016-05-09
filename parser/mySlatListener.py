@@ -10,12 +10,16 @@ from slatListener import slatListener
 import glob
 from distutils import text_file
 import numbers
+import  pyslat
+import math
+import numpy
 
 class mySlatListener(slatListener):
     def __init__(self):
         super().__init__()
         self._stack = []
         self._stack_stack = []
+        self._variables = dict()
 
     def _push_stack(self):
         self._stack_stack.append(self._stack)
@@ -127,7 +131,9 @@ class mySlatListener(slatListener):
 
     # Exit a parse tree produced by slatParser#var_ref.
     def exitVar_ref(self, ctx:slatParser.Var_refContext):
-        self._stack.append("(evalate the variable {})".format(ctx.ID().getText()))
+        variable = ctx.ID().getText()
+        value = self._variables.get(variable)
+        self._stack.append(value)
 
 
     # Enter a parse tree produced by slatParser#numerical_scalar.
@@ -474,12 +480,24 @@ class mySlatListener(slatListener):
 
     # Exit a parse tree produced by slatParser#print_command.
     def exitPrint_command(self, ctx:slatParser.Print_commandContext):
-        if ctx.print_message():
-            if ctx.print_message().STRING():
-                object = "the message [" + ctx.print_message().STRING().getText().strip('\'"') + "]"
+        if ctx.print_options():
+            options = self._stack.pop()
+            print("OPTIONS: {}".format(options))
+            
+            if options['filename']:
+                destination = "the file [{}]".format(options['filename'])
+                if options['append']:
+                    destination = "appending to " + destination
+                else:
+                    destination = "overwriting " + destination + ", if it exists, "
             else:
-                object = "a blank line"
+                destination = "standard output"
+        else:
+            destination = "standard output"
                 
+        if ctx.print_message():
+            object = self._stack.pop()
+            print("MESSAGE: {}".format(object))
         elif ctx.print_function():
             fntype = ctx.print_function()
             if fntype.DETFN():
@@ -500,20 +518,6 @@ class mySlatListener(slatListener):
                 object = 'unknown'
             object = 'the ' + object + " known as " + ctx.print_function().ID().getText()
 
-        if ctx.print_options():
-            options = self._stack.pop()
-            
-            if options['filename']:
-                destination = "the file [{}]".format(options['filename'])
-                if options['append']:
-                    destination = "appending to " + destination
-                else:
-                    destination = "overwriting " + destination + ", if it exists, "
-            else:
-                destination = "standard output"
-        else:
-            destination = "standard output"
-                
         print("    Print ", object, " to ", destination)
                 
 
@@ -523,7 +527,15 @@ class mySlatListener(slatListener):
 
     # Exit a parse tree produced by slatParser#print_message.
     def exitPrint_message(self, ctx:slatParser.Print_messageContext):
-        pass
+        if ctx.python_script():
+            object = self._stack.pop()
+        elif ctx.var_ref():
+            object = self._stack.pop()
+        elif ctx.STRING():
+            object = ctx.STRING().getText().strip('\'"')
+        else:
+            object = "a blank line"
+        self._stack.append(object)
 
         
     # Enter a parse tree produced by slatParser#print_function.
@@ -627,7 +639,7 @@ class mySlatListener(slatListener):
         
         id = ctx.ID().getText()
         message = message + " known as " + id
-        if at:
+        if at != None:
             message =  "{}, at the values {}, ".format(message, at)
         else:
             message = message + " "
@@ -723,8 +735,10 @@ class mySlatListener(slatListener):
 
     # Exit a parse tree produced by slatParser#python_script.
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
-        self._stack.append("(evaluate the Python expression '{}')".format(ctx.python_expression().getText()))
-        pass
+        expression =  ctx.python_expression().getText()
+        value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": numpy})
+        print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
+        self._stack.append(value)
 
     # Enter a parse tree produced by slatParser#non_paren_expression.
     def enterNon_paren_expression(self, ctx:slatParser.Non_paren_expressionContext):
@@ -759,10 +773,12 @@ class mySlatListener(slatListener):
     def exitSet_command(self, ctx:slatParser.Set_commandContext):
         id = ctx.ID().getText()
         value = self._stack.pop()
+        self._variables[id] = value
         print(("    Set the variable '{}' to {}.").format(id, value ))
 
 def main(argv):
     for file in glob.glob('test_cases/*.lines'):
+        listener = mySlatListener()
         print("-----------")
         print("File:", file)
         for test_case in text_file.TextFile(file).readlines():
@@ -779,7 +795,7 @@ def main(argv):
                     parser = slatParser(stream)
                     tree = parser.script()
                     #print(tree.toStringTree(recog=parser))
-                    listener = mySlatListener()
+                    #listener = mySlatListener()
                     walker = ParseTreeWalker()
                     walker.walk(listener, tree)
 
