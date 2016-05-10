@@ -282,6 +282,10 @@ namespace SLAT {
         {
             return relationship->lambda(x);
         }
+        double P_exceedence(double x, double y) 
+        {
+            return relationship->P_exceedence(x, y);
+        }
         python::list lambda_l(python::list l) 
         {
             return l;
@@ -562,6 +566,7 @@ namespace SLAT {
 
         python::class_<CompoundRateRelationshipWrapper>("CompoundRateRelationship", python::no_init)
             .def("getlambda", &CompoundRateRelationshipWrapper::lambda)
+            .def("P_exceedence", &CompoundRateRelationshipWrapper::P_exceedence)
             .def("Mean", &CompoundRateRelationshipWrapper::Mean)
             .def("MeanLn", &CompoundRateRelationshipWrapper::MeanLn)
             .def("Median", &CompoundRateRelationshipWrapper::Median)

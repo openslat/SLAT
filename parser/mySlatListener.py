@@ -80,6 +80,8 @@ class recorder:
                         if isinstance(y, numbers.Number):
                             if isinstance(self._function, pyslat.ProbabilisticFn):
                                 yval = self._function.X_at_exceedence(x, y)
+                            elif isinstance(self._function, pyslat.CompoundRateRelationship):
+                                yval = self._function.P_exceedence(x, y)
                             else:
                                 yval = "----"
                         elif y == 'mean_x':
