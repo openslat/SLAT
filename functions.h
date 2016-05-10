@@ -370,6 +370,51 @@ namespace SLAT {
          */
         virtual double Mean(double x) const { return NAN; };
 
+        /** 
+         * @brief Mean Exceedence in log space
+         * 
+         * Given an input value 'x',  returns the mean of ln(f(x)).
+          *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return mean(ln(f(x)))
+         */
+        virtual double MeanLn(double x) const { return NAN; };
+
+        /** 
+         * @brief Median Exceedence
+         * 
+         * Given an input value 'x',  returns the median of f(x).
+          *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return median(f(x))
+         */
+        virtual double Median(double x) const { return NAN; };
+
+        /** 
+         * @brief Standard Deviation in log space
+         * 
+         * Given an input value 'x',  returns the standard deviation of ln(f(x)).
+          *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return standard deviation(ln(f(x)))
+         */
+        virtual double SD_ln(double x) const { return NAN; };
+
+        /** 
+         * @brief Standard Deviation 
+         * 
+         * Given an input value 'x',  returns the standard deviation of f(x).
+          *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return standard deviation(f(x))
+         */
+        virtual double SD(double x) const { return NAN; };
+
+
         ~ProbabilisticFn();
         
         friend std::ostream& operator<<(std::ostream& out, const ProbabilisticFn& o);
@@ -450,6 +495,50 @@ namespace SLAT {
          * @return mean(f(x))
          */
         virtual double Mean(double x) const;
+
+        /** 
+         * @brief Mean Exceedence in log space
+         * 
+         * Given an input value 'x',  returns the mean of ln(f(x)).
+          *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return mean(ln(f(x)))
+         */
+        virtual double MeanLn(double x) const;
+
+        /** 
+         * @brief Median Exceedence
+         * 
+         * Given an input value 'x',  returns the median of f(x).
+          *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return median(f(x))
+         */
+        virtual double Median(double x) const;
+
+        /** 
+         * @brief Standard Deviation in log space
+         * 
+         * Given an input value 'x',  returns the standard deviation of ln(f(x)).
+          *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return standard deviation(ln(f(x)))
+         */
+        virtual double SD_ln(double x) const;
+
+        /** 
+         * @brief Standard Deviation 
+         * 
+         * Given an input value 'x',  returns the standard deviation of f(x).
+          *
+         * @param x The input point at which to evaluate the function.
+         * 
+         * @return standard deviation(f(x))
+         */
+        virtual double SD(double x) const;
 
         ~LogNormalFn() {
         }; /**< Destructor; doesn't need to do anything. */

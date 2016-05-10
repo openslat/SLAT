@@ -9,8 +9,7 @@ from slatParser import slatParser
 from slatListener import slatListener
 
 def main(argv):
-    for file in glob.glob('test_cases/e*.slat'):
-        print("-----------")
+    for file in argv[1:]:
         print("File:", file)
         text = open(file).read()
         print()

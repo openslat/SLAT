@@ -145,6 +145,18 @@ namespace SLAT {
         double Mean(double x) {
             return function->Mean(x);
         };
+        double MeanLn(double x) {
+            return function->MeanLn(x);
+        };
+        double Median(double x) {
+            return function->Median(x);
+        };
+        double SD_ln(double x) {
+            return function->SD_ln(x);
+        };
+        double SD(double x) {
+            return function->SD(x);
+        };
         std::shared_ptr<ProbabilisticFn> function;
     private:
     };
@@ -510,6 +522,10 @@ namespace SLAT {
             .def("P_exceedence", &ProbabilisticFnWrapper::P_exceedence)
             .def("X_at_exceedence", &ProbabilisticFnWrapper::X_at_exceedence)
             .def("Mean", &ProbabilisticFnWrapper::Mean)
+            .def("MeanLn", &ProbabilisticFnWrapper::MeanLn)
+            .def("Median", &ProbabilisticFnWrapper::Median)
+            .def("SD_ln", &ProbabilisticFnWrapper::SD_ln)
+            .def("SD", &ProbabilisticFnWrapper::SD)
             ;
 
         python::def("MakeSimpleRelationship",

@@ -13,6 +13,108 @@ import numbers
 import  pyslat
 import math
 import numpy
+from contextlib import redirect_stdout
+
+def frange(start, stop, step):
+    i = start
+    while i <= stop:
+        yield i
+        i += step
+
+class recorder:
+    def __init__(self, type, function, options, columns, at):
+        super().__init__()
+
+        self._type = type
+        self._function = function
+        self._options = options
+        self._at = at
+
+        if (type =='dsedp' or type == 'dsim') and columns == None:
+            columns = []
+            # TODO: Get actual number of damage states
+            for i in range(10):
+                columns.append(i + 1)
+        elif (type == 'probfn' or type == 'edpim') and columns == None:
+            columns = ['mean_x', 'sd_ln_x']
+        self._columns = columns
+
+    def str(self):
+        if not self._columns == None:
+            for c in self._columns:
+                print(c)
+        return "Recorder: {} {} {} {} {}".format(self._type, self._function, self._options, type(self._columns), self._at)
+
+    def generate_output(self):
+        print(self.str())
+        if self._type == 'dsrate':
+            # TODO: How does this recorder work?
+            print("dsrate")
+        else:
+            labels = {'detfn': ['x', 'y'],
+                      'probfn': ['x', None],
+                      'imrate': ['IM', 'lambda'],
+                      'edpim': ['IM', None],
+                      'edprate': ['EDP', 'lambda'],
+                      'dsedp': ['EDP', None],
+                      'dsim': ['IM', None],
+                      'lossds': ['DS', None],
+                      'lossedp': ['EDP', None],
+                      'lossim': ['IM', None]}
+            x_label = labels[self._type][0]
+            y_label = labels[self._type][1]
+
+            if not self._columns == None:
+                line = "{:>15}".format(x_label)
+                for y in self._columns:
+                    line = "{}{:>15}".format(line, y)
+            else:
+                line = "{:>15}{:>15}".format(x_label, y_label)
+            print(line)
+                
+            for x in self._at:
+                line = "{:>15.6}".format(x)
+                if not self._columns == None:
+                    line = "{:>15.6}".format(x)
+                    for y in self._columns:
+                        if isinstance(y, numbers.Number):
+                            if isinstance(self._function, pyslat.ProbabilisticFn):
+                                yval = self._function.X_at_exceedence(x, y)
+                            else:
+                                yval = "----"
+                        elif y == 'mean_x':
+                            yval = self._function.Mean(x)
+                        elif y == 'sd_ln_x':
+                            yval = self._function.SD_ln(x)
+                        else:
+                            yval = "+++++++++"
+                        line = "{}{:>15.6}".format(line, yval)
+                else:
+                    if isinstance(self._function, pyslat.DeterministicFn):
+                        yval = self._function.ValueAt(x)
+                    elif (isinstance(self._function, pyslat.RateRelationship) or
+                          isinstance(self._function, pyslat.CompoundRateRelationship)):
+                          yval = self._function.getlambda(x)
+                    elif isinstance(self._function, pyslat.CompGroup):
+                          yval = self._function.E_Loss_EDP(x)
+                    line = "{}{:>15.6}".format(line, yval)
+                print(line)
+                
+            
+    def run(self):
+        destination = self._options and self._options.get('filename')
+        if destination != None:
+            if self._options.get('append'):
+                f = open(destination, "a")
+            else:
+                f = open(destination, "w")
+            with redirect_stdout(f):
+                self.generate_output()
+
+        else:
+            self.generate_output()
+    
+        
 
 class mySlatListener(slatListener):
     def __init__(self):
@@ -84,7 +186,7 @@ class mySlatListener(slatListener):
         print("    Create a ", type, " function named ", ctx.ID(), 
               ", using the parameters: ", value)
         self._detfns[ctx.ID().getText()] = pyslat.factory(fntype, value)
-        print(self._detfns)
+        #print(self._detfns)
 
 
     # Enter a parse tree produced by slatParser#hyperbolic_args.
@@ -239,7 +341,7 @@ class mySlatListener(slatListener):
                "'{}' for sigma ({}).").format(id, mufn, mu, sigmafn, sd))
         self._probfns[ctx.ID().getText()] = pyslat.MakeLogNormalProbabilisticFn({mu: self._detfns.get(mufn),
                                                                                  sd: self._detfns.get(sigmafn)})
-        print(self._probfns)
+        #print(self._probfns)
 
 
     # Enter a parse tree produced by slatParser#im_command.
@@ -252,7 +354,7 @@ class mySlatListener(slatListener):
         fn_id = ctx.ID(1).getText()
         print(("    Create an impulse measurement '{}' from the deterministic function '{}'.").format(im_id, fn_id))
         self._ims[im_id] = pyslat.MakeSimpleRelationship(self._detfns.get(fn_id))
-        print(self._ims)
+        #print(self._ims)
 
     # Enter a parse tree produced by slatParser#edp_command.
     def enterEdp_command(self, ctx:slatParser.Edp_commandContext):
@@ -266,7 +368,7 @@ class mySlatListener(slatListener):
         print(("    Create an engineering demand parameter '{}' from the impulse response '{}'" +
                " and the deterministic function '{}'.").format(edp_id, im_id, fn_id))
         self._edps[edp_id] = pyslat.MakeCompoundRelationship(self._ims.get(im_id), self._probfns.get(fn_id))
-        print(self._edps)
+        #print(self._edps)
 
     # Enter a parse tree produced by slatParser#fragfn_command.
     def enterFragfn_command(self, ctx:slatParser.Fragfn_commandContext):
@@ -295,7 +397,7 @@ class mySlatListener(slatListener):
             for s in scalars:
                 params.append({options['mu']: s[0], options['sd']: s[1]})
             self._fragfns[id] = pyslat.MakeFragilityFn(params)
-            print(self._fragfns)
+            #print(self._fragfns)
                 
 
     # Enter a parse tree produced by slatParser#fragfn_db_params.
@@ -429,7 +531,7 @@ class mySlatListener(slatListener):
     def exitLossfn_command(self, ctx:slatParser.Lossfn_commandContext):
         id = ctx.ID().getText()
         self._lossfns[id] = self._stack.pop()
-        print(self._lossfns)
+        #print(self._lossfns)
 
     # Enter a parse tree produced by slatParser#simple_loss_command.
     def enterSimple_loss_command(self, ctx:slatParser.Simple_loss_commandContext):
@@ -512,7 +614,7 @@ class mySlatListener(slatListener):
             self._fragfns.get(frag_id),
             self._lossfns.get(loss_id),
             count)
-        print(self._compgroups)
+        #print(self._compgroups)
 
     # Enter a parse tree produced by slatParser#print_command.
     def enterPrint_command(self, ctx:slatParser.Print_commandContext):
@@ -522,30 +624,17 @@ class mySlatListener(slatListener):
     def exitPrint_command(self, ctx:slatParser.Print_commandContext):
         if ctx.print_options():
             options = self._stack.pop()
-            print("OPTIONS: {}".format(options))
-            
-            if options['filename']:
-                destination = "the file [{}]".format(options['filename'])
-                if options['append']:
-                    destination = "appending to " + destination
-                else:
-                    destination = "overwriting " + destination + ", if it exists, "
-            else:
-                destination = "standard output"
         else:
-            destination = "standard output"
-                
+            options = None
+
         if ctx.print_message():
             object = self._stack.pop()
-            print("MESSAGE: {}".format(object))
         elif ctx.print_function():
             id = ctx.print_function().ID().getText()
             
             fntype = ctx.print_function()
             if fntype.DETFN():
                 object = self._detfns.get(id)
-                if not object == None:
-                    print("  ----> ", object.ValueAt(0.1))
             elif fntype.PROBFN():
                 object = self._probfns.get(id)
             elif fntype.IM():
@@ -560,15 +649,18 @@ class mySlatListener(slatListener):
                 object = self._compgroups.get(id)
             else:
                 object = 'unknown'
+        message = "{}".format(object)
 
-            if object == None:
-                object = "<undefined DETFN '{}'>".format(id)
-
-                
-            object = 'the {} known as {} '.format(object, ctx.print_function().ID().getText())
-
-        print("    Print ", object, " to ", destination)
-                
+        destination = options and options.get('filename')
+        if destination != None:
+            if options.get('append'):
+                f = open(destination, "a")
+            else:
+                f = open(destination, "w")
+            with redirect_stdout(f):
+                print(message)
+        else:
+            print(message)
 
     # Enter a parse tree produced by slatParser#print_message.
     def enterPrint_message(self, ctx:slatParser.Print_messageContext):
@@ -663,6 +755,7 @@ class mySlatListener(slatListener):
             else:
                 destination = "to standard output"
         else:
+            options = None
             destination = "to standard output"
 
         if ctx.recorder_cols():
@@ -671,6 +764,7 @@ class mySlatListener(slatListener):
             for col in cols:
                 columns = "{} {}".format(columns, col)
         else:
+            cols = None
             columns = " to the default columns"
 
         if ctx.recorder_at():
@@ -682,11 +776,28 @@ class mySlatListener(slatListener):
 
         type = ctx.recorder_type()
         if type:
-            message = message + self._stack.pop()
+            type = type.getText()
         else:
-            message = message + "DS-rate relationship"
-        
+            type = "dsrate"
+
         id = ctx.ID().getText()
+
+        if type == "dsrate" or type == 'dsedp' or type == 'dsim':
+            function = self._compgroups.get(id)
+        elif type == 'detfn':
+            function = self._detfns.get(id)
+        elif type == 'probfn':
+            function = self._probfns.get(id)
+        elif type == 'imrate':
+            function = self._ims.get(id)
+        elif type == 'edpim' or type == 'edprate':
+            function = self._edps.get(id)
+        elif type == 'lossds' or type == 'lossedp' or type == 'lossim':
+            function = self._compgroups.get(id)
+        else:
+            print("Error!")
+        message = "{} [{}, {}]".format(message, type, function)
+            
         message = message + " known as " + id
         if at != None:
             message =  "{}, at the values {}, ".format(message, at)
@@ -694,8 +805,8 @@ class mySlatListener(slatListener):
             message = message + " "
 
         message = message + destination + columns + "."
-        self._recorders.append(message)
         print(message)
+        self._recorders.append(recorder(type, function, options, cols, at))
 
     # Enter a parse tree produced by slatParser#recorder_type.
     def enterRecorder_type(self, ctx:slatParser.Recorder_typeContext):
@@ -703,31 +814,8 @@ class mySlatListener(slatListener):
 
     # Exit a parse tree produced by slatParser#recorder_type.
     def exitRecorder_type(self, ctx:slatParser.Recorder_typeContext):
-        type = "ERROR"
-        if ctx.DETFN():
-            value = "deterministic function"
-        elif ctx.PROBFN():
-            value = "probabilistic function"
-        elif ctx.IMRATE():
-            value = "IM-rate relationship"
-        elif ctx.EDPIM():
-            value = "EDP-IM relationship"
-        elif ctx.EDPRATE():
-            value = "EDP-rate relationship"
-        elif ctx.DSEDP():
-            value = "DS-EDP relationship"
-        elif ctx.DSIM():
-            value = "DS-IM relationship"
-        elif ctx.LOSSDS():
-            value = "LOSS-DS relationship"
-        elif ctx.LOSSEDP():
-            value = "LOSS-EDP relationship"
-        elif ctx.LOSSIM():
-            value = "LOSS-IM relationship"
-        else:
-            value = "ERROR"
-        self._stack.append(value)
-
+        pass
+    
     # Enter a parse tree produced by slatParser#recorder_at.
     def enterRecorder_at(self, ctx:slatParser.Recorder_atContext):
         pass
@@ -743,7 +831,7 @@ class mySlatListener(slatListener):
                 start = float(floats[0].getText())
                 incr = float(floats[1].getText())
                 end = float(floats[2].getText())
-                self._stack.append({'from': start, 'to': end, 'by': incr})
+                self._stack.append(frange(start, end, incr))
 
     # Enter a parse tree produced by slatParser#float_array.
     def enterFloat_array(self, ctx:slatParser.Float_arrayContext):
@@ -813,7 +901,7 @@ class mySlatListener(slatListener):
     def exitAnalyze_command(self, ctx:slatParser.Analyze_commandContext):
         print("Perform analysis:")
         for rec in self._recorders:
-            print("    RUN {}".format(rec))
+            rec.run()
 
     # Enter a parse tree produced by slatParser#set_command.
     def enterSet_command(self, ctx:slatParser.Set_commandContext):

@@ -39,6 +39,7 @@ integration maq 0.01 1024;
 
 # Set up recorders:
 recorder detfn IM_FUNC 0.01:0.01:1.00 example1_out.txt --append;
+recorder detfn IM_FUNC $(numpy.arange(0.01, 1.01, 0.01)) example1_out.txt --append;
 recorder probfn EDPIM_FUNC 0:0.01:1.00 --cols 0.16, mean_x, 0.84 example1_out.txt --append;
 recorder imrate IM_1 0.01:0.01:1.00 example1_out.txt --append;
 recorder edpim EDP_1 0:0.01:1.00 --cols mean_x, sd_x example1_out.txt --append;

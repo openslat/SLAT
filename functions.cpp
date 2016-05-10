@@ -356,6 +356,26 @@ namespace SLAT {
         return distribution(x).get_mean_X();
     }
 
+    double LogNormalFn::MeanLn(double x) const
+    {
+        return distribution(x).get_mu_lnX();
+    }
+
+    double LogNormalFn::Median(double x) const
+    {
+        return distribution(x).get_median_X();
+    }
+
+    double LogNormalFn::SD_ln(double x) const
+    {
+        return distribution(x).get_sigma_lnX();
+    }
+
+    double LogNormalFn::SD(double x) const
+    {
+        return distribution(x).get_sigma_X();
+    }
+
     LogNormalDist LogNormalFn::distribution(double x) const
     {
         LogNormalDist result = LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(mean_lnX(x), sigma_lnX(x));
