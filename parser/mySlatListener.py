@@ -84,8 +84,14 @@ class recorder:
                                 yval = "----"
                         elif y == 'mean_x':
                             yval = self._function.Mean(x)
+                        elif y == 'mean_ln_x':
+                            yval = self._function.MeanLn(x)
+                        elif y == 'median_x':
+                            yval = self._function.Median(x)
                         elif y == 'sd_ln_x':
                             yval = self._function.SD_ln(x)
+                        elif y == 'sd_x':
+                            yval = self._function.SD(x)
                         else:
                             yval = "+++++++++"
                         line = "{}{:>15.6}".format(line, yval)

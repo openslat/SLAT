@@ -286,6 +286,26 @@ namespace SLAT {
         {
             return l;
         }
+        double Mean(double x)
+        {
+            return relationship->Mean(x);
+        }
+        double MeanLn(double x)
+        {
+            return relationship->MeanLn(x);
+        }
+        double Median(double x)
+        {
+            return relationship->Median(x);
+        }
+        double SD_ln(double x)
+        {
+            return relationship->SD_ln(x);
+        }
+        double SD(double x)
+        {
+            return relationship->SD(x);
+        }
     public:
         std::shared_ptr<CompoundRateRelationship> relationship;
         friend CompGroupWrapper *MakeCompGroup(CompoundRateRelationshipWrapper edp, FragilityFnWrapper frag_fn,
@@ -542,6 +562,11 @@ namespace SLAT {
 
         python::class_<CompoundRateRelationshipWrapper>("CompoundRateRelationship", python::no_init)
             .def("getlambda", &CompoundRateRelationshipWrapper::lambda)
+            .def("Mean", &CompoundRateRelationshipWrapper::Mean)
+            .def("MeanLn", &CompoundRateRelationshipWrapper::MeanLn)
+            .def("Median", &CompoundRateRelationshipWrapper::Median)
+            .def("SD_ln", &CompoundRateRelationshipWrapper::SD_ln)
+            .def("SD", &CompoundRateRelationshipWrapper::SD)
             ;
 
         python::enum_<FUNCTION_TYPE>("FUNCTION_TYPE")

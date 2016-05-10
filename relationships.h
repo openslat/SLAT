@@ -179,6 +179,12 @@ namespace SLAT {
 
         double P_exceedence(double base_value, double min_dependent_value) const;
         
+        double Mean(double base_value) const;
+        double MeanLn(double base_value) const;
+        double Median(double base_value) const;
+        double SD_ln(double base_value) const;
+        double SD(double base_value) const;
+        
         std::shared_ptr<RateRelationship> Base_Rate(void) { return base_rate; };
     protected:
         std::shared_ptr<RateRelationship> base_rate; /**< Base rate relationship */

@@ -186,6 +186,31 @@ namespace SLAT {
         return dependent_rate->P_exceedence(base_value, min_dependent_value);
     }
 
+    double CompoundRateRelationship::MeanLn(double base_value) const
+    {
+        return dependent_rate->MeanLn(base_value);
+    }
+
+    double CompoundRateRelationship::Median(double base_value) const
+    {
+        return dependent_rate->Median(base_value);
+    }
+
+    double CompoundRateRelationship::Mean(double base_value) const
+    {
+        return dependent_rate->Mean(base_value);
+    }
+
+    double CompoundRateRelationship::SD_ln(double base_value) const
+    {
+        return dependent_rate->SD_ln(base_value);
+    }
+
+    double CompoundRateRelationship::SD(double base_value) const
+    {
+        return dependent_rate->SD(base_value);
+    }
+
 }
 
 
