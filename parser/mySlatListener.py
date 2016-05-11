@@ -149,7 +149,91 @@ class edp:
         return(("Engineering Demand Parameter '{}' using the intensity measure '{}', and " +
                 "the probabilistic function {}.").format(self._id, self._im.id(), self._fn.id()))
 
+class fragfn:
+    def __init__(self, id):
+        self._id = id
+        self.func = None
+        
+    def id(self):
+        return(self._id)
 
+    def function(self):
+        return self._func
+
+class fragfn_db(fragfn):
+    def __init__(self, id, db_params):
+        super().__init__(id)
+        self._db_params = db_params
+        print("CREATE a fragfn from db params")
+
+    def __str__(self):
+        return("Fragility Function '{}', from database: {}.".format(self._id, self._db_params))
+
+class fragfn_user(fragfn):
+    def __init__(self, id, options, scalars):
+        super().__init__(id)
+        self._options = options
+        self._scalars = scalars
+        params = []
+        for s in scalars:
+            params.append({options['mu']: s[0], options['sd']: s[1]})
+        self._func = pyslat.MakeFragilityFn(params)
+        print("CREATE a fragfn from log normal distributions")
+
+    def __str__(self):
+        return("User-defined Fragility Function '{}', built from {} using options '{}'.".format(
+            self._id,
+            self._scalars,
+            self._options))
+
+class lossfn:
+    def __init__(self, id, options, data):
+        self._id = id
+        self._options = options
+        self._data = data
+
+        params = []
+        for d in data:
+            params.append({options['mu']: d[0], options['sd']: d[1]})
+        self._func = pyslat.MakeLossFn(params)
+        print("CREATE Loss Function '{}' from {} as {}.".format(id, data, options))
+
+    def id(self):
+        return(self._id)
+
+    def function(self):
+        return self._func
+
+    def __str__(self):
+        return("Loss Function '{}', from {} as {}.".format(self._id, self._data, self._options))
+
+class compgroup:
+    def __init__(self, id, edp, frag, loss, count):
+        self._id = id
+        self._edp = edp
+        self._frag = frag
+        self._loss = loss
+        self._count = count
+        print("CREATE {}".format(self))
+        self._func = pyslat.MakeCompGroup(edp.function(),
+                                          frag.function(),
+                                          loss.function(),
+                                          count)
+        
+    def function(self):
+        return self._func
+    
+    def id(self):
+        return(self._id)
+        
+    def __str__(self):
+        return("Component Group '{}' using {}, {}, and {} ({} components".format(
+            self._id, 
+            self._edp.id(),
+            self._frag.id(),
+            self._loss.id(),
+            self._count))
+                 
 class recorder:
     def __init__(self, type, function, options, columns, at):
         super().__init__()
@@ -168,14 +252,11 @@ class recorder:
             columns = ['mean_x', 'sd_ln_x']
         self._columns = columns
 
-    def str(self):
-        if not self._columns == None:
-            for c in self._columns:
-                print(c)
-        return "Recorder: {} {} {} {} {}".format(self._type, self._function, self._options, type(self._columns), self._at)
+    def __str__(self):
+        return "Recorder: {} {} {} {} {}".format(self._type, self._function, self._options, self._columns, self._at)
 
     def generate_output(self):
-        print(self.str())
+        print(self)
         if self._type == 'dsrate':
             # TODO: How does this recorder work?
             print("dsrate")
@@ -524,6 +605,7 @@ class mySlatListener(slatListener):
                    "the key [{}] in {}.").format(id, 
                                                  db_params['key'],
                                                  db_params['database']))
+            self._fragfns[id] = fragfn_db(id, db_params)
         else:
             params = ctx.fragfn_user_defined_params()
             options = self._stack.pop()
@@ -533,10 +615,7 @@ class mySlatListener(slatListener):
                   "] using the parameters below to represent ",
                   options)
             print("    ......", scalars)
-            params = []
-            for s in scalars:
-                params.append({options['mu']: s[0], options['sd']: s[1]})
-            self._fragfns[id] = pyslat.MakeFragilityFn(params)
+            self._fragfns[id] = fragfn_user(id, options, scalars)
             #print(self._fragfns)
                 
 
@@ -670,7 +749,12 @@ class mySlatListener(slatListener):
     # Exit a parse tree produced by slatParser#lossfn_command.
     def exitLossfn_command(self, ctx:slatParser.Lossfn_commandContext):
         id = ctx.ID().getText()
-        self._lossfns[id] = self._stack.pop()
+        if ctx.simple_loss_command():
+            options = self._stack.pop()
+            data = self._stack.pop()
+            self._lossfns[id] = lossfn(id, options, data)
+        else:
+            print("ERRROR")
         #print(self._lossfns)
 
     # Enter a parse tree produced by slatParser#simple_loss_command.
@@ -679,12 +763,7 @@ class mySlatListener(slatListener):
 
     # Exit a parse tree produced by slatParser#simple_loss_command.
     def exitSimple_loss_command(self, ctx:slatParser.Simple_loss_commandContext):
-        options = self._stack.pop()
-        data = self._stack.pop()
-        params = []
-        for d in data:
-            params.append({options['mu']: d[0], options['sd']: d[1]})
-        self._stack.append(pyslat.MakeLossFn(params))
+        pass
     
     # Enter a parse tree produced by slatParser#scalar2_sequence.
     def enterScalar2_sequence(self, ctx:slatParser.Scalar2_sequenceContext):
@@ -749,12 +828,11 @@ class mySlatListener(slatListener):
         print("    Create a group of", count, "components, called '" + compgroup_id +
               "', using the EDP '" + edp_id + "',", "the Fragility Function '" +
               frag_id + "', and the Loss Function '" + loss_id + "'.")
-        self._compgroups[compgroup_id] = pyslat.MakeCompGroup(
-            self._edps.get(edp_id),
-            self._fragfns.get(frag_id),
-            self._lossfns.get(loss_id),
-            count)
-        #print(self._compgroups)
+        self._compgroups[compgroup_id] = compgroup(compgroup_id,
+                                                   self._edps.get(edp_id),
+                                                   self._fragfns.get(frag_id),
+                                                   self._lossfns.get(loss_id),
+                                                   count)
 
     # Enter a parse tree produced by slatParser#print_command.
     def enterPrint_command(self, ctx:slatParser.Print_commandContext):
@@ -815,7 +893,7 @@ class mySlatListener(slatListener):
         elif ctx.STRING():
             object = ctx.STRING().getText().strip('\'"')
         else:
-            object = "a blank line"
+            object = ""
         self._stack.append(object)
 
         
