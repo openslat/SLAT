@@ -2,7 +2,7 @@
 import sys
 import glob
 from distutils import text_file
-from mySlatListener import mySlatListener
+from SlatInterpreter import SlatInterpreter
 from antlr4 import *
 from slatLexer import slatLexer
 from slatParser import slatParser
@@ -21,7 +21,7 @@ def main(argv):
         parser = slatParser(stream)
         tree = parser.script()
         #print(tree.toStringTree(recog=parser))
-        listener = mySlatListener()
+        listener = SlatInterpreter()
         walker = ParseTreeWalker()
         walker.walk(listener, tree)
 

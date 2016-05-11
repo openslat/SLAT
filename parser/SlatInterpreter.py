@@ -376,7 +376,7 @@ class recorder:
     
         
 
-class mySlatListener(slatListener):
+class SlatInterpreter(slatListener):
     def __init__(self):
         super().__init__()
         self._stack = []
@@ -1170,27 +1170,21 @@ class mySlatListener(slatListener):
         print(("    Set the variable '{}' to {}.").format(id, value ))
 
 def main(argv):
-    for file in glob.glob('test_cases/*.lines'):
-        listener = mySlatListener()
-        print("-----------")
+    for file in argv[1:]:
         print("File:", file)
-        for test_case in text_file.TextFile(file).readlines():
-            if not re.search('^%%', test_case):
-                print()
-                print("INPUT:", test_case)
+        text = open(file).read()
+        print()
+        print("INPUT:", text)
 
-                if False and re.search('\$\(', test_case):
-                    print("SKIP")
-                else:
-                    input = InputStream(test_case)
-                    lexer = slatLexer(input)
-                    stream = CommonTokenStream(lexer)
-                    parser = slatParser(stream)
-                    tree = parser.script()
-                    #print(tree.toStringTree(recog=parser))
-                    #listener = mySlatListener()
-                    walker = ParseTreeWalker()
-                    walker.walk(listener, tree)
+        input = InputStream(text)
+        lexer = slatLexer(input)
+        stream = CommonTokenStream(lexer)
+        parser = slatParser(stream)
+        tree = parser.script()
+        #print(tree.toStringTree(recog=parser))
+        listener = SlatInterpreter()
+        walker = ParseTreeWalker()
+        walker.walk(listener, tree)
 
 if __name__ == '__main__':
     main(sys.argv)
