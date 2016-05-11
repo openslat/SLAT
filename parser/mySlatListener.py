@@ -227,12 +227,25 @@ class compgroup:
                                           count)
     def fragfn(self):
         return self._frag
+
     def size(self):
         return self._frag.size()
         
     def function(self):
         return self._func
-    
+
+    def E_Loss_EDP(self, x):
+        return self._func.E_Loss_EDP(x)
+
+    def SD_ln_Loss_EDP(self, x):
+        return self._func.SD_ln_loss_EDP(x)
+
+    def E_Loss_IM(self, x):
+        return self._func.E_Loss_IM(x)
+
+    def SD_ln_Loss_IM(self, x):
+        return self._func.SD_ln_loss_IM(x)
+
     def id(self):
         return(self._id)
         
@@ -269,7 +282,7 @@ class recorder:
         print(self)
         if self._type == 'dsrate':
             # TODO: How does this recorder work?
-            print("dsrate")
+            print("DSRATE recorder not implemented")
         else:
             labels = {'detfn': ['x', 'y'],
                       'probfn': ['x', None],
@@ -310,13 +323,23 @@ class recorder:
                             else:
                                 yval = "----"
                         elif y == 'mean_x':
-                            yval = self._function.Mean(x)
+                            if self._type == 'lossedp':
+                                yval = self._function.E_Loss_EDP(x)
+                            elif self._type == 'lossim':
+                                yval = self._function.E_Loss_IM(x)
+                            else:
+                                yval = self._function.Mean(x)
                         elif y == 'mean_ln_x':
                             yval = self._function.MeanLn(x)
                         elif y == 'median_x':
                             yval = self._function.Median(x)
                         elif y == 'sd_ln_x':
-                            yval = self._function.SD_ln(x)
+                            if self._type == 'lossedp':
+                                yval = self._function.SD_ln_Loss_EDP(x)
+                            elif self._type == 'lossim':
+                                yval = self._function.SD_ln_Loss_IM(x)
+                            else:
+                                yval = self._function.SD_ln(x)
                         elif y == 'sd_x':
                             yval = self._function.SD(x)
                         else:

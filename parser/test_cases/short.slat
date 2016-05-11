@@ -56,11 +56,17 @@ print message example1_out.txt --append;
 
 compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 1;
 print compgroup COMPGROUP_1 example1_out.txt --append;
-
 recorder dsedp COMPGROUP_1 0.0:0.02:0.200  example1_out.txt --append;
-#recorder dsrate COMPGROUP_1;
-#recorder lossedp COMPGROUP_1 0.001:0.02:0.200 --cols mean_x, sd_ln_x example1_out.txt --append;
-#recorder lossim COMPGROUP_1 0.001:0.5:2.5  --cols mean_x, sd_x example1_out.txt --append;
+print message example1_out.txt --append;
+
+recorder dsrate COMPGROUP_1 example1_out.txt --append;
+print message example1_out.txt --append;
+
+recorder lossedp COMPGROUP_1 0.001:0.02:0.200 --cols mean_x, sd_ln_x example1_out.txt --append;
+print message example1_out.txt --append;
+
+recorder lossim COMPGROUP_1 0.001:0.5:2.5  --cols mean_x, sd_ln_x example1_out.txt --append;
+print message example1_out.txt --append;
 
 analyze;
 
