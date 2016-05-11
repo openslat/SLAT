@@ -160,6 +160,9 @@ class fragfn:
     def function(self):
         return self._func
 
+    def pExceeded(self, x):
+        return self._func.pExceeded(x)
+
 class fragfn_db(fragfn):
     def __init__(self, id, db_params):
         super().__init__(id)
@@ -185,6 +188,9 @@ class fragfn_user(fragfn):
             self._id,
             self._scalars,
             self._options))
+
+    def size(self):
+        return len(self._scalars)
 
 class lossfn:
     def __init__(self, id, options, data):
@@ -219,6 +225,10 @@ class compgroup:
                                           frag.function(),
                                           loss.function(),
                                           count)
+    def fragfn(self):
+        return self._frag
+    def size(self):
+        return self._frag.size()
         
     def function(self):
         return self._func
@@ -246,7 +256,7 @@ class recorder:
         if (type =='dsedp' or type == 'dsim') and columns == None:
             columns = []
             # TODO: Get actual number of damage states
-            for i in range(10):
+            for i in range(function.size()):
                 columns.append(i + 1)
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_x', 'sd_ln_x']
@@ -284,7 +294,11 @@ class recorder:
                 
             for x in self._at:
                 line = "{:>15.6}".format(x)
-                if not self._columns == None:
+                if self._type == 'dsedp':
+                    yvals = self._function.fragfn().pExceeded(x)
+                    for y in yvals:
+                        line = "{}{:>15.6}".format(line, y)
+                elif not self._columns == None:
                     line = "{:>15.6}".format(x)
                     for y in self._columns:
                         if isinstance(y, numbers.Number):
