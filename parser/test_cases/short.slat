@@ -13,8 +13,8 @@ im IM_1 IM_FUNC;
 print im IM_1 example1_out.txt --append;
 
 # Set up recorders:
-recorder detfn IM_FUNC 0.00:0.001:1.00 example1_out.txt --append;
-recorder imrate IM_1   0.00:0.001:1.00 example1_out.txt --append;
+recorder detfn IM_FUNC 0.00:0.1:1.00 example1_out.txt --append;
+recorder imrate IM_1   0.00:0.1:1.00 example1_out.txt --append;
 
 
 
@@ -23,17 +23,17 @@ recorder imrate IM_1   0.00:0.001:1.00 example1_out.txt --append;
 detfn MU_EDP powerlaw 0.1, 1.5;
 detfn SIGMA_EDP powerlaw 0.5, 0.0;
 
-recorder detfn MU_EDP 0.00:0.01:2.5 example1_out.txt --append;
-recorder detfn SIGMA_EDP 0.00:0.01:2.5 example1_out.txt --append;
+recorder detfn MU_EDP 0.00:0.25:2.5 example1_out.txt --append;
+recorder detfn SIGMA_EDP 0.00:0.25:2.5 example1_out.txt --append;
 
 probfn EDPIM_FUNC lognormal MU_EDP, SIGMA_EDP --mu mean_x --sd sd_ln_x;
-recorder probfn EDPIM_FUNC 0.00:0.01:2.5 example1_out.txt --append;
-recorder probfn EDPIM_FUNC 0.00:0.01:2.5 --cols mean_x, sd_x, 0.50 example1_out.txt --append;
+recorder probfn EDPIM_FUNC 0.00:0.25:2.5 example1_out.txt --append;
+recorder probfn EDPIM_FUNC 0.00:0.25:2.5 --cols mean_x, sd_x, 0.50 example1_out.txt --append;
 
 edp EDP_1 IM_1 EDPIM_FUNC;
-recorder edpim EDP_1 0.00:0.01:2.5 example1_out.txt --append;
-recorder edpim EDP_1 0.00:0.01:2.5 --cols mean_x, sd_x, 0.50 example1_out.txt --append;
-recorder edprate EDP_1 0.0:0.001:0.15 example1_out.txt --append;
+recorder edpim EDP_1 0.00:0.25:2.5 example1_out.txt --append;
+recorder edpim EDP_1 0.00:0.25:2.5 --cols mean_x, sd_x, 0.50 example1_out.txt --append;
+recorder edprate EDP_1 0.0:0.025:0.15 example1_out.txt --append;
 
 analyze;
 

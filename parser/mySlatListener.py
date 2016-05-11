@@ -21,6 +21,135 @@ def frange(start, stop, step):
         yield i
         i += step
 
+class detfn:
+    def __init__(self, id, type, parameters):
+        print("CREATE a detfn '{}' of type {} from {}.".format(id, type, parameters))
+        if type == 'power law':
+            fntype = pyslat.FUNCTION_TYPE.PLC
+        elif type == 'hyperbolic':
+            fntype = pyslat.FUNCTION_TYPE.NLH
+        else:
+            raise ValueError("Invalid detfn type: {}".format(type))
+            
+        self._id = id
+        self._type = type
+        self._parameters = parameters.copy()
+        self._func = pyslat.factory(fntype, parameters)
+
+    def id(self):
+        return self._id
+
+    def function(self):
+        return self._func
+
+    def ValueAt(self, x):
+        return self._func.ValueAt(x)
+    
+    def __str__(self):
+        return("Deterministic Function '{}', of type '{}', from parameters {}.".format(self._id, self._type, self._parameters))
+
+class probfn:
+    def __init__(self, id, type, mu_func, sigma_func):
+        print(("CREATE a probfn '{}' of type {}, using the deterministic function {} for {}, and " +
+               "the deterministic function {} for {}.").format(
+                   id, type,
+                   mu_func[1].id(), mu_func[0],
+                   sigma_func[1].id(), sigma_func[0]))
+        self._id = id
+        self._type = type
+        self._mu_func = mu_func
+        self._sigma_func = sigma_func
+        self._func = pyslat.MakeLogNormalProbabilisticFn({mu_func[0]: mu_func[1].function(),
+                                                          sigma_func[0]: sigma_func[1].function()})
+            
+    def id(self):
+        return self._id
+
+    def function(self):
+        return self._func
+    
+    def Mean(self, x):
+        return self._func.Mean(x)
+
+    def MeanLn(self, x):
+        return self._func.MeanLn(x)
+
+    def Median(self, x):
+        return self._func.Median(x)
+
+    def SD_ln(self, x):
+        return self._func.SD_ln(x)
+
+    def SD(self, x):
+        return self._func.SD(x)
+
+    def __str__(self):
+        return(("Probabilistic function '{}' of type {}, using the deterministic function {} for {}, and " +
+               "the deterministic function {} for {}.").format(
+                   self._id, self._type,
+                   self._mu_func[1].id(), self._mu_func[0],
+                   self._sigma_func[1].id(), self._sigma_func[0]))
+
+class im:
+    def __init__(self, id, detfn):
+        print("CREATE im {} from {}.".format(id, detfn.id()))
+        self._id = id
+        self._detfn = detfn
+        self._func = pyslat.MakeSimpleRelationship(detfn.function())
+
+    def id(self):
+        return self._id
+
+    def function(self):
+        return self._func
+
+    def getlambda(self, x):
+        return self._func.getlambda(x)
+
+    def __str__(self):
+        return("Intensity measure '{}', based on the deterministic function '{}'.".format(self._id, self._detfn.id()))
+
+class edp:
+    def __init__(self, id, im, fn):
+        print(("CREATE an EDP '{}' using the deterministic function {} and " +
+               "the probabilistic function {}.").format(id, im.id(), fn.id()))
+        self._id = id
+        self._im = im
+        self._fn = fn
+        self._func = pyslat.MakeCompoundRelationship(im.function(), fn.function())
+            
+    def id(self):
+        return self._id
+
+    def function(self):
+        return self._func
+    
+    def Mean(self, x):
+        return self._func.Mean(x)
+
+    def MeanLn(self, x):
+        return self._func.MeanLn(x)
+
+    def Median(self, x):
+        return self._func.Median(x)
+
+    def SD_ln(self, x):
+        return self._func.SD_ln(x)
+
+    def SD(self, x):
+        return self._func.SD(x)
+
+    def getlambda(self, x):
+        return self._func.getlambda(x)
+
+    def P_exceedence(self, x, y):
+        return self._func.P_exceedence(x, y)
+
+    def __str__(self):
+        return(("Engineering Demand Parameter '{}' using the intensity measure '{}', and " +
+                "the probabilistic function {}.").format(self._id, self._im.id(), self._fn.id()))
+
+
 class recorder:
     def __init__(self, type, function, options, columns, at):
         super().__init__()
@@ -78,9 +207,10 @@ class recorder:
                     line = "{:>15.6}".format(x)
                     for y in self._columns:
                         if isinstance(y, numbers.Number):
-                            if isinstance(self._function, pyslat.ProbabilisticFn):
-                                yval = self._function.X_at_exceedence(x, y)
-                            elif isinstance(self._function, pyslat.CompoundRateRelationship):
+                            if isinstance(self._function, probfn):
+                                yval = self._function.function().X_at_exceedence(x, y)
+                            elif (isinstance(self._function, pyslat.CompoundRateRelationship) or
+                                  isinstance(self._function, edp)):
                                 yval = self._function.P_exceedence(x, y)
                             else:
                                 yval = "----"
@@ -98,13 +228,17 @@ class recorder:
                             yval = "+++++++++"
                         line = "{}{:>15.6}".format(line, yval)
                 else:
-                    if isinstance(self._function, pyslat.DeterministicFn):
+                    if isinstance(self._function, detfn):
                         yval = self._function.ValueAt(x)
-                    elif (isinstance(self._function, pyslat.RateRelationship) or
+                    elif (isinstance(self._function, im) or
+                          isinstance(self._function, edp) or
+                          isinstance(self._function, pyslat.RateRelationship) or
                           isinstance(self._function, pyslat.CompoundRateRelationship)):
                           yval = self._function.getlambda(x)
                     elif isinstance(self._function, pyslat.CompGroup):
                           yval = self._function.E_Loss_EDP(x)
+                    else:
+                        yval = "*****"
                     line = "{}{:>15.6}".format(line, yval)
                 print(line)
                 
@@ -193,8 +327,8 @@ class mySlatListener(slatListener):
 
         print("    Create a ", type, " function named ", ctx.ID(), 
               ", using the parameters: ", value)
-        self._detfns[ctx.ID().getText()] = pyslat.factory(fntype, value)
-        #print(self._detfns)
+        id = ctx.ID().getText()
+        self._detfns[id] = detfn(id, type, value)
 
 
     # Enter a parse tree produced by slatParser#hyperbolic_args.
@@ -336,7 +470,7 @@ class mySlatListener(slatListener):
 
     # Exit a parse tree produced by slatParser#probfn_command.
     def exitProbfn_command(self, ctx:slatParser.Probfn_commandContext):
-        id = ctx.ID()
+        id = ctx.ID().getText()
         refs = ctx.function_ref()
         mufn = (refs[0].ID() or refs[0].var_ref()).getText() 
         sigmafn = (refs[1].ID() or refs[1].var_ref()).getText()
@@ -347,9 +481,7 @@ class mySlatListener(slatListener):
         print(("    Create a probabilistic function '{}', using the "+
                "function '{}' for mu ({}), and the function " +
                "'{}' for sigma ({}).").format(id, mufn, mu, sigmafn, sd))
-        self._probfns[ctx.ID().getText()] = pyslat.MakeLogNormalProbabilisticFn({mu: self._detfns.get(mufn),
-                                                                                 sd: self._detfns.get(sigmafn)})
-        #print(self._probfns)
+        self._probfns[id] = probfn(id, 'lognormal', [mu, self._detfns.get(mufn)], [sd, self._detfns.get(sigmafn)])
 
 
     # Enter a parse tree produced by slatParser#im_command.
@@ -361,7 +493,7 @@ class mySlatListener(slatListener):
         im_id = ctx.ID(0).getText()
         fn_id = ctx.ID(1).getText()
         print(("    Create an impulse measurement '{}' from the deterministic function '{}'.").format(im_id, fn_id))
-        self._ims[im_id] = pyslat.MakeSimpleRelationship(self._detfns.get(fn_id))
+        self._ims[im_id] = im(im_id, self._detfns.get(fn_id))
         #print(self._ims)
 
     # Enter a parse tree produced by slatParser#edp_command.
@@ -375,7 +507,7 @@ class mySlatListener(slatListener):
         fn_id = ctx.ID(2).getText()
         print(("    Create an engineering demand parameter '{}' from the impulse response '{}'" +
                " and the deterministic function '{}'.").format(edp_id, im_id, fn_id))
-        self._edps[edp_id] = pyslat.MakeCompoundRelationship(self._ims.get(im_id), self._probfns.get(fn_id))
+        self._edps[edp_id] = edp(edp_id, self._ims.get(im_id), self._probfns.get(fn_id))
         #print(self._edps)
 
     # Enter a parse tree produced by slatParser#fragfn_command.
