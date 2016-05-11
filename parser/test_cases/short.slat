@@ -1,72 +1,72 @@
 # This is an example file
 title 'Short Example';
-print message "This is a short example" example1_out.txt --new;      
+print message "This is a short example" shortex_out.txt --new;      
 
 #                        v_asy, IM_asy, alpha
 detfn IM_FUNC hyperbolic 1221,   29.8,  62.2;
 
-print detfn IM_FUNC example1_out.txt --append;
+print detfn IM_FUNC shortex_out.txt --append;
 
 # Define relationships:
 im IM_1 IM_FUNC;
 
-print im IM_1 example1_out.txt --append;
-print message example1_out.txt --append;
+print im IM_1 shortex_out.txt --append;
+print message shortex_out.txt --append;
 
 # Set up recorders:
-recorder detfn IM_FUNC 0.00:0.1:1.00 example1_out.txt --append;
-recorder imrate IM_1   0.00:0.1:1.00 example1_out.txt --append;
+recorder detfn IM_FUNC 0.00:0.1:1.00 shortex_out.txt --append;
+recorder imrate IM_1   0.00:0.1:1.00 shortex_out.txt --append;
 
 # Define the EDP-IM function:
 #
 detfn MU_EDP powerlaw 0.1, 1.5;
 detfn SIGMA_EDP powerlaw 0.5, 0.0;
 
-print detfn MU_EDP example1_out.txt --append;
-print detfn SIGMA_EDP example1_out.txt --append;
-print message example1_out.txt --append;
+print detfn MU_EDP shortex_out.txt --append;
+print detfn SIGMA_EDP shortex_out.txt --append;
+print message shortex_out.txt --append;
 
-recorder detfn MU_EDP 0.00:0.25:2.5 example1_out.txt --append;
-recorder detfn SIGMA_EDP 0.00:0.25:2.5 example1_out.txt --append;
+recorder detfn MU_EDP 0.00:0.25:2.5 shortex_out.txt --append;
+recorder detfn SIGMA_EDP 0.00:0.25:2.5 shortex_out.txt --append;
 
 probfn EDPIM_FUNC lognormal MU_EDP, SIGMA_EDP --mu mean_x --sd sd_ln_x;
-print probfn EDPIM_FUNC example1_out.txt --append;
-print message example1_out.txt --append;
+print probfn EDPIM_FUNC shortex_out.txt --append;
+print message shortex_out.txt --append;
 
-recorder probfn EDPIM_FUNC 0.00:0.25:2.5 example1_out.txt --append;
-recorder probfn EDPIM_FUNC 0.00:0.25:2.5 --cols mean_x, sd_x, 0.50 example1_out.txt --append;
+recorder probfn EDPIM_FUNC 0.00:0.25:2.5 shortex_out.txt --append;
+recorder probfn EDPIM_FUNC 0.00:0.25:2.5 --cols mean_x, sd_x, 0.50 shortex_out.txt --append;
 
 edp EDP_1 IM_1 EDPIM_FUNC;
-print edp EDP_1 example1_out.txt --append;
+print edp EDP_1 shortex_out.txt --append;
 
-recorder edpim EDP_1 0.00:0.25:2.5 example1_out.txt --append;
-recorder edpim EDP_1 0.00:0.25:2.5 --cols mean_x, sd_x, 0.50 example1_out.txt --append;
-recorder edprate EDP_1 0.0:0.025:0.15 example1_out.txt --append;
+recorder edpim EDP_1 0.00:0.25:2.5 shortex_out.txt --append;
+recorder edpim EDP_1 0.00:0.25:2.5 --cols mean_x, sd_x, 0.50 shortex_out.txt --append;
+recorder edprate EDP_1 0.0:0.025:0.15 shortex_out.txt --append;
 
 fragfn FRAG0 --stdfunc the_key;
-print fragfn FRAG0 example1_out.txt --append;
+print fragfn FRAG0 shortex_out.txt --append;
 
 fragfn FRAG_1 [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --mu mean_ln_x --sd sd_ln_x;
-print fragfn FRAG_1 example1_out.txt --append;
-print message example1_out.txt --append;
+print fragfn FRAG_1 shortex_out.txt --append;
+print message shortex_out.txt --append;
 
 lossfn LOSS_1 --type simple [0.03,0.4], [0.08, 0.4], [0.25, 0.4], [1.00, 0.4] --mu mean_x --sd sd_ln_x;
-print lossfn LOSS_1 example1_out.txt --append;
-print message example1_out.txt --append;
+print lossfn LOSS_1 shortex_out.txt --append;
+print message shortex_out.txt --append;
 
 compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 1;
-print compgroup COMPGROUP_1 example1_out.txt --append;
-recorder dsedp COMPGROUP_1 0.0:0.02:0.200  example1_out.txt --append;
-print message example1_out.txt --append;
+print compgroup COMPGROUP_1 shortex_out.txt --append;
+recorder dsedp COMPGROUP_1 0.0:0.02:0.200  shortex_out.txt --append;
+print message shortex_out.txt --append;
 
-recorder dsrate COMPGROUP_1 example1_out.txt --append;
-print message example1_out.txt --append;
+recorder dsrate COMPGROUP_1 shortex_out.txt --append;
+print message shortex_out.txt --append;
 
-recorder lossedp COMPGROUP_1 0.001:0.02:0.200 --cols mean_x, sd_ln_x example1_out.txt --append;
-print message example1_out.txt --append;
+recorder lossedp COMPGROUP_1 0.001:0.02:0.200 --cols mean_x, sd_ln_x shortex_out.txt --append;
+print message shortex_out.txt --append;
 
-recorder lossim COMPGROUP_1 0.001:0.5:2.5  --cols mean_x, sd_ln_x example1_out.txt --append;
-print message example1_out.txt --append;
+recorder lossim COMPGROUP_1 0.001:0.5:2.5  --cols mean_x, sd_ln_x shortex_out.txt --append;
+print message shortex_out.txt --append;
 
 analyze;
 

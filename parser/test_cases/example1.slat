@@ -38,16 +38,16 @@ print message '-- End of Input Functions --' example1_out.txt --append;
 integration maq 0.01 1024;
 
 # Set up recorders:
-recorder detfn IM_FUNC 0.01:0.1:1.00 example1_out.txt --append;
+recorder detfn IM_FUNC 0.01:0.01:1.00 example1_out.txt --append;
 recorder detfn IM_FUNC $(numpy.arange(0.01, 1.01, 0.1)) example1_out.txt --append;
-recorder probfn EDPIM_FUNC 0:0.1:1.00 --cols 0.16, mean_x, 0.84 example1_out.txt --append;
-recorder imrate IM_1 0.01:0.1:1.00 example1_out.txt --append;
-recorder edpim EDP_1 0:0.1:1.00 --cols mean_x, sd_x example1_out.txt --append;
-recorder edprate EDP_1 0.001:0.01:0.15  example1_out.txt --append;
-recorder dsedp COMPGROUP_1 0.0:0.02:0.200  example1_out.txt --append;
+recorder probfn EDPIM_FUNC 0:0.01:1.00 --cols 0.16, mean_x, 0.84 example1_out.txt --append;
+recorder imrate IM_1 0.01:0.01:1.00 example1_out.txt --append;
+recorder edpim EDP_1 0:0.01:1.00 --cols mean_x, sd_x example1_out.txt --append;
+recorder edprate EDP_1 0.001:0.001:0.15  example1_out.txt --append;
+recorder dsedp COMPGROUP_1 0.0:0.001:0.200  example1_out.txt --append;
 recorder dsrate COMPGROUP_1;
-recorder lossedp COMPGROUP_1 0.001:0.02:0.200 --cols mean_x, sd_ln_x example1_out.txt --append;
-recorder lossim COMPGROUP_1 0.001:0.5:2.5  --cols mean_x, sd_x example1_out.txt --append;
+recorder lossedp COMPGROUP_1 0.001:0.001:0.200 --cols mean_x, sd_ln_x example1_out.txt --append;
+recorder lossim COMPGROUP_1 0.001:0.01:2.5  --cols mean_x, sd_ln_x example1_out.txt --append;
 
 print message '(Before analysis)' example1_out.txt --append;
 analyze;
