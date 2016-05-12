@@ -1,6 +1,10 @@
 # This is an example file
 title 'Short Example';
-print message "This is a short example" shortex_out.txt --new;      
+title '-------------';
+title 'A title can be more than one line long.';
+
+print title shortex_out.txt --new;      
+print message shortex_out.txt --append;      
 
 #                        v_asy, IM_asy, alpha
 detfn IM_FUNC hyperbolic 1221,   29.8,  62.2;

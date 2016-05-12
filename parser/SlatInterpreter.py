@@ -23,7 +23,6 @@ def frange(start, stop, step):
 
 class detfn:
     def __init__(self, id, type, parameters):
-        print("CREATE a detfn '{}' of type {} from {}.".format(id, type, parameters))
         if type == 'power law':
             fntype = pyslat.FUNCTION_TYPE.PLC
         elif type == 'hyperbolic':
@@ -50,12 +49,6 @@ class detfn:
 
 class probfn:
     def __init__(self, id, type, mu_func, sigma_func):
-        print(id, type, mu_func, sigma_func)
-        print(("CREATE a probfn '{}' of type {}, using the deterministic function {} for {}, and " +
-               "the deterministic function {} for {}.").format(
-                   id, type,
-                   mu_func[1].id(), mu_func[0],
-                   sigma_func[1].id(), sigma_func[0]))
         self._id = id
         self._type = type
         self._mu_func = mu_func
@@ -83,6 +76,9 @@ class probfn:
 
     def SD(self, x):
         return self._func.SD(x)
+
+    def X_at_exceedence(self, x, y):
+        return self._func.X_at_exceedence(x, y)
 
     def __str__(self):
         return(("Probabilistic function '{}' of type {}, using the deterministic function {} for {}, and " +
@@ -140,8 +136,8 @@ class edp:
     def getlambda(self, x):
         return self._func.getlambda(x)
 
-    def P_exceedence(self, x, y):
-        return self._func.P_exceedence(x, y)
+    def X_at_exceedence(self, x, y):
+        return self._fn.X_at_exceedence(x, y)
 
     def __str__(self):
         return(("Engineering Demand Parameter '{}' using the intensity measure '{}', and " +
@@ -310,9 +306,8 @@ class recorder:
                         if isinstance(y, numbers.Number):
                             if isinstance(self._function, probfn):
                                 yval = self._function.function().X_at_exceedence(x, y)
-                            elif (isinstance(self._function, pyslat.CompoundRateRelationship) or
-                                  isinstance(self._function, edp)):
-                                yval = self._function.P_exceedence(x, y)
+                            elif isinstance(self._function, edp):
+                                yval = self._function.X_at_exceedence(x, y)
                             else:
                                 yval = "----"
                         elif y == 'mean_x':
@@ -383,6 +378,7 @@ class SlatInterpreter(slatListener):
         self._lossfns = dict()
         self._compgroups = dict()
         self._recorders = []
+        self._title = []
 
     def _push_stack(self):
         self._stack_stack.append(self._stack)
@@ -406,7 +402,7 @@ class SlatInterpreter(slatListener):
 
     # Exit a parse tree produced by slatParser#title_command.
     def exitTitle_command(self, ctx:slatParser.Title_commandContext):
-        print("    Set the title to [" + ctx.STRING().getText().strip('\'"') + "].")
+        self._title.append(ctx.STRING().getText().strip('\'"'))
 
     # Exit a parse tree produced by slatParser#detfn_command.
     def exitDetfn_command(self, ctx:slatParser.Detfn_commandContext):
@@ -643,6 +639,13 @@ class SlatInterpreter(slatListener):
                 object = self._compgroups.get(id)
             else:
                 object = 'unknown'
+        elif ctx.print_title():
+            object = ""
+            for t in self._title:
+                object = "{}\n{}".format(object, t)
+        else:
+            raise ValueError("Unhandled print variation")
+                
         message = "{}".format(object)
 
         destination = options and options.get('filename')
@@ -697,45 +700,25 @@ class SlatInterpreter(slatListener):
             iterations = int(ctx.INTEGER().getText())
         else:
             iterations = self._stack.pop()
-        print(("    Integrate using the {} algorithm, with precision " +
-               "of {} and max iterations of {}.").format(
-                   methodstring, 
-                   precision,
-                   iterations))
-        raise ValueError("Integration not implemented")
+        # TODO: Implement choice of methods
+        pyslat.IntegrationSettings(precision, iterations);
 
     # Exit a parse tree produced by slatParser#recorder_command.
     def exitRecorder_command(self, ctx:slatParser.Recorder_commandContext):
         if ctx.print_options():
             options = self._stack.pop()
-            
-            if options['filename']:
-                destination = "the file [{}]".format(options['filename'])
-                if options['append']:
-                    destination = "appending to " + destination
-                else:
-                    destination = "overwriting " + destination + ", if it exists,"
-            else:
-                destination = "to standard output"
         else:
             options = None
-            destination = "to standard output"
 
         if ctx.recorder_cols():
             cols = self._stack.pop()
-            columns = " to the columns: "
-            for col in cols:
-                columns = "{} {}".format(columns, col)
         else:
             cols = None
-            columns = " to the default columns"
 
         if ctx.recorder_at():
             at = self._stack.pop()
         else:
             at = None
-
-        message = "    Record the "
 
         type = ctx.recorder_type()
         if type:
@@ -758,17 +741,8 @@ class SlatInterpreter(slatListener):
         elif type == 'lossds' or type == 'lossedp' or type == 'lossim':
             function = self._compgroups.get(id)
         else:
-            print("Error!")
-        message = "{} [{}, {}]".format(message, type, function)
+            raise ValueError("Unhandled recorder type")
             
-        message = message + " known as " + id
-        if at != None:
-            message =  "{}, at the values {}, ".format(message, at)
-        else:
-            message = message + " "
-
-        message = message + destination + columns + "."
-        print(message)
         self._recorders.append(recorder(type, function, options, cols, at))
 
     # Exit a parse tree produced by slatParser#recorder_at.
@@ -776,8 +750,7 @@ class SlatInterpreter(slatListener):
         if ctx.FLOAT_VAL():
             floats = ctx.FLOAT_VAL()
             if len(floats) != 3:
-                print("NEED EXACTLY THREE VALUES")
-                return
+                raise ValueError("Recorder 'at' specification requires exactly three values.")
             else:
                 start = float(floats[0].getText())
                 incr = float(floats[1].getText())

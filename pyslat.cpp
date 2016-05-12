@@ -24,6 +24,7 @@
 #include "fragility.h"
 #include "loss_functions.h"
 #include "comp_group.h"
+#include "maq.h"
 #include <iostream>
 using namespace SLAT;
 
@@ -528,10 +529,18 @@ namespace SLAT {
                                         count));
     }
 
+    void IntegrationSettings(double tolerance, unsigned int max_evals)
+    {
+        Integration::IntegrationSettings::Set_Tolerance(tolerance);
+        Integration::IntegrationSettings::Set_Max_Evals(max_evals);
+    }
+
 // Python requires an exported function called init<module-name> in every
 // extension module. This is where we build the module contents.
     BOOST_PYTHON_MODULE(pyslat)
     {
+        python::def("IntegrationSettings", IntegrationSettings);
+        
         python::def("factory", factory, python::return_value_policy<python::manage_new_object>());
         python::class_<DeterministicFnWrapper>("DeterministicFn", 
                                                       python::no_init)

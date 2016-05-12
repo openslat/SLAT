@@ -163,9 +163,10 @@ lossfn_named_array : LBRACKET lossfn_dict (',' lossfn_dict)* RBRACKET;
 
 compgroup_command : COMPGROUP ID ID ID ID INTEGER;
 
-print_command : (print_message | print_function) print_options?;
+print_command : (print_message | print_function | print_title) print_options?;
 
 print_message : PRINT 'message' (STRING | python_script | var_ref)?;
+print_title : PRINT 'title';
 print_function: PRINT (DETFN | PROBFN | IM | EDP | FRAGFN | LOSSFN | COMPGROUP) ID;
 
 print_options : FILE_NAME (APPEND_OPTION | NEW_OPTION)?;
