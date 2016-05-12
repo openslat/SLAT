@@ -152,7 +152,7 @@ FILE_NAME : [a-zA-Z_.0-9]+;
 db_key :  ID;
 
 lossfn_command : LOSSFN ID simple_loss_command;
-simple_loss_command : ('--type' 'simple')? scalar2_sequence lognormal_options;
+simple_loss_command : 'simple' scalar2_sequence lognormal_options;
 scalar2_sequence: LBRACKET scalar2 RBRACKET (',' LBRACKET scalar2 RBRACKET)*;
 
 lossfn_heading : 'cost' | 'disp' | 'upper_cost' | 'lower_cost' | 'lower_n' | 'upper_n' | 'mean_uncert' | 'var_uncert';

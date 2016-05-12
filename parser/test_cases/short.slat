@@ -54,7 +54,7 @@ fragfn FRAG_1 [0.0062, 0.4], [0.0230, 0.4], [0.0440, 0.4], [0.0564, 0.4] --mu me
 print fragfn FRAG_1 shortex_out.txt --append;
 print message shortex_out.txt --append;
 
-lossfn LOSS_1 --type simple [0.03,0.4], [0.08, 0.4], [0.25, 0.4], [1.00, 0.4] --mu mean_x --sd sd_ln_x;
+lossfn LOSS_1 simple [0.03,0.4], [0.08, 0.4], [0.25, 0.4], [1.00, 0.4] --mu mean_x --sd sd_ln_x;
 print lossfn LOSS_1 shortex_out.txt --append;
 print message shortex_out.txt --append;
 
