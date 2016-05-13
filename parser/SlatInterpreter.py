@@ -21,6 +21,9 @@ def frange(start, stop, step):
         yield i
         i += step
 
+def preprocess_string(s):        
+    return s.strip('\'"').replace('\\\"', '\"').replace('\\\'', '\'').replace('\\\\', '\\')
+
 class detfn:
     def __init__(self, id, type, parameters):
         if type == 'power law':
@@ -402,7 +405,7 @@ class SlatInterpreter(slatListener):
 
     # Exit a parse tree produced by slatParser#title_command.
     def exitTitle_command(self, ctx:slatParser.Title_commandContext):
-        self._title.append(ctx.STRING().getText().strip('\'"'))
+        self._title.append(preprocess_string(ctx.STRING().getText()))
 
     # Exit a parse tree produced by slatParser#detfn_command.
     def exitDetfn_command(self, ctx:slatParser.Detfn_commandContext):
@@ -420,7 +423,7 @@ class SlatInterpreter(slatListener):
     # Exit a parse tree produced by slatParser#scalar.
     def exitScalar(self, ctx:slatParser.ScalarContext):
         if ctx.STRING():
-            value = ctx.STRING().getText()
+            value = preprocess_string(ctx.STRING().getText())
         else:
             value = self._stack.pop()
         self._stack.append(value)
@@ -461,7 +464,7 @@ class SlatInterpreter(slatListener):
         if ctx.ID():
             value = ctx.ID().getText()
         elif ctx.STRING():
-            value =  ctx.STRING().getText()
+            value =  preprocess_string(ctx.STRING().getText())
         elif ctx.INTEGER():
             value = int(ctx.INTEGER().getText())
         elif ctx.FLOAT_VAL():
@@ -493,7 +496,7 @@ class SlatInterpreter(slatListener):
 
     # Exit a parse tree produced by slatParser#dictionary_entry.
     def exitDictionary_entry(self, ctx:slatParser.Dictionary_entryContext):
-        key = (ctx.ID() or ctx.STRING()).getText()
+        key = (ctx.ID() or preprocess_string(ctx.STRING()).getText())
         value = self._stack.pop()
         self._stack.append([key, value])
 
@@ -666,7 +669,7 @@ class SlatInterpreter(slatListener):
         elif ctx.var_ref():
             object = self._stack.pop()
         elif ctx.STRING():
-            object = ctx.STRING().getText().strip('\'"')
+            object = preprocess_string(ctx.STRING().getText())
         else:
             object = ""
         self._stack.append(object)
