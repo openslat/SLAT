@@ -271,7 +271,7 @@ class recorder:
         return "Recorder: {} {} {} {} {}".format(self._type, self._function, self._options, self._columns, self._at)
 
     def generate_output(self):
-        print(self)
+        #print(self)
         if self._type == 'dsrate':
             # TODO: How does this recorder work?
             print("DSRATE recorder not implemented")

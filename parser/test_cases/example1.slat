@@ -1,14 +1,7 @@
 # This is an example file
 title 'Example File';
-title 'This is a title';
-title 'This title has a quote\' in it.';
-title 'This title has a double quote" in it.';
-title 'This title has a backslash\\ in it.';
-title 'This title has a quote\' and a backslash \\ in it.';
-title "This is a title in double quotes";
-title "This is a title in double quotes, with a ' single quote";
-title "This title has double quotes, and a backslash\\.";
-title "This title has double quotes, and a double quote\".";
+title '------------';
+title 'This title has several lines.';
 print title example1_out.txt --new;
 
 # Define the IM function:
@@ -45,7 +38,10 @@ compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 1;
 integration maq 1E-6 1024;
 
 # Set up recorders:
-recorder imrate IM_1 0.01:0.01:1.00 example1_im_rate.txt --new;
+#recorder imrate IM_1 0.01:0.01:1.00 example1_im_rate.txt --new;
+#recorder imrate IM_1 $(numpy.arange(0.01, 1.01, 0.01)) example1_im_rate.txt --new;
+set values $(numpy.arange(0.0, 1.01, 0.01));
+recorder imrate IM_1 $values example1_im_rate.txt --new;
 recorder edpim EDP_1 0:0.01:1.00 --cols mean_x, sd_x, 0.16, 0.50, 0.84 example1_im_edp.txt --new;
 recorder edprate EDP_1 0.001:0.001:0.15  example1_edp_rate.txt --new;
 recorder dsedp COMPGROUP_1 0.0:0.001:0.200  example1_ds_edp.txt --new;

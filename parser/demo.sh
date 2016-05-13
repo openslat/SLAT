@@ -7,16 +7,16 @@ if LD_LIBRARY_PATH=.. PYTHONPATH=.. ./SlatInterpreter.py test_cases/example1.sla
 	  -X "IM" \
 	  -Y "Rate" \
 	  -m 1 -W 0.01 <(tail -n +2 ../im_rate.dat) \
-	  -m 3 -W 0.005 <(tail -n +4 example1_im_rate.txt) \
+	  -m 3 -W 0.005 <(tail -n +3 example1_im_rate.txt) \
 	  > im_rate.png
 
     graph -T png -C \
 	  -L "EDP-IM Relationship" \
 	  -X "IM" \
 	  -Y "EDP" \
-	  -m 1 -W 0.01 <(tail -n +3 example1_im_edp.txt | awk -e '{print $1, $2}') \
-	  -m 2 -W 0.01 <(tail -n +3 example1_im_edp.txt | awk -e '{print $1, $4}') \
-	  -m 3 -W 0.01 <(tail -n +3 example1_im_edp.txt | awk -e '{print $1, $6}') \
+	  -m 1 -W 0.01 <(tail -n +2 example1_im_edp.txt | awk -e '{print $1, $2}') \
+	  -m 2 -W 0.01 <(tail -n +2 example1_im_edp.txt | awk -e '{print $1, $4}') \
+	  -m 3 -W 0.01 <(tail -n +2 example1_im_edp.txt | awk -e '{print $1, $6}') \
 	  -m 4 -W 0.005 <(tail -n +2 ../im_edp.dat | awk -e '{print $1, $2}') \
 	  -m 5 -W 0.005 <(tail -n +2 ../im_edp.dat | awk -e '{print $1, $3}') \
 	  -m 6 -W 0.005 <(tail -n +2 ../im_edp.dat | awk -e '{print $1, $4}') \
@@ -26,7 +26,7 @@ if LD_LIBRARY_PATH=.. PYTHONPATH=.. ./SlatInterpreter.py test_cases/example1.sla
 	  -L "EDP-RATE Relationship" \
 	  -X "EDP" \
 	  -Y "RATE" \
-	  -m 1 -W 0.01 <(tail -n +3 example1_edp_rate.txt) \
+	  -m 1 -W 0.01 <(tail -n +2 example1_edp_rate.txt) \
 	  -m 3 -W 0.005 <(tail -n +4 ../edp_rate.dat) \
 	  > edp_rate.png
 
@@ -38,10 +38,10 @@ if LD_LIBRARY_PATH=.. PYTHONPATH=.. ./SlatInterpreter.py test_cases/example1.sla
 	  -W 0.01 <(tail -n +2 ../ds_edp.dat | awk -e '{print $1, $3}') \
 	  -W 0.01 <(tail -n +2 ../ds_edp.dat | awk -e '{print $1, $4}') \
 	  -W 0.01 <(tail -n +2 ../ds_edp.dat | awk -e '{print $1, $5}') \
-	  -W 0.005 <(tail -n +3 example1_ds_edp.txt | awk -e '{print $1, $2}') \
-	  -W 0.005 <(tail -n +3 example1_ds_edp.txt | awk -e '{print $1, $3}') \
-	  -W 0.005 <(tail -n +3 example1_ds_edp.txt | awk -e '{print $1, $4}') \
-	  -W 0.005 <(tail -n +3 example1_ds_edp.txt | awk -e '{print $1, $5}') \
+	  -W 0.005 <(tail -n +2 example1_ds_edp.txt | awk -e '{print $1, $2}') \
+	  -W 0.005 <(tail -n +2 example1_ds_edp.txt | awk -e '{print $1, $3}') \
+	  -W 0.005 <(tail -n +2 example1_ds_edp.txt | awk -e '{print $1, $4}') \
+	  -W 0.005 <(tail -n +2 example1_ds_edp.txt | awk -e '{print $1, $5}') \
 	  > ds_edp.png
 
     graph -T png -C \
@@ -49,7 +49,7 @@ if LD_LIBRARY_PATH=.. PYTHONPATH=.. ./SlatInterpreter.py test_cases/example1.sla
 	  -X "EDP" \
 	  -Y "LOSS" \
 	  -m 1 -W 0.01 <(tail -n +2 ../loss_edp.dat | awk -e '{print $1, $2}') \
-	  -m 3 -W 0.005 <(tail -n +4 example1_loss_edp.txt | awk -e '{print $1, $2}') \
+	  -m 3 -W 0.005 <(tail -n +3 example1_loss_edp.txt | awk -e '{print $1, $2}') \
 	  > loss_edp.png
 
     graph -T png -C \
@@ -57,7 +57,7 @@ if LD_LIBRARY_PATH=.. PYTHONPATH=.. ./SlatInterpreter.py test_cases/example1.sla
 	  -X "EDP" \
 	  -Y "LOSS" \
 	  -m 1 -W 0.01 <(tail -n +2 ../loss_edp.dat | awk -e '{print $1, $3}') \
-	  -m 3 -W 0.005 <(tail -n +4 example1_loss_edp.txt | awk -e '{print $1, $3}') \
+	  -m 3 -W 0.005 <(tail -n +3 example1_loss_edp.txt | awk -e '{print $1, $3}') \
 	  > sigma_loss_edp.png
 
         graph -T png -C \
@@ -65,7 +65,7 @@ if LD_LIBRARY_PATH=.. PYTHONPATH=.. ./SlatInterpreter.py test_cases/example1.sla
 	  -X "IM" \
 	  -Y "LOSS" \
 	  -m 1 -W 0.01 <(tail -n +2 ../loss_im.dat | awk -e '{ if ($2 !~ /nan/) print $1, $2}') \
-	  -m 3 -W 0.005 <(tail -n +4 example1_loss_im.txt | awk -e '{print $1, $2}') \
+	  -m 3 -W 0.005 <(tail -n +3 example1_loss_im.txt | awk -e '{print $1, $2}') \
 	  > loss_im.png
 
 	graph -T png -C \
@@ -73,7 +73,7 @@ if LD_LIBRARY_PATH=.. PYTHONPATH=.. ./SlatInterpreter.py test_cases/example1.sla
 	  -X "IM" \
 	  -Y "LOSS" \
 	  -m 1 -W 0.01 <(tail -n +2 ../loss_im.dat | awk -e '{ if ($3 !~ /nan/) print $1, $3}') \
-	  -m 3 -W 0.005 <(tail -n +4 example1_loss_im.txt | awk -e '{print $1, $3}') \
+	  -m 3 -W 0.005 <(tail -n +3 example1_loss_im.txt | awk -e '{print $1, $3}') \
 	  > sigma_loss_im.png
 
 #	graph -T png -C \
