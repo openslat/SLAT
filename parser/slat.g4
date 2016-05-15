@@ -32,6 +32,8 @@ DSIM : 'dsim';
 LOSSDS : 'lossds';
 LOSSEDP : 'lossedp';
 LOSSIM : 'lossim';
+DSRATE : 'dsrate';
+ANNLOSS: 'annloss';
 APPEND_OPTION : '--append';
 NEW_OPTION : '--new';
 DOLLARS : '$';
@@ -174,7 +176,12 @@ print_options : FILE_NAME (APPEND_OPTION | NEW_OPTION)?;
 integration_command : 'integration' integration_method numerical_scalar (INTEGER | var_ref | python_script);
 integration_method : MAQ;
 
-recorder_command : 'recorder' ((recorder_type ID recorder_at recorder_cols?) | ('dsrate' ID)) print_options?;
+recorder_command : 'recorder' ((recorder_type ID recorder_at recorder_cols?) 
+                  | (DSRATE ID)
+		  | (ANNLOSS ID recorder_at '--lambda' lambda_value))
+		  print_options?;
+lambda_value: numerical_scalar;
+
 recorder_type : DETFN | PROBFN | IMRATE | EDPIM | EDPRATE | DSEDP
 	      | DSIM | LOSSDS | LOSSEDP | LOSSIM;
 recorder_at : (float_array | (FLOAT_VAL ':' FLOAT_VAL ':' FLOAT_VAL) | python_script | var_ref);

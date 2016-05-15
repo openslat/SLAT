@@ -239,6 +239,9 @@ class compgroup:
     def SD_ln_Loss_IM(self, x):
         return self._func.SD_ln_loss_IM(x)
 
+    def E_loss(self, t, l):
+        return self._func.E_loss(t, l)
+
     def id(self):
         return(self._id)
         
@@ -285,24 +288,31 @@ class recorder:
                       'dsim': ['IM', None],
                       'lossds': ['DS', None],
                       'lossedp': ['EDP', None],
-                      'lossim': ['IM', None]}
+                      'lossim': ['IM', None],
+                      'annloss': ['t', ["E[ALt]"]]}
             x_label = labels[self._type][0]
             y_label = labels[self._type][1]
 
-            if not self._columns == None:
-                line = "{:>15}".format(x_label)
-                for y in self._columns:
-                    line = "{}{:>15}".format(line, y)
+            if y_label:
+                if not isinstance(y_label, list):
+                    y_label = [y_label];
             else:
-                line = "{:>15}{:>15}".format(x_label, y_label)
+                y_label = self._columns
+                      
+            line = "{:>15}".format(x_label)
+            for y in y_label:
+                    line = "{}{:>15}".format(line, y)
             print(line)
-                
+
             for x in self._at:
                 line = "{:>15.6}".format(x)
                 if self._type == 'dsedp':
                     yvals = self._function.fragfn().pExceeded(x)
                     for y in yvals:
                         line = "{}{:>15.6}".format(line, y)
+                elif self._type == 'annloss':
+                    annual_loss = self._function.E_loss(int(x), self._options['lambda'])
+                    line = "{}{:>15.6}".format(line, annual_loss)
                 elif not self._columns == None:
                     line = "{:>15.6}".format(x)
                     for y in self._columns:
@@ -353,7 +363,7 @@ class recorder:
                 
             
     def run(self):
-        destination = self._options and self._options.get('filename')
+        destination = self._options.get('filename')
         if destination != None:
             if self._options.get('append'):
                 f = open(destination, "a")
@@ -711,13 +721,16 @@ class SlatInterpreter(slatListener):
         if ctx.print_options():
             options = self._stack.pop()
         else:
-            options = None
+            options = dict()
 
         if ctx.recorder_cols():
             cols = self._stack.pop()
         else:
             cols = None
 
+        if ctx.lambda_value():
+            options['lambda'] = self._stack.pop()
+            
         if ctx.recorder_at():
             at = self._stack.pop()
         else:
@@ -726,8 +739,12 @@ class SlatInterpreter(slatListener):
         type = ctx.recorder_type()
         if type:
             type = type.getText()
-        else:
+        elif ctx.DSRATE():
             type = "dsrate"
+        elif ctx.ANNLOSS():
+            type = "annloss"
+        else:
+            raise ValueError("Unhandled recorder type")
 
         id = ctx.ID().getText()
 
@@ -741,11 +758,11 @@ class SlatInterpreter(slatListener):
             function = self._ims.get(id)
         elif type == 'edpim' or type == 'edprate':
             function = self._edps.get(id)
-        elif type == 'lossds' or type == 'lossedp' or type == 'lossim':
+        elif type == 'lossds' or type == 'lossedp' or type == 'lossim' or type == 'annloss':
             function = self._compgroups.get(id)
         else:
             raise ValueError("Unhandled recorder type")
-            
+
         self._recorders.append(recorder(type, function, options, cols, at))
 
     # Exit a parse tree produced by slatParser#recorder_at.
@@ -789,7 +806,7 @@ class SlatInterpreter(slatListener):
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
         expression =  ctx.python_expression().getText()
         value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": numpy})
-        print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
+        #print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
         self._stack.append(value)
 
     # Exit a parse tree produced by slatParser#analyze_command.
@@ -803,7 +820,7 @@ class SlatInterpreter(slatListener):
         id = ctx.ID().getText()
         value = self._stack.pop()
         self._variables[id] = value
-        print(("    Set the variable '{}' to {}.").format(id, value ))
+        #print(("    Set the variable '{}' to {}.").format(id, value ))
 
 def main(argv):
     for file in argv[1:]:
