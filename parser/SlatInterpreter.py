@@ -242,6 +242,9 @@ class compgroup:
     def E_loss(self, t, l):
         return self._func.E_loss(t, l)
 
+    def lambda_loss(self, loss):
+        return self._func.lambda_loss(loss)
+
     def id(self):
         return(self._id)
         
@@ -289,7 +292,9 @@ class recorder:
                       'lossds': ['DS', None],
                       'lossedp': ['EDP', None],
                       'lossim': ['IM', None],
-                      'annloss': ['t', ["E[ALt]"]]}
+                      'annloss': ['t', ["E[ALt]"]],
+                      'lossrate': ['t', 'Rate']}
+        
             x_label = labels[self._type][0]
             y_label = labels[self._type][1]
 
@@ -313,6 +318,9 @@ class recorder:
                 elif self._type == 'annloss':
                     annual_loss = self._function.E_loss(int(x), self._options['lambda'])
                     line = "{}{:>15.6}".format(line, annual_loss)
+                elif self._type == 'lossrate':
+                    loss_rate = self._function.lambda_loss(x)
+                    line = "{}{:>15.6}".format(line, loss_rate)
                 elif not self._columns == None:
                     line = "{:>15.6}".format(x)
                     for y in self._columns:
@@ -743,6 +751,8 @@ class SlatInterpreter(slatListener):
             type = "dsrate"
         elif ctx.ANNLOSS():
             type = "annloss"
+        elif ctx.LOSSRATE():
+            type = 'lossrate'
         else:
             raise ValueError("Unhandled recorder type")
 
@@ -758,7 +768,8 @@ class SlatInterpreter(slatListener):
             function = self._ims.get(id)
         elif type == 'edpim' or type == 'edprate':
             function = self._edps.get(id)
-        elif type == 'lossds' or type == 'lossedp' or type == 'lossim' or type == 'annloss':
+        elif type == 'lossds' or type == 'lossedp' or type == 'lossim' \
+             or type == 'annloss' or type == 'lossrate':
             function = self._compgroups.get(id)
         else:
             raise ValueError("Unhandled recorder type")

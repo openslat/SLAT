@@ -34,6 +34,7 @@ LOSSEDP : 'lossedp';
 LOSSIM : 'lossim';
 DSRATE : 'dsrate';
 ANNLOSS: 'annloss';
+LOSSRATE: 'lossrate';	 
 APPEND_OPTION : '--append';
 NEW_OPTION : '--new';
 DOLLARS : '$';
@@ -178,6 +179,7 @@ integration_method : MAQ;
 
 recorder_command : 'recorder' ((recorder_type ID recorder_at recorder_cols?) 
                   | (DSRATE ID)
+                  | (LOSSRATE ID recorder_at)
 		  | (ANNLOSS ID recorder_at '--lambda' lambda_value))
 		  print_options?;
 lambda_value: numerical_scalar;

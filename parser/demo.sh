@@ -93,20 +93,19 @@ if LD_LIBRARY_PATH=.. PYTHONPATH=.. ./SlatInterpreter.py test_cases/example1.sla
 	  -X "Year" \
 	  -Y "Loss" \
 	  -m 1 -W 0.01 <(tail -n +2 ../annual_loss.dat | awk -e '{ if ($2 !~ /nan/) print $1, $2}') \
-	  -m 3 -W 0.005 <(tail -n +4 example1_annual_loss.txt | awk -e '{print $1, $2}') \
+	  -m 3 -W 0.005 <(tail -n +2 example1_annual_loss.txt | awk -e '{print $1, $2}') \
 	  > annual_loss.png
 
-#
-#	qiv -ft annual_loss.png
-#	graph -T png -l x -l y -C \
-#	  -L "Loss Rate" \
-#	  -X "Loss" \
-#	  -Y "Rate of Exceedence" \
-#	  -m 1 -W 0.01 <(tail -n +2 loss_rate.dat | awk -e '{ if ($2 !~ /nan/) print $1, $2}') \
-#	  -m 3 -W 0.005 <(tail -n +4 ~/Downloads/SLATv1.15_Public/example1_output_gcc/example1_Loss-rate-1 | awk -e '{print $1, $2}') \
-#	  > loss_rate.png
-#
+	echo "Writing Loss Rate"
+	graph -T png -l x -l y -C \
+	  -L "Loss Rate" \
+	  -X "Loss" \
+	  -Y "Rate of Exceedence" \
+	  -m 1 -W 0.01 <(tail -n +2 ../loss_rate.dat | awk -e '{ if ($2 !~ /nan/) print $1, $2}') \
+	  -m 3 -W 0.005 <(tail -n +2 example1_loss_rate.txt | awk -e '{print $1, $2}') \
+	  > loss_rate.png
+
 	qiv -Dft im_rate.png edp_im.png edp_rate.png ds_edp.png loss_edp.png sigma_loss_edp.png loss_im.png sigma_loss_im.png \
-	annual_loss.png #loss_rate.png
+	annual_loss.png loss_rate.png
 fi
 

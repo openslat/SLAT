@@ -49,9 +49,9 @@ recorder dsrate COMPGROUP_1;
 recorder lossedp COMPGROUP_1 0.001:0.001:0.200 --cols mean_x, sd_ln_x example1_loss_edp.txt --new;
 recorder lossim COMPGROUP_1 0.01:0.01:2.5  --cols mean_x, sd_ln_x example1_loss_im.txt --new;
 #recorder lossim COMPGROUP_1 0:100:1  --cols mean_x, sd_ln_x example1_loss_im.txt --new;
-print message "HERE I AM";
 recorder annloss COMPGROUP_1 1.0:1.0:100.0 --lambda 0.06 example1_annual_loss.txt --new;
 #recorder annloss COMPGROUP_1 0.0:1.0.0:100.0 --lambda 0.06;
+recorder lossrate COMPGROUP_1 1E-4:4.8E-3:1.2 example1_loss_rate.txt --new;
 analyze;
 
 
