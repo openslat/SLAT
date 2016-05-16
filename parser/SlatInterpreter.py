@@ -30,6 +30,8 @@ class detfn:
             fntype = pyslat.FUNCTION_TYPE.PLC
         elif type == 'hyperbolic':
             fntype = pyslat.FUNCTION_TYPE.NLH
+        elif type == 'loglog':
+            fntype = pyslat.FUNCTION_TYPE.LOGLOG
         else:
             raise ValueError("Invalid detfn type: {}".format(type))
             
@@ -430,13 +432,31 @@ class SlatInterpreter(slatListener):
         if ctx.powerlaw_args():
             type = "power law"
             fntype = pyslat.FUNCTION_TYPE.PLC
-        else:
+        elif ctx.hyperbolic_args():
             type = "hyperbolic"
             fntype = pyslat.FUNCTION_TYPE.NLH
+        elif ctx.loglog_args():
+            type = 'loglog'
+            fntype = pyslat.FUNCTION_TYPE.LOGLOG
+        else:
+            raise ValueError("Unhandled DETFN type.")
         value = self._stack.pop()
 
         id = ctx.ID().getText()
         self._detfns[id] = detfn(id, type, value)
+
+    def enterLoglog_args(self, ctx:slatParser.Loglog_argsContext):
+        self._push_stack()
+
+    def exitLoglog_args(self, ctx:slatParser.Loglog_argsContext):
+        values = self._pop_stack()
+        # Put x and y values into separate lists:
+        x_values = []
+        y_values = []
+        for pair in values:
+            x_values.append(pair[0])
+            y_values.append(pair[1])
+        self._stack.append([x_values, y_values])
 
     # Exit a parse tree produced by slatParser#scalar.
     def exitScalar(self, ctx:slatParser.ScalarContext):

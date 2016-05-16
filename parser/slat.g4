@@ -105,9 +105,10 @@ DIGIT_SEQUENCE : Digit+;
 fragment
 EXPONENT : ('e' | 'E') SIGN? DIGIT_SEQUENCE;
 
-detfn_command : DETFN ID (hyperbolic_args | powerlaw_args);
+detfn_command : DETFN ID (hyperbolic_args | powerlaw_args | loglog_args);
 hyperbolic_args : 'hyperbolic' scalar3;
 powerlaw_args : 'powerlaw' scalar2;
+loglog_args : 'loglog' LBRACKET scalar2 RBRACKET (',' LBRACKET scalar2 RBRACKET)*;
 
 scalar :  STRING | numerical_scalar;
 scalar2 : scalar ',' scalar;
