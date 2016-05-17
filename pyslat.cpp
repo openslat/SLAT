@@ -75,14 +75,26 @@ namespace SLAT {
         case LIN:
         {
             double *x_data, *y_data;
-            int size = len(params);
-            x_data = new double[size];
+            if (len(params) != 2) {
+                std::cout << "Must have exactly two lists of data." << std::endl;
+                break;
+            }
+            python::list y_list = python::extract<python::list>(params.pop());
+            python::list x_list = python::extract<python::list>(params.pop());
+
+            if (len(y_list) < 2 || len(y_list) != len(x_list)) {
+                std::cout << "Data lists must be same size, greater than 1." << std::endl;
+                break;
+            }
+            
+            size_t size = len(x_list);
             y_data = new double[size];
+            x_data = new double[size];
+
         
-            for (int i=0; i < size; i++) {
-                python::list o = python::extract<python::list>(params.pop());
-                double y = python::extract<double>(o.pop());
-                double x = python::extract<double>(o.pop());
+            for (size_t i=0; i < size; i++) {
+                double x = python::extract<double>(x_list.pop());
+                double y = python::extract<double>(y_list.pop());
 
                 x_data[size - i - 1] = x;
                 y_data[size - i - 1] = y;

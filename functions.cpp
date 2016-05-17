@@ -182,9 +182,16 @@ namespace SLAT {
     LinearInterpolatedFn::LinearInterpolatedFn(double x[], double y[], size_t size) :
         InterpolatedFn(x, y, size)
     {
+        std::cout << size << std::endl;
+        for (size_t i=0; i < size; i++)  {
+            std::cout << i << ", " << x[i] << ", " << y[i] << std::endl;
+        }
         accel = gsl_interp_accel_alloc();
+        std::cout << "." << std::endl;
         interp = gsl_spline_alloc (gsl_interp_linear, size);
+        std::cout << "." << std::endl;
         gsl_spline_init(interp, x, y, size);
+        std::cout << "." << std::endl;
     }
 
 /*

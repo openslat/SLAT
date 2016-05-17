@@ -51,7 +51,7 @@ MAQ: 'maq';
 
 script : (WS | command)*;
 
-command : (title_command | detfn_command | probfn_command | im_command | edp_command | fragfn_command | lossfn_command | compgroup_command | print_command | integration_command | recorder_command | analyze_command | set_command) ';' ;
+command : (title_command | detfn_command | probfn_command | im_command | edp_command | fragfn_command | lossfn_command | compgroup_command | print_command | integration_command | recorder_command | analyze_command | set_command | importprobfn_command) ';' ;
 
 title_command : 'title' STRING;
 
@@ -105,10 +105,11 @@ DIGIT_SEQUENCE : Digit+;
 fragment
 EXPONENT : ('e' | 'E') SIGN? DIGIT_SEQUENCE;
 
-detfn_command : DETFN ID (hyperbolic_args | powerlaw_args | loglog_args);
+detfn_command : DETFN ID (hyperbolic_args | powerlaw_args | loglog_args | linear_args);
 hyperbolic_args : 'hyperbolic' scalar3;
 powerlaw_args : 'powerlaw' scalar2;
 loglog_args : 'loglog' LBRACKET scalar2 RBRACKET (',' LBRACKET scalar2 RBRACKET)*;
+linear_args : 'linear' LBRACKET scalar2 RBRACKET (',' LBRACKET scalar2 RBRACKET)*;
 
 scalar :  STRING | numerical_scalar;
 scalar2 : scalar ',' scalar;
@@ -152,7 +153,7 @@ lognormal_dist : scalar2 lognormal_options;
 
 lognormal_parameter_array : LBRACKET lognormal_dist (',' lognormal_dist)* RBRACKET;
 array_array : LBRACKET parameter_array (',' parameter_array)* RBRACKET;	       
-FILE_NAME : [a-zA-Z_.0-9]+;
+FILE_NAME : [/a-zA-Z_.0-9]+;
 db_key :  ID;
 
 lossfn_command : LOSSFN ID simple_loss_command;
@@ -202,4 +203,6 @@ non_paren_expression:  .+?;
 analyze_command : 'analyze';
 
 set_command : 'set' ID (python_script | var_ref | parameters);
+
+importprobfn_command : 'importprobfn' ID FILE_NAME;
 OTHER: .+?;

@@ -12,4 +12,49 @@ detfn im_interp loglog    [0.01, 0.376775], [0.02, 0.155158], [0.04, 0.054048],
 	[1.9, 2.00E-07],  [2.0, 1.00E-07];
 
 recorder detfn im_interp 0.01:0.001:1.0 example2_im_rate.txt --new;
+
+
+#importprobfn probfn1  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
+importprobfn probfn2  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP2.txt;
+#importprobfn probfn3  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP3.txt;
+#importprobfn probfn4  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP4.txt;
+#importprobfn probfn5  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP5.txt;
+#importprobfn probfn6  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP6.txt;
+#importprobfn probfn7  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP7.txt;
+#importprobfn probfn8  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP8.txt;
+#importprobfn probfn9  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP9.txt;
+#importprobfn probfn10  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP10.txt;
+#importprobfn probfn11  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP11.txt;
+#importprobfn probfn12  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP12.txt;
+#importprobfn probfn13  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP13.txt;
+#importprobfn probfn14  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP14.txt;
+#importprobfn probfn15  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP15.txt;
+#importprobfn probfn16  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP16.txt;
+#importprobfn probfn17  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP17.txt;
+#importprobfn probfn18  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP18.txt;
+#importprobfn probfn19  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP19.txt;
+#importprobfn probfn20  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP20.txt;
+#importprobfn probfn21  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP21.txt;
+
+#recorder probfn probfn1 0.0:0.001:1.0 example2_probfn1.txt --new;
+recorder probfn probfn2 0.0:0.001:1.0 example2_probfn2.txt --new;
+#recorder probfn probfn3 0.0:0.001:1.0 example2_probfn3.txt --new;
+#recorder probfn probfn4 0.0:0.001:1.0 example2_probfn4.txt --new;
+#recorder probfn probfn5 0.0:0.001:1.0 example2_probfn5.txt --new;
+#recorder probfn probfn6 0.0:0.001:1.0 example2_probfn6.txt --new;
+#recorder probfn probfn7 0.0:0.001:1.0 example2_probfn7.txt --new;
+#recorder probfn probfn8 0.0:0.001:1.0 example2_probfn8.txt --new;
+#recorder probfn probfn9 0.0:0.001:1.0 example2_probfn9.txt --new;
+#recorder probfn probfn10 0.0:0.001:1.0 example2_probfn10.txt --new;
+#recorder probfn probfn11 0.0:0.001:1.0 example2_probfn11.txt --new;
+#recorder probfn probfn12 0.0:0.001:1.0 example2_probfn12.txt --new;
+#recorder probfn probfn13 0.0:0.001:1.0 example2_probfn13.txt --new;
+#recorder probfn probfn14 0.0:0.001:1.0 example2_probfn14.txt --new;
+#recorder probfn probfn15 0.0:0.001:1.0 example2_probfn15.txt --new;
+#recorder probfn probfn16 0.0:0.001:1.0 example2_probfn16.txt --new;
+#recorder probfn probfn17 0.0:0.001:1.0 example2_probfn17.txt --new;
+#recorder probfn probfn18 0.0:0.001:1.0 example2_probfn18.txt --new;
+#recorder probfn probfn19 0.0:0.001:1.0 example2_probfn19.txt --new;
+#recorder probfn probfn20 0.0:0.001:1.0 example2_probfn20.txt --new;
+#recorder probfn probfn21 0.0:0.001:1.0 example2_probfn21.txt --new;
 analyze;

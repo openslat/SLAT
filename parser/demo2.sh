@@ -13,6 +13,6 @@ if LD_LIBRARY_PATH=.. PYTHONPATH=.. ./SlatInterpreter.py test_cases/example2.sla
 	  -m 3 -W 0.005 <(tail -n +3 example2_im_rate.txt) \
 	  > im_rate_2.png
 
-	qiv -Dft im_rate_2.png 
+#	qiv -Dft im_rate_2.png 
 fi
 

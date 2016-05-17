@@ -12,7 +12,7 @@ from distutils import text_file
 import numbers
 import  pyslat
 import math
-import numpy
+import numpy as np
 from contextlib import redirect_stdout
 
 def frange(start, stop, step):
@@ -32,6 +32,8 @@ class detfn:
             fntype = pyslat.FUNCTION_TYPE.NLH
         elif type == 'loglog':
             fntype = pyslat.FUNCTION_TYPE.LOGLOG
+        elif type == 'linear':
+            fntype = pyslat.FUNCTION_TYPE.LIN
         else:
             raise ValueError("Invalid detfn type: {}".format(type))
             
@@ -272,7 +274,7 @@ class recorder:
             for i in range(function.size()):
                 columns.append("DS{}".format(i + 1))
         elif (type == 'probfn' or type == 'edpim') and columns == None:
-            columns = ['mean_x', 'sd_ln_x']
+            columns = ['mean_ln_x', 'mean_x', 'median_x', 'sd_ln_x', 'sd_x']
         self._columns = columns
 
     def __str__(self):
@@ -438,6 +440,9 @@ class SlatInterpreter(slatListener):
         elif ctx.loglog_args():
             type = 'loglog'
             fntype = pyslat.FUNCTION_TYPE.LOGLOG
+        elif ctx.linear_args():
+            type = 'log'
+            fntype = pyslat.FUNCTION_TYPE.LIN
         else:
             raise ValueError("Unhandled DETFN type.")
         value = self._stack.pop()
@@ -852,6 +857,37 @@ class SlatInterpreter(slatListener):
         value = self._stack.pop()
         self._variables[id] = value
         #print(("    Set the variable '{}' to {}.").format(id, value ))
+
+    def exitImportprobfn_command(self, ctx:slatParser.Importprobfn_commandContext):
+        data = np.loadtxt(ctx.FILE_NAME().getText().strip('\'"'), skiprows=2)
+        x = [0]
+        mu = [0]
+        sigma = [0]
+        C = []
+        for d in data:
+            x.append(d[0])
+            values = []
+            collapse = 0
+            for y in d[1:]:
+                if y==0:
+                    collapse = collapse + 1
+                else:
+                    values.append(math.log(y))
+            mu.append(np.mean(values))
+            sigma.append(np.std(values))
+            C.append(collapse / (len(d) - 1))
+        print(x)
+        print(mu)
+        print("MU")
+        mu_func = detfn("anonymous", 'linear', [x.copy(), mu.copy()])
+        print(sigma)
+        print("SIGMA")
+        sigma_func = detfn("anonymous", 'linear', [x.copy(), sigma.copy()])
+        id = ctx.ID().getText()
+        print(x, mu)
+        self._probfns[id] = probfn(id, 'lognormal', 
+                                   [pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X, mu_func],
+                                   [pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X,  sigma_func])
 
 def main(argv):
     for file in argv[1:]:

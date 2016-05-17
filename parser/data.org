@@ -1,0 +1,89 @@
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both
+edp1 <- read.csv("~/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt", skip=2, header=FALSE, sep="")
+edp1[edp1 == 0] <- NA
+datacol = ncol(edp1)
+edp1$mean = rowMeans(edp1[,2:ncol(edp1)], na.rm=TRUE)
+#plot(edp1$mean ~ edp1$V1)
+#t <- edp1
+#t[!is.na(t)] <- 0
+#t[is.na(t)] <- 1
+edp1$C <- rowSums(is.na(edp1[,2:datacol])) / (datacol - 1)
+plot(edp1$mean ~ edp1$V1)
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/babel-1802dYN/figure-1802EdL.gif]]
+
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both
+plot(edp1$C ~ edp1$V1)
+#+END_SRC
+
+#+RESULTS:
+
+#+BEGIN_SRC R :session :exports both :results output
+  edp <- list()
+  for (i in seq(21)) {
+     e = read.csv(sprintf("~/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP%d.txt", i), skip=2, header=FALSE, sep="")
+     e[e == 0] <- NA
+     datacol = ncol(e)
+     e$median = exp(rowMeans(log(e[,2:ncol(e)]), na.rm=TRUE))
+     e$mean = rowMeans(e[,2:ncol(e)], na.rm=TRUE)
+     e$C <- rowSums(is.na(e[,2:datacol])) / (datacol - 1)
+     edp[[i]] <- e
+  }
+#+END_SRC
+
+#+RESULTS:
+
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both
+palette(rainbow(21))
+plot(edp[[1]]$median ~ edp[[1]]$V1, type='l', col=1, lwd=21, ylim=c(0, 2))
+for (i in seq(2, 21)) {
+    lines(edp[[i]]$median ~ edp[[i]]$V1, col=i, lwd=21-i)
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/babel-1802dYN/figure-1802LHB.gif]]
+
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both
+plot(edp[[1]]$C ~ edp[[1]]$V1, type='l', col=1, lwd=21)
+for (i in seq(2, 21)) {
+    lines(edp[[i]]$C ~ edp[[i]]$V1, col=i, lwd=21-i)
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/babel-1802dYN/figure-1802vUW.gif]]
+
+
+#+BEGIN_SRC R :session :exports both :results output
+e = read.csv(sprintf("~/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP%d.txt", 2), skip=2, header=FALSE, sep="")
+e[e == 0] <- NA
+datacol = ncol(e)
+e$mean = rowMeans(e[,2:datacol], na.rm=TRUE)
+e$median = exp(rowMeans(log(e[,2:datacol]), na.rm=TRUE))
+e$C <- rowSums(is.na(e[,2:datacol])) / (datacol - 1)
+print(e$median)
+print(e$mean)
+print(e$C)
+#+END_SRC
+
+#+RESULTS:
+:  [1] 0.0008320893 0.0014336772 0.0020236092 0.0030425848 0.0056170671
+:  [6] 0.0064268926 0.0131587868 0.0161511540 0.0130158757 0.0162137936
+: [11] 0.0239067418 0.0183511903 0.0127561435 0.0106468859 0.0087130504
+:  [1] 0.0008467975 0.0014862700 0.0026105500 0.0059848611 0.0137081389
+:  [6] 0.0159932333 0.0243133478 0.0282533500 0.0237211250 0.0245290000
+: [11] 0.0259000000 0.0235281667 0.0208866667 0.0211646667 0.0153512500
+:  [1] 0.000 0.000 0.000 0.100 0.100 0.250 0.425 0.500 0.600 0.650 0.800 0.850
+: [13] 0.850 0.850 0.900
+
