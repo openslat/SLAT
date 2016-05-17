@@ -274,7 +274,7 @@ class recorder:
             for i in range(function.size()):
                 columns.append("DS{}".format(i + 1))
         elif (type == 'probfn' or type == 'edpim') and columns == None:
-            columns = ['mean_ln_x', 'mean_x', 'median_x', 'sd_ln_x', 'sd_x']
+            columns = ['mean_ln_x', 'sd_ln_x']
         self._columns = columns
 
     def __str__(self):
@@ -863,7 +863,7 @@ class SlatInterpreter(slatListener):
         x = [0]
         mu = [0]
         sigma = [0]
-        C = []
+        C = [0]
         for d in data:
             x.append(d[0])
             values = []
@@ -872,22 +872,16 @@ class SlatInterpreter(slatListener):
                 if y==0:
                     collapse = collapse + 1
                 else:
-                    values.append(math.log(y))
+                    values.append(y)
             mu.append(np.mean(values))
             sigma.append(np.std(values))
             C.append(collapse / (len(d) - 1))
-        print(x)
-        print(mu)
-        print("MU")
         mu_func = detfn("anonymous", 'linear', [x.copy(), mu.copy()])
-        print(sigma)
-        print("SIGMA")
         sigma_func = detfn("anonymous", 'linear', [x.copy(), sigma.copy()])
         id = ctx.ID().getText()
-        print(x, mu)
         self._probfns[id] = probfn(id, 'lognormal', 
-                                   [pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X, mu_func],
-                                   [pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X,  sigma_func])
+                                   [pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X, mu_func],
+                                   [pyslat.LOGNORMAL_PARAM_TYPE.SD_X,  sigma_func])
 
 def main(argv):
     for file in argv[1:]:

@@ -44,13 +44,26 @@ plot(edp1$C ~ edp1$V1)
 #+BEGIN_SRC R :session :exports both
 palette(rainbow(21))
 plot(edp[[1]]$median ~ edp[[1]]$V1, type='l', col=1, lwd=21, ylim=c(0, 2))
-for (i in seq(2, 21)) {
+for (i in seq(3, 21, 2)) {
     lines(edp[[i]]$median ~ edp[[i]]$V1, col=i, lwd=21-i)
 }
 #+END_SRC
 
 #+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802LHB.gif]]
+[[file:/tmp/babel-1802dYN/figure-1802D7p.gif]]
+
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both
+palette(rainbow(21))
+plot(edp[[2]]$median ~ edp[[2]]$V1, type='l', col=1, lwd=21, ylim=c(0, 0.04))
+for (i in seq(4, 21,2)) {
+    lines(edp[[i]]$median ~ edp[[i]]$V1, col=i, lwd=21-i)
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/babel-1802dYN/figure-18022FA.gif]]
 
 #+HEADER: :results graphics
 #+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
@@ -86,4 +99,22 @@ print(e$C)
 : [11] 0.0259000000 0.0235281667 0.0208866667 0.0211646667 0.0153512500
 :  [1] 0.000 0.000 0.000 0.100 0.100 0.250 0.425 0.500 0.600 0.650 0.800 0.850
 : [13] 0.850 0.850 0.900
+
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both :results output
+  slat.edp <- list()
+  for (i in seq(21)) {
+     e = read.csv(sprintf("example2_probfn%d.txt", i), skip=0, header=TRUE, sep="")
+     e[e == 0] <- NA
+     slat.edp[[i]] <- e
+  }
+plot(slat.edp[[1]]$median_x ~ slat.edp[[1]]$x, type='l', col=1, lwd=21, ylim=c(0, 2))
+for (i in seq(2, 21)) {
+    lines(slat.edp[[i]]$median_x ~ slat.edp[[i]]$x, col=i, lwd=21-i)
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/babel-1802dYN/figure-1802N7m.gif]]
 
