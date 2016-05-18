@@ -11,7 +11,7 @@ detfn im_interp loglog    [0.01, 0.376775], [0.02, 0.155158], [0.04, 0.054048],
 	[1.5, 1.80E-06],  [1.6, 1.00E-06],  [1.7, 7.00E-07],  [1.8, 4.00E-07],
 	[1.9, 2.00E-07],  [2.0, 1.00E-07];
 
-recorder detfn im_interp 0.01:0.001:1.0 example2_im_rate.txt --new;
+#recorder detfn im_interp 0.01:0.001:1.0 example2_imfn.txt --new;
 
 
 importprobfn probfn1  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
@@ -36,25 +36,115 @@ importprobfn probfn19  /home/mag109/Downloads/SLATv1.15_Public/example2_10storey
 importprobfn probfn20  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP20.txt;
 importprobfn probfn21  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP21.txt;
 
-recorder probfn probfn1 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn1.txt --new;
-recorder probfn probfn2 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn2.txt --new;
-recorder probfn probfn3 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn3.txt --new;
-recorder probfn probfn4 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn4.txt --new;
-recorder probfn probfn5 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn5.txt --new;
-recorder probfn probfn6 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn6.txt --new;
-recorder probfn probfn7 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn7.txt --new;
-recorder probfn probfn8 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn8.txt --new;
-recorder probfn probfn9 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn9.txt --new;
-recorder probfn probfn10 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn10.txt --new;
-recorder probfn probfn11 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn11.txt --new;
-recorder probfn probfn12 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn12.txt --new;
-recorder probfn probfn13 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn13.txt --new;
-recorder probfn probfn14 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn14.txt --new;
-recorder probfn probfn15 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn15.txt --new;
-recorder probfn probfn16 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn16.txt --new;
-recorder probfn probfn17 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn17.txt --new;
-recorder probfn probfn18 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn18.txt --new;
-recorder probfn probfn19 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn19.txt --new;
-recorder probfn probfn20 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn20.txt --new;
-recorder probfn probfn21 0.05:0.05:1.5 --cols median_x, mean_x, mean_ln_x example2_probfn21.txt --new;
+im im1 im_interp;
+recorder imrate im1 0.01:0.001:2.0 example2_im_rate.txt --new;
+
+#recorder probfn probfn1 0.05:0.05:1.5 --cols median_x example2_probfn1.txt --new;
+#recorder probfn probfn2 0.05:0.05:1.5 --cols median_x example2_probfn2.txt --new;
+#recorder probfn probfn3 0.05:0.05:1.5 --cols median_x example2_probfn3.txt --new;
+#recorder probfn probfn4 0.05:0.05:1.5 --cols median_x example2_probfn4.txt --new;
+#recorder probfn probfn5 0.05:0.05:1.5 --cols median_x example2_probfn5.txt --new;
+#recorder probfn probfn6 0.05:0.05:1.5 --cols median_x example2_probfn6.txt --new;
+#recorder probfn probfn7 0.05:0.05:1.5 --cols median_x example2_probfn7.txt --new;
+#recorder probfn probfn8 0.05:0.05:1.5 --cols median_x example2_probfn8.txt --new;
+#recorder probfn probfn9 0.05:0.05:1.5 --cols median_x example2_probfn9.txt --new;
+#recorder probfn probfn10 0.05:0.05:1.5 --cols median_x example2_probfn10.txt --new;
+#recorder probfn probfn11 0.05:0.05:1.5 --cols median_x example2_probfn11.txt --new;
+#recorder probfn probfn12 0.05:0.05:1.5 --cols median_x example2_probfn12.txt --new;
+#recorder probfn probfn13 0.05:0.05:1.5 --cols median_x example2_probfn13.txt --new;
+#recorder probfn probfn14 0.05:0.05:1.5 --cols median_x example2_probfn14.txt --new;
+#recorder probfn probfn15 0.05:0.05:1.5 --cols median_x example2_probfn15.txt --new;
+#recorder probfn probfn16 0.05:0.05:1.5 --cols median_x example2_probfn16.txt --new;
+#recorder probfn probfn17 0.05:0.05:1.5 --cols median_x example2_probfn17.txt --new;
+#recorder probfn probfn18 0.05:0.05:1.5 --cols median_x example2_probfn18.txt --new;
+#recorder probfn probfn19 0.05:0.05:1.5 --cols median_x example2_probfn19.txt --new;
+#recorder probfn probfn20 0.05:0.05:1.5 --cols median_x example2_probfn20.txt --new;
+#recorder probfn probfn21 0.05:0.05:1.5 --cols median_x example2_probfn21.txt --new;
+
+edp edp1 im1 probfn1;
+recorder edpim edp1 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp1.txt --new;
+recorder edprate edp1 0.05:0.05:1.5 example2_edp1_rate.txt --new;
+
+edp edp2 im1 probfn2;
+recorder edpim edp2 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp2.txt --new;
+recorder edprate edp2 0.05:0.05:1.5 example2_edp2_rate.txt --new;
+
+edp edp3 im1 probfn3;
+recorder edpim edp3 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp3.txt --new;
+recorder edprate edp3 0.05:0.05:1.5 example2_edp3_rate.txt --new;
+
+edp edp4 im1 probfn4;
+recorder edpim edp4 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp4.txt --new;
+recorder edprate edp4 0.05:0.05:1.5 example2_edp4_rate.txt --new;
+
+edp edp5 im1 probfn5;
+recorder edpim edp5 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp5.txt --new;
+recorder edprate edp5 0.05:0.05:1.5 example2_edp5_rate.txt --new;
+
+edp edp6 im1 probfn6;
+recorder edpim edp6 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp6.txt --new;
+recorder edprate edp6 0.05:0.05:1.5 example2_edp6_rate.txt --new;
+
+edp edp7 im1 probfn7;
+recorder edpim edp7 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp7.txt --new;
+recorder edprate edp7 0.05:0.05:1.5 example2_edp7_rate.txt --new;
+
+edp edp8 im1 probfn8;
+recorder edpim edp8 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp8.txt --new;
+recorder edprate edp8 0.05:0.05:1.5 example2_edp8_rate.txt --new;
+
+edp edp9 im1 probfn9;
+recorder edpim edp9 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp9.txt --new;
+recorder edprate edp9 0.05:0.05:1.5 example2_edp9_rate.txt --new;
+
+edp edp10 im1 probfn10;
+recorder edpim edp10 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp10.txt --new;
+recorder edprate edp10 0.05:0.05:1.5 example2_edp10_rate.txt --new;
+
+edp edp11 im1 probfn11;
+recorder edpim edp11 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp11.txt --new;
+recorder edprate edp11 0.05:0.05:1.5 example2_edp11_rate.txt --new;
+
+edp edp12 im1 probfn12;
+recorder edpim edp12 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp12.txt --new;
+recorder edprate edp12 0.05:0.05:1.5 example2_edp12_rate.txt --new;
+
+edp edp13 im1 probfn13;
+recorder edpim edp13 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp13.txt --new;
+recorder edprate edp13 0.05:0.05:1.5 example2_edp13_rate.txt --new;
+
+edp edp14 im1 probfn14;
+recorder edpim edp14 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp14.txt --new;
+recorder edprate edp14 0.05:0.05:1.5 example2_edp14_rate.txt --new;
+
+edp edp15 im1 probfn15;
+recorder edpim edp15 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp15.txt --new;
+recorder edprate edp15 0.05:0.05:1.5 example2_edp15_rate.txt --new;
+
+edp edp16 im1 probfn16;
+recorder edpim edp16 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp16.txt --new;
+recorder edprate edp16 0.05:0.05:1.5 example2_edp16_rate.txt --new;
+
+edp edp17 im1 probfn17;
+recorder edpim edp17 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp17.txt --new;
+recorder edprate edp17 0.05:0.05:1.5 example2_edp17_rate.txt --new;
+
+edp edp18 im1 probfn18;
+recorder edpim edp18 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp18.txt --new;
+recorder edprate edp18 0.05:0.05:1.5 example2_edp18_rate.txt --new;
+
+edp edp19 im1 probfn19;
+recorder edpim edp19 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp19.txt --new;
+recorder edprate edp19 0.05:0.05:1.5 example2_edp19_rate.txt --new;
+
+edp edp20 im1 probfn20;
+recorder edpim edp20 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp20.txt --new;
+recorder edprate edp20 0.05:0.05:1.5 example2_edp20_rate.txt --new;
+
+edp edp21 im1 probfn21;
+recorder edpim edp21 0.05:0.05:1.5 --cols median_x, mean_x example2_im_edp21.txt --new;
+recorder edprate edp21 0.05:0.05:1.5 example2_edp21_rate.txt --new;
+
+
+
 analyze;

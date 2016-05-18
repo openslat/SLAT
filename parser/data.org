@@ -1,3 +1,20 @@
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both
+  im.paleo <- read.csv("~/Downloads/SLATv1.15_Public/example2_10storeybuilding/IMrateSa15data.txt", skip=2, header=FALSE, sep="")
+  palette(c("red", "blue"))
+  plot(im.paleo, log="xy", xlab="IM", ylab="lambda", main="IM Rate",
+       type="p", col=2, xlim=c(0.01, 2.0), ylim=c(1E-6, 1E0))
+
+  im.neo <- read.csv("example2_im_rate.txt", skip=0, header=TRUE, sep="")
+  lines(im.neo$lambda ~ im.neo$IM, col=1)
+  legend(x="topright", legend=c("Paleo", "Neo"), fill=palette())
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/babel-1802dYN/figure-1802WwI.gif]]
+
+
 #+BEGIN_SRC R :session :exports both :results output
   edp <- list()
   for (i in seq(21)) {
@@ -12,6 +29,21 @@
 #+END_SRC
 
 #+RESULTS:
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both
+  plot(NULL, xlim=c(0, 1.5), ylim=c(0.0, 0.06), xlab="IM", ylab="Drift",
+       main="Interstory Drift")
+  floor.index <- 4
+  temp <- edp[[floor.index]]
+  for (i in seq(2, ncol(temp) - 3)) {
+      points(temp[,1], temp[,i])
+  }
+  lines(temp$mean ~ edp[[2]][,1], col="blue")
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/babel-1802dYN/figure-1802jBD.gif]]
 
 #+HEADER: :results graphics
 #+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
@@ -82,20 +114,20 @@ print(e$C)
 #+BEGIN_SRC R :session :exports both :results output
   slat.edp <- list()
   for (i in seq(21)) {
-     e = read.csv(sprintf("example2_probfn%d.txt", i), skip=0, header=TRUE, sep="")
+     e = read.csv(sprintf("example2_im_edp%d.txt", i), skip=0, header=TRUE, sep="")
      e[e == 0] <- NA
      slat.edp[[i]] <- e
   }
   plot(NULL, xlim=c(0,1.5), ylim=c(0,2), xlab="IM", ylab="EDP")
 for (i in seq(1, 21)) {
     if (i %% 2 == 1) {
-        lines(slat.edp[[i]]$median_x ~ slat.edp[[i]]$x, col=i, lwd=21-i)
+        lines(slat.edp[[i]]$median_x ~ slat.edp[[i]]$IM, col=i, lwd=21-i)
     }
 }
 #+END_SRC
 
 #+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-180245l.gif]]
+[[file:/tmp/babel-1802dYN/figure-1802xYO.gif]]
 
 
 #+HEADER: :results graphics
@@ -104,11 +136,66 @@ for (i in seq(1, 21)) {
   plot(NULL, xlim=c(0,1.5), ylim=c(0,0.04), xlab="IM", ylab="EDP")
   for (i in seq(1, 21)) {
     if (i %% 2 == 0) {
-        lines(slat.edp[[i]]$median_x ~ slat.edp[[i]]$x, col=i, lwd=21-i)
+        lines(slat.edp[[i]]$median_x ~ slat.edp[[i]]$IM, col=i, lwd=21-i)
     }
 }
 #+END_SRC
 
 #+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802SOy.gif]]
+[[file:/tmp/babel-1802dYN/figure-1802Lta.gif]]
+
+
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both :results output
+  slat.edp.rate.rate <- list()
+  for (i in seq(21)) {
+      e = read.csv(sprintf("example2_edp%d_rate.txt", i), skip=0, header=TRUE, sep="")
+      e[e == 0] <- NA
+      slat.edp.rate[[i]] <- e
+  }
+  plot(NULL, xlim=c(0.05, 3.0), ylim=c(1E-8, 1), log="y", xlab="Peak Acceleration", ylab="lambda")
+  for (i in seq(1, 21)) {
+      if (i %% 2 == 1) {
+          lines(slat.edp.rate[[i]]$lambda ~ slat.edp.rate[[i]]$EDP, col=i, lwd=21-i)
+      }
+  }
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/babel-1802dYN/figure-1802yLt.gif]]
+
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both :results output
+  plot(NULL, xlim=c(0.05, 3.0), ylim=c(1E-8, 1), log="y", xlab="Interstory Drift", ylab="lambda")
+  for (i in seq(1, 21)) {
+      if (i %% 2 == 0) {
+          lines(slat.edp.rate[[i]]$lambda ~ slat.edp.rate[[i]]$EDP, col=i, lwd=21-i)
+      }
+  }
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/babel-1802dYN/figure-1802xfC.gif]]
+
+#+RESULTS:
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both
+  plot(NULL, xlim=c(0, 1.5), ylim=c(0.0, 0.06), xlab="IM", ylab="Drift",
+       main="Interstory Drift")
+  floor.index <- 4
+  temp <- edp[[floor.index]]
+  for (i in seq(2, ncol(temp) - 3)) {
+      points(temp[,1], temp[,i])
+  }
+  lines(temp$mean ~ edp[[2]][,1], col="blue")
+
+  temp <- slat.edp[[floor.index]]
+  lines(temp$mean_x ~ temp$IM, col="red")
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/babel-1802dYN/figure-1802EFP.gif]]
 
