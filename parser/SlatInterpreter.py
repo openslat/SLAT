@@ -17,7 +17,7 @@ from contextlib import redirect_stdout
 
 def frange(start, stop, step):
     i = start
-    while i <= stop:
+    while i <= stop + step/2:
         yield i
         i += step
 
@@ -841,7 +841,7 @@ class SlatInterpreter(slatListener):
     # Exit a parse tree produced by slatParser#python_script.
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
         expression =  ctx.python_expression().getText()
-        value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": numpy})
+        value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np})
         #print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
         self._stack.append(value)
 
@@ -860,6 +860,7 @@ class SlatInterpreter(slatListener):
 
     def exitImportprobfn_command(self, ctx:slatParser.Importprobfn_commandContext):
         data = np.loadtxt(ctx.FILE_NAME().getText().strip('\'"'), skiprows=2)
+        # Add a point at 0, 0 to support interpolation down to zero
         x = [0]
         mu = [0]
         sigma = [0]
@@ -876,6 +877,12 @@ class SlatInterpreter(slatListener):
             mu.append(np.mean(values))
             sigma.append(np.std(values))
             C.append(collapse / (len(d) - 1))
+        # Add points beyond the data provided to support interpolation beyond
+        # the given data, up to a point:
+        N = len(x)
+        x.append(x[N - 1] * 1.5)
+        mu.append(mu[N - 2] + (mu[N-1] - mu[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
+        sigma.append(sigma[N - 2] + (sigma[N-1] - sigma[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
         mu_func = detfn("anonymous", 'linear', [x.copy(), mu.copy()])
         sigma_func = detfn("anonymous", 'linear', [x.copy(), sigma.copy()])
         id = ctx.ID().getText()

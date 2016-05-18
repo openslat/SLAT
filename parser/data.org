@@ -1,29 +1,3 @@
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
-#+BEGIN_SRC R :session :exports both
-edp1 <- read.csv("~/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt", skip=2, header=FALSE, sep="")
-edp1[edp1 == 0] <- NA
-datacol = ncol(edp1)
-edp1$mean = rowMeans(edp1[,2:ncol(edp1)], na.rm=TRUE)
-#plot(edp1$mean ~ edp1$V1)
-#t <- edp1
-#t[!is.na(t)] <- 0
-#t[is.na(t)] <- 1
-edp1$C <- rowSums(is.na(edp1[,2:datacol])) / (datacol - 1)
-plot(edp1$mean ~ edp1$V1)
-#+END_SRC
-
-#+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802EdL.gif]]
-
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
-#+BEGIN_SRC R :session :exports both
-plot(edp1$C ~ edp1$V1)
-#+END_SRC
-
-#+RESULTS:
-
 #+BEGIN_SRC R :session :exports both :results output
   edp <- list()
   for (i in seq(21)) {
@@ -43,22 +17,25 @@ plot(edp1$C ~ edp1$V1)
 #+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
 #+BEGIN_SRC R :session :exports both
 palette(rainbow(21))
-plot(edp[[1]]$median ~ edp[[1]]$V1, type='l', col=1, lwd=21, ylim=c(0, 2))
-for (i in seq(3, 21, 2)) {
-    lines(edp[[i]]$median ~ edp[[i]]$V1, col=i, lwd=21-i)
+plot(NULL, xlim=c(0, 1.5), ylim=c(0, 2), xlab="IM", ylab="EDP")
+for (i in seq(1, 21)) {
+    if (i %% 2 == 1) {
+        lines(edp[[i]]$median ~ edp[[i]]$V1, col=i, lwd=21-i)
+    }
 }
 #+END_SRC
 
 #+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802D7p.gif]]
+[[file:/tmp/babel-1802dYN/figure-1802u5o.gif]]
 
 #+HEADER: :results graphics
 #+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
 #+BEGIN_SRC R :session :exports both
-palette(rainbow(21))
-plot(edp[[2]]$median ~ edp[[2]]$V1, type='l', col=1, lwd=21, ylim=c(0, 0.04))
-for (i in seq(4, 21,2)) {
-    lines(edp[[i]]$median ~ edp[[i]]$V1, col=i, lwd=21-i)
+plot(NULL, xlim=c(0, 1.5), ylim=c(0, 0.04), xlab="IM", ylab="EDP")
+for (i in seq(1, 21)) {
+    if (i %% 2 == 0) {
+        lines(edp[[i]]$median ~ edp[[i]]$V1, col=i, lwd=21-i)
+    }
 }
 #+END_SRC
 
@@ -109,12 +86,29 @@ print(e$C)
      e[e == 0] <- NA
      slat.edp[[i]] <- e
   }
-plot(slat.edp[[1]]$median_x ~ slat.edp[[1]]$x, type='l', col=1, lwd=21, ylim=c(0, 2))
-for (i in seq(2, 21)) {
-    lines(slat.edp[[i]]$median_x ~ slat.edp[[i]]$x, col=i, lwd=21-i)
+  plot(NULL, xlim=c(0,1.5), ylim=c(0,2), xlab="IM", ylab="EDP")
+for (i in seq(1, 21)) {
+    if (i %% 2 == 1) {
+        lines(slat.edp[[i]]$median_x ~ slat.edp[[i]]$x, col=i, lwd=21-i)
+    }
 }
 #+END_SRC
 
 #+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802N7m.gif]]
+[[file:/tmp/babel-1802dYN/figure-180245l.gif]]
+
+
+#+HEADER: :results graphics
+#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+BEGIN_SRC R :session :exports both :results output
+  plot(NULL, xlim=c(0,1.5), ylim=c(0,0.04), xlab="IM", ylab="EDP")
+  for (i in seq(1, 21)) {
+    if (i %% 2 == 0) {
+        lines(slat.edp[[i]]$median_x ~ slat.edp[[i]]$x, col=i, lwd=21-i)
+    }
+}
+#+END_SRC
+
+#+RESULTS:
+[[file:/tmp/babel-1802dYN/figure-1802SOy.gif]]
 

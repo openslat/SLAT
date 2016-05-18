@@ -202,7 +202,13 @@ namespace SLAT {
     {
         // Use the GSL interpolator allocated by the constructor:
         double y;
-        (void)gsl_spline_eval_e(interp, x, accel, &y);
+        if (x < min_x.first) {
+            y = min_x.second;
+        } else if (x > max_x.first) {
+            y = max_x.second;
+        } else {
+            (void)gsl_spline_eval_e(interp, x, accel, &y);
+        }
         return y;
     }
 
