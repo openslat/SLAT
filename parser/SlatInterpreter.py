@@ -875,14 +875,14 @@ class SlatInterpreter(slatListener):
                 else:
                     values.append(y)
             mu.append(np.mean(values))
-            sigma.append(np.std(values))
+            sigma.append(np.std(values, ddof=1))
             C.append(collapse / (len(d) - 1))
         # Add points beyond the data provided to support interpolation beyond
         # the given data, up to a point:
-        N = len(x)
-        x.append(x[N - 1] * 1.5)
-        mu.append(mu[N - 2] + (mu[N-1] - mu[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
-        sigma.append(sigma[N - 2] + (sigma[N-1] - sigma[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
+        #N = len(x)
+        #x.append(x[N - 1] * 1.5)
+        #mu.append(mu[N - 2] + (mu[N-1] - mu[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
+        #sigma.append(sigma[N - 2] + (sigma[N-1] - sigma[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
         mu_func = detfn("anonymous", 'linear', [x.copy(), mu.copy()])
         sigma_func = detfn("anonymous", 'linear', [x.copy(), sigma.copy()])
         id = ctx.ID().getText()

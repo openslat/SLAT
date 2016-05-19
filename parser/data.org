@@ -1,201 +1,494 @@
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
+#+Title:     Seismic Loss Assessment Tool
+#+AUTHOR:    Michael Gauland
+#+EMAIL:     michael.gauland@canterbury.ac.nz
+#+DATE:      {{{time(%Y-%m-%d %H:%M)}}}
+#+DESCRIPTION: 
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:6 num:t toc:nil \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
+#+OPTIONS:   TeX:dvipng LaTeX:dvipng skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+OPTIONS:   timestamp:t email:t
+#+OPTIONS:   ':t
+#+INFOJS_OPT: view:nil toc:t ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [a4paper]
+#+LATEX_HEADER: \usepackage{unicode-math}
+#+LaTex_header: \usepackage{epstopdf}
+#+LATEX_HEADER: \usepackage{register}
+#+LATEX_HEADER: \usepackage{bytefield}
+#+LATEX_HEADER: \usepackage{parskip}
+#+LATEX_HEADER: \usepackage{tabulary}
+#+LATEX_HEADER: \usepackage[section]{placeins}
+#+LATEX_HEADER: \usepackage[htt]{hyphenat}
+#+LATEX_HEADER: \setlength{\parindent}{0pt}
+#+LATEX_HEADER: \lstset{keywordstyle=\color{blue}\bfseries}
+#+LATEX_HEADER: \newfontfamily\listingsfont[Scale=.7]{DejaVu Sans Mono}
+#+LATEX_HEADER: \lstset{basicstyle=\listingsfont}
+#+LATEX_HEADER: \lstset{showspaces=false}
+#+LATEX_HEADER: \lstset{columns=fixed}
+#+LATEX_HEADER: \lstset{extendedchars=true}
+#+LATEX_HEADER: \lstset{frame=shadowbox}
+#+LATEX_HEADER: \lstset{basicstyle=\ttfamily}
+#+LATEX_HEADER: \definecolor{mygray}{gray}{0.8}
+#+LATEX_HEADER: \lstset{rulesepcolor=\color{mygray}}
+#+LATEX_HEADER: \lstdefinelanguage{dash}{rulecolor=\color{green},rulesepcolor=\color{mygray},frameround=ffff,backgroundcolor=\color{white}}
+#+LATEX_HEADER: \lstdefinelanguage{fundamental}{basicstyle=\ttfamily\scriptsize,rulesepcolor=\color{cyan},frameround=tttt,backgroundcolor=\color{white},breaklines=true}
+#+LATEX_HEADER: \usepackage{pst-circ}
+#+LATEX_HEADER: \usepackage[hang,small,bf]{caption}
+#+LATEX_HEADER: \setlength{\captionmargin}{20pt}
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+#+STARTUP: overview
+#+STARTUP: align
+#+STARTUP: noinlineimages
+#+PROPERTY: exports both
+
+Read input data, and output data from both versions of SLAT:
 #+BEGIN_SRC R :session :exports both
-  im.paleo <- read.csv("~/Downloads/SLATv1.15_Public/example2_10storeybuilding/IMrateSa15data.txt", skip=2, header=FALSE, sep="")
-  palette(c("red", "blue"))
-  plot(im.paleo, log="xy", xlab="IM", ylab="lambda", main="IM Rate",
-       type="p", col=2, xlim=c(0.01, 2.0), ylim=c(1E-6, 1E0))
+  # Define variables for the directories:
+  paleo.dir = paste("~/Downloads/SLATv1.15_Public/",
+      "example2_10storeybuilding/", sep="")
+  results.dir = paste(paleo.dir, "results/", sep="")
 
-  im.neo <- read.csv("example2_im_rate.txt", skip=0, header=TRUE, sep="")
-  lines(im.neo$lambda ~ im.neo$IM, col=1)
-  legend(x="topright", legend=c("Paleo", "Neo"), fill=palette())
-#+END_SRC
+  # Read in the IM data:
+  input.im <- read.csv(
+      paste(paleo.dir, "IMrateSa15data.txt", sep=""),
+      skip=2, header=FALSE, sep="")
 
-#+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802WwI.gif]]
+  paleo.im <- read.csv(
+      paste(results.dir, "im-rate", sep=""),
+      skip=3, header=FALSE, sep="")
+  names(paleo.im) = c("IM", "lambda")
+
+  neo.im <- read.csv("example2_im_rate.txt", 
+                     header=TRUE, sep="")
+  # Read in the EDP data. We'll store each set in separate
+  # variables for acceleration and drift:
+    accel.input <- list()
+    drift.input <- list()
+
+    accel.paleo <- list()
+    drift.paleo <- list()
+
+    accel.neo <- list()
+    drift.neo <- list()
+
+    accel.rate.paleo <- list()
+    drift.rate.paleo <- list()
+
+    accel.rate.neo <- list()
+    drift.rate.neo <- list()
+
+    for (i in seq(21)) {
+	index = ceiling(i/2)
+
+	temp = read.csv(sprintf("%sRB_EDP%d.txt", paleo.dir, i),
+            skip=2, header=FALSE, sep="")
+	# Zero indicates collapse; change to NA:
+	temp[temp == 0] <- NA
+
+	datacol = ncol(temp)
+	names(temp)[1] <- "IM"
+	temp$median = exp(rowMeans(log(temp[,2:datacol]), 
+            na.rm=TRUE))
+	temp$mean = rowMeans(temp[,2:datacol], na.rm=TRUE)
+	temp$C <- rowSums(is.na(temp[,2:datacol])) / (datacol - 1)
+
+	if (i %% 2 == 1) {
+            accel.input[[index]] <- temp
+	} else {
+            drift.input[[index]] <- temp
+	}
+
+	temp = read.csv(sprintf("%sedp-im-%d", results.dir, i),
+	    skip=3, header=FALSE, sep="")
+	names(temp) <- c("IM", "mean_x", "sd_ln_x")
+	if (i %% 2 == 1) {
+            accel.paleo[[index]] <- temp
+	} else {
+            drift.paleo[[index]] <- temp
+	}
 
 
-#+BEGIN_SRC R :session :exports both :results output
-  edp <- list()
-  for (i in seq(21)) {
-     e = read.csv(sprintf("~/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP%d.txt", i), skip=2, header=FALSE, sep="")
-     e[e == 0] <- NA
-     datacol = ncol(e)
-     e$median = exp(rowMeans(log(e[,2:ncol(e)]), na.rm=TRUE))
-     e$mean = rowMeans(e[,2:ncol(e)], na.rm=TRUE)
-     e$C <- rowSums(is.na(e[,2:datacol])) / (datacol - 1)
-     edp[[i]] <- e
-  }
-#+END_SRC
+	temp = read.csv(sprintf("%sedp-rate-%d", results.dir, i),
+	    skip=3, header=FALSE, sep="")
+	names(temp) <- c("EDP", "lambda")
+	if (i %% 2 == 1) {
+            accel.rate.paleo[[index]] <- temp
+	} else {
+            drift.rate.paleo[[index]] <- temp
+	}
 
-#+RESULTS:
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
-#+BEGIN_SRC R :session :exports both
-  plot(NULL, xlim=c(0, 1.5), ylim=c(0.0, 0.06), xlab="IM", ylab="Drift",
-       main="Interstory Drift")
-  floor.index <- 4
-  temp <- edp[[floor.index]]
-  for (i in seq(2, ncol(temp) - 3)) {
-      points(temp[,1], temp[,i])
-  }
-  lines(temp$mean ~ edp[[2]][,1], col="blue")
-#+END_SRC
+	temp = read.csv(sprintf("example2_im_edp%d.txt", i),
+	    skip=3, header=FALSE, sep="")
+	names(temp) <- c("IM", "mean_x", "sd_ln_x")
+	if (i %% 2 == 1) {
+            accel.neo[[index]] <- temp
+	} else {
+            drift.neo[[index]] <- temp
+	}
 
-#+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802jBD.gif]]
-
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
-#+BEGIN_SRC R :session :exports both
-palette(rainbow(21))
-plot(NULL, xlim=c(0, 1.5), ylim=c(0, 2), xlab="IM", ylab="EDP")
-for (i in seq(1, 21)) {
-    if (i %% 2 == 1) {
-        lines(edp[[i]]$median ~ edp[[i]]$V1, col=i, lwd=21-i)
+	temp = read.csv(sprintf("example2_edp%d_rate.txt", i),
+	    skip=3, header=FALSE, sep="")
+	names(temp) <- c("EDP", "lambda")
+	if (i %% 2 == 1) {
+            accel.rate.neo[[index]] <- temp
+	} else {
+            drift.rate.neo[[index]] <- temp
+	}
     }
-}
-#+END_SRC
+    
+
+  #+END_SRC
 
 #+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802u5o.gif]]
 
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
-#+BEGIN_SRC R :session :exports both
-plot(NULL, xlim=c(0, 1.5), ylim=c(0, 0.04), xlab="IM", ylab="EDP")
-for (i in seq(1, 21)) {
-    if (i %% 2 == 0) {
-        lines(edp[[i]]$median ~ edp[[i]]$V1, col=i, lwd=21-i)
-    }
-}
-#+END_SRC
+* Impulse Measurement Data
+  Plot the IM data from the Example2 input data file against the results from
+  the old new versions of slat:
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue", "green"))
+    plot(input.im, log="xy", 
+         xlab="IM", ylab="lambda", main="IM Rate",
+         type="p", col=1,
+         xlim=c(0.01, 3.0), ylim=c(1E-8, 1E0))
 
-#+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-18022FA.gif]]
-
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
-#+BEGIN_SRC R :session :exports both
-plot(edp[[1]]$C ~ edp[[1]]$V1, type='l', col=1, lwd=21)
-for (i in seq(2, 21)) {
-    lines(edp[[i]]$C ~ edp[[i]]$V1, col=i, lwd=21-i)
-}
-#+END_SRC
-
-#+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802vUW.gif]]
+    points(paleo.im$lambda ~ paleo.im$IM, col=2)
+    lines(neo.im$lambda ~ neo.im$IM, col=3)
 
 
-#+BEGIN_SRC R :session :exports both :results output
-e = read.csv(sprintf("~/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP%d.txt", 2), skip=2, header=FALSE, sep="")
-e[e == 0] <- NA
-datacol = ncol(e)
-e$mean = rowMeans(e[,2:datacol], na.rm=TRUE)
-e$median = exp(rowMeans(log(e[,2:datacol]), na.rm=TRUE))
-e$C <- rowSums(is.na(e[,2:datacol])) / (datacol - 1)
-print(e$median)
-print(e$mean)
-print(e$C)
-#+END_SRC
+    legend(x="topright",
+         legend=c("Input", "Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
 
-#+RESULTS:
-:  [1] 0.0008320893 0.0014336772 0.0020236092 0.0030425848 0.0056170671
-:  [6] 0.0064268926 0.0131587868 0.0161511540 0.0130158757 0.0162137936
-: [11] 0.0239067418 0.0183511903 0.0127561435 0.0106468859 0.0087130504
-:  [1] 0.0008467975 0.0014862700 0.0026105500 0.0059848611 0.0137081389
-:  [6] 0.0159932333 0.0243133478 0.0282533500 0.0237211250 0.0245290000
-: [11] 0.0259000000 0.0235281667 0.0208866667 0.0211646667 0.0153512500
-:  [1] 0.000 0.000 0.000 0.100 0.100 0.250 0.425 0.500 0.600 0.650 0.800 0.850
-: [13] 0.850 0.850 0.900
+  #+RESULTS:
+  [[file:/tmp/babel-1802dYN/figure-18020hW.pdf]]
 
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
-#+BEGIN_SRC R :session :exports both :results output
-  slat.edp <- list()
-  for (i in seq(21)) {
-     e = read.csv(sprintf("example2_im_edp%d.txt", i), skip=0, header=TRUE, sep="")
-     e[e == 0] <- NA
-     slat.edp[[i]] <- e
-  }
-  plot(NULL, xlim=c(0,1.5), ylim=c(0,2), xlab="IM", ylab="EDP")
-for (i in seq(1, 21)) {
-    if (i %% 2 == 1) {
-        lines(slat.edp[[i]]$median_x ~ slat.edp[[i]]$IM, col=i, lwd=21-i)
-    }
-}
-#+END_SRC
+* Engineering Design Parameter Data
+** Peak Ground Acceleration
+   The peak ground acceleration will be stored at odd indices. Plot them
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session :exports both
+     n.lines <- length(accel.input)
+     palette(rainbow(n.lines))
+     plot(NULL, xlim=c(0, 1.5), ylim=c(0, 2), xlab="IM",
+          ylab="Acceleration")
+     for (i in seq(n.lines)) {
+         points(accel.input[[i]]$mean ~ accel.input[[i]]$IM, col=i)
+	 lines(accel.paleo[[i]]$mean ~ accel.paleo[[i]]$IM, col=i)
+	 lines(accel.neo[[i]]$mean ~ accel.neo[[i]]$IM)
+     }
+     legend(x="topleft", legend=seq(n.lines), fill=palette())
+   #+END_SRC
 
-#+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802xYO.gif]]
+   #+RESULTS:
+   [[file:/tmp/babel-1802dYN/figure-1802oKv.pdf]]
+
+** Interstory Drift
+   Interstory drift will be at even indices:
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session :exports both
+     n.lines <- length(drift.input)
+     palette(rainbow(n.lines))
+     plot(NULL, xlim=c(0, 1.5), ylim=c(0, 0.04), xlab="IM",
+          ylab="Drift")
+     for (i in seq(n.lines)) {
+         points(drift.input[[i]]$mean ~ drift.input[[i]]$IM, col=i)
+	 lines(drift.paleo[[i]]$mean ~ drift.paleo[[i]]$IM, col=i)
+	 lines(drift.neo[[i]]$mean ~ drift.neo[[i]]$IM)
+     }
+     legend(x="topleft", legend=seq(n.lines), fill=palette())
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:/tmp/babel-1802dYN/figure-1802BzQ.pdf]]
+
+** Collapse
+   This prints the probability of collapse taken from all EDPs. The lines are
+   drawing with decreasing widths to make it clear that the data is consistent
+   across all EDPs.
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session :exports both
+     n.accel = length(accel.input)
+     n.drift = length(drift.input)
+     palette(rainbow(n.accel + n.drift))
+
+     plot(NULL, xlim=c(0, 1.5), ylim=c(0, 1.0),
+          xlab="IM", ylab="p(Collapse)", 
+          main="Probability of Collapse")
+    
+     for (i in seq(n.accel)) {
+         color = i
+         lines(accel.input[[i]]$C ~ accel.input[[i]]$IM,
+	     col=color,
+	     lwd=n.accel + n.drift - color)
+     }
+     for (i in seq(n.drift)) {
+         color = n.accel + i
+         lines(drift.input[[i]]$C ~ drift.input[[i]]$IM,
+	     col=color,
+	     lwd=n.accel + n.drift - color)
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:/tmp/babel-1802dYN/figure-1802W7F.pdf]]
 
 
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
-#+BEGIN_SRC R :session :exports both :results output
-  plot(NULL, xlim=c(0,1.5), ylim=c(0,0.04), xlab="IM", ylab="EDP")
-  for (i in seq(1, 21)) {
-    if (i %% 2 == 0) {
-        lines(slat.edp[[i]]$median_x ~ slat.edp[[i]]$IM, col=i, lwd=21-i)
-    }
-}
-#+END_SRC
+** Ground Acceleration EDPs
+   These plots show the individual data points, with the mean calculated by R in
+   blue, and the points calculated by neoslat in red:
+   #+HEADER: :results graphics 
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session :exports both
+     par(mfrow=c(4,3))
+     for (i in seq(1,length(accel.input))) {
+         temp <- accel.input[[i]]
+         plot(NULL, xlim=c(0, 1.5), 
+              ylim=c(0, max(temp, na.rm=TRUE)), 
+              xlab="IM", ylab="Drift",
+   	   main=sprintf("Interstory Drift %d", i))
+         for (j in seq(2, ncol(temp) - 3)) {
+   	  points(temp[,1], temp[,j])
+         }
+         lines(temp$mean ~ temp$IM, col="blue")
 
-#+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802Lta.gif]]
+         temp <- accel.paleo[[i]]
+         points(temp$mean_x ~ temp$IM, col="green")
 
+         temp <- accel.neo[[i]]
+         points(temp$mean_x ~ temp$IM, col="red")
 
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
-#+BEGIN_SRC R :session :exports both :results output
-  slat.edp.rate.rate <- list()
-  for (i in seq(21)) {
-      e = read.csv(sprintf("example2_edp%d_rate.txt", i), skip=0, header=TRUE, sep="")
-      e[e == 0] <- NA
-      slat.edp.rate[[i]] <- e
-  }
-  plot(NULL, xlim=c(0.05, 3.0), ylim=c(1E-8, 1), log="y", xlab="Peak Acceleration", ylab="lambda")
-  for (i in seq(1, 21)) {
-      if (i %% 2 == 1) {
-          lines(slat.edp.rate[[i]]$lambda ~ slat.edp.rate[[i]]$EDP, col=i, lwd=21-i)
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:/tmp/babel-1802dYN/figure-18021bp.pdf]]
+
+** Interstory Drift EDPs
+   These plots show the individual data points, with the mean calculated by R in
+   blue, and the points calculated by neoslat in red:
+   #+HEADER: :results graphics 
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session :exports both
+     par(mfrow=c(4,3))
+     for (i in seq(1,length(drift.input))) {
+         temp <- drift.input[[i]]
+         max.col <- max(temp[2:(ncol(temp) - 3)], na.rm=TRUE)
+         plot(NULL, xlim=c(0, 1.5), 
+              ylim=c(0, max.col), 
+              xlab="IM", ylab="Drift",
+   	   main=sprintf("Interstory Drift %d", i))
+         for (j in seq(2, ncol(temp) - 3)) {
+   	  points(temp[,1], temp[,j])
+         }
+         lines(temp$mean ~ temp$IM, col="blue")
+
+         temp <- drift.paleo[[i]]
+         points(temp$mean_x ~ temp$IM, col="green")
+
+         temp <- drift.neo[[i]]
+         points(temp$mean_x ~ temp$IM, col="red")
+
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:/tmp/babel-1802dYN/figure-1802OEL.pdf]]
+
+** Peak Ground Acceleration Rate
+   This plot shows the EDP rate curve for peak ground acceleration, as calculated by neoslat. This does not match the user manual:
+   #+NAME: pga-rate
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session :exports both :results output
+     n.accel = length(accel.rate.paleo)
+     palette(rainbow(n.accel))
+     plot(NULL, xlim=c(0.05, 3.0), ylim=c(1E-8, 1), log="y", 
+          xlab="Peak Acceleration", ylab="lambda")
+     for (i in seq(n.accel)) {
+          points(accel.rate.paleo[[i]]$lambda ~ accel.rate.paleo[[i]]$EDP, col=i)
+          lines(accel.rate.neo[[i]]$lambda ~ accel.rate.neo[[i]]$EDP, col=i)
       }
-  }
-#+END_SRC
+      legend(x="topright", legend=seq(n.accel), fill=palette(), ncol=2)
+   #+END_SRC
 
-#+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802yLt.gif]]
+   #+CAPTION: Peak ground acceleration rate. Circles represent values
+   #+CAPTION: from paleoslat; lines represent values from neoslat.
+   #+RESULTS: pga-rate
+   [[file:/tmp/babel-1802dYN/figure-1802qal.pdf]]
 
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
-#+BEGIN_SRC R :session :exports both :results output
-  plot(NULL, xlim=c(0.05, 3.0), ylim=c(1E-8, 1), log="y", xlab="Interstory Drift", ylab="lambda")
-  for (i in seq(1, 21)) {
-      if (i %% 2 == 0) {
-          lines(slat.edp.rate[[i]]$lambda ~ slat.edp.rate[[i]]$EDP, col=i, lwd=21-i)
+** Interstory Drift Rate
+   This plot shows the EDP rate curve for interstory drift, as calculated by neoslat. This does not match the user manual:
+   #+NAME: drift-rate
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session :exports both :results output
+     n.drift = length(drift.rate.paleo)
+     palette(rainbow(n.drift))
+     plot(NULL, xlim=c(0.0, 0.1), ylim=c(1E-8, 1), log="y", 
+          xlab="Interstory Drift", ylab="lambda")
+     for (i in seq(n.drift)) {
+          points(drift.rate.paleo[[i]]$lambda ~ drift.rate.paleo[[i]]$EDP, col=i)
+          lines(drift.rate.neo[[i]]$lambda ~ drift.rate.neo[[i]]$EDP, col=i)
       }
-  }
-#+END_SRC
+      legend(x="topright", legend=seq(n.drift), fill=palette(), ncol=2)
+   #+END_SRC
 
-#+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802xfC.gif]]
+   
+   #+CAPTION: Inter-story drift rate. Circles represent values
+   #+CAPTION: from paleoslat; lines represent values from neoslat.
+   #+RESULTS: drift-rate
+   [[file:/tmp/babel-1802dYN/figure-1802hij.pdf]]
 
-#+RESULTS:
-#+HEADER: :results graphics
-#+HEADER: :file (org-babel-temp-file "./figure-" ".gif")
-#+BEGIN_SRC R :session :exports both
-  plot(NULL, xlim=c(0, 1.5), ylim=c(0.0, 0.06), xlab="IM", ylab="Drift",
-       main="Interstory Drift")
-  floor.index <- 4
-  temp <- edp[[floor.index]]
-  for (i in seq(2, ncol(temp) - 3)) {
-      points(temp[,1], temp[,i])
-  }
-  lines(temp$mean ~ edp[[2]][,1], col="blue")
+** EDPs
+*** Response
+**** Acceleration
+     #+HEADER: :results graphics
+     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+     #+BEGIN_SRC R :session :exports both :results output
+       n.accel = length(accel.paleo)
+       par(mfrow=c(4,3))
+       for (i in seq(n.accel)) {
+           plot(accel.paleo[[i]]$mean_x ~ accel.paleo[[i]]$IM, type="p", ylim=c(0, 1.8), 
+		col="red", xlab="IM", ylab="mean(Acceleration)", main=sprintf("Floor #%d", i))
+           lines(accel.neo[[i]]$mean_x ~ accel.neo[[i]]$IM, col="blue")
+       }
+     #+END_SRC
 
-  temp <- slat.edp[[floor.index]]
-  lines(temp$mean_x ~ temp$IM, col="red")
-#+END_SRC
+     #+RESULTS:
+     [[file:/tmp/babel-1802dYN/figure-1802x9m.pdf]]
 
-#+RESULTS:
-[[file:/tmp/babel-1802dYN/figure-1802EFP.gif]]
+     #+HEADER: :results graphics
+     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+     #+BEGIN_SRC R :session :exports both :results output
+       par(mfrow=c(4,3))
+       for (i in seq(n.accel)) {
+           plot(accel.paleo[[i]]$sd_ln_x ~ accel.paleo[[i]]$IM, type="p", ylim=c(0, 0.5), 
+		col="red", xlab="IM", ylab="sd(ln(Acceleration))", main=sprintf("Floor #%d", i))
+           lines(accel.neo[[i]]$sd_ln_x ~ accel.neo[[i]]$IM, col="blue")
+       }
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:/tmp/babel-1802dYN/figure-18028TH.pdf]]
+
+
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R :session :exports both :results output
+      par(mfrow=c(4,3))
+      for (i in seq(n.accel)) {
+          plot(accel.rate.paleo[[i]]$lambda ~ accel.rate.paleo[[i]]$EDP, type="p", col="red", log="xy",
+               ylim=c(1E-8, 1E-1))
+          lines(accel.rate.neo[[i]]$lambda ~ accel.rate.neo[[i]]$EDP, col="blue")
+      }
+    #+END_SRC
+
+    #+RESULTS:
+    [[file:/tmp/babel-1802dYN/figure-1802KmI.pdf]]
+
+**** Drift
+     #+HEADER: :results graphics
+     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+     #+BEGIN_SRC R :session :exports both :results output
+       n.drift = length(drift.paleo)
+       par(mfrow=c(4,3))
+       for (i in seq(n.drift)) {
+           plot(drift.paleo[[i]]$mean_x ~ drift.paleo[[i]]$IM, type="p", ylim=c(0, 0.04), 
+		col="red", xlab="IM", ylab="mean(Drift)", main=sprintf("Story #%d", i))
+           lines(drift.neo[[i]]$mean_x ~ drift.neo[[i]]$IM, col="blue")
+       }
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:/tmp/babel-1802dYN/figure-1802Xpa.pdf]]
+
+     #+HEADER: :results graphics
+     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+     #+BEGIN_SRC R :session :exports both :results output
+       par(mfrow=c(4,3))
+       for (i in seq(n.drift)) {
+           plot(drift.paleo[[i]]$sd_ln_x ~ drift.paleo[[i]]$IM, type="p", ylim=c(0, 1.2), 
+		col="red", xlab="IM", ylab="sd(ln(Drift))", main=sprintf("Story #%d", i))
+           lines(drift.neo[[i]]$sd_ln_x ~ drift.neo[[i]]$IM, col="blue")
+       }
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:/tmp/babel-1802dYN/figure-1802LSz.pdf]]
+
+
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R :session :exports both :results output
+      par(mfrow=c(4,3))
+      for (i in seq(n.drift)) {
+          plot(drift.rate.paleo[[i]]$lambda ~ drift.rate.paleo[[i]]$EDP, type="p", col="red", log="xy",
+               ylim=c(1E-8, 1E-1))
+          lines(drift.rate.neo[[i]]$lambda ~ drift.rate.neo[[i]]$EDP, col="blue")
+      }
+    #+END_SRC
+
+    #+RESULTS:
+    [[file:/tmp/babel-1802dYN/figure-1802KmI.pdf]]
+
+
+** EDP1
+*** Response
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R :session :exports both :results output
+      i = 1
+      plot(accel.paleo[[i]]$mean_x ~ accel.paleo[[i]]$IM, type="p", ylim=c(0, 1.8), 
+           col="red")
+      lines(accel.neo[[i]]$mean_x ~ accel.neo[[i]]$IM, col="blue")
+      legend(x="topleft", legend=c("Paleo", "Neo"), 
+    	 fill=c("red", "blue"))
+    #+END_SRC
+
+    #+RESULTS:
+    [[file:/tmp/babel-1802dYN/figure-1802ixS.pdf]]
+
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R :session :exports both :results output
+      plot(accel.paleo[[i]]$sd_ln_x ~ accel.paleo[[i]]$IM, type="p", ylim=c(0, 0.5), 
+           col="red")
+      lines(accel.neo[[i]]$sd_ln_x ~ accel.neo[[i]]$IM, col="blue")
+      legend(x="topleft", legend=c("Paleo", "Neo"), 
+    	 fill=c("red", "blue"))
+    #+END_SRC
+
+    #+RESULTS:
+    [[file:/tmp/babel-1802dYN/figure-1802VuA.pdf]]
+
+
+*** Rate
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R :session :exports both :results output
+      paleo <- read.csv(
+           paste(results.dir, "edp-rate-1", sep=""),
+           skip=3, header=FALSE, sep="")
+      neo <- read.csv("example2_edp1_rate.txt", header=TRUE,
+                      sep="")
+      plot(paleo$V2 ~ paleo$V1, type="p", col="red", log="xy",
+           ylim=c(1E-8, 1E-1))
+      lines(neo$lambda ~ neo$EDP, col="blue")
+      legend(x="topright", legend=c("Paleo", "Neo"),
+    	 fill=c("red", "blue"))
+    #+END_SRC
+
+    #+RESULTS:
+    [[file:/tmp/babel-1802dYN/figure-1802JJx.pdf]]
 
