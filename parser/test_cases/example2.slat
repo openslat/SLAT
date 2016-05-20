@@ -3,7 +3,7 @@ title '10 storey frame 2D direct loss only WRITTEN 15/12/07 B BRADLEY';
 print title example1_out.txt --new;
 
 # Set up integration parameters:
-integration maq 0.1 1024;
+integration maq 1E-6 1024;
 
 
 # Define the IM function:
@@ -67,87 +67,87 @@ recorder imrate im1 0.01:0.001:3.0 example2_im_rate.txt --new;
 
 edp edp1 im1 probfn1;
 recorder edpim edp1 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp1.txt --new;
-recorder edprate edp1 0.05:0.05:1.5 example2_edp1_rate.txt --new;
+recorder edprate edp1 0.05:0.05:3.0 example2_edp1_rate.txt --new;
 
 edp edp2 im1 probfn2;
-recorder edpim edp2 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp2.txt --new;
+recorder edpim edp2 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp2.txt --new;
 recorder edprate edp2 0.001:0.001:0.100 example2_edp2_rate.txt --new;
 
 edp edp3 im1 probfn3;
-recorder edpim edp3 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp3.txt --new;
-recorder edprate edp3 0.05:0.05:1.5 example2_edp3_rate.txt --new;
+recorder edpim edp3 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp3.txt --new;
+recorder edprate edp3 0.05:0.05:3.0 example2_edp3_rate.txt --new;
 
 edp edp4 im1 probfn4;
-recorder edpim edp4 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp4.txt --new;
+recorder edpim edp4 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp4.txt --new;
 recorder edprate edp4 0.001:0.001:0.100 example2_edp4_rate.txt --new;
 
 edp edp5 im1 probfn5;
-recorder edpim edp5 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp5.txt --new;
-recorder edprate edp5 0.05:0.05:1.5 example2_edp5_rate.txt --new;
+recorder edpim edp5 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp5.txt --new;
+recorder edprate edp5 0.05:0.05:3.0 example2_edp5_rate.txt --new;
 
 edp edp6 im1 probfn6;
-recorder edpim edp6 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp6.txt --new;
+recorder edpim edp6 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp6.txt --new;
 recorder edprate edp6 0.001:0.001:0.100 example2_edp6_rate.txt --new;
 
 edp edp7 im1 probfn7;
-recorder edpim edp7 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp7.txt --new;
-recorder edprate edp7 0.05:0.05:1.5 example2_edp7_rate.txt --new;
+recorder edpim edp7 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp7.txt --new;
+recorder edprate edp7 0.05:0.05:3.0 example2_edp7_rate.txt --new;
 
 edp edp8 im1 probfn8;
-recorder edpim edp8 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp8.txt --new;
+recorder edpim edp8 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp8.txt --new;
 recorder edprate edp8 0.001:0.001:0.100 example2_edp8_rate.txt --new;
 
 edp edp9 im1 probfn9;
-recorder edpim edp9 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp9.txt --new;
-recorder edprate edp9 0.05:0.05:1.5 example2_edp9_rate.txt --new;
+recorder edpim edp9 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp9.txt --new;
+recorder edprate edp9 0.05:0.05:3.0 example2_edp9_rate.txt --new;
 
 edp edp10 im1 probfn10;
-recorder edpim edp10 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp10.txt --new;
+recorder edpim edp10 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp10.txt --new;
 recorder edprate edp10 0.001:0.001:0.100 example2_edp10_rate.txt --new;
 
 edp edp11 im1 probfn11;
-recorder edpim edp11 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp11.txt --new;
-recorder edprate edp11 0.05:0.05:1.5 example2_edp11_rate.txt --new;
+recorder edpim edp11 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp11.txt --new;
+recorder edprate edp11 0.05:0.05:3.0 example2_edp11_rate.txt --new;
 
 edp edp12 im1 probfn12;
-recorder edpim edp12 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp12.txt --new;
+recorder edpim edp12 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp12.txt --new;
 recorder edprate edp12 0.001:0.001:0.100 example2_edp12_rate.txt --new;
 
 edp edp13 im1 probfn13;
-recorder edpim edp13 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp13.txt --new;
-recorder edprate edp13 0.05:0.05:1.5 example2_edp13_rate.txt --new;
+recorder edpim edp13 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp13.txt --new;
+recorder edprate edp13 0.05:0.05:3.0 example2_edp13_rate.txt --new;
 
 edp edp14 im1 probfn14;
-recorder edpim edp14 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp14.txt --new;
+recorder edpim edp14 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp14.txt --new;
 recorder edprate edp14 0.001:0.001:0.100 example2_edp14_rate.txt --new;
 
 edp edp15 im1 probfn15;
-recorder edpim edp15 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp15.txt --new;
-recorder edprate edp15 0.05:0.05:1.5 example2_edp15_rate.txt --new;
+recorder edpim edp15 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp15.txt --new;
+recorder edprate edp15 0.05:0.05:3.0 example2_edp15_rate.txt --new;
 
 edp edp16 im1 probfn16;
-recorder edpim edp16 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp16.txt --new;
+recorder edpim edp16 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp16.txt --new;
 recorder edprate edp16 0.001:0.001:0.100 example2_edp16_rate.txt --new;
 
 edp edp17 im1 probfn17;
-recorder edpim edp17 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp17.txt --new;
-recorder edprate edp17 0.05:0.05:1.5 example2_edp17_rate.txt --new;
+recorder edpim edp17 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp17.txt --new;
+recorder edprate edp17 0.05:0.05:3.0 example2_edp17_rate.txt --new;
 
 edp edp18 im1 probfn18;
-recorder edpim edp18 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp18.txt --new;
+recorder edpim edp18 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp18.txt --new;
 recorder edprate edp18 0.001:0.001:0.100 example2_edp18_rate.txt --new;
 
 edp edp19 im1 probfn19;
-recorder edpim edp19 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp19.txt --new;
-recorder edprate edp19 0.05:0.05:1.5 example2_edp19_rate.txt --new;
+recorder edpim edp19 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp19.txt --new;
+recorder edprate edp19 0.05:0.05:3.0 example2_edp19_rate.txt --new;
 
 edp edp20 im1 probfn20;
-recorder edpim edp20 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp20.txt --new;
+recorder edpim edp20 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp20.txt --new;
 recorder edprate edp20 0.001:0.001:0.100 example2_edp20_rate.txt --new;
 
 edp edp21 im1 probfn21;
-recorder edpim edp21 0.05:0.05:1.5 --cols mean_x, sd_ln_x example2_im_edp21.txt --new;
-recorder edprate edp21 0.05:0.05:1.5 example2_edp21_rate.txt --new;
+recorder edpim edp21 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp21.txt --new;
+recorder edprate edp21 0.05:0.05:3.0 example2_edp21_rate.txt --new;
 
 
 
