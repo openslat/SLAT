@@ -72,9 +72,9 @@ BOOST_AUTO_TEST_CASE( Linear_Interp_Test_1 )
     double y[] = { 1, 10, 25, 85 };
     LinearInterpolatedFn f(x, y, sizeof(x)/sizeof(x[0]));
 
-    BOOST_REQUIRE(std::isnan(f.ValueAt(0.0)));
+    BOOST_CHECK_EQUAL(f.ValueAt(0.0), 1.0);
     BOOST_CHECK_EQUAL(f.ValueAt(1.0), 1.0);
-    BOOST_CHECK_CLOSE(f.DerivativeAt(1.0), 1.0, 0.1);
+    BOOST_CHECK_CLOSE(f.DerivativeAt(1.0), 0.5, 0.1);
     BOOST_CHECK_EQUAL(f.ValueAt(2.0), 2.0);
     BOOST_CHECK_CLOSE(f.DerivativeAt(2.0), 1.0, 0.1);
     BOOST_CHECK_CLOSE(f.DerivativeAt(9.9), 1.0, 0.1);
@@ -89,8 +89,8 @@ BOOST_AUTO_TEST_CASE( Linear_Interp_Test_1 )
     BOOST_CHECK_EQUAL(f.ValueAt(30.0), 45.0);
     BOOST_CHECK_CLOSE(f.DerivativeAt(30.0), 2.0, 0.1);
     BOOST_CHECK_EQUAL(f.ValueAt(50.0), 85.0);
-    BOOST_CHECK_CLOSE(f.DerivativeAt(50.0), 2.0, 0.1);
-    BOOST_REQUIRE(std::isnan(f.ValueAt(50.1)));
+    BOOST_CHECK_CLOSE(f.DerivativeAt(50.0), 1.0, 0.1);
+    BOOST_CHECK_CLOSE(f.ValueAt(55.0), 85.0, 0.1);
 }
 
 BOOST_AUTO_TEST_CASE( Log_Log_Interp_Test_1 )
