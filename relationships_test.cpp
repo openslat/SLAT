@@ -25,7 +25,7 @@ BOOST_AUTO_TEST_CASE( Simple_Rate_Relationship_Test )
     shared_ptr<DeterministicFn> im_rate_function(
         new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
 
-    SimpleRateRelationship im_rate_rel(im_rate_function);
+    IM im_rate_rel(im_rate_function);
 
     struct { double im, rate; } test_data[] = {
         { 1.0000E-03, 2.915 }, { 1.0822E-03, 2.782 }, { 1.1712E-03, 2.653 }, { 1.2676E-03, 2.529 },
@@ -99,8 +99,8 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
     shared_ptr<DeterministicFn> im_rate_function(
         new PowerLawParametricCurve(1.6E-4, -2.74));
 
-    shared_ptr<RateRelationship> im_rate_rel(
-        new SimpleRateRelationship(im_rate_function));
+    shared_ptr<IM> im_rate_rel(
+        new IM(im_rate_function));
     
     shared_ptr<DeterministicFn> mu_edp(
         new PowerLawParametricCurve(0.1, 1.5));
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
 {
     shared_ptr<DeterministicFn> im_rate_function = std::make_shared<NonLinearHyperbolicLaw>(1221, 29.8, 62.2);
 
-    shared_ptr<RateRelationship> im_rate_rel = std::make_shared<SimpleRateRelationship>(im_rate_function);
+    shared_ptr<IM> im_rate_rel = std::make_shared<IM>(im_rate_function);
     
     shared_ptr<DeterministicFn> mu_edp = std::make_shared<PowerLawParametricCurve>(0.1, 1.5);
 
@@ -312,9 +312,9 @@ BOOST_AUTO_TEST_CASE( Callbacks )
      */
     shared_ptr<DeterministicFn> x_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
     shared_ptr<DeterministicFn> y_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
-    shared_ptr<RateRelationship> x_im_rate = std::make_shared<SimpleRateRelationship>(x_rate_fn);
+    shared_ptr<IM> x_im_rate = std::make_shared<IM>(x_rate_fn);
     {
-        shared_ptr<RateRelationship> y_im_rate = std::make_shared<SimpleRateRelationship>(x_rate_fn);
+        shared_ptr<IM> y_im_rate = std::make_shared<IM>(x_rate_fn);
     }
     x_rate_fn->replace(y_rate_fn);
     

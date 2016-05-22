@@ -261,6 +261,25 @@ namespace SLAT {
         }
     };
 
+    class IMWrapper {
+    public:
+        IMWrapper() : relationship(NULL) {};
+        IMWrapper(std::shared_ptr<IM> r)
+        {
+            relationship = r;
+        }
+        double lambda(double x) 
+        {
+            return relationship->lambda(x);
+        }
+        python::list lambda_l(python::list l) 
+        {
+            return l;
+        }
+    public:
+        std::shared_ptr<IM> relationship;
+    };
+    
     class RateRelationshipWrapper {
     public:
         RateRelationshipWrapper() : relationship(NULL) {};
@@ -329,15 +348,14 @@ namespace SLAT {
                                                 LossFnWrapper loss_fn, int count);
     };
     
-    RateRelationshipWrapper *MakeSimpleRelationship(DeterministicFnWrapper f)
+    IMWrapper *MakeIM(DeterministicFnWrapper f)
     {
-        std::shared_ptr<SimpleRateRelationship> relationship(
-            new SimpleRateRelationship(f.function));
-        return new RateRelationshipWrapper(relationship);
+        std::shared_ptr<IM> relationship(new IM(f.function));
+        return new IMWrapper(relationship);
     }
 
     CompoundRateRelationshipWrapper *MakeCompoundRelationship(
-        RateRelationshipWrapper base_rate,
+        IMWrapper base_rate,
         ProbabilisticFnWrapper dependent_rate)
     {
         std::shared_ptr<CompoundRateRelationship> relationship(
@@ -573,13 +591,17 @@ namespace SLAT {
             .def("SD", &ProbabilisticFnWrapper::SD)
             ;
 
-        python::def("MakeSimpleRelationship",
-                    MakeSimpleRelationship,
+        python::def("MakeIM",
+                    MakeIM,
                     python::return_value_policy<python::manage_new_object>());
 
         python::def("MakeCompoundRelationship",
                     MakeCompoundRelationship,
                     python::return_value_policy<python::manage_new_object>());
+
+        python::class_<IMWrapper>("IM", python::no_init)
+            .def("getlambda", &IMWrapper::lambda)
+            ;
 
         python::class_<RateRelationshipWrapper>("RateRelationship", python::no_init)
             .def("getlambda", &RateRelationshipWrapper::lambda)

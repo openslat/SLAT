@@ -21,8 +21,8 @@ BOOST_AUTO_TEST_CASE(comp_group_edp_test)
 {
     shared_ptr<DeterministicFn> im_rate_function(
         new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
-    shared_ptr<RateRelationship> im_rate_rel(
-        new SimpleRateRelationship(im_rate_function));
+    shared_ptr<IM> im_rate_rel(
+        new IM(im_rate_function));
 
     shared_ptr<DeterministicFn> mu_edp(
         new PowerLawParametricCurve(0.1, 1.5));

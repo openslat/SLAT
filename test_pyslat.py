@@ -13,7 +13,7 @@ import math
 # Create a non-linear hyperbolic function, as used in example 1, and use it as
 # the base function for an IM-Rate relationship:
 im = pyslat.factory(pyslat.FUNCTION_TYPE.NLH, [1221, 29.8, 62.2])
-im_rate = pyslat.MakeSimpleRelationship(im)
+im_rate = pyslat.MakeIM(im)
 
 old_slat_path = os.path.expanduser("~") + "/Downloads/SLATv1.15_Public/example1_output_gcc/"
 old_slat_path = "paleo-SLAT-data/"

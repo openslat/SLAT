@@ -22,6 +22,50 @@
 
 namespace SLAT {
 
+
+/**
+ * @brief IM
+ * 
+ * An 'IM' object represents an intensity measurement function. It is
+ * constructed from a deterministic function, and can report the rate of
+ * exceedence, and derivative.
+ */
+    class IM : public Replaceable<IM>
+    {
+    protected:
+        int callback_id;
+        std::shared_ptr<DeterministicFn> f;
+
+    public:
+        IM(std::shared_ptr<DeterministicFn> func);
+        ~IM() {
+            f->remove_callbacks(callback_id);
+        }; /**< Destructor; uninstall callbacks */
+
+        /** 
+         * Returns the probability of exceedence at a given value.
+         * 
+         * @param x The value for which we want to know the probability.
+         * 
+         * @return The probability the of exceedence.
+         */
+        double lambda(double x);
+        
+        /** 
+         * Returns the derivative of lambda at the given point.
+         * 
+         * @param x The value at which we want to know the derivative.
+         * 
+         * @return The derivative of the relationship at x.
+         */
+        virtual double DerivativeAt(double x) ;
+
+        virtual std::string ToString(void) const;
+            
+        friend std::ostream& operator<<(std::ostream& out, const IM& o);
+    };
+
+    
 /**
  * @brief Rate Relationship
  * 
@@ -78,41 +122,6 @@ namespace SLAT {
         friend std::ostream& operator<<(std::ostream& out, const RateRelationship& o);
     };
 
-/**
- * @brief Simple Rate Relationship
- * 
- * A simple rate relationship is defined by a single, deterministic
- * function. The function should describe the probability that a value will
- * exceed a given value. This should be 1 at 0 (i.e., the value is guaranteed to
- * be at least zero), monotonically decreasing to 0.
- */
-    class SimpleRateRelationship : public RateRelationship
-    {
-    public:
-        /** 
-         * Construct a SimpleRateRelationship given a shared pointer to a
-         * deterministic function that describes the rate relationship.
-         * 
-         * @param func A shared pointer to the function defining the relationship.
-         */
-        SimpleRateRelationship(std::shared_ptr<DeterministicFn> func);
-        ~SimpleRateRelationship() {
-            f->remove_callbacks(callback_id);
-        }; /**< Destructor; uninstall callbacks */
-        /** 
-         * Return the probability of exceeding a given value.
-         * 
-         * @param x  The value at which we want to know the probability.
-         * 
-         * @return The probability that the value will exceed x.
-         */
-        virtual double calc_lambda(double x);
-
-        virtual std::string ToString(void) const;
-    protected:
-        std::shared_ptr<DeterministicFn> f; /**< Function describing the
-                                                   * relationship. */
-    };
 
 /**
  * @brief Comound Rate Relationship
@@ -153,7 +162,7 @@ namespace SLAT {
          * 
          * @return 
          */
-        CompoundRateRelationship(std::shared_ptr<RateRelationship> base_rate,
+        CompoundRateRelationship(std::shared_ptr<IM> base_rate,
                                  std::shared_ptr<ProbabilisticFn> dependent_rate);
 
         ~CompoundRateRelationship() {
@@ -185,9 +194,9 @@ namespace SLAT {
         double SD_ln(double base_value) const;
         double SD(double base_value) const;
         
-        std::shared_ptr<RateRelationship> Base_Rate(void) { return base_rate; };
+        std::shared_ptr<IM> Base_Rate(void) { return base_rate; };
     protected:
-        std::shared_ptr<RateRelationship> base_rate; /**< Base rate relationship */
+        std::shared_ptr<IM> base_rate; /**< Base rate relationship */
         std::shared_ptr<ProbabilisticFn> dependent_rate; /**< Dependent function */
 
         double tolerance;

@@ -37,8 +37,7 @@ int main(int argc, char **argv)
     shared_ptr<DeterministicFn> im_rate_function(
         new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
 
-    shared_ptr<RateRelationship> im_rate_rel(
-        new SimpleRateRelationship(im_rate_function));
+    shared_ptr<IM> im_rate_rel(new IM(im_rate_function));
     {
         BOOST_LOG(logger) << "Writing IM-RATE table";
         ofstream outfile("im_rate.dat");

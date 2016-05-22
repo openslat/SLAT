@@ -55,8 +55,7 @@ namespace SLAT {
     return (*f)(x);
   }
 
-    SimpleRateRelationship::SimpleRateRelationship(
-        std::shared_ptr<DeterministicFn> func) : RateRelationship(false)
+    IM::IM( std::shared_ptr<DeterministicFn> func) 
     {
         f = func;
         callback_id = f->add_callbacks(
@@ -70,19 +69,19 @@ namespace SLAT {
     }
 
 
-    double SimpleRateRelationship::calc_lambda(double x)
+    double IM::lambda(double x)
     {
       return f->ValueAt(x);
+    }
+
+    std::string IM::ToString(void) const 
+    {
+        return "IM(" + f->ToString() + ")";
     }
 
     std::string RateRelationship::ToString(void) const 
     {
         return "Rate Relationship: ";
-    }
-
-    std::string SimpleRateRelationship::ToString(void) const 
-    {
-        return "Simple(" + f->ToString() + ")";
     }
 
     std::string CompoundRateRelationship::ToString(void) const 
@@ -96,6 +95,35 @@ namespace SLAT {
         out << o.ToString();
         return out;
     }
+
+    double IM::DerivativeAt(double x)
+    {
+        /*
+         * Encapsulate the function in a lambda, that we can pass to the GSL through
+         * the function 'wrapper()' (above).
+         */
+        std::function<double (double)> local_lambda = [this] (double x) {
+	  double result = this->lambda(x);
+	  return result;
+        };
+
+        /*
+         * Set up a 'gsl_function'--we'll pass the lambda as an additional
+         * parameter, as allowed by the GSL.
+         */
+        gsl_function F;
+        F.function = (double (*)(double, void *))wrapper;
+        F.params = &local_lambda;
+    
+        /*
+         * Just return the result reported by the GSL--we're ignoring the absolute
+         * error, and any error codes, at least for now.
+         */
+        double result, abserror;
+        gsl_deriv_forward(&F, x, 1E-8, &result, &abserror);
+        return result;
+    }
+
 /*
  * Uses the GSL to calculate the derivative; can be overridden by subclasses.
  */
@@ -128,7 +156,7 @@ namespace SLAT {
     }
 
     CompoundRateRelationship::CompoundRateRelationship(
-        std::shared_ptr<RateRelationship> base_rate,
+        std::shared_ptr<IM> base_rate,
         std::shared_ptr<ProbabilisticFn> dependent_rate)
         : RateRelationship(true)
     {
@@ -140,7 +168,7 @@ namespace SLAT {
                 this->lambda.ClearCache();
                 this->notify_change();
             },
-            [this] (std::shared_ptr<RateRelationship> new_base_rate) {
+            [this] (std::shared_ptr<IM> new_base_rate) {
                 this->lambda.ClearCache();
                 this->base_rate = new_base_rate;
                 this->notify_change();
@@ -169,7 +197,10 @@ namespace SLAT {
                 } else {
                     double d = this->base_rate->DerivativeAt(x2);
                     double p = this->dependent_rate->P_exceedence(x2, min_y);
-                    result = p * std::abs(d);
+
+                    LogNormalDist c = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.470);
+                    result = (p * (1 - c.p_at_most(x2)) + c.p_at_most(x2)) * std::abs(d);
+                    result = p  * std::abs(d);
                 }
                 return result;
             }, local_settings); 
