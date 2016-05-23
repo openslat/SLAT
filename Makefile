@@ -6,10 +6,17 @@ clean:
 #PYPATH=/c/Users/mag109/AppData/Local/Programs/Python/Python35
 #PYINC=$(PYPATH)/include
 #PYLIB=$(PYLIB)/lib
-PYVER=3.5m
-PYINC=/mingw64/include/python$(PYVER)
-PYLIB=python$(PYVER)
-CC=g++
+PLATFORM := $(shell uname)
+ifeq ($(shell uname), Linux)
+	# Linux Build
+	CC=g++
+else
+	# MING build (presumably)
+	CC=/mingw64/bin/g++
+	PYVER=3.5m
+	PYINC=/mingw64/include/python$(PYVER)
+	PYLIB=python$(PYVER)
+endif
 CFLAGS=-g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11  -fPIC -DBOOST_ALL_DYN_LINK
 CFLAGS += `pkg-config --cflags gsl`
 
@@ -30,6 +37,7 @@ UNIT_SRCS = unit_test.cpp functions_test.cpp relationships_test.cpp maq_test.cpp
 UNIT_OBJS = $(UNIT_SRCS:.cpp=.o)
 
 %.o : %.cpp
+	echo $(PLATFORM)
 	$(CC) -c $(CFLAGS) $< -o $@
 caching.o: caching.cpp caching.h 
 functions.o: functions.cpp functions.h replaceable.h
