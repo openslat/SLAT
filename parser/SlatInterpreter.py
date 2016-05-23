@@ -130,7 +130,7 @@ class im:
 
     def __str__(self):
         if self._collapse:
-            return("Intensity measure '{}', based on the deterministic function '{}', with collapse function {}".format(self._id, self._detfn.id()), self._collapse)
+            return("Intensity measure '{}', based on the deterministic function '{}', with {}".format(self._id, self._detfn.id(), self._collapse))
         else:
             return("Intensity measure '{}', based on the deterministic function '{}'.".format(self._id, self._detfn.id()))
 
@@ -597,7 +597,6 @@ class SlatInterpreter(slatListener):
             raise ValueError("Sd option for collapse not yet supported")
 
         self._ims[id].SetCollapse(collapse("anonymous", mu, sd))
-        print(self._ims)
 
     # Exit a parse tree produced by slatParser#edp_command.
     def exitEdp_command(self, ctx:slatParser.Edp_commandContext):
