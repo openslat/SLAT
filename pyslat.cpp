@@ -261,6 +261,26 @@ namespace SLAT {
         }
     };
 
+    class CollapseWrapper {
+    public:
+        CollapseWrapper() : collapse(NULL) {};
+        CollapseWrapper(std::shared_ptr<Collapse> c) {
+            collapse = c;
+        }
+        double pCollapse(double im)
+        {
+            return collapse->pCollapse(im);
+        }
+        std::shared_ptr<Collapse> collapse;
+    };
+
+    CollapseWrapper *MakeCollapse(double mu, double sd)
+    {
+        return new CollapseWrapper(std::make_shared<Collapse>(mu, sd));
+
+    }
+
+    
     class IMWrapper {
     public:
         IMWrapper() : relationship(NULL) {};
@@ -276,8 +296,17 @@ namespace SLAT {
         {
             return l;
         }
+        void SetCollapse(CollapseWrapper c)
+        {
+           relationship->SetCollapse(c.collapse);
+        }
+        double pCollapse(double im)
+        {
+            return relationship->pCollapse(im);
+        }
     public:
         std::shared_ptr<IM> relationship;
+        
     };
     
     class EDPWrapper {
@@ -576,8 +605,18 @@ namespace SLAT {
                     MakeEDP,
                     python::return_value_policy<python::manage_new_object>());
 
+        python::class_<CollapseWrapper>("Collapse", python::no_init)
+            .def("pCollapse", &CollapseWrapper::pCollapse);
+            ;
+
+        python::def("MakeCollapse", 
+                    MakeCollapse,
+                    python::return_value_policy<python::manage_new_object>());
+        
         python::class_<IMWrapper>("IM", python::no_init)
             .def("getlambda", &IMWrapper::lambda)
+            .def("SetCollapse", &IMWrapper::SetCollapse)
+            .def("pCollapse", &IMWrapper::pCollapse)
             ;
 
         python::class_<EDPWrapper>("EDP", python::no_init)

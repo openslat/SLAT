@@ -94,11 +94,26 @@ class probfn:
                    self._mu_func[1].id(), self._mu_func[0],
                    self._sigma_func[1].id(), self._sigma_func[0]))
 
+class collapse:
+    def __init__(self, id, mu, sd):
+        self._id = id
+        self._mu = mu
+        self._sd = sd
+        self._func = pyslat.MakeCollapse(mu, sd)
+        self._collapse = None
+        print(self)
+
+    def func(self):
+        return self._func
+
+    def __str__(self):
+        return("Collapse function '{}', mu={}, sd={}.".format(self._id, self._mu, self._sd))
+        
 class im:
     def __init__(self, id, detfn):
         self._id = id
         self._detfn = detfn
-        self._func = pyslat.MakeSimpleRelationship(detfn.function())
+        self._func = pyslat.MakeIM(detfn.function())
 
     def id(self):
         return self._id
@@ -109,15 +124,22 @@ class im:
     def getlambda(self, x):
         return self._func.getlambda(x)
 
+    def SetCollapse(self, collapse):
+        self._collapse = collapse
+        self._func.SetCollapse(collapse.func())
+
     def __str__(self):
-        return("Intensity measure '{}', based on the deterministic function '{}'.".format(self._id, self._detfn.id()))
+        if self._collapse:
+            return("Intensity measure '{}', based on the deterministic function '{}', with collapse function {}".format(self._id, self._detfn.id()), self._collapse)
+        else:
+            return("Intensity measure '{}', based on the deterministic function '{}'.".format(self._id, self._detfn.id()))
 
 class edp:
     def __init__(self, id, im, fn):
         self._id = id
         self._im = im
         self._fn = fn
-        self._func = pyslat.MakeCompoundRelationship(im.function(), fn.function())
+        self._func = pyslat.MakeEDP(im.function(), fn.function())
             
     def id(self):
         return self._id
@@ -363,8 +385,8 @@ class recorder:
                         yval = self._function.ValueAt(x)
                     elif (isinstance(self._function, im) or
                           isinstance(self._function, edp) or
-                          isinstance(self._function, pyslat.RateRelationship) or
-                          isinstance(self._function, pyslat.CompoundRateRelationship)):
+                          isinstance(self._function, pyslat.IM) or
+                          isinstance(self._function, pyslat.EDP)):
                           yval = self._function.getlambda(x)
                     elif isinstance(self._function, pyslat.CompGroup):
                           yval = self._function.E_Loss_EDP(x)
@@ -560,6 +582,22 @@ class SlatInterpreter(slatListener):
         im_id = ctx.ID(0).getText()
         fn_id = ctx.ID(1).getText()
         self._ims[im_id] = im(im_id, self._detfns.get(fn_id))
+
+    def exitCollapse_command(self, ctx:slatParser.Collapse_commandContext):
+        id = ctx.ID().getText()
+        options = self._stack.pop()
+        params = self._stack.pop()
+        mu = params[0]
+        sd = params[1]
+
+        if not options['mu'] == pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:
+            raise ValueError("Mu option for collapse not yet supported")
+
+        if not options['sd'] == pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:
+            raise ValueError("Sd option for collapse not yet supported")
+
+        self._ims[id].SetCollapse(collapse("anonymous", mu, sd))
+        print(self._ims)
 
     # Exit a parse tree produced by slatParser#edp_command.
     def exitEdp_command(self, ctx:slatParser.Edp_commandContext):

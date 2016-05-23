@@ -186,10 +186,8 @@ namespace SLAT {
                 } else {
                     double d = this->base_rate->DerivativeAt(x2);
                     double p = this->dependent_rate->P_exceedence(x2, min_y);
-
-                    LogNormalDist c = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.470);
-                    result = (p * (1 - c.p_at_most(x2)) + c.p_at_most(x2)) * std::abs(d);
-                    result = p  * std::abs(d);
+                    result = (p * (1 - base_rate->pCollapse(x2)) + 
+                              base_rate->pCollapse(x2)) * std::abs(d);
                 }
                 return result;
             }, local_settings); 

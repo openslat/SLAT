@@ -19,6 +19,7 @@ COMMENT :   '#' ~[\r\n]*;
 PRINT : 'print';
 DETFN : 'detfn';
 PROBFN : 'probfn';
+COLLAPSE : 'collapse';
 IM : 'im';
 EDP : 'edp';
 FRAGFN: 'fragfn';
@@ -51,7 +52,7 @@ MAQ: 'maq';
 
 script : (WS | command)*;
 
-command : (title_command | detfn_command | probfn_command | im_command | edp_command | fragfn_command | lossfn_command | compgroup_command | print_command | integration_command | recorder_command | analyze_command | set_command | importprobfn_command) ';' ;
+command : (title_command | detfn_command | probfn_command | im_command | edp_command | fragfn_command | lossfn_command | compgroup_command | print_command | integration_command | recorder_command | analyze_command | set_command | importprobfn_command | collapse_command) ';' ;
 
 title_command : 'title' STRING;
 
@@ -134,6 +135,7 @@ function_ref : ID | var_ref;
 im_command : IM ID ID;
 edp_command : EDP ID ID ID;
 
+collapse_command: COLLAPSE ID lognormal_dist;
 
 fragfn_command : FRAGFN ID 
 	       (fragfn_db_params | fragfn_user_defined_params);

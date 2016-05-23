@@ -17,11 +17,32 @@
 #include "maq.h"
 #include "replaceable.h"
 #include "caching.h"
-
+#include "lognormaldist.h"
 #include <iostream>
 
 namespace SLAT {
 
+/**
+ * @brief Collapse
+ * 
+ * An 'Collapse' object reports on the probability of collapse for a given IM
+ * value.
+ */
+    class Collapse 
+    {
+    private:
+        LogNormalDist dist;
+    public:
+        Collapse(double mean_x, double sd_ln_x) {
+            dist = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mean_x, sd_ln_x);
+        }
+
+        double pCollapse(double im) {
+            return dist.p_at_most(im);
+        }
+
+        ~Collapse() {}; /**< Destructor; do nothing */
+    };
 
 /**
  * @brief IM
@@ -35,7 +56,7 @@ namespace SLAT {
     protected:
         int callback_id;
         std::shared_ptr<DeterministicFn> f;
-
+        std::shared_ptr<Collapse> collapse = NULL;
     public:
         IM(std::shared_ptr<DeterministicFn> func);
         ~IM() {
@@ -59,6 +80,20 @@ namespace SLAT {
          * @return The derivative of the relationship at x.
          */
         virtual double DerivativeAt(double x) ;
+
+        void SetCollapse(std::shared_ptr<Collapse> new_collapse)
+        {
+            collapse = new_collapse;
+            notify_change();
+        }
+
+        double pCollapse(double im) {
+            if (collapse) {
+                return collapse->pCollapse(im);
+            } else {
+                return 0;
+            }
+        }
 
         virtual std::string ToString(void) const;
             
