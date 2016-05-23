@@ -7,21 +7,44 @@ clean:
 #PYINC=$(PYPATH)/include
 #PYLIB=$(PYLIB)/lib
 PLATFORM := $(shell uname)
+
+CFLAGS=-g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11  -fPIC -DBOOST_ALL_DYN_LINK
+
 ifeq ($(shell uname), Linux)
 	# Linux Build
 	CC=g++
+	CFLAGS += `pkg-config --cflags gsl`
+
+	LDFLAGS=-lboost_log -lboost_thread -lboost_system -lpthread 
+	LDFLAGS += `pkg-config --libs gsl`
 else
 	# MING build (presumably)
-	CC=/mingw64/bin/g++
 	PYVER=3.5m
 	PYINC=/mingw64/include/python$(PYVER)
 	PYLIB=python$(PYVER)
-endif
-CFLAGS=-g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11  -fPIC -DBOOST_ALL_DYN_LINK
-CFLAGS += `pkg-config --cflags gsl`
 
-LDFLAGS=-lboost_log -lboost_thread -lboost_system -lpthread 
-LDFLAGS += `pkg-config --libs gsl`
+	CC=/mingw64/bin/g++
+
+	CFLAGS += -shared-libgcc \
+		-D__x86_64__ \
+		-I$(PYINC) \
+		-I/mingw64/include \
+		-I/usr/local/include
+
+	LDFLAGS=-L$(PYLIB) \
+		-L/mingw64/lib \
+		-lpython$(PYVER) \
+		-L/usr/local/lib \
+		-L. \
+		-lgsl.dll -lgslcblas.dll \
+		-lboost_log-mt \
+		-lboost_thread-mt \
+		-lboost_system-mt \
+		-lboost_filesystem-mt \
+		-lboost_unit_test_framework-mt \
+		-L/c/windows \
+		-lpthread -lm
+endif
 
 # Uncomment the next line to add the current directory to the search path. This is *NOT*
 # generally recommended, but saves on from specifying 'LD_LIBRARY_PATH=.':
