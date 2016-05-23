@@ -80,7 +80,7 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "IM-EDP table done.";
     }
 
-    std::shared_ptr<CompoundRateRelationship> rel = std::make_shared<CompoundRateRelationship>(im_rate_rel, edp_im_relationship);
+    std::shared_ptr<EDP> rel = std::make_shared<EDP>(im_rate_rel, edp_im_relationship);
     for (int i=0; i < 5; i++) 
     {
         //std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();

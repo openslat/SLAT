@@ -22,7 +22,7 @@ namespace SLAT {
     class CompGroup {
     public:
         CompGroup() {};
-        CompGroup(std::shared_ptr<CompoundRateRelationship> edp,
+        CompGroup(std::shared_ptr<EDP> edp,
                   std::shared_ptr<FragilityFn> frag_fn,
                   std::shared_ptr<LossFn> loss_fn, int count);
         double E_loss_EDP(double edp);
@@ -40,7 +40,7 @@ namespace SLAT {
         Caching::CachedFunction<LogNormalDist, double> loss_EDP_dist;
         double E_loss(int years, double discount_rate);
     private:
-        std::shared_ptr<CompoundRateRelationship> edp;
+        std::shared_ptr<EDP> edp;
         std::shared_ptr<FragilityFn> frag_fn;
         std::shared_ptr<LossFn> loss_fn;
         int count;

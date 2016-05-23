@@ -111,15 +111,15 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Integration_Params_Test )
     shared_ptr<ProbabilisticFn> edp_im_relationship(
         new LogNormalFn(mu_edp, LogNormalFn::MEAN_LN_X,  sigma_edp, LogNormalFn::SIGMA_LN_X));
 
-    CompoundRateRelationship rel1(im_rate_rel, edp_im_relationship);
-    CompoundRateRelationship rel2(im_rate_rel, edp_im_relationship);
+    EDP rel1(im_rate_rel, edp_im_relationship);
+    EDP rel2(im_rate_rel, edp_im_relationship);
 
     {
         /*
          * Make sure the class and object defaults are correct:
          */
         Integration::IntegrationSettings &class_settings = 
-            RateRelationship::Get_Class_Integration_Settings();
+            EDP::Get_Class_Integration_Settings();
 
         BOOST_REQUIRE_EQUAL(class_settings.Get_Effective_Tolerance(), 1E-6);
         BOOST_REQUIRE_EQUAL(class_settings.Get_Effective_Max_Evals(), 1024);
@@ -229,7 +229,7 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
     shared_ptr<ProbabilisticFn> edp_im_relationship = 
         std::make_shared<LogNormalFn>(mu_edp, LogNormalFn::MEAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X);
 
-    CompoundRateRelationship rel(im_rate_rel, edp_im_relationship);
+    EDP rel(im_rate_rel, edp_im_relationship);
 
     const struct { double edp, rate; } test_data[] = {
         { 1.0000E-03, 7.8804E-02 }, { 1.0519E-03, 7.4990E-02 }, { 1.1065E-03, 7.1321E-02 }, { 1.1640E-03, 6.7801E-02 },
@@ -263,8 +263,8 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
     }
 
     {
-        std::shared_ptr<CompoundRateRelationship> rel_ptr(
-            new CompoundRateRelationship(im_rate_rel, edp_im_relationship));
+        std::shared_ptr<EDP> rel_ptr(
+            new EDP(im_rate_rel, edp_im_relationship));
         
         for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
             BOOST_CHECK_CLOSE(rel_ptr->lambda(test_data[i].edp), test_data[i].rate, 0.2);
@@ -276,7 +276,7 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
     }
 
     {
-        std::shared_ptr<RateRelationship> rel_ptr = std::make_shared<CompoundRateRelationship>(im_rate_rel, edp_im_relationship);
+        std::shared_ptr<EDP> rel_ptr = std::make_shared<EDP>(im_rate_rel, edp_im_relationship);
 
         for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
             BOOST_REQUIRE_CLOSE(rel_ptr->lambda(test_data[i].edp), test_data[i].rate, 0.2);
@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
     }
 
     {
-        RateRelationship *rel_ptr = new CompoundRateRelationship(im_rate_rel, edp_im_relationship);
+        EDP *rel_ptr = new EDP(im_rate_rel, edp_im_relationship);
 
         for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
             BOOST_REQUIRE_CLOSE(rel_ptr->lambda(test_data[i].edp), test_data[i].rate, 0.2);
@@ -325,9 +325,9 @@ BOOST_AUTO_TEST_CASE( Callbacks )
     shared_ptr<DeterministicFn> x_sigma_edp = std::make_shared<PowerLawParametricCurve>(0.5, 0.0);
     shared_ptr<ProbabilisticFn> x_edp_im_fn = 
         std::make_shared<LogNormalFn>(x_mu_edp, LogNormalFn::MEAN_LN_X,  x_sigma_edp, LogNormalFn::SIGMA_LN_X);
-    shared_ptr<RateRelationship> x_edp_im_rel = std::make_shared<CompoundRateRelationship>(x_im_rate, x_edp_im_fn); 
+    shared_ptr<EDP> x_edp_im_rel = std::make_shared<EDP>(x_im_rate, x_edp_im_fn); 
     {
-        shared_ptr<RateRelationship> y_edp_im_rel = std::make_shared<CompoundRateRelationship>(x_im_rate, x_edp_im_fn); 
+        shared_ptr<EDP> y_edp_im_rel = std::make_shared<EDP>(x_im_rate, x_edp_im_fn); 
     }
     y_rate_fn->replace(x_rate_fn);
     x_mu_edp->replace(x_sigma_edp);

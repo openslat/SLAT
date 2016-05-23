@@ -76,7 +76,7 @@ plt.show()
 
 # Use the functions defined above to describe the relationship between EDP and
 # rate:
-edp_rate = pyslat.MakeCompoundRelationship(im_rate, edp_im)
+edp_rate = pyslat.MakeEDP(im_rate, edp_im)
 edp_rate_GCC = np.loadtxt(old_slat_path + "example1_EDP-rate-1", skiprows=3, unpack=True)
 old_slat_line, = plt.loglog(edp_rate_GCC[0], edp_rate_GCC[1])
 old_slat_line.set_label("Old SLAT (mean)")

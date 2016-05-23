@@ -67,34 +67,18 @@ namespace SLAT {
 
     
 /**
- * @brief Rate Relationship
+ * @brief EDP
  * 
- * A 'Rate Relationship' represents the probability of a function exceeding a
- * given value. This is an abstract class.
+ * An 'EDP' object represents the relationship between a probabilistic EDP
+ * function, and the related IM.
  */
-    class RateRelationship : public Replaceable<RateRelationship>
+    class EDP : public Replaceable<EDP>
     {
-    public:
-        virtual ~RateRelationship() {
-        };   /**< Default destructor; does nothing. */
     protected:
-        RateRelationship(bool activate_cache);
         Integration::IntegrationSettings local_settings;
         static Integration::IntegrationSettings class_settings;
         int callback_id;
 
-        /** 
-         * Returns the probability of exceedence at a given value.
-         * 
-         * @param x The value for which we want to know the probability.
-         * 
-         * @return The probability the of exceedence.
-         */
-        virtual double calc_lambda(double x) {
-            return NAN;
-        };
-
-        
     public:
         Caching::CachedFunction<double, double> lambda;
         
@@ -119,22 +103,8 @@ namespace SLAT {
 
         virtual std::string ToString(void) const;
             
-        friend std::ostream& operator<<(std::ostream& out, const RateRelationship& o);
-    };
+        friend std::ostream& operator<<(std::ostream& out, const EDP& o);
 
-
-/**
- * @brief Comound Rate Relationship
- * 
- * A compound rate relationship is defined by a rate relationship, and a
- * probabilistic function. For example, given an rate relationship for IM, and a
- * probabilistic function describing the relationship between IM and EDP, a
- * compound relationship will combine them to describe the rate relationship for
- * EDP.
- */
-    class CompoundRateRelationship : public RateRelationship
-    {
-    public:
         /** 
          * Set the default tolerance and evaluations limit used by the
          * integrator when calculating lambda for CompoundRateRelationships.
@@ -162,14 +132,13 @@ namespace SLAT {
          * 
          * @return 
          */
-        CompoundRateRelationship(std::shared_ptr<IM> base_rate,
-                                 std::shared_ptr<ProbabilisticFn> dependent_rate);
+        EDP(std::shared_ptr<IM> base_rate,
+            std::shared_ptr<ProbabilisticFn> dependent_rate);
 
-        ~CompoundRateRelationship() {
+        virtual ~EDP() {
             base_rate->remove_callbacks(base_rate_callback_id);
             dependent_rate->remove_callbacks(dependent_rate_callback_id);
         }; /**< Destructor; unregister callbacks */
-
 
         /** 
          * Return the probability of exceeding a given value in the complex
@@ -182,9 +151,7 @@ namespace SLAT {
          * 
          * @return The probability that the value will exceed x.
          */
-        virtual double calc_lambda(double x);
-
-        virtual std::string ToString(void) const;
+        double calc_lambda(double x);
 
         double P_exceedence(double base_value, double min_dependent_value) const;
         

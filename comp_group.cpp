@@ -17,7 +17,7 @@
 using namespace std;
 
 namespace SLAT {
-    CompGroup::CompGroup(std::shared_ptr<CompoundRateRelationship> edp,
+    CompGroup::CompGroup(std::shared_ptr<EDP> edp,
                          std::shared_ptr<FragilityFn> frag_fn, 
                          std::shared_ptr<LossFn> loss_fn,
                          int count)

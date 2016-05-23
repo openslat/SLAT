@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(comp_group_edp_test)
     shared_ptr<ProbabilisticFn> edp_im_relationship(
         new LogNormalFn(mu_edp, LogNormalFn::MEAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X));
 
-    std::shared_ptr<CompoundRateRelationship> rel(new CompoundRateRelationship(im_rate_rel, edp_im_relationship));
+    std::shared_ptr<EDP> rel(new EDP(im_rate_rel, edp_im_relationship));
 
     std::shared_ptr<FragilityFn> fragFn(new FragilityFn(
                                             { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),

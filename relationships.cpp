@@ -18,22 +18,15 @@
 #include "maq.h"
 
 namespace SLAT {
-    Integration::IntegrationSettings RateRelationship::class_settings(
+    Integration::IntegrationSettings EDP::class_settings(
         Integration::IntegrationSettings::Get_Global_Settings());
 
-    RateRelationship::RateRelationship(bool activate_cache) :
-        local_settings(&class_settings),
-        callback_id(0),
-        lambda([this] (double x) { return this->calc_lambda(x); }, activate_cache)
-    {
-    };
-
-    Integration::IntegrationSettings &RateRelationship::Get_Class_Integration_Settings(void)
+    Integration::IntegrationSettings &EDP::Get_Class_Integration_Settings(void)
     {
         return class_settings;
     }
 
-    Integration::IntegrationSettings &RateRelationship::Get_Integration_Settings(void)
+    Integration::IntegrationSettings &EDP::Get_Integration_Settings(void)
     {
         return local_settings;
     }
@@ -79,18 +72,13 @@ namespace SLAT {
         return "IM(" + f->ToString() + ")";
     }
 
-    std::string RateRelationship::ToString(void) const 
+    std::string EDP::ToString(void) const 
     {
-        return "Rate Relationship: ";
-    }
-
-    std::string CompoundRateRelationship::ToString(void) const 
-    {
-        return "Compound(" + base_rate->ToString()
+        return "EDP((" + base_rate->ToString()
             + ", " + dependent_rate->ToString() + ")";
     }
 
-    std::ostream& operator<<(std::ostream& out, const RateRelationship& o)
+    std::ostream& operator<<(std::ostream& out, const EDP& o)
     {
         out << o.ToString();
         return out;
@@ -127,7 +115,7 @@ namespace SLAT {
 /*
  * Uses the GSL to calculate the derivative; can be overridden by subclasses.
  */
-    double RateRelationship::DerivativeAt(double x)
+    double EDP::DerivativeAt(double x)
     {
         /*
          * Encapsulate the function in a lambda, that we can pass to the GSL through
@@ -155,10 +143,11 @@ namespace SLAT {
         return result;
     }
 
-    CompoundRateRelationship::CompoundRateRelationship(
-        std::shared_ptr<IM> base_rate,
-        std::shared_ptr<ProbabilisticFn> dependent_rate)
-        : RateRelationship(true)
+    EDP::EDP(std::shared_ptr<IM> base_rate,
+             std::shared_ptr<ProbabilisticFn> dependent_rate) :
+        local_settings(&class_settings),
+        callback_id(0),
+        lambda([this] (double x) { return this->calc_lambda(x); }) 
     {
         this->base_rate = base_rate;
         this->dependent_rate = dependent_rate;
@@ -186,7 +175,7 @@ namespace SLAT {
             });
     }
 
-    double CompoundRateRelationship::calc_lambda(double min_y) 
+    double EDP::calc_lambda(double min_y) 
     {
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
@@ -212,32 +201,32 @@ namespace SLAT {
         };
     }
 
-    double CompoundRateRelationship::P_exceedence(double base_value, double min_dependent_value) const
+    double EDP::P_exceedence(double base_value, double min_dependent_value) const
     {
         return dependent_rate->P_exceedence(base_value, min_dependent_value);
     }
 
-    double CompoundRateRelationship::MeanLn(double base_value) const
+    double EDP::MeanLn(double base_value) const
     {
         return dependent_rate->MeanLn(base_value);
     }
 
-    double CompoundRateRelationship::Median(double base_value) const
+    double EDP::Median(double base_value) const
     {
         return dependent_rate->Median(base_value);
     }
 
-    double CompoundRateRelationship::Mean(double base_value) const
+    double EDP::Mean(double base_value) const
     {
         return dependent_rate->Mean(base_value);
     }
 
-    double CompoundRateRelationship::SD_ln(double base_value) const
+    double EDP::SD_ln(double base_value) const
     {
         return dependent_rate->SD_ln(base_value);
     }
 
-    double CompoundRateRelationship::SD(double base_value) const
+    double EDP::SD(double base_value) const
     {
         return dependent_rate->SD(base_value);
     }
