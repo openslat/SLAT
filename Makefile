@@ -8,12 +8,12 @@ clean:
 #PYLIB=$(PYLIB)/lib
 PLATFORM := $(shell uname)
 
-CFLAGS=-g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11  -fPIC -DBOOST_ALL_DYN_LINK
+CFLAGS=-g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
 
 ifeq ($(shell uname), Linux)
 	# Linux Build
 	CC=g++
-	CFLAGS += `pkg-config --cflags gsl`
+	CFLAGS +=  -fPIC `pkg-config --cflags gsl`
 
 	LDFLAGS=-lboost_log -lboost_thread -lboost_system -lpthread 
 	LDFLAGS += `pkg-config --libs gsl`
