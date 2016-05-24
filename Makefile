@@ -115,8 +115,13 @@ fragility_test.o: fragility_test.cpp fragility.h
 comp_group_test.o: comp_group_test.cpp comp_group.h 
 unit_test.o: unit_test.cpp
 
+ifeq ($(shell uname), Linux)
 unit_tests: unit_test.o $(UNIT_OBJS) libslat.so 
 	$(CC) -fPIC $(UNIT_OBJS) -L. -lslat -o unit_tests ${LDFLAGS} -lboost_unit_test_framework
+else
+unit_tests: unit_test.o $(UNIT_OBJS) libslat.dll
+	$(CC) $(UNIT_OBJS) -L. -lslat -o unit_tests ${LDFLAGS} -lboost_unit_test_framework-mt
+endif
 
 pyslat.o: pyslat.cpp functions.h relationships.h replaceable.h
 	$(CC) -c $(CFLAGS) `pkg-config --cflags python3` -o $@ $<
