@@ -52,7 +52,10 @@ MAQ: 'maq';
 
 script : (WS | command)*;
 
-command : (title_command | detfn_command | probfn_command | im_command | edp_command | fragfn_command | lossfn_command | compgroup_command | print_command | integration_command | recorder_command | analyze_command | set_command | importprobfn_command | collapse_command) ';' ;
+command : (title_command | detfn_command | probfn_command | im_command | edp_command
+	| fragfn_command | lossfn_command | compgroup_command | print_command 
+	| integration_command | recorder_command | analyze_command | set_command 
+	| importprobfn_command | collapse_command) ';' ;
 
 title_command : 'title' STRING;
 
@@ -183,7 +186,7 @@ integration_method : MAQ;
 
 recorder_command : 'recorder' ((recorder_type ID recorder_at recorder_cols?) 
                   | (DSRATE ID)
-                  | (LOSSRATE ID recorder_at)
+                  | ((LOSSRATE | COLLAPSE) ID recorder_at)
 		  | (ANNLOSS ID recorder_at '--lambda' lambda_value))
 		  print_options?;
 lambda_value: numerical_scalar;

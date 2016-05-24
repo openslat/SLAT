@@ -124,6 +124,9 @@ class im:
     def getlambda(self, x):
         return self._func.getlambda(x)
 
+    def pCollapse(self, x):
+        return self._func.pCollapse(x)
+
     def SetCollapse(self, collapse):
         self._collapse = collapse
         self._func.SetCollapse(collapse.func())
@@ -319,7 +322,8 @@ class recorder:
                       'lossedp': ['EDP', None],
                       'lossim': ['IM', None],
                       'annloss': ['t', ["E[ALt]"]],
-                      'lossrate': ['t', 'Rate']}
+                      'lossrate': ['t', 'Rate'],
+                      'collapse': ['IM', 'p(Collapse)']}
         
             x_label = labels[self._type][0]
             y_label = labels[self._type][1]
@@ -347,6 +351,9 @@ class recorder:
                 elif self._type == 'lossrate':
                     loss_rate = self._function.lambda_loss(x)
                     line = "{}{:>15.6}".format(line, loss_rate)
+                elif self._type == 'collapse':
+                    p = self._function.pCollapse(x)
+                    line = "{}{:>15.6}".format(line, p)
                 elif not self._columns == None:
                     line = "{:>15.6}".format(x)
                     for y in self._columns:
@@ -815,6 +822,8 @@ class SlatInterpreter(slatListener):
             type = "annloss"
         elif ctx.LOSSRATE():
             type = 'lossrate'
+        elif ctx.COLLAPSE():
+            type = 'collapse'
         else:
             raise ValueError("Unhandled recorder type")
 
@@ -826,7 +835,7 @@ class SlatInterpreter(slatListener):
             function = self._detfns.get(id)
         elif type == 'probfn':
             function = self._probfns.get(id)
-        elif type == 'imrate':
+        elif type == 'imrate' or type == 'collapse':
             function = self._ims.get(id)
         elif type == 'edpim' or type == 'edprate':
             function = self._edps.get(id)
