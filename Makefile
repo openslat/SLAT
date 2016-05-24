@@ -1,12 +1,14 @@
+ifeq ($(shell uname), Linux)
 all: main unit_tests pyslat.so doc 
 
 clean:
-	rm -f *.a *.o main unit_tests
-#PYVER=35
-#PYPATH=/c/Users/mag109/AppData/Local/Programs/Python/Python35
-#PYINC=$(PYPATH)/include
-#PYLIB=$(PYLIB)/lib
-PLATFORM := $(shell uname)
+	rm -f *.a *.o *.so main unit_tests
+else
+all: main unit_tests pyslat.dll doc 
+
+clean:
+	rm -f *.a *.o *.dll main unit_tests
+endif
 
 CFLAGS=-g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
 
@@ -71,12 +73,40 @@ lognormaldist.o: lognormaldist.cpp lognormaldist.h
 loss_functions.o: loss_functions.cpp loss_functions.h 
 comp_group.o: comp_group.cpp comp_group.h
 
+ifeq ($(shell uname), Linux)
 libslat.so: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_functions.o comp_group.o caching.o
 	$(CC) -fPIC -shared -Wl,-soname,libslat.so -o libslat.so $(LIBOBJS) ${LDFLAGS}
+else
+libslat.dll: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_functions.o comp_group.o caching.o
+	$(CC) -shared \
+	-Wl,--dll \
+	-Wl,--export-all-symbols \
+	-Wl,--out-implib,libslat.a \
+	-o libslat.dll \
+	$(LIBOBJS) \
+	$(LDFLAGS)
+endif
 
 main.o: main.cpp functions.h relationships.h maq.h libslat.so replaceable.h fragility.h lognormaldist.h loss_functions.h
+
+ifeq ($(shell uname), Linux)
 main: main.o libslat.so
 	$(CC) -fPIC main.o -L. -lslat -o main ${LDFLAGS}
+else
+main: main.o libslat.dll
+	$(CC) main.o -L. -o main \
+	-lslat \
+	-L/usr/local/lib \
+	 $(CFLAGS) \
+	-lgsl \
+	-lboost_system-mt \
+	-lboost_log-mt \
+	-lboost_filesystem-mt \
+	-lboost_log_setup-mt \
+	-lpthread -lm \
+	-lboost_thread-mt \
+        -lboost_unit_test_framework-mt
+endif
 
 functions_test.o: functions_test.cpp functions.h replaceable.h
 relationships_test.o: relationships_test.cpp relationships.h functions.h replaceable.h
