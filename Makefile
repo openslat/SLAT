@@ -4,7 +4,7 @@ all: main unit_tests pyslat.so doc
 clean:
 	rm -f *.a *.o *.so main unit_tests
 else
-all: main unit_tests pyslat.dll doc 
+all: main unit_tests pyslat.pyd doc 
 
 clean:
 	rm -f *.a *.o *.dll main unit_tests
@@ -125,9 +125,23 @@ endif
 
 pyslat.o: pyslat.cpp functions.h relationships.h replaceable.h
 	$(CC) -c $(CFLAGS) `pkg-config --cflags python3` -o $@ $<
+
+ifeq ($(shell uname), Linux)
 pyslat.so: pyslat.o libslat.so
 	$(CC) -fPIC -shared -Wl,-soname,pyslat.so -o pyslat.so pyslat.o ${LDFLAGS} -L. -lslat \
 	`pkg-config --libs python3` -lboost_python-py34
+else
+pyslat.pyd: pyslat.o libslat.dll
+	$(CC) -shared pyslat.o \
+	-shared -o pyslat.pyd \
+	-Wl,--dll \
+	-Wl,--export-all-symbols \
+	-Wl,--out-implib,pyslat.a \
+	-L. -lslat \
+	${LDFLAGS} \
+        -L$(PYLIB) \
+	-lpython3.5 -lboost_python3-mt
+endif
 
 # pyslat.pyd: pyslat.o libslat.dll
 # 	$(CC) -shared pyslat.o \
