@@ -87,7 +87,7 @@ libslat.dll: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_
 	$(LDFLAGS)
 endif
 
-main.o: main.cpp functions.h relationships.h maq.h libslat.so replaceable.h fragility.h lognormaldist.h loss_functions.h
+main.o: main.cpp functions.h relationships.h maq.h replaceable.h fragility.h lognormaldist.h loss_functions.h
 
 ifeq ($(shell uname), Linux)
 main: main.o libslat.so
