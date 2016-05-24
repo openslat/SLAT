@@ -31,6 +31,18 @@ namespace SLAT {
         return local_settings;
     }
 
+    Integration::IntegrationSettings IM::class_settings(
+        Integration::IntegrationSettings::Get_Global_Settings());
+
+    Integration::IntegrationSettings &IM::Get_Class_Integration_Settings(void)
+    {
+        return class_settings;
+    }
+
+    Integration::IntegrationSettings &IM::Get_Integration_Settings(void)
+    {
+        return local_settings;
+    }
     
 /** 
  * Local wrapper function for use with GSL. 
@@ -111,6 +123,25 @@ namespace SLAT {
         gsl_deriv_forward(&F, x, 1E-8, &result, &abserror);
         return result;
     }
+
+    double IM::CollapseRate(void)
+    {
+        Integration::MAQ_RESULT result;
+        result =  Integration::MAQ(
+            [this] (double im) -> double {
+                double d = this->DerivativeAt(im);
+                double p = this->pCollapse(im);
+                double result = fabs(d) * p;
+                return result;
+            }, local_settings); 
+        if (result.successful) {
+            return result.integral;
+        } else {
+            // Log error
+            return NAN;
+        };
+    }
+
 
 /*
  * Uses the GSL to calculate the derivative; can be overridden by subclasses.

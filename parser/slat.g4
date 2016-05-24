@@ -20,6 +20,7 @@ PRINT : 'print';
 DETFN : 'detfn';
 PROBFN : 'probfn';
 COLLAPSE : 'collapse';
+COLLRATE : 'collrate';
 IM : 'im';
 EDP : 'edp';
 FRAGFN: 'fragfn';
@@ -185,7 +186,7 @@ integration_command : 'integration' integration_method numerical_scalar (INTEGER
 integration_method : MAQ;
 
 recorder_command : 'recorder' ((recorder_type ID recorder_at recorder_cols?) 
-                  | (DSRATE ID)
+                  | ((DSRATE | COLLRATE) ID)
                   | ((LOSSRATE | COLLAPSE) ID recorder_at)
 		  | (ANNLOSS ID recorder_at '--lambda' lambda_value))
 		  print_options?;

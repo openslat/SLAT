@@ -304,6 +304,10 @@ namespace SLAT {
         {
             return relationship->pCollapse(im);
         }
+        double CollapseRate(void)
+        {
+            return relationship->CollapseRate();
+        }
     public:
         std::shared_ptr<IM> relationship;
         
@@ -616,6 +620,7 @@ namespace SLAT {
         python::class_<IMWrapper>("IM", python::no_init)
             .def("getlambda", &IMWrapper::lambda)
             .def("SetCollapse", &IMWrapper::SetCollapse)
+            .def("CollapseRate", &IMWrapper::CollapseRate)
             .def("pCollapse", &IMWrapper::pCollapse)
             ;
 

@@ -131,6 +131,9 @@ class im:
         self._collapse = collapse
         self._func.SetCollapse(collapse.func())
 
+    def CollapseRate(self):
+        return self._func.CollapseRate()
+
     def __str__(self):
         if self._collapse:
             return("Intensity measure '{}', based on the deterministic function '{}', with {}".format(self._id, self._detfn.id(), self._collapse))
@@ -310,6 +313,8 @@ class recorder:
         if self._type == 'dsrate':
             # TODO: How does this recorder work?
             print("DSRATE recorder not implemented")
+        elif self._type == 'collrate':
+            print("Rate of Collapse for IM {} is {}".format(self._function.id(), self._function.CollapseRate()))
         else:
             labels = {'detfn': ['x', 'y'],
                       'probfn': ['x', None],
@@ -824,6 +829,8 @@ class SlatInterpreter(slatListener):
             type = 'lossrate'
         elif ctx.COLLAPSE():
             type = 'collapse'
+        elif ctx.COLLRATE():
+            type = 'collrate'
         else:
             raise ValueError("Unhandled recorder type")
 
@@ -835,7 +842,7 @@ class SlatInterpreter(slatListener):
             function = self._detfns.get(id)
         elif type == 'probfn':
             function = self._probfns.get(id)
-        elif type == 'imrate' or type == 'collapse':
+        elif type == 'imrate' or type == 'collapse' or type == 'collrate':
             function = self._ims.get(id)
         elif type == 'edpim' or type == 'edprate':
             function = self._edps.get(id)

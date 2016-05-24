@@ -175,6 +175,19 @@
         }
     #+END_SRC
 
+    Read the collapse data, from both versions:
+      #+BEGIN_SRC R :session :exports both :results output
+        collapse.paleo = read.csv(
+                  sprintf("%scollapse-im", results.dir),
+                  skip=3, header=FALSE, sep="")
+        names(collapse.paleo) <- c("IM", "p.Collapse")
+
+        collapse.neo = read.csv("example2_collapse.txt",
+                  skip=0, header=TRUE, sep="")
+        names(collapse.neo) <- c("IM", "p.Collapse")
+    #+END_SRC
+
+    #+RESULTS:
 
 * Impulse Measurement Data
   Plot the IM data from the Example2 input data file against the results from
@@ -204,6 +217,54 @@
   #+NAME: fig:im-rate
   #+RESULTS: im-rate
   [[file:/tmp/babel-1802dYN/figure-1802wyL.pdf]]
+
+  Plot the probability of collapse, as reported by both versions:
+  #+NAME: collapse-calc
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(collapse.paleo, 
+         xlab="IM", ylab="p", main="Probability of Collapse",
+         type="p", col=1, 
+         xlim=c(0.01, 3.0), ylim=c(1E-8, 1E0))
+
+    lines(collapse.neo$p.Collapse ~ collapse.neo$IM, col=2)
+
+    legend(x="right",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: The probability of collapse calculations are consistent between
+  #+CAPTION: the old and new code.
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:collapse-calc
+  #+RESULTS: collapse-calc
+  [[file:/tmp/babel-1802dYN/figure-1802wyL.pdf]]
+
+  The overall rate of collapse:
+  #+BEGIN_SRC sh :results output
+  cd ~/Downloads/SLATv1.15_Public/example2_10storeybuilding
+  cat results/collapse-rate
+  #+END_SRC
+
+  #+RESULTS:
+  :  Ouput of Collapse-rate data for IM =    1
+  :  |--v[C]--|
+  : ---------------------------------------------------------------------------------
+  :   2.1255E-04
+  : 
+
+  #+BEGIN_SRC sh :results output
+  cat example2_collrate.txt
+  #+END_SRC
+
+  #+RESULTS:
+  : Rate of Collapse for IM im1 is 0.0002158956085998493
+
+  There is a small discrepancy between the two, which may be simple due to the
+  libraries used for lognormal distribution.
 
 * Engineering Design Parameter Data
 ** Peak Ground Acceleration
@@ -298,7 +359,7 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:collapse
    #+RESULTS: collapse
-   [[file:/tmp/babel-1802dYN/figure-1802ymx.pdf]]
+   [[file:/tmp/babel-1772V7h/figure-1772Bnc.pdf]]
 
 ** Ground Acceleration EDPs
    These plots show the individual data points, with the mean calculated by R in

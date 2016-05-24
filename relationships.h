@@ -54,10 +54,23 @@ namespace SLAT {
     class IM : public Replaceable<IM>
     {
     protected:
+        Integration::IntegrationSettings local_settings;
+        static Integration::IntegrationSettings class_settings;
+        
         int callback_id;
         std::shared_ptr<DeterministicFn> f;
         std::shared_ptr<Collapse> collapse = NULL;
     public:
+        /**
+         * Returns class integration settings:
+         */
+        static Integration::IntegrationSettings &Get_Class_Integration_Settings(void);
+
+        /**
+         * Returns object integration settings:
+         */
+        Integration::IntegrationSettings &Get_Integration_Settings(void);
+
         IM(std::shared_ptr<DeterministicFn> func);
         ~IM() {
             f->remove_callbacks(callback_id);
@@ -94,6 +107,8 @@ namespace SLAT {
                 return 0;
             }
         }
+
+        double CollapseRate(void);
 
         virtual std::string ToString(void) const;
             

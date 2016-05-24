@@ -44,6 +44,7 @@ im im1 im_interp;
 collapse im1 0.9, 0.470 --mu mean_x --sd sd_ln_x;
 recorder imrate im1 0.01:0.001:3.0 example2_im_rate.txt --new;
 recorder collapse im1 0.01:0.001:3.0 example2_collapse.txt --new;
+recorder collrate im1 example2_collrate.txt --new;
 
 #recorder probfn probfn1 0.05:0.05:1.5 --cols median_x example2_probfn1.txt --new;
 #recorder probfn probfn2 0.05:0.05:1.5 --cols median_x example2_probfn2.txt --new;
