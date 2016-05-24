@@ -123,14 +123,16 @@ unit_tests: unit_test.o $(UNIT_OBJS) libslat.dll
 	$(CC) $(UNIT_OBJS) -L. -lslat -o unit_tests ${LDFLAGS} -lboost_unit_test_framework-mt
 endif
 
-pyslat.o: pyslat.cpp functions.h relationships.h replaceable.h
-	$(CC) -c $(CFLAGS) `pkg-config --cflags python3` -o $@ $<
 
 ifeq ($(shell uname), Linux)
+pyslat.o: pyslat.cpp functions.h relationships.h replaceable.h
+	$(CC) -c $(CFLAGS) `pkg-config --cflags python3` -o $@ $<
 pyslat.so: pyslat.o libslat.so
 	$(CC) -fPIC -shared -Wl,-soname,pyslat.so -o pyslat.so pyslat.o ${LDFLAGS} -L. -lslat \
 	`pkg-config --libs python3` -lboost_python-py34
 else
+pyslat.o: pyslat.cpp $(LIBHDRS)
+	$(CC) -c $(CFLAGS) -dD -o $@ $<
 pyslat.pyd: pyslat.o libslat.dll
 	$(CC) -shared pyslat.o \
 	-shared -o pyslat.pyd \
