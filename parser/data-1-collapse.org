@@ -1,0 +1,348 @@
+#+Title:     SLAT: Example 1 with Collapse Added
+#+AUTHOR:    Michael Gauland
+#+EMAIL:     michael.gauland@canterbury.ac.nz
+#+DATE:      {{{time(%Y-%m-%d %H:%M)}}}
+#+DESCRIPTION: 
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:6 num:t toc:4 \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
+#+OPTIONS:   TeX:dvipng LaTeX:dvipng skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+OPTIONS:   timestamp:t email:t
+#+OPTIONS:   ':t
+#+INFOJS_OPT: view:nil toc:t ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [a4paper]
+#+LATEX_HEADER: \usepackage{unicode-math}
+#+LaTex_header: \usepackage{epstopdf}
+#+LATEX_HEADER: \usepackage{register}
+#+LATEX_HEADER: \usepackage{bytefield}
+#+LATEX_HEADER: \usepackage{parskip}
+#+LATEX_HEADER: \usepackage{tabulary}
+#+LATEX_HEADER: \usepackage[section]{placeins}
+#+LATEX_HEADER: \usepackage[htt]{hyphenat}
+#+LATEX_HEADER: \setlength{\parindent}{0pt}
+#+LATEX_HEADER: \lstset{keywordstyle=\color{blue}\bfseries}
+#+LATEX_HEADER: \newfontfamily\listingsfont[Scale=.7]{DejaVu Sans Mono}
+#+LATEX_HEADER: \lstset{basicstyle=\listingsfont}
+#+LATEX_HEADER: \lstset{showspaces=false}
+#+LATEX_HEADER: \lstset{columns=fixed}
+#+LATEX_HEADER: \lstset{extendedchars=true}
+#+LATEX_HEADER: \lstset{frame=shadowbox}
+#+LATEX_HEADER: \lstset{basicstyle=\ttfamily}
+#+LATEX_HEADER: \definecolor{mygray}{gray}{0.8}
+#+LATEX_HEADER: \lstset{rulesepcolor=\color{mygray}}
+#+LATEX_HEADER: \lstdefinelanguage{dash}{rulecolor=\color{green},rulesepcolor=\color{mygray},frameround=ffff,backgroundcolor=\color{white}}
+#+LATEX_HEADER: \lstdefinelanguage{fundamental}{basicstyle=\ttfamily\scriptsize,rulesepcolor=\color{cyan},frameround=tttt,backgroundcolor=\color{white},breaklines=true}
+#+LATEX_HEADER: \usepackage{pst-circ}
+#+LATEX_HEADER: \usepackage[hang,small,bf]{caption}
+#+LATEX_HEADER: \setlength{\captionmargin}{20pt}
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+#+STARTUP: overview
+#+STARTUP: align
+#+STARTUP: noinlineimages
+#+PROPERTY: exports both
+
+* Initialisation
+  The code in this section reads in the input data, as well as the results
+  produces by the old ("paleo") and new ("neo") versions of SLAT.
+
+  Set up variables to make it easier to get to the files:
+  #+BEGIN_SRC R :session :exports both :results output
+    paleo.dir = paste("~/Downloads/SLATv1.15_Public/",
+	"example1a_collapse/", sep="")
+    results.dir = paste(paleo.dir, "results/", sep="")
+  #+END_SRC
+
+  #+RESULTS:
+  
+* IM
+  Read the IM rate data:
+  #+BEGIN_SRC R :session :exports both :results output
+    ## Read in the IM data:
+    paleo.im <- read.csv(
+        paste(results.dir, "im-rate.txt", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.im) = c("IM", "lambda")
+
+    neo.im <- read.csv("example1_im_rate.txt", 
+                       header=TRUE, sep="")
+  #+END_SRC
+  
+  #+RESULTS:
+
+  Plot it:
+  #+NAME: im-rate
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.im$lambda ~ paleo.im$IM, log="xy", 
+         xlab="IM", ylab="lambda", main="IM Rate",
+         type="p", col=1,
+         xlim=c(0.01, 3.0), ylim=c(1E-8, 1E0))
+
+    lines(neo.im$lambda ~ neo.im$IM, col=2)
+
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: IM rate calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:im-rate
+  #+RESULTS: im-rate
+  [[file:/tmp/babel-1772V7h/figure-17720RB.pdf]]
+
+* EDP
+  Read the EDP rate data:
+  #+BEGIN_SRC R :session :exports both :results output
+    ## Read in the IM data:
+    paleo.edp.rate <- read.csv(
+        paste(results.dir, "edp-rate.txt", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.edp.rate) = c("EDP", "lambda")
+
+    neo.edp.rate <- read.csv("example1_edp_rate.txt", 
+        header=TRUE, sep="")
+  #+END_SRC
+  
+  #+RESULTS:
+
+  Plot it:
+  #+NAME: edp-rate
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.edp.rate$lambda ~ paleo.edp.rate$EDP, log="xy", 
+         xlab="EDP", ylab="lambda", main="EDP Rate",
+         type="p", col=1)
+
+    lines(neo.edp.rate$lambda ~ neo.edp.rate$EDP, col=2)
+
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: EDP rate calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:edp-rate
+  #+RESULTS: edp-rate
+  [[file:/tmp/babel-1772V7h/figure-1772OYl.pdf]]
+
+* COLLAPSE
+  Read the COLLAPSE-IM data:
+  #+BEGIN_SRC R :session :exports both :results output
+    ## Read in the IM data:
+    paleo.collapse.im <- read.csv(
+        paste(results.dir, "collapse-im", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.collapse.im) = c("IM", "pCollapse")
+
+    neo.collapse.im <- read.csv("example1_collapse.txt", 
+        header=TRUE, sep="")
+    names(neo.collapse.im) = c("IM", "pCollapse")
+  #+END_SRC
+  
+  #+RESULTS:
+
+
+  Plot it:
+  #+NAME: collapse-im
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, log="y", 
+         xlab="IM", ylab="pCollapse", main="COLLAPSE Rate",
+         type="p", col=1)
+
+    lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, col=2)
+
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: Probability of Collapse calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:collapse-im
+  #+RESULTS: collapse-im
+  [[file:/tmp/babel-1772V7h/figure-1772S_F.pdf]]
+
+  #+NAME: collapse-im-zoom
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, log="y", 
+         xlab="IM", ylab="pCollapse", main="COLLAPSE Rate",
+	 xlim=c(0, 0.5),
+         type="p", col=1)
+
+    lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, col=2)
+
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: COLLAPSE rate calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:collapse-im-zoom
+  #+RESULTS: collapse-im-zoom
+  [[file:/tmp/babel-1772V7h/figure-1772saG.pdf]]
+* LOSS-IM
+  Read the LOSS-IM data:
+  #+BEGIN_SRC R :session :exports both :results output
+    paleo.loss.im <- read.csv(
+        paste(results.dir, "pg-im", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.loss.im) = c("IM", "mean_x", "sd_ln_x")
+
+    neo.loss.im <- read.csv("example1_loss_im.txt", 
+        header=TRUE, sep="")
+  #+END_SRC
+  
+  #+RESULTS:
+
+  Plot it:
+  #+NAME: loss.im-mean
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.loss.im$mean_x ~ paleo.loss.im$IM, log="y", 
+         xlab="IM", ylab="Mean Loss", main="Loss-IM Relationship",
+         type="p", col=1)
+
+    lines(neo.loss.im$mean_x ~ neo.loss.im$IM, col=2)
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: Loss-IM calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:loss.im-mean
+  #+RESULTS: loss.im-mean
+  [[file:/tmp/babel-1772V7h/figure-1772XSR.pdf]]
+
+  #+NAME: loss.im-mean-zoom
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.loss.im$mean_x ~ paleo.loss.im$IM, log="y", 
+         xlab="IM", ylab="Mean Loss", main="Loss-IM Relationship",
+	 xlim=c(0.001, 0.10), ylim=c(1E-12, 1E0),
+         type="p", col=1)
+
+    lines(neo.loss.im$mean_x ~ neo.loss.im$IM, col=2)
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: Loss-IM calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:loss.im-mean-zoom
+  #+RESULTS: loss.im-mean-zoom
+  [[file:/tmp/babel-1772V7h/figure-1772lde.pdf]]
+
+
+  #+NAME: loss.im-sd
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.loss.im$sd_ln_x ~ paleo.loss.im$IM, log="", 
+         xlab="IM", ylab="sd(ln(Loss))", main="Loss-IM Relationship",
+         type="p", col=1)
+
+    lines(neo.loss.im$sd_ln_x ~ neo.loss.im$IM, col=2)
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: LOSS.IM rate calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:loss.im-sd
+  #+RESULTS: loss.im-sd
+  [[file:/tmp/babel-1772V7h/figure-1772H3N.pdf]]
+
+
+* LOSS-EDP
+  Read the LOSS-EDP data:
+  #+BEGIN_SRC R :session :exports both :results output
+    paleo.loss.edp <- read.csv(
+        paste(results.dir, "pg-edp", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.loss.edp) = c("EDP", "mean_x", "sd_ln_x")
+
+    neo.loss.edp <- read.csv("example1_loss_edp.txt", 
+        header=TRUE, sep="")
+  #+END_SRC
+  
+  #+RESULTS:
+
+  Plot it:
+  #+NAME: loss.edp-mean
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.loss.edp$mean_x ~ paleo.loss.edp$EDP, log="xy", 
+         xlab="EDP", ylab="Mean(Loss)", main="Loss-EDP Relationship",
+         type="p", col=1)
+
+    lines(neo.loss.edp$mean_x ~ neo.loss.edp$EDP, col=2)
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: Loss-EDP rate calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:loss.edp-mean
+  #+RESULTS: loss.edp-mean
+  [[file:/tmp/babel-1772V7h/figure-1772h9x.pdf]]
+
+
+  #+NAME: loss.edp-sd
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.loss.edp$sd_ln_x ~ paleo.loss.edp$EDP, log="", 
+         xlab="EDP", ylab="sd(ln(Loss))", main="Loss-EDP Relationship",
+         type="p", col=1)
+
+    lines(neo.loss.edp$sd_ln_x ~ neo.loss.edp$EDP, col=2)
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: Loss-EDP calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:loss.edp-sd
+  #+RESULTS: loss.edp-sd
+  [[file:/tmp/babel-1772V7h/figure-1772ABa.pdf]]
+

@@ -1,6 +1,6 @@
 #! /bin/bash
 
-rm *.png *.txt
+rm *.png example1*.txt
 export CLASSPATH=".:/usr/local/lib/antlr-4.5.2-complete.jar:$CLASSPATH"
 java -jar /usr/local/lib/antlr-4.5.2-complete.jar -Dlanguage=Python3 slat.g4
 

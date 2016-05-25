@@ -17,6 +17,7 @@ probfn EDPIM_FUNC lognormal MU_EDP, SIGMA_EDP --mu mean_x --sd sd_ln_x;
 
 # Define relationships:
 im IM_1 IM_FUNC;
+collapse IM_1 0.3, 0.470 --mu mean_x --sd sd_ln_x;
 edp EDP_1 IM_1 EDPIM_FUNC;
 
 # Fragility, loss, component group:
@@ -42,6 +43,8 @@ integration maq 1E-6 1024;
 #recorder imrate IM_1 $(numpy.arange(0.01, 1.01, 0.01)) example1_im_rate.txt --new;
 set values $(numpy.arange(0.0, 1.01, 0.01));
 recorder imrate IM_1 $values example1_im_rate.txt --new;
+recorder collapse IM_1 0.01:0.001:3.0 example1_collapse.txt --new;
+recorder collrate IM_1 example1_collrate.txt --new;
 recorder edpim EDP_1 0:0.01:1.00 --cols mean_x, sd_x, 0.16, 0.50, 0.84 example1_im_edp.txt --new;
 recorder edprate EDP_1 0.001:0.001:0.15  example1_edp_rate.txt --new;
 recorder dsedp COMPGROUP_1 0.0:0.001:0.200  example1_ds_edp.txt --new;
