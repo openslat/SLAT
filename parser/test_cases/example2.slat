@@ -152,6 +152,25 @@ edp edp21 im1 probfn21;
 recorder edpim edp21 0.05:0.05:3.0 --cols mean_x, sd_ln_x example2_im_edp21.txt --new;
 recorder edprate edp21 0.05:0.05:3.0 example2_edp21_rate.txt --new;
 
+# Fragility and Loss functions
+fragfn DUCTIVE_BEAMS  
+       [0.005, 0.40],  # Widespread light cracking
+       [0.010, 0.45],  # Significant cracking
+       [0.030, 0.50],  # Very large cracks
+       [0.060, 0.60]   # Very severe cracking
+     --mu median_x
+     --sd sd_ln_x;
+lossfn DUCTIVE_BEAMS simple 
+       [1143, 0.42],
+       [3214, 0.4],
+       [4900, 0.37],
+       [4900, 0.37]
+     --mu median_x
+     --sd sd_ln_x;
 
 
+# Component Groups
+compgroup GRAV_COLS edp2 DUCTIVE_BEAMS DUCTIVE_BEAMS 20;
+recorder lossedp GRAV_COLS 0.001:0.001:0.1 --cols mean_x, sd_ln_x example2_cg1_edp.txt --new;
+recorder lossim GRAV_COLS 0.001:0.001:3.00 --cols mean_x, sd_ln_x example2_cg1_im.txt --new;
 analyze;

@@ -47,7 +47,7 @@ namespace SLAT {
 
     double CompGroup::E_loss_EDP(double edp)
     {
-        return loss_EDP_dist(edp).get_mean_X();
+        return this->count * loss_EDP_dist(edp).get_mean_X();
     }
 
     double CompGroup::SD_ln_loss_EDP(double edp)
@@ -110,8 +110,14 @@ namespace SLAT {
                     result = 0;
                 } else {
   		  std::function<double (double)> local_lambda = [this, im] (double x) {
-                        double result = this->edp->P_exceedence(im, x);
-                        return result;
+                        if (false) {
+                            double pExceedence = this->edp->P_exceedence(im, x);
+                            double pCollapse = this->edp->Base_Rate()->pCollapse(im);
+                            return pExceedence * (1 - pCollapse) + pCollapse;
+                        } else {
+                            double result = this->edp->P_exceedence(im, x);
+                            return result;
+                        }
                     };
                     gsl_function F;
                     F.function = (double (*)(double, void *))wrapper;
