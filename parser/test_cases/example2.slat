@@ -158,14 +158,14 @@ fragfn DUCTIVE_BEAMS
        [0.010, 0.45],  # Significant cracking
        [0.030, 0.50],  # Very large cracks
        [0.060, 0.60]   # Very severe cracking
-     --mu median_x
+     --mu mean_x
      --sd sd_ln_x;
 lossfn DUCTIVE_BEAMS simple 
        [1143, 0.42],
        [3214, 0.4],
        [4900, 0.37],
        [4900, 0.37]
-     --mu median_x
+     --mu mean_x
      --sd sd_ln_x;
 
 

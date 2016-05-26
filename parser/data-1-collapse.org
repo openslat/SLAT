@@ -317,11 +317,32 @@
          fill=palette())
   #+END_SRC
 
+  #+NAME: loss.edp-mean-zoom
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.loss.edp$mean_x ~ paleo.loss.edp$EDP, log="xy", 
+         xlab="EDP", ylab="Mean(Loss)", main="Loss-EDP Relationship",
+	 xlim=c(0.05, 0.10),
+	 ylim=c(5E-1, 1E0),
+         type="p", col=1)
+
+    lines(neo.loss.edp$mean_x ~ neo.loss.edp$EDP, col=2)
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+RESULTS: loss.edp-mean-zoom
+  [[file:/tmp/babel-1772V7h/figure-1772jIe.pdf]]
+
   #+CAPTION: Loss-EDP rate calculations
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.edp-mean
   #+RESULTS: loss.edp-mean
-  [[file:/tmp/babel-1772V7h/figure-1772h9x.pdf]]
+  [[file:/tmp/babel-1772V7h/figure-17728bj.pdf]]
 
 
   #+NAME: loss.edp-sd
@@ -345,4 +366,29 @@
   #+NAME: fig:loss.edp-sd
   #+RESULTS: loss.edp-sd
   [[file:/tmp/babel-1772V7h/figure-1772ABa.pdf]]
+
+
+  #+NAME: loss.edp-sd-zoom
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.loss.edp$sd_ln_x ~ paleo.loss.edp$EDP, log="", 
+         xlab="EDP", ylab="sd(ln(Loss))", main="Loss-EDP Relationship",
+	 xlim=c(0.05, 0.10),
+	 ylim=c(0.4, 0.85),
+         type="p", col=1)
+
+    lines(neo.loss.edp$sd_ln_x ~ neo.loss.edp$EDP, col=2)
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: Loss-EDP calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:loss.edp-sd-zoom
+  #+RESULTS: loss.edp-sd-zoom
+  [[file:/tmp/babel-1772V7h/figure-1772K8M.pdf]]
 

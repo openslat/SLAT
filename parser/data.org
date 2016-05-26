@@ -846,7 +846,28 @@
      #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
      #+NAME: fig:loss-edp-1-mean
      #+RESULTS: loss-edp-1-mean
-     [[file:/tmp/babel-1772V7h/figure-1772nFR.pdf]]
+     [[file:/tmp/babel-1772V7h/figure-1772SsT.pdf]]
+
+     #+NAME: loss-edp-1-mean-zoom
+     #+HEADER: :results graphics
+     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+     #+BEGIN_SRC R :session :exports both :results output
+       plot(paleo$mean_x ~ paleo$EDP, type="p", col="red", log="y",
+	    ylab="Loss", xlab="EDP",
+	    xlim=c(0.06, 0.08),
+	    ylim=c(0.9E5, 1.1E5),
+	    main="Mean Loss for Component Group #1")
+       lines(neo$mean_x ~ neo$EDP, col="blue")
+       legend(x="topright", legend=c("Paleo", "Neo"),
+    	  fill=c("red", "blue"))
+     #+END_SRC
+
+     #+CAPTION: This graph compares the loss calculated for
+     #+CAPTION: first component group by both versions.
+     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+     #+NAME: fig:loss-edp-1-mean-zoom
+     #+RESULTS: loss-edp-1-mean-zoom
+     [[file:/tmp/babel-1772V7h/figure-1772gws.pdf]]
 
      #+NAME: loss-edp-1-sd
      #+HEADER: :results graphics
@@ -869,7 +890,29 @@
      #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
      #+NAME: fig:loss-edp-1-sd
      #+RESULTS: loss-edp-1-sd
-     [[file:/tmp/babel-1772V7h/figure-1772Bad.pdf]]
+     [[file:/tmp/babel-1772V7h/figure-1772fEC.pdf]]
+
+     #+NAME: loss-edp-1-sd-zoom
+     #+HEADER: :results graphics
+     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+     #+BEGIN_SRC R :session :exports both :results output
+       plot(paleo$sd_ln_x ~ paleo$EDP, type="p", col="red", log="",
+            ylab="Loss", xlab="EDP",
+	    xlim=c(0.06, 0.08),
+	    ylim=c(0.3, 0.5),
+            main="Standard Deviation Loss for Component Group #1")
+       lines(neo$sd_ln_x ~ neo$EDP, col="blue")
+       legend(x="topright", legend=c("Paleo", "Neo"),
+          fill=c("red", "blue"))
+     #+END_SRC
+
+     #+CAPTION: This graph compares the standard deviation of the
+     #+CAPTION: loss calculated for first component group by both
+     #+CAPTION: versions.
+     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+     #+NAME: fig:loss-edp-1-sd-zoom
+     #+RESULTS: loss-edp-1-sd-zoom
+     [[file:/tmp/babel-1772V7h/figure-1772GqI.pdf]]
 ** IM
      #+NAME: loss-im-1-mean
      #+HEADER: :results graphics
@@ -890,7 +933,27 @@
      #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
      #+NAME: fig:loss-im-1-mean
      #+RESULTS: loss-im-1-mean
-     [[file:/tmp/babel-1772V7h/figure-1772bup.pdf]]
+     [[file:/tmp/babel-1772V7h/figure-1772g-U.pdf]]
+
+     #+NAME: loss-im-1-mean-zoom
+     #+HEADER: :results graphics
+     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+     #+BEGIN_SRC R :session :exports both :results output
+       plot(paleo$mean_x ~ paleo$IM, type="p", col="red", log="y",
+	    ylab="Loss", xlab="IM",
+	    xlim=c(1.0, 2.0), ylim=c(2.5E4,1E5),
+	    main="Mean Loss for Component Group #1")
+       lines(neo$mean_x ~ neo$IM, col="blue")
+       legend(x="topright", legend=c("Paleo", "Neo"),
+    	  fill=c("red", "blue"))
+     #+END_SRC
+
+     #+CAPTION: This graph compares the loss calculated for
+     #+CAPTION: first component group by both versions.
+     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+     #+NAME: fig:loss-im-1-mean-zoom
+     #+RESULTS: loss-im-1-mean-zoom
+     [[file:/tmp/babel-1772V7h/figure-1772Hkb.pdf]]
 
      #+NAME: loss-im-1-sd
      #+HEADER: :results graphics
@@ -913,3 +976,24 @@
      #+RESULTS: loss-im-1-sd
      [[file:/tmp/babel-1772V7h/figure-17721C2.pdf]]
 
+     #+NAME: loss-im-1-sd-zoom
+     #+HEADER: :results graphics
+     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+     #+BEGIN_SRC R :session :exports both :results output
+       plot(paleo$sd_ln_x ~ paleo$IM, type="p", col="red", log="",
+	    ylab="Loss", xlab="IM",
+            xlim=c(1.0, 2.0),
+	    ylim=c(0.01, 1.0),
+	    main="Standard Deviation Loss for Component Group #1")
+       lines(neo$sd_ln_x ~ neo$IM, col="blue")
+       legend(x="topright", legend=c("Paleo", "Neo"),
+    	  fill=c("red", "blue"))
+     #+END_SRC
+
+     #+CAPTION: This graph compares the standard deviation of the
+     #+CAPTION: loss calculated for first component group by both
+     #+CAPTION: versions.
+     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+     #+NAME: fig:loss-im-1-sd-zoom
+     #+RESULTS: loss-im-1-sd-zoom
+     [[file:/tmp/babel-1772V7h/figure-1772U1V.pdf]]

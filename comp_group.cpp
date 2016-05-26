@@ -24,20 +24,20 @@ namespace SLAT {
         :E_loss_IM([this] (double im) {
                 return this->E_loss_IM_calc(im);
             }, true),
-          SD_ln_loss_IM([this] (double im) {
-                  return this->SD_ln_loss_IM_calc(im);
-              }, true),
-          E_annual_loss([this] (void) {
+         SD_ln_loss_IM([this] (double im) {
+                 return this->SD_ln_loss_IM_calc(im);
+             }, true),
+         E_annual_loss([this] (void) {
 
-                  return this->E_annual_loss_calc();
-              }),
-          lambda_loss([this] (double loss) {
-                  return this->lambda_loss_calc(loss);
-              }, true),
-          loss_EDP_dist([this] (double edp) {
-                  return LogNormalDist::AddWeightedDistributions(this->loss_fn->LossFns(), 
-                                                                 this->frag_fn->pHighest(edp)); 
-              }, true),
+                 return this->E_annual_loss_calc();
+             }),
+         lambda_loss([this] (double loss) {
+                 return this->lambda_loss_calc(loss);
+             }, true),
+         loss_EDP_dist([this] (double edp) {
+                 return LogNormalDist::AddWeightedDistributions(this->loss_fn->LossFns(), 
+                                                                this->frag_fn->pHighest(edp)); 
+             }, true),
          edp(edp),
          frag_fn(frag_fn),
          loss_fn(loss_fn),
@@ -48,6 +48,11 @@ namespace SLAT {
     double CompGroup::E_loss_EDP(double edp)
     {
         return this->count * loss_EDP_dist(edp).get_mean_X();
+    }
+
+    double CompGroup::mean_ln_loss_EDP(double edp)
+    {
+        return this->count * loss_EDP_dist(edp).get_mu_lnX();
     }
 
     double CompGroup::SD_ln_loss_EDP(double edp)
@@ -62,87 +67,178 @@ namespace SLAT {
 
     static double wrapper(double x,  std::function<double (double)> *f)
     {
-      return (*f)(x);
+        return (*f)(x);
+    }
+
+    LogNormalDist CompGroup::LossDist_IM(double im) {
+        double E;
+        {
+            Integration::MAQ_RESULT result;
+            result =  Integration::MAQ(
+                [this, im] (double edp) -> double {
+                    double result;
+                    if (edp == 0) {
+                        result = 0;
+                    } else {
+                        std::function<double (double)> local_lambda = [this, im] (double x) {
+                            double result = this->edp->P_exceedence(im, x);
+                            return result;
+                        };
+                        gsl_function F;
+                        F.function = (double (*)(double, void *))wrapper;
+                        F.params = &local_lambda;
+                        double deriv, abserror;
+                        gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+
+                        double d = deriv;
+                        //double d = this->edp->P_exceedence(im, edp);
+                        double p = this->E_loss_EDP(edp);
+                        result = p * std::abs(d);
+                    }
+                    return result;
+                }, local_settings); 
+            if (result.successful) {
+                E = result.integral;
+            } else {
+                E = NAN;
+            };
+        }
+
+        double sd_ln;
+        {
+            Integration::MAQ_RESULT result;
+            result =  Integration::MAQ(
+                [this, im] (double edp) -> double {
+                    double result;
+                    if (edp == 0) {
+                        result = 0;
+                    } else {
+                        std::function<double (double)> local_lambda = [this, im] (double x) {
+                            if (false) {
+                                double pExceedence = this->edp->P_exceedence(im, x);
+                                double pCollapse = this->edp->Base_Rate()->pCollapse(im);
+                                return pExceedence * (1 - pCollapse) + pCollapse;
+                            } else {
+                                double result = this->edp->P_exceedence(im, x);
+                                return result;
+                            }
+                        };
+                        gsl_function F;
+                        F.function = (double (*)(double, void *))wrapper;
+                        F.params = &local_lambda;
+                        double deriv, abserror;
+                        gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+
+                        double d = deriv;
+                        //double d = this->edp->P_exceedence(im, edp);
+                        double e = this->E_loss_EDP(edp);
+                        double sd = this->SD_loss_EDP(edp);
+                        result = (e * e + sd * sd) * std::abs(d);
+                    }
+                    return result;
+                }, local_settings); 
+            if (result.successful) {
+                double mean_x = E; //E_loss_IM(im);
+                double sigma_x = sqrt(result.integral  - mean_x * mean_x);
+                double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
+                sd_ln = sigma_lnx;
+            } else {
+                sd_ln = NAN;
+            };
+        }
+        return LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(E, sd_ln);
     }
 
     double CompGroup::E_loss_IM_calc(double im)
     {
-        Integration::MAQ_RESULT result;
-        result =  Integration::MAQ(
-            [this, im] (double edp) -> double {
-                double result;
-                if (edp == 0) {
-                    result = 0;
-                } else {
-                    std::function<double (double)> local_lambda = [this, im] (double x) {
-                        double result = this->edp->P_exceedence(im, x);
-                        return result;
-                    };
-                    gsl_function F;
-                    F.function = (double (*)(double, void *))wrapper;
-                    F.params = &local_lambda;
-                    double deriv, abserror;
-                    gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
-
-                    double d = deriv;
-                    //double d = this->edp->P_exceedence(im, edp);
-                    double p = this->E_loss_EDP(edp);
-                    result = p * std::abs(d);
-                }
-                return result;
-            }, local_settings); 
-        if (result.successful) {
-            return result.integral;
+        if (true) {
+            return LossDist_IM(im).get_mean_X();
         } else {
-            return 0; //NAN;;
-        };
+            Integration::MAQ_RESULT result;
+            result =  Integration::MAQ(
+                [this, im] (double edp) -> double {
+                    double result;
+                    if (edp == 0) {
+                        result = 0;
+                    } else {
+                        std::function<double (double)> local_lambda = [this, im] (double x) {
+                            double result = this->edp->P_exceedence(im, x);
+                            return result;
+                        };
+                        gsl_function F;
+                        F.function = (double (*)(double, void *))wrapper;
+                        F.params = &local_lambda;
+                        double deriv, abserror;
+                        gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+
+                        double d = deriv;
+                        //double d = this->edp->P_exceedence(im, edp);
+                        double p = this->E_loss_EDP(edp);
+                        result = p * std::abs(d);
+                    }
+                    return result;
+                }, local_settings); 
+            if (result.successful) {
+                return result.integral;
+            } else {
+                return 0; //NAN;;
+            };
+        }
     }
 
     double CompGroup::SD_ln_loss_IM_calc(double im)
     {
-        Integration::MAQ_RESULT result;
-        result =  Integration::MAQ(
-            [this, im] (double edp) -> double {
-                double result;
-                if (edp == 0) {
-                    result = 0;
-                } else {
-  		  std::function<double (double)> local_lambda = [this, im] (double x) {
-                        if (false) {
-                            double pExceedence = this->edp->P_exceedence(im, x);
-                            double pCollapse = this->edp->Base_Rate()->pCollapse(im);
-                            return pExceedence * (1 - pCollapse) + pCollapse;
-                        } else {
-                            double result = this->edp->P_exceedence(im, x);
-                            return result;
-                        }
-                    };
-                    gsl_function F;
-                    F.function = (double (*)(double, void *))wrapper;
-                    F.params = &local_lambda;
-                    double deriv, abserror;
-                    gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
-
-                    double d = deriv;
-                    //double d = this->edp->P_exceedence(im, edp);
-                    double e = this->E_loss_EDP(edp);
-                    double sd = this->SD_loss_EDP(edp);
-                    result = (e * e + sd * sd) * std::abs(d);
-                }
-                return result;
-            }, local_settings); 
-        if (result.successful) {
-            double mean_x = E_loss_IM(im);
-            double sigma_x = sqrt(result.integral  - mean_x * mean_x);
-            double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
-            return sigma_lnx;
+        if (true) {
+            return LossDist_IM(im).get_sigma_lnX();
         } else {
-            return 0; //NAN;;
-        };
+            Integration::MAQ_RESULT result;
+            result =  Integration::MAQ(
+                [this, im] (double edp) -> double {
+                    double result;
+                    if (edp == 0) {
+                        result = 0;
+                    } else {
+                        std::function<double (double)> local_lambda = [this, im] (double x) {
+                            if (false) {
+                                double pExceedence = this->edp->P_exceedence(im, x);
+                                double pCollapse = this->edp->Base_Rate()->pCollapse(im);
+                                return pExceedence * (1 - pCollapse) + pCollapse;
+                            } else {
+                                double result = this->edp->P_exceedence(im, x);
+                                return result;
+                            }
+                        };
+                        gsl_function F;
+                        F.function = (double (*)(double, void *))wrapper;
+                        F.params = &local_lambda;
+                        double deriv, abserror;
+                        gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+
+                        double d = deriv;
+                        //double d = this->edp->P_exceedence(im, edp);
+                        double e = this->E_loss_EDP(edp);
+                        double sd = this->SD_loss_EDP(edp);
+                        result = (e * e + sd * sd) * std::abs(d);
+                    }
+                    return result;
+                }, local_settings); 
+            if (result.successful) {
+                double mean_x = E_loss_IM(im);
+                double sigma_x = sqrt(result.integral  - mean_x * mean_x);
+                double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
+                return sigma_lnx;
+            } else {
+                return 0; //NAN;;
+            };
+        }
     };
 
     double CompGroup::E_annual_loss_calc(void)
