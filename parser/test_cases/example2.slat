@@ -18,27 +18,27 @@ detfn im_interp loglog    [0.01, 0.376775], [0.02, 0.155158], [0.04, 0.054048],
 #recorder detfn im_interp 0.01:0.001:1.0 example2_imfn.txt --new;
 
 
-importprobfn probfn1  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
-importprobfn probfn2  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP2.txt;
-importprobfn probfn3  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP3.txt;
-importprobfn probfn4  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP4.txt;
-importprobfn probfn5  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP5.txt;
-importprobfn probfn6  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP6.txt;
-importprobfn probfn7  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP7.txt;
-importprobfn probfn8  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP8.txt;
-importprobfn probfn9  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP9.txt;
-importprobfn probfn10  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP10.txt;
-importprobfn probfn11  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP11.txt;
-importprobfn probfn12  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP12.txt;
-importprobfn probfn13  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP13.txt;
-importprobfn probfn14  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP14.txt;
-importprobfn probfn15  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP15.txt;
-importprobfn probfn16  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP16.txt;
-importprobfn probfn17  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP17.txt;
-importprobfn probfn18  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP18.txt;
-importprobfn probfn19  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP19.txt;
-importprobfn probfn20  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP20.txt;
-importprobfn probfn21  /home/mag109/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP21.txt;
+importprobfn probfn1  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
+importprobfn probfn2  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP2.txt;
+importprobfn probfn3  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP3.txt;
+importprobfn probfn4  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP4.txt;
+importprobfn probfn5  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP5.txt;
+importprobfn probfn6  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP6.txt;
+importprobfn probfn7  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP7.txt;
+importprobfn probfn8  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP8.txt;
+importprobfn probfn9  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP9.txt;
+importprobfn probfn10  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP10.txt;
+importprobfn probfn11  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP11.txt;
+importprobfn probfn12  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP12.txt;
+importprobfn probfn13  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP13.txt;
+importprobfn probfn14  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP14.txt;
+importprobfn probfn15  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP15.txt;
+importprobfn probfn16  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP16.txt;
+importprobfn probfn17  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP17.txt;
+importprobfn probfn18  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP18.txt;
+importprobfn probfn19  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP19.txt;
+importprobfn probfn20  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP20.txt;
+importprobfn probfn21  /home/mike/Downloads/SLATv1.15_Public/example2_10storeybuilding/RB_EDP21.txt;
 
 im im1 im_interp;
 collapse im1 0.9, 0.470 --mu mean_x --sd sd_ln_x;

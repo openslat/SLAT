@@ -52,9 +52,13 @@
 
   Set up variables to make it easier to get to the files:
   #+BEGIN_SRC R :session :exports both :results output
-    paleo.dir = paste("~/Downloads/SLATv1.15_Public/",
+    paleo.dir = paste("~/SLATv1.15_Public/",
 	"example1a_collapse/", sep="")
     results.dir = paste(paleo.dir, "results/", sep="")
+
+    paleo2.dir = paste("~/SLATv1.15_Public/",
+	"example2_10storeybuilding/", sep="")
+    results2.dir = paste(paleo2.dir, "results/", sep="")
   #+END_SRC
 
   #+RESULTS:
@@ -70,6 +74,10 @@
 
     neo.im <- read.csv("example1_im_rate.txt", 
                        header=TRUE, sep="")
+    paleo.im2 <- read.csv(
+        paste(results2.dir, "im-rate", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.im2) = c("IM", "lambda")
   #+END_SRC
   
   #+RESULTS:
@@ -79,7 +87,7 @@
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R :session :exports both
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.im$lambda ~ paleo.im$IM, log="xy", 
          xlab="IM", ylab="lambda", main="IM Rate",
          type="p", col=1,
@@ -87,7 +95,7 @@
 
     lines(neo.im$lambda ~ neo.im$IM, col=2)
 
-
+    points(paleo.im2$lambda ~ paleo.im2$IM, col=3)
     legend(x="topright",
          legend=c("Paleo", "Neo"),
          fill=palette())
@@ -97,9 +105,97 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:im-rate
   #+RESULTS: im-rate
-  [[file:/tmp/babel-1772V7h/figure-17720RB.pdf]]
+  [[file:/tmp/babel-36639js/figure-3663dUQ.pdf]]
 
-* EDP
+
+* EDP IM
+  Read the EDP IM data:
+  #+BEGIN_SRC R :session :exports both :results output
+    ## Read in the IM data:
+    paleo.edp.im <- read.csv(
+        paste(results.dir, "edp-im-1", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.edp.im) = c("IM", "mean_x", "sd_ln_x")
+
+    neo.edp.im <- read.csv("example1_im_edp.txt",
+        header=TRUE, sep="")
+  #+END_SRC
+  
+  #+RESULTS:
+
+
+  Plot it:
+  #+NAME: edp-im-mean
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.edp.im$mean_x ~ paleo.edp.im$IM, log="", 
+         xlab="IM", ylab="EDP", main="mean(EDP)-IM",
+         type="p", col=1)
+
+    lines(neo.edp.im$mean_x ~ neo.edp.im$IM, col=2)
+
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: men(EDP) vs. IM
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:edp-im-mean
+  #+RESULTS: edp-im-mean
+  [[file:/tmp/babel-36639js/figure-3663CSk.pdf]]
+
+  #+NAME: edp-im-mean-zoom
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.edp.im$mean_x ~ paleo.edp.im$IM, log="", 
+         xlab="IM", ylab="EDP", main="mean(EDP)-IM",
+	 xlim=c(1.0, 1.5),
+         type="p", col=1)
+
+    lines(neo.edp.im$mean_x ~ neo.edp.im$IM, col=2)
+
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: men(EDP) vs. IM
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:edp-im-mean-zoom
+  #+RESULTS: edp-im-mean-zoom
+  [[file:/tmp/babel-36639js/figure-3663dDI.pdf]]
+
+  #+NAME: edp-im-sd-ln
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R :session :exports both
+    palette(c("red", "blue"))
+    plot(paleo.edp.im$sd_ln_x ~ paleo.edp.im$IM, log="", 
+         xlab="IM", ylab="EDP", main="sd(ln(EDP))-IM",
+         type="p", col=1)
+
+    lines(neo.edp.im$sd_ln_x ~ neo.edp.im$IM, col=2)
+
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: sd(ln(EDP)) vs. IM
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:edp-im-sd-ln
+  #+RESULTS: edp-im-sd-ln
+  [[file:/tmp/babel-36639js/figure-3663OpL.pdf]]
+
+* EDP Rate
   Read the EDP rate data:
   #+BEGIN_SRC R :session :exports both :results output
     ## Read in the IM data:
@@ -136,7 +232,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:edp-rate
   #+RESULTS: edp-rate
-  [[file:/tmp/babel-1772V7h/figure-1772OYl.pdf]]
+  [[file:/tmp/babel-36639js/figure-3663w3y.pdf]]
 
 * COLLAPSE
   Read the COLLAPSE-IM data:
@@ -201,7 +297,28 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:collapse-im-zoom
   #+RESULTS: collapse-im-zoom
-  [[file:/tmp/babel-1772V7h/figure-1772saG.pdf]]
+  [[file:/tmp/babel-36639js/figure-3663BYR.pdf]]
+
+  The overall rate of collapse:
+  #+BEGIN_SRC sh :results output
+  cd ~/SLATv1.15_Public/example1a_collapse
+  cat results/collapse-rate
+  #+END_SRC
+
+  #+RESULTS:
+  :  Ouput of Collapse-rate data for IM =    1
+  :  |--v[C]--|
+  : ---------------------------------------------------------------------------------
+  :   2.1517E-04
+  : 
+
+  #+BEGIN_SRC sh :results output
+  cat example1_collrate.txt
+  #+END_SRC
+
+  #+RESULTS:
+  : Rate of Collapse for IM IM_1 is 0.00021589560528186507
+
 * LOSS-IM
   Read the LOSS-IM data:
   #+BEGIN_SRC R :session :exports both :results output
@@ -237,7 +354,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.im-mean
   #+RESULTS: loss.im-mean
-  [[file:/tmp/babel-1772V7h/figure-1772XSR.pdf]]
+  [[file:/tmp/babel-36639js/figure-3663Fct.pdf]]
 
   #+NAME: loss.im-mean-zoom
   #+HEADER: :results graphics
@@ -260,7 +377,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.im-mean-zoom
   #+RESULTS: loss.im-mean-zoom
-  [[file:/tmp/babel-1772V7h/figure-1772lde.pdf]]
+  [[file:/tmp/babel-36639js/figure-3663qUC.pdf]]
 
 
   #+NAME: loss.im-sd
@@ -342,7 +459,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.edp-mean
   #+RESULTS: loss.edp-mean
-  [[file:/tmp/babel-1772V7h/figure-17728bj.pdf]]
+  [[file:/tmp/babel-36639js/figure-3663Rsg.pdf]]
 
 
   #+NAME: loss.edp-sd

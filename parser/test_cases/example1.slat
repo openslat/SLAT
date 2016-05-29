@@ -6,18 +6,26 @@ print title example1_out.txt --new;
 
 # Define the IM function:
 #                        v_asy, IM_asy, alpha
-detfn IM_FUNC hyperbolic 1221,   29.8,  62.2;
+#detfn IM_FUNC hyperbolic 1221,   29.8,  62.2;
+detfn IM_FUNC loglog    [0.01, 0.376775], [0.02, 0.155158], [0.04, 0.054048],
+        [0.06, 0.027886], [0.08, 0.017241], [0.1, 0.011857],  [0.2, 0.003656],
+	[0.3, 0.001628],  [0.4, 0.000794],  [0.5, 0.000405],  [0.6, 0.000214],
+	[0.7, 0.000115],  [0.8, 0.000064],  [0.9, 0.000037],  [1.0, 0.000021],
+	[1.1, 0.000013],  [1.2, 7.00E-06],  [1.3, 4.00E-06],  [1.4, 3.00E-06],
+	[1.5, 1.80E-06],  [1.6, 1.00E-06],  [1.7, 7.00E-07],  [1.8, 4.00E-07],
+	[1.9, 2.00E-07],  [2.0, 1.00E-07];
 
 # Define the EDP-IM functions:
 #                          a    b
-detfn MU_EDP powerlaw    0.1, 1.5;
-detfn SIGMA_EDP powerlaw 0.5, 0.0;
+#detfn MU_EDP powerlaw    0.1, 1.5;
+#detfn SIGMA_EDP powerlaw 0.5, 0.0;
 
-probfn EDPIM_FUNC lognormal MU_EDP, SIGMA_EDP --mu mean_x --sd sd_ln_x;
+#probfn EDPIM_FUNC lognormal MU_EDP, SIGMA_EDP --mu mean_x --sd sd_ln_x;
+importprobfn EDPIM_FUNC  /home/mike/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
 
 # Define relationships:
 im IM_1 IM_FUNC;
-collapse IM_1 0.3, 0.470 --mu mean_x --sd sd_ln_x;
+collapse IM_1 0.9, 0.470 --mu mean_x --sd sd_ln_x;
 edp EDP_1 IM_1 EDPIM_FUNC;
 
 # Fragility, loss, component group:
@@ -45,7 +53,7 @@ set values $(numpy.arange(0.0, 1.01, 0.01));
 recorder imrate IM_1 $values example1_im_rate.txt --new;
 recorder collapse IM_1 0.01:0.001:3.0 example1_collapse.txt --new;
 recorder collrate IM_1 example1_collrate.txt --new;
-recorder edpim EDP_1 0:0.01:1.00 --cols mean_x, sd_x, 0.16, 0.50, 0.84 example1_im_edp.txt --new;
+recorder edpim EDP_1 0:0.01:1.50 --cols mean_x, sd_ln_x, 0.16, 0.50, 0.84 example1_im_edp.txt --new;
 recorder edprate EDP_1 0.001:0.001:0.15  example1_edp_rate.txt --new;
 recorder dsedp COMPGROUP_1 0.0:0.001:0.200  example1_ds_edp.txt --new;
 recorder dsrate COMPGROUP_1;

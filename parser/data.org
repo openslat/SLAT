@@ -280,6 +280,8 @@
   cat results/collapse-rate
   #+END_SRC
 
+  R: scan("results/collapse-rate", skip=3)
+ as.numeric(scan("example1_collrate.xt", what="string")[8])
   #+RESULTS:
   :  Ouput of Collapse-rate data for IM =    1
   :  |--v[C]--|
@@ -292,7 +294,7 @@
   #+END_SRC
 
   #+RESULTS:
-  : Rate of Collapse for IM im1 is 0.0002158956085998493
+  : Rate of Collapse for IM im1 is 0.00021589560528186507
 
   There is a small discrepancy between the two, which may be simple due to the
   libraries used for lognormal distribution.
