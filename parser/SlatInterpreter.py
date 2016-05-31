@@ -894,7 +894,10 @@ class SlatInterpreter(slatListener):
     # Exit a parse tree produced by slatParser#python_script.
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
         expression =  ctx.python_expression().getText()
-        value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np})
+        print("-----")
+        print(expression)
+        print("-----")
+        value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np, "list":list, "map": map})
         #print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
         self._stack.append(value)
 
@@ -909,7 +912,7 @@ class SlatInterpreter(slatListener):
         id = ctx.ID().getText()
         value = self._stack.pop()
         self._variables[id] = value
-        #print(("    Set the variable '{}' to {}.").format(id, value ))
+        print(("    Set the variable '{}' to {}.").format(id, value ))
 
     def exitImportprobfn_command(self, ctx:slatParser.Importprobfn_commandContext):
         data = np.loadtxt(ctx.FILE_NAME().getText().strip('\'"'), skiprows=2)

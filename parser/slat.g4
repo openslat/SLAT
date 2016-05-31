@@ -202,8 +202,8 @@ recorder_cols : '--cols' col_spec (',' col_spec)*;
 
 
 python_script : PYTHON_ESCAPE python_expression RPAREN;
-python_expression : (balanced_paren_expression | non_paren_expression)*;
-balanced_paren_expression : LPAREN non_paren_expression* RPAREN;
+python_expression : (balanced_paren_expression | non_paren_expression)*?;
+balanced_paren_expression : LPAREN non_paren_expression*? RPAREN;
 non_paren_expression:  .+?;
 
 analyze_command : 'analyze';

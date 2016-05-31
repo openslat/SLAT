@@ -21,7 +21,7 @@ detfn IM_FUNC loglog    [0.01, 0.376775], [0.02, 0.155158], [0.04, 0.054048],
 #detfn SIGMA_EDP powerlaw 0.5, 0.0;
 
 #probfn EDPIM_FUNC lognormal MU_EDP, SIGMA_EDP --mu mean_x --sd sd_ln_x;
-importprobfn EDPIM_FUNC  /home/mike/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
+importprobfn EDPIM_FUNC  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
 
 # Define relationships:
 im IM_1 IM_FUNC;
@@ -47,18 +47,20 @@ compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 1;
 integration maq 1E-6 1024;
 
 # Set up recorders:
-#recorder imrate IM_1 0.01:0.01:1.00 example1_im_rate.txt --new;
+#recorder imrate IM_1 0.01:0.01:2.50 example1_im_rate.txt --new;
 #recorder imrate IM_1 $(numpy.arange(0.01, 1.01, 0.01)) example1_im_rate.txt --new;
-set values $(numpy.arange(0.0, 1.01, 0.01));
-recorder imrate IM_1 $values example1_im_rate.txt --new;
-recorder collapse IM_1 0.01:0.001:3.0 example1_collapse.txt --new;
+#set values $(numpy.arange(0.0, 1.01, 0.01));
+set logvalues $(list(map(math.exp, math.log(0.01) + numpy.arange(0, 199, 1) * math.log(2.5/0.01)/198)));
+set linvalues $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198);
+recorder imrate IM_1 $logvalues example1_im_rate.txt --new;
+recorder collapse IM_1 $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) example1_collapse.txt --new;
 recorder collrate IM_1 example1_collrate.txt --new;
-recorder edpim EDP_1 0:0.01:1.50 --cols mean_x, sd_ln_x, 0.16, 0.50, 0.84 example1_im_edp.txt --new;
-recorder edprate EDP_1 0.001:0.001:0.15  example1_edp_rate.txt --new;
+recorder edpim EDP_1  $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) --cols mean_x, sd_ln_x, 0.16, 0.50, 0.84 example1_im_edp.txt --new;
+recorder edprate EDP_1 $(list(map(math.exp, math.log(0.001) + numpy.arange(0, 149, 1) * math.log(0.15/0.001)/148)))  example1_edp_rate.txt --new;
 recorder dsedp COMPGROUP_1 0.0:0.001:0.200  example1_ds_edp.txt --new;
 recorder dsrate COMPGROUP_1;
-recorder lossedp COMPGROUP_1 0.001:0.001:0.200 --cols mean_x, sd_ln_x example1_loss_edp.txt --new;
-recorder lossim COMPGROUP_1 0.01:0.01:2.5  --cols mean_x, sd_ln_x example1_loss_im.txt --new;
+recorder lossedp COMPGROUP_1 $(0.001 + numpy.arange(0, 149, 1) * (0.15 - 0.001)/148) --cols mean_x, sd_ln_x example1_loss_edp.txt --new;
+recorder lossim COMPGROUP_1 $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198)  --cols mean_x, sd_ln_x example1_loss_im.txt --new;
 #recorder lossim COMPGROUP_1 0:100:1  --cols mean_x, sd_ln_x example1_loss_im.txt --new;
 recorder annloss COMPGROUP_1 1.0:1.0:100.0 --lambda 0.06 example1_annual_loss.txt --new;
 #recorder annloss COMPGROUP_1 0.0:1.0.0:100.0 --lambda 0.06;
