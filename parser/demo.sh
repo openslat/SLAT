@@ -2,7 +2,8 @@
 
 rm *.png example1*.txt
 export CLASSPATH=".:/usr/local/lib/antlr-4.5.2-complete.jar:$CLASSPATH"
-java -jar /usr/local/lib/antlr-4.5.2-complete.jar -Dlanguage=Python3 slat.g4
+java -jar /usr/local/lib/antlr-4.5.2-complete.jar -Dlanguage=Python3 slatLexer.g4
+java -jar /usr/local/lib/antlr-4.5.2-complete.jar -Dlanguage=Python3 slatParser.g4
 
 if LD_LIBRARY_PATH=.. PYTHONPATH=.. ./SlatInterpreter.py test_cases/example1.slat; then
     echo "Writing IM-Reate Relationship"

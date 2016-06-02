@@ -4,7 +4,8 @@ export CLASSPATH=".:/usr/local/lib/antlr-4.5.2-complete.jar:$CLASSPATH"
 alias grun='java org.antlr.v4.gui.TestRig'
 alias antlr4='java -jar /usr/local/lib/antlr-4.5.2-complete.jar'
 
-antlr4 -Dlanguage=Python3 slat.g4 && \
+antlr4 -Dlanguage=Python3 slatLexer.g4 && \
+antlr4 -Dlanguage=Python3 slatParser.g4 && \
 ./test_slat.py
 
 

@@ -1,4 +1,4 @@
-grammar slat;
+parser grammar slatParser;
 
 WS  :   ( ' '
         | '\t'

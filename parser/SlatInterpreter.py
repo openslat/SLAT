@@ -6,7 +6,7 @@ import re
 from antlr4 import *
 from slatLexer import slatLexer
 from slatParser import slatParser
-from slatListener import slatListener
+from slatParserListener import slatParserListener
 import glob
 from distutils import text_file
 import numbers
@@ -434,7 +434,7 @@ class recorder:
     
         
 
-class SlatInterpreter(slatListener):
+class SlatInterpreter(slatParserListener):
     def __init__(self):
         super().__init__()
         self._stack = []
