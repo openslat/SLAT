@@ -21,3 +21,5 @@ recorder lossds cgroup1 1E3, 1E4, 1E5;
 recorder lossedp cgroup1 0.0:0.05:0.15;
 recorder lossim cgroup1 0.0:0.05:0.15;
 recorder detfn im_func $(numpy.arange(0.00, 0.05, 0.01));
+recorder losstotal im1 0.0:0.1:0.5;
+

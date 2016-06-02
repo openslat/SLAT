@@ -34,13 +34,13 @@ DSIM : 'dsim';
 LOSSDS : 'lossds';
 LOSSEDP : 'lossedp';
 LOSSIM : 'lossim';
+LOSSTOTAL: 'losstotal';
 DSRATE : 'dsrate';
 ANNLOSS: 'annloss';
 LOSSRATE: 'lossrate';	 
 APPEND_OPTION : '--append';
 NEW_OPTION : '--new';
 DOLLARS : '$';
-PYTHON_ESCAPE : '$('; 
 
 MEAN_LN_X: 'mean_ln_x';
 MEDIAN_X: 'median_x';
@@ -50,6 +50,11 @@ SD_LN_X: 'sd_ln_x';
 SD_X: 'sd_x';
 
 MAQ: 'maq';
+
+COLLAPSE_FLAG: '--collapse';
+NOCOLLAPSE_FLAG: '--nocollapse';
+
+PYTHON_ESCAPE : '${';
 
 script : (WS | command)*;
 
@@ -193,18 +198,19 @@ recorder_command : 'recorder' ((recorder_type ID recorder_at recorder_cols?)
 lambda_value: numerical_scalar;
 
 recorder_type : DETFN | PROBFN | IMRATE | EDPIM | EDPRATE | DSEDP
-	      | DSIM | LOSSDS | LOSSEDP | LOSSIM;
+	      | DSIM | LOSSDS | LOSSEDP | LOSSIM | LOSSTOTAL;
 recorder_at : (float_array | (FLOAT_VAL ':' FLOAT_VAL ':' FLOAT_VAL) | python_script | var_ref);
 float_array : FLOAT_VAL (',' FLOAT_VAL)*;
+collapse_type : COLLAPSE_FLAG | NOCOLLAPSE_FLAG;
 
 col_spec : placement_type | spread_type | scalar;
 recorder_cols : '--cols' col_spec (',' col_spec)*;
 
 
-python_script : PYTHON_ESCAPE python_expression RPAREN;
-python_expression : (balanced_paren_expression | non_paren_expression)*?;
-balanced_paren_expression : LPAREN non_paren_expression*? RPAREN;
-non_paren_expression:  .+?;
+python_script : PYTHON_ESCAPE python_expression RBRACE;
+python_expression : .*?; /*(balanced_paren_expression | non_paren_expression)*?;
+balanced_paren_expression : LBACE non_paren_expression RBRACE;
+non_paren_expression:  .+?;*/
 
 analyze_command : 'analyze';
 

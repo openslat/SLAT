@@ -250,6 +250,9 @@ class compgroup:
                                           frag.function(),
                                           loss.function(),
                                           count)
+        print(self)
+        print(self.E_annual_loss())
+        
     def fragfn(self):
         return self._frag
 
@@ -273,6 +276,9 @@ class compgroup:
 
     def E_loss(self, t, l):
         return self._func.E_loss(t, l)
+
+    def E_annual_loss(self):
+        return self._func.E_annual_loss()
 
     def lambda_loss(self, loss):
         return self._func.lambda_loss(loss)
@@ -326,6 +332,7 @@ class recorder:
                       'lossds': ['DS', None],
                       'lossedp': ['EDP', None],
                       'lossim': ['IM', None],
+                      'losstotal': ['IM', 'xbmean_x'],
                       'annloss': ['t', ["E[ALt]"]],
                       'lossrate': ['t', 'Rate'],
                       'collapse': ['IM', 'p(Collapse)']}
@@ -374,6 +381,8 @@ class recorder:
                                 yval = self._function.E_Loss_EDP(x)
                             elif self._type == 'lossim':
                                 yval = self._function.E_Loss_IM(x)
+                            elif self._type == 'losstotal':
+                                yval = -1  # TODO
                             else:
                                 yval = self._function.Mean(x)
                         elif y == 'mean_ln_x':
@@ -385,6 +394,8 @@ class recorder:
                                 yval = self._function.SD_ln_Loss_EDP(x)
                             elif self._type == 'lossim':
                                 yval = self._function.SD_ln_Loss_IM(x)
+                            elif self._type == 'losstotal':
+                                yval = -1  # TODO
                             else:
                                 yval = self._function.SD_ln(x)
                         elif y == 'sd_x':
@@ -849,6 +860,8 @@ class SlatInterpreter(slatListener):
         elif type == 'lossds' or type == 'lossedp' or type == 'lossim' \
              or type == 'annloss' or type == 'lossrate':
             function = self._compgroups.get(id)
+        elif type == 'losstotal':
+            function = None # TODO
         else:
             raise ValueError("Unhandled recorder type")
 
@@ -898,7 +911,7 @@ class SlatInterpreter(slatListener):
         print(expression)
         print("-----")
         value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np, "list":list, "map": map})
-        #print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
+        print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
         self._stack.append(value)
 
     # Exit a parse tree produced by slatParser#analyze_command.

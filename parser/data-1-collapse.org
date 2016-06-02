@@ -73,6 +73,12 @@
         skip=3, header=FALSE, sep="")
     names(paleo.im) = c("IM", "lambda")
 
+
+    paleo2.im <- read.csv(
+        paste(results2.dir, "im-rate", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo2.im) = c("IM", "lambda")
+
     neo.im <- read.csv("example1_im_rate.txt", 
                        header=TRUE, sep="")
 
@@ -89,26 +95,29 @@
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R
-    palette(c("red", "blue", "green"))
-    plot(paleo.im$lambda ~ paleo.im$IM, log="xy", 
-         xlab="IM", ylab="lambda", main="IM Rate",
-         type="l", lwd=3, col=1,
-         xlim=c(0.01, 3.0), ylim=c(1E-8, 1E0),
-         pch=25)
+     palette(c("red", "blue", "green", "cyan"))
+     plot(paleo.im$lambda ~ paleo.im$IM, log="xy", 
+  	xlab="IM", ylab="lambda", main="IM Rate",
+  	type="l", lwd=5, col=1,
+  	xlim=c(0.01, 3.0), ylim=c(1E-8, 1E0),
+  	pch=25)
 
-    lines(neo.im$lambda ~ neo.im$IM, lwd=1, col=2, pch=24)
+    lines(neo.im$lambda ~ neo.im$IM, lwd=3, col=2, pch=24)
 
     points(input.im$lambda ~ input.im$IM, col=3)
+
+    lines(paleo2.im$lambda ~ paleo2.im$IM, col=4, lwd=1)
+
     legend(x="topright",
-         legend=c("Paleo", "Neo", "Input"),
-         fill=palette())
+  	 legend=c("Paleo", "Neo", "Input", "Paleo2"),
+  	 fill=palette())
   #+END_SRC
 
   #+CAPTION: IM rate calculations
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:im-rate
   #+RESULTS: im-rate
-  [[file:/tmp/babel-1789nf2/figure-1789-LY.pdf]]
+  [[file:/tmp/babel-1789nf2/figure-1789nwM.pdf]]
 
   Compare the two versions (assumes same IM values are used):
   #+BEGIN_SRC R
@@ -129,6 +138,11 @@
         paste(results.dir, "edp-im-1", sep=""),
         skip=3, header=FALSE, sep="")
     names(paleo.edp.im) = c("IM", "mean_x", "sd_ln_x")
+
+    paleo2.edp.im <- read.csv(
+        paste(results.dir, "edp-im-1", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo2.edp.im) = c("IM", "mean_x", "sd_ln_x")
 
     neo.edp.im <- read.csv("example1_im_edp.txt",
         header=TRUE, sep="")
@@ -174,17 +188,20 @@
   #+NAME: edp-im-mean
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-  #+BEGIN_SRC R  
-      palette(c("red", "blue"))
+  #+BEGIN_SRC R 
+      palette(c("red", "blue", "green"))
       plot(paleo.edp.im$mean_x ~ paleo.edp.im$IM, log="", 
   	 xlab="IM", ylab="EDP", main="mean(EDP)-IM",
+	 lwd=5,
   	 type="p", col=1)
 
-      lines(neo.edp.im$mean_x ~ neo.edp.im$IM, col=2)
+      lines(neo.edp.im$mean_x ~ neo.edp.im$IM, col=2, lwd=3)
 
+      points(paleo2.edp.im$mean_x ~ paleo2.edp.im$IM,
+          col=3)
 
-      legend(x="topright",
-  	 legend=c("Paleo", "Neo"),
+      legend(x="right",
+  	 legend=c("Paleo", "Neo", "Paleo2"),
   	 fill=palette())
   #+END_SRC
 
@@ -194,46 +211,54 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:edp-im-mean
   #+RESULTS: edp-im-mean
-  [[file:/tmp/babel-36639js/figure-3663CSk.pdf]]
+  [[file:/tmp/babel-1789nf2/figure-1789frp.pdf]]
 
   #+NAME: edp-im-mean-zoom
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R 
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.edp.im$mean_x ~ paleo.edp.im$IM, log="", 
          xlab="IM", ylab="EDP", main="mean(EDP)-IM",
-	 xlim=c(0.8, 1.2),
+         lwd=5,
+         xlim=c(0.8, 1.2),
          type="p", col=1)
 
-    lines(neo.edp.im$mean_x ~ neo.edp.im$IM, col=2)
+    lines(neo.edp.im$mean_x ~ neo.edp.im$IM, col=2,
+  	lwd=3)
 
+    points(paleo2.edp.im$mean_x ~ paleo2.edp.im$IM,
+  	col=3)
 
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
-  #+CAPTION: men(EDP) vs. IM
+  #+Caption: men(EDP) vs. IM
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:edp-im-mean-zoom
   #+RESULTS: edp-im-mean-zoom
-  [[file:/tmp/babel-1789nf2/figure-1789c8H.pdf]]
+  [[file:/tmp/babel-1789nf2/figure-1789yQ2.pdf]]
 
   #+NAME: edp-im-sd-ln
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R  
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.edp.im$sd_ln_x ~ paleo.edp.im$IM, log="", 
          xlab="IM", ylab="EDP", main="sd(ln(EDP))-IM",
+         lwd=5,
          type="p", col=1)
 
-    lines(neo.edp.im$sd_ln_x ~ neo.edp.im$IM, col=2)
+    lines(neo.edp.im$sd_ln_x ~ neo.edp.im$IM, col=2,
+  	lwd=3)
 
+    points(paleo2.edp.im$mean_x ~ paleo2.edp.im$IM,
+  	 col=3)
 
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
@@ -251,6 +276,11 @@
         paste(results.dir, "edp-rate.txt", sep=""),
         skip=3, header=FALSE, sep="")
     names(paleo.edp.rate) = c("EDP", "lambda")
+
+    paleo2.edp.rate <- read.csv(
+        paste(results.dir, "edp-rate.txt", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo2.edp.rate) = c("EDP", "lambda")
 
     neo.edp.rate <- read.csv("example1_edp_rate.txt", 
         header=TRUE, sep="")
@@ -276,21 +306,25 @@
   | Max abs(error) is 9.499000e-03 (8.23%). |
   | Mean error is 1.757726e-03 (0.58%).     |
 
-  Plot it:
+  Plot it (Figure [[fig:edp-rate]]):
   #+NAME: edp-rate
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R  
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.edp.rate$lambda ~ paleo.edp.rate$EDP, log="xy", 
          xlab="EDP", ylab="lambda", main="EDP Rate",
+         lwd=5,
          type="p", col=1)
 
-    lines(neo.edp.rate$lambda ~ neo.edp.rate$EDP, col=2)
+    lines(neo.edp.rate$lambda ~ neo.edp.rate$EDP, col=2,
+  	lwd=3)
+
+    points(paleo2.edp.rate$lambda ~ paleo2.edp.rate$EDP, col=3)
 
 
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
@@ -309,6 +343,11 @@
         skip=3, header=FALSE, sep="")
     names(paleo.collapse.im) = c("IM", "pCollapse")
 
+    paleo2.collapse.im <- read.csv(
+        paste(results.dir, "collapse-im", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo2.collapse.im) = c("IM", "pCollapse")
+
     neo.collapse.im <- read.csv("example1_collapse.txt", 
         header=TRUE, sep="")
     names(neo.collapse.im) = c("IM", "pCollapse")
@@ -318,7 +357,8 @@
 
   Compare the two versions (assumes same IM values are used):
   #+BEGIN_SRC R 
-    diff <- paleo.collapse.im$pCollapse - neo.collapse.im$pCollapse
+    diff <- paleo.collapse.im$pCollapse -
+        neo.collapse.im$pCollapse
     denom <- paleo.collapse.im$pCollapse
     denom[denom == 0] <- NA
     diff.pct <- diff / denom
@@ -341,17 +381,21 @@
   #+NAME: collapse-im
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-  #+BEGIN_SRC R  
-    palette(c("red", "blue"))
-    plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, log="y", 
+  #+BEGIN_SRC R 
+    palette(c("red", "blue", "green"))
+    plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, 
+         log="y", lwd=5,
          xlab="IM", ylab="pCollapse", main="COLLAPSE Rate",
          type="p", col=1)
 
-    lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, col=2)
+    lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, 
+  	col=2, lwd=3)
+
+    points(paleo2.collapse.im$pCollapse ~ paleo2.collapse.im$IM, col=3)
 
 
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
@@ -359,13 +403,13 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:collapse-im
   #+RESULTS: collapse-im
-  [[file:/tmp/babel-1789nf2/figure-1789bru.pdf]]
+  [[file:/tmp/babel-1789nf2/figure-1789jGM.pdf]]
 
   #+NAME: collapse-im-zoom
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R  
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, log="y", 
          xlab="IM", ylab="pCollapse", main="COLLAPSE Rate",
 	 xlim=c(0, 0.5),
@@ -373,9 +417,10 @@
 
     lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, col=2)
 
+    points(paleo2.collapse.im$pCollapse ~ paleo2.collapse.im$IM, col=3)
 
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
@@ -389,7 +434,7 @@
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R 
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, log="y", 
          xlab="IM", ylab="pCollapse", main="COLLAPSE Rate",
 	 xlim=c(1.5, 2.0),
@@ -398,9 +443,10 @@
 
     lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, col=2)
 
+    points(paleo2.collapse.im$pCollapse ~ paleo2.collapse.im$IM, col=3)
 
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
@@ -414,16 +460,23 @@
   The overall rate of collapse:
   #+BEGIN_SRC R  :results value 
     paleo.rate <- scan(paste(results.dir, "collapse-rate", sep=""), skip=3)
+    paleo2.rate <- scan(paste(results2.dir, "collapse-rate", sep=""), skip=3)
     neo.rate <- as.numeric(scan("example1_collrate.txt", what="string")[8])
-
-    sprintf("Paleo: %e; Neo: %e; error: %3.2f%%", 
-            paleo.rate,
-            neo.rate, 
-            (100 * abs(neo.rate - paleo.rate)/paleo.rate))
+    paste(
+        sprintf("Paleo: %e; Neo: %e; error: %3.2f%%", 
+                paleo.rate,
+                neo.rate, 
+                (100 * abs(neo.rate - paleo.rate)/paleo.rate)),
+        sprintf("Paleo: %e; Paleo2: %e; error: %3.2f%%", 
+                paleo.rate,
+                paleo2.rate, 
+                (100 * abs(paleo2.rate - paleo.rate)/paleo.rate)),
+        sep="\n")
   #+END_SRC
   
   #+RESULTS:
-  : Paleo: 2.125500e-04; Neo: 2.158956e-04; error: 1.57%
+  | Paleo: 2.125500e-04; Neo: 2.158956e-04; error: 1.57%    |
+  | Paleo: 2.125500e-04; Paleo2: 2.125500e-04; error: 0.00% |
 
 * LOSS-IM
   Read the LOSS-IM data:
@@ -432,6 +485,11 @@
         paste(results.dir, "pg-im", sep=""),
         skip=3, header=FALSE, sep="")
     names(paleo.loss.im) = c("IM", "mean_x", "sd_ln_x")
+
+    paleo2.loss.im <- read.csv(
+        paste(results.dir, "pg-im", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo2.loss.im) = c("IM", "mean_x", "sd_ln_x")
 
     neo.loss.im <- read.csv("example1_loss_im.txt", 
         header=TRUE, sep="")
@@ -464,15 +522,17 @@
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R  
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.loss.im$mean_x ~ paleo.loss.im$IM, log="y", 
          xlab="IM", ylab="Mean Loss", main="Loss-IM Relationship",
-         type="p", col=1)
+         type="p", col=1, lwd=5)
 
-    lines(neo.loss.im$mean_x ~ neo.loss.im$IM, col=2)
+    lines(neo.loss.im$mean_x ~ neo.loss.im$IM, col=2, lwd=3)
 
+    points(paleo.loss.im$mean_x ~ paleo.loss.im$IM, col=3)
+    
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
@@ -486,7 +546,7 @@
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R  
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.loss.im$mean_x ~ paleo.loss.im$IM, log="y", 
          xlab="IM", ylab="Mean Loss", main="Loss-IM Relationship",
 	 xlim=c(0.001, 0.10), ylim=c(1E-12, 1E0),
@@ -494,8 +554,10 @@
 
     lines(neo.loss.im$mean_x ~ neo.loss.im$IM, col=2)
 
+    points(paleo.loss.im$mean_x ~ paleo.loss.im$IM, col=3)
+
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
@@ -530,15 +592,17 @@
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R  
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.loss.im$sd_ln_x ~ paleo.loss.im$IM, log="", 
          xlab="IM", ylab="sd(ln(Loss))", main="Loss-IM Relationship",
          type="p", col=1)
 
     lines(neo.loss.im$sd_ln_x ~ neo.loss.im$IM, col=2)
 
+    points(paleo.loss.im$sd_ln_x ~ paleo.loss.im$IM, col=3)
+
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
@@ -556,6 +620,11 @@
         paste(results.dir, "pg-edp", sep=""),
         skip=3, header=FALSE, sep="")
     names(paleo.loss.edp) = c("EDP", "mean_x", "sd_ln_x")
+
+    paleo2.loss.edp <- read.csv(
+        paste(results.dir, "pg-edp", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo2.loss.edp) = c("EDP", "mean_x", "sd_ln_x")
 
     neo.loss.edp <- read.csv("example1_loss_edp.txt", 
         header=TRUE, sep="")
@@ -597,16 +666,19 @@
   #+NAME: loss.edp-mean
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-  #+BEGIN_SRC R  
-    palette(c("red", "blue"))
+  #+BEGIN_SRC R
+    palette(c("red", "blue", "green"))
     plot(paleo.loss.edp$mean_x ~ paleo.loss.edp$EDP, log="xy", 
          xlab="EDP", ylab="Mean(Loss)", main="Loss-EDP Relationship",
-         type="p", col=1)
+         type="p", col=1, lwd=5)
 
-    lines(neo.loss.edp$mean_x ~ neo.loss.edp$EDP, col=2)
+    lines(neo.loss.edp$mean_x ~ neo.loss.edp$EDP, 
+  	col=2, lwd=3)
+
+    points(paleo2.loss.edp$mean_x ~ paleo2.loss.edp$EDP,col=3)
 
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
@@ -614,17 +686,20 @@
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R  
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.loss.edp$mean_x ~ paleo.loss.edp$EDP, log="xy", 
          xlab="EDP", ylab="Mean(Loss)", main="Loss-EDP Relationship",
-	 xlim=c(0.05, 0.10),
-	 ylim=c(5E-1, 1E0),
-         type="p", col=1)
+         xlim=c(0.05, 0.10),
+         ylim=c(5E-1, 1E0),
+         type="p", col=1, lwd=5)
 
-    lines(neo.loss.edp$mean_x ~ neo.loss.edp$EDP, col=2)
+    lines(neo.loss.edp$mean_x ~ neo.loss.edp$EDP, 
+  	col=2, lwd=3)
+
+    points(paleo2.loss.edp$mean_x ~ paleo2.loss.edp$EDP, col=3)
 
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
@@ -635,19 +710,21 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.edp-mean
   #+RESULTS: loss.edp-mean
-  [[file:/tmp/babel-36639js/figure-3663Rsg.pdf]]
+  [[file:/tmp/babel-1789nf2/figure-1789TYW.pdf]]
 
 
   #+NAME: loss.edp-sd
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R  
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.loss.edp$sd_ln_x ~ paleo.loss.edp$EDP, log="", 
          xlab="EDP", ylab="sd(ln(Loss))", main="Loss-EDP Relationship",
-         type="p", col=1)
+         type="p", col=1, lwd=5)
+    lines(neo.loss.edp$sd_ln_x ~ neo.loss.edp$EDP, 
+  	col=2, lwd=3)
 
-    lines(neo.loss.edp$sd_ln_x ~ neo.loss.edp$EDP, col=2)
+    points(paleo.loss.edp$sd_ln_x ~ paleo.loss.edp$EDP, col=3)
 
     legend(x="topright",
          legend=c("Paleo", "Neo"),
@@ -665,17 +742,20 @@
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R 
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.loss.edp$sd_ln_x ~ paleo.loss.edp$EDP, log="", 
          xlab="EDP", ylab="sd(ln(Loss))", main="Loss-EDP Relationship",
-	 xlim=c(0.08, 0.12),
-	 ylim=c(0.4, 0.85),
-         type="p", col=1)
+         xlim=c(0.08, 0.12),
+         ylim=c(0.4, 0.85),
+         type="p", col=1, lwd=5)
 
-    lines(neo.loss.edp$sd_ln_x ~ neo.loss.edp$EDP, col=2)
+    lines(neo.loss.edp$sd_ln_x ~ neo.loss.edp$EDP, 
+  	col=2, lwd=3)
+
+    points(paleo.loss.edp$sd_ln_x ~ paleo.loss.edp$EDP, col=3)
 
     legend(x="topright",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
@@ -683,5 +763,39 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.edp-sd-zoom
   #+RESULTS: loss.edp-sd-zoom
-  [[file:/tmp/babel-1789nf2/figure-1789cUE.pdf]]
+  [[file:/tmp/babel-1789nf2/figure-1789WwH.pdf]]
 
+* Annual Loss
+  
+  #+BEGIN_SRC R   :results output
+    paleo.loss.edp <- read.csv(
+        paste(results.dir, "pg-edp", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.loss.edp) = c("EDP", "mean_x", "sd_ln_x")
+
+    paleo2.loss.edp <- read.csv(
+        paste(results.dir, "pg-edp", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo2.loss.edp) = c("EDP", "mean_x", "sd_ln_x")
+
+    neo.loss.edp <- read.csv("example1_loss_edp.txt", 
+        header=TRUE, sep="")
+  #+END_SRC
+  
+  #+RESULTS:
+
+  #+BEGIN_SRC R 
+    diff <- paleo.loss.edp$mean-x - neo.loss.edp$mean-x
+    denom <- paleo.loss.edp$mean-x
+    denom[denom == 0] <- NA
+    diff.pct <- diff / denom
+
+    paste(
+        sprintf("Max abs(error) is %e (%3.2f%%).",
+                max(abs(diff)),
+                100 * max(abs(diff.pct), na.rm=TRUE)),
+        sprintf("Mean error is %e (%3.2f%%).",
+                mean(diff),
+                100 * mean(diff.pct, na.rm=TRUE)),
+        sep="\n")
+  #+END_SRC

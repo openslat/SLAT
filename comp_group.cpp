@@ -155,7 +155,7 @@ namespace SLAT {
 
     double CompGroup::E_loss_IM_calc(double im)
     {
-        if (true) {
+        if (false) {
             return LossDist_IM(im).get_mean_X();
         } else {
             Integration::MAQ_RESULT result;
@@ -194,7 +194,7 @@ namespace SLAT {
 
     double CompGroup::SD_ln_loss_IM_calc(double im)
     {
-        if (true) {
+        if (false) {
             return LossDist_IM(im).get_sigma_lnX();
         } else {
             Integration::MAQ_RESULT result;

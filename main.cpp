@@ -103,7 +103,7 @@ int main(int argc, char **argv)
     shared_ptr<DeterministicFn> new_im_rate_function = std::make_shared<NonLinearHyperbolicLaw>(12.21, 29.8, 62.2);
     std::cout << "Replacing im_rate_function" << std::endl;
     im_rate_function->replace(new_im_rate_function);
-    im_rate_rel->SetCollapse(std::make_shared<Collapse>(0.9, 0.470));
+    //im_rate_rel->SetCollapse(std::make_shared<Collapse>(0.9, 0.470));
 
     std::cout << "Rate of Collapse: " << im_rate_rel->CollapseRate() << std::endl;
     std::cout << *rel << std::endl;
