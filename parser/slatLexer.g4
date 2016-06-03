@@ -1,5 +1,7 @@
 lexer grammar slatLexer;
 
+//mode default;
+
 WS  :   ( ' '
         | '\t'
         | '\r'
@@ -9,8 +11,10 @@ WS  :   ( ' '
     ;
 COMMENT :   '#' ~[\r\n]*;
 
-LBRACE : '{';
-RBRACE : '}';
+PYTHON_ESCAPE : '${' -> pushMode(PYMODE);
+
+/*LBRACE : '{';
+RBRACE : '}';*/
 LBRACKET : '[';
 RBRACKET : ']';
 LPAREN : '(';
@@ -55,7 +59,6 @@ MAQ: 'maq';
 COLLAPSE_FLAG: '--collapse';
 NOCOLLAPSE_FLAG: '--nocollapse';
 
-PYTHON_ESCAPE : '${';
 STRING : SINGLE_QUOTED_STRING | DOUBLE_QUOTED_STRING ;
 
 HYPERBOLIC: 'hyperbolic';
@@ -140,4 +143,6 @@ EXPONENT : ('e' | 'E') SIGN? DIGIT_SEQUENCE;
 
 FILE_NAME : [/a-zA-Z_.0-9]+;
 
-OTHER: .+?;
+mode PYMODE;
+PYTHON_END: '{}' -> popMode ;
+OTHER: .;

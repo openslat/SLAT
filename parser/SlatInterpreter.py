@@ -332,7 +332,7 @@ class recorder:
                       'lossds': ['DS', None],
                       'lossedp': ['EDP', None],
                       'lossim': ['IM', None],
-                      'losstotal': ['IM', 'xbmean_x'],
+                      'losstotal': ['IM', 'mean_x'],
                       'annloss': ['t', ["E[ALt]"]],
                       'lossrate': ['t', 'Rate'],
                       'collapse': ['IM', 'p(Collapse)']}
@@ -646,8 +646,8 @@ class SlatInterpreter(slatParserListener):
     def exitFragfn_db_params(self, ctx:slatParser.Fragfn_db_paramsContext):
         dbkey = ctx.db_key().ID().getText().strip('\'"')
         
-        if ctx.FILE_NAME():
-            dbfile = ctx.FILE_NAME().getText().strip('\'"') 
+        if ctx.file_spec():
+            dbfile = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"') 
         else:
             dbfile = "(default database)"
         self._stack.append({'key': dbkey, 'database': dbfile})
@@ -781,8 +781,8 @@ class SlatInterpreter(slatParserListener):
     # Exit a parse tree produced by slatParser#print_options.
     def exitPrint_options(self, ctx:slatParser.Print_optionsContext):
         options = dict()
-        if ctx.FILE_NAME():
-            options['filename'] = ctx.FILE_NAME().getText()
+        if ctx.file_spec():
+            options['filename'] = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText()
         else:
             options['filename'] = None;
             
@@ -928,7 +928,7 @@ class SlatInterpreter(slatParserListener):
         print(("    Set the variable '{}' to {}.").format(id, value ))
 
     def exitImportprobfn_command(self, ctx:slatParser.Importprobfn_commandContext):
-        data = np.loadtxt(ctx.FILE_NAME().getText().strip('\'"'), skiprows=2)
+        data = np.loadtxt((ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"'), skiprows=2)
         # Add a point at 0, 0 to support interpolation down to zero
         x = [0]
         mu = [0]

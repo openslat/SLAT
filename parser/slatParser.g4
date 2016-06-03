@@ -44,8 +44,9 @@ collapse_command: COLLAPSE ID lognormal_dist;
 
 fragfn_command : FRAGFN ID 
 	       (fragfn_db_params | fragfn_user_defined_params);
-fragfn_db_params : ((DB_FLAG FILE_NAME)? STDFUNC_FLAG db_key) |
-		   (STDFUNC_FLAG db_key DB_FLAG FILE_NAME) ;
+file_spec: FILE_NAME | ID;	       
+fragfn_db_params : ((DB_FLAG file_spec)? STDFUNC_FLAG db_key) |
+		   (STDFUNC_FLAG db_key DB_FLAG file_spec) ;
 		 
 fragfn_user_defined_params : scalar2_sequence lognormal_options;
 mu_option : MU_FLAG (MEAN_LN_X | MEDIAN_X | MEAN_X);
@@ -80,7 +81,7 @@ print_message : PRINT MESSAGE (STRING | python_script | var_ref)?;
 print_title : PRINT TITLE;
 print_function: PRINT (DETFN | PROBFN | IM | EDP | FRAGFN | LOSSFN | COMPGROUP) ID;
 
-print_options : FILE_NAME (APPEND_OPTION | NEW_OPTION)?;
+print_options : file_spec (APPEND_OPTION | NEW_OPTION)?;
 
 integration_command : INTEGRATION integration_method numerical_scalar (INTEGER | var_ref | python_script);
 integration_method : MAQ;
@@ -102,13 +103,11 @@ col_spec : placement_type | spread_type | scalar;
 recorder_cols : COLS_FLAG col_spec (COMMA col_spec)*;
 
 
-python_script : PYTHON_ESCAPE python_expression RBRACE;
-python_expression : .*?; /*(balanced_paren_expression | non_paren_expression)*?;
-balanced_paren_expression : LBACE non_paren_expression RBRACE;
-non_paren_expression:  .+?;*/
+python_script : PYTHON_ESCAPE python_expression PYTHON_END;
+python_expression : OTHER*?;
 
 analyze_command : ANALYZE;
 
 set_command : SET ID (python_script | var_ref | parameters);
 
-importprobfn_command : IMPORTPROBFN ID FILE_NAME;
+importprobfn_command : IMPORTPROBFN ID file_spec;
