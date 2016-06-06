@@ -104,7 +104,7 @@ recorder_cols : COLS_FLAG col_spec (COMMA col_spec)*;
 
 
 python_script : PYTHON_ESCAPE python_expression PYTHON_END;
-python_expression : OTHER*?;
+python_expression : (OTHER | PYMODELPAREN | NESTEDOTHER | NESTEDLPAREN | NESTEDRPAREN)*?;
 
 analyze_command : ANALYZE;
 

@@ -11,10 +11,10 @@ WS  :   ( ' '
     ;
 COMMENT :   '#' ~[\r\n]*;
 
-PYTHON_ESCAPE : '${' -> pushMode(PYMODE);
+PYTHON_ESCAPE : '$(' -> pushMode(PYMODE);
 
-/*LBRACE : '{';
-RBRACE : '}';*/
+LBRACE : '{';
+RBRACE : '}';
 LBRACKET : '[';
 RBRACKET : ']';
 LPAREN : '(';
@@ -144,5 +144,10 @@ EXPONENT : ('e' | 'E') SIGN? DIGIT_SEQUENCE;
 FILE_NAME : [/a-zA-Z_.0-9]+;
 
 mode PYMODE;
-PYTHON_END: '{}' -> popMode ;
+PYTHON_END: ')' -> popMode ;
+PYMODELPAREN: '(' -> pushMode(NESTEDPYMODE);
 OTHER: .;
+mode NESTEDPYMODE;
+NESTEDLPAREN: '(' -> pushMode(NESTEDPYMODE);
+NESTEDRPAREN: ')' -> popMode;
+NESTEDOTHER: .;
