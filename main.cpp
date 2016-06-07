@@ -6,6 +6,7 @@
 #include "lognormaldist.h"
 #include "loss_functions.h"
 #include "comp_group.h"
+#include "structure.h"
 #include <chrono>
 
 using namespace std;
@@ -103,7 +104,7 @@ int main(int argc, char **argv)
     shared_ptr<DeterministicFn> new_im_rate_function = std::make_shared<NonLinearHyperbolicLaw>(12.21, 29.8, 62.2);
     std::cout << "Replacing im_rate_function" << std::endl;
     im_rate_function->replace(new_im_rate_function);
-    //im_rate_rel->SetCollapse(std::make_shared<Collapse>(0.9, 0.470));
+    im_rate_rel->SetCollapse(std::make_shared<Collapse>(0.9, 0.470));
 
     std::cout << "Rate of Collapse: " << im_rate_rel->CollapseRate() << std::endl;
     std::cout << *rel << std::endl;
@@ -183,7 +184,7 @@ int main(int argc, char **argv)
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
 
     {
-        CompGroup  component_group(rel, fragFn, lossFn, 1);
+        std::shared_ptr<CompGroup> component_group = std::make_shared<CompGroup>(rel, fragFn, lossFn, 1);
         ofstream outfile("loss_edp.dat");
     
         outfile << setw(10) << "EDP" << setw(15) << "Loss"
@@ -191,10 +192,10 @@ int main(int argc, char **argv)
 
         for (int i=1; i < 200; i++) {
             double edp = i / 1000.;
-            double loss = component_group.E_loss_EDP(edp);
+            double loss = component_group->E_loss_EDP(edp);
 
             outfile << setw(10) << edp << setw(15) << loss
-                    << setw(15) << component_group.SD_ln_loss_EDP(edp) << endl;
+                    << setw(15) << component_group->SD_ln_loss_EDP(edp) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-EDP table written." << endl;
@@ -204,18 +205,18 @@ int main(int argc, char **argv)
                 << setw(15) << "SD(ln)" << endl;
         for (int i=0; i < 250; i++) {
             double im = (i + 1)/ 100.;
-            outfile << setw(10) << im << setw(15) << component_group.E_loss_IM(im)
-                    << setw(15) << component_group.SD_ln_loss_IM(im) << endl;
+            outfile << setw(10) << im << setw(15) << component_group->E_loss_IM(im)
+                    << setw(15) << component_group->SD_ln_loss_IM(im) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-IM table written." << endl;
 
-        std::cout << "Expected Annual Loss: " << component_group.E_annual_loss() << std::endl;
+        std::cout << "Expected Annual Loss: " << component_group->E_annual_loss() << std::endl;
         
         outfile.open("annual_loss.dat");
         outfile << setw(10) << "Year" << setw(15) << "Loss" << endl;
         for (int year=0; year <= 100; year++) {
-            outfile << setw(10) << year << setw(15) << component_group.E_loss(year, 0.06) << endl;
+            outfile << setw(10) << year << setw(15) << component_group->E_loss(year, 0.06) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "annual loss table written." << endl;
@@ -224,9 +225,18 @@ int main(int argc, char **argv)
         outfile << setw(10) << "Loss" << setw(15) << "Rate" << std::endl;
         for (int i=0; i < 250; i++) {
             double loss = 1E-4 + i * (1.2 - 1E-4) / 250;
-            outfile << setw(10) << loss << setw(15) << component_group.lambda_loss(loss) << std::endl;
+            outfile << setw(10) << loss << setw(15) << component_group->lambda_loss(loss) << std::endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-RATE table written." << endl;
+
+
+        Structure structure;
+        structure.AddCompGroup(component_group);
+        std::cout << "Structure Loss: " << structure.Loss(0, false) << std::endl;
+        std::cout << "Structure Loss: " << structure.Loss(0, true) << std::endl;
+
+        std::cout << "Structure Loss: " << structure.Loss(0.1, false) << std::endl;
+        std::cout << "Structure Loss: " << structure.Loss(0.1, true) << std::endl;
     }
 }

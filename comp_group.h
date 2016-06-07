@@ -41,6 +41,7 @@ namespace SLAT {
         double E_loss(int years, double discount_rate);
         double mean_ln_loss_EDP(double edp);
         LogNormalDist LossDist_IM(double im);
+        std::shared_ptr<IM> getIM(void) { return edp->Base_Rate(); };
     private:
         std::shared_ptr<EDP> edp;
         std::shared_ptr<FragilityFn> frag_fn;

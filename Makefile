@@ -53,7 +53,7 @@ endif
 #LDFLAGS+=-Wl,-rpath,.
 
 LIBSRCS=functions.cpp relationships.cpp maq.cpp fragility.cpp lognormaldist.cpp loss_functions.cpp \
-	comp_group.cpp caching.cpp
+	comp_group.cpp caching.cpp structure.cpp
 LIBHDRS=$(LIBSRCS:.cpp=.h)
 LIBOBJS=$(LIBSRCS:.cpp=.o)
 
@@ -72,12 +72,13 @@ fragility.o: fragility.cpp fragility.h
 lognormaldist.o: lognormaldist.cpp lognormaldist.h 
 loss_functions.o: loss_functions.cpp loss_functions.h 
 comp_group.o: comp_group.cpp comp_group.h
+structure.o: structure.cpp structure.h
 
 ifeq ($(shell uname), Linux)
-libslat.so: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_functions.o comp_group.o caching.o
+libslat.so: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_functions.o comp_group.o caching.o structure.o
 	$(CC) -fPIC -shared -Wl,-soname,libslat.so -o libslat.so $(LIBOBJS) ${LDFLAGS}
 else
-libslat.dll: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_functions.o comp_group.o caching.o
+libslat.dll: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_functions.o comp_group.o caching.o structure.o
 	$(CC) -shared \
 	-Wl,--dll \
 	-Wl,--export-all-symbols \
