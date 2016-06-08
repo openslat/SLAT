@@ -13,6 +13,7 @@
 #define _STRUCTURE_H_
 
 #include "comp_group.h"
+#include "lognormaldist.h"
 #include "maq.h"
 
 namespace SLAT {
@@ -26,10 +27,13 @@ namespace SLAT {
         Integration::IntegrationSettings local_settings;
         static Integration::IntegrationSettings class_settings;
 
-        double Loss(double im, bool consider_collapse);
+        LogNormalDist Loss(double im, bool consider_collapse);
+        void setRebuildCost(LogNormalDist dist) { rebuild_cost = dist; };
+        LogNormalDist getRebuildCost(void) { return rebuild_cost; };
     private:
         std::vector<std::shared_ptr<CompGroup>> components;
         std::shared_ptr<IM> im;
+        LogNormalDist rebuild_cost;
     };
 }
 #endif

@@ -233,10 +233,22 @@ int main(int argc, char **argv)
 
         Structure structure;
         structure.AddCompGroup(component_group);
-        std::cout << "Structure Loss: " << structure.Loss(0, false) << std::endl;
-        std::cout << "Structure Loss: " << structure.Loss(0, true) << std::endl;
-
-        std::cout << "Structure Loss: " << structure.Loss(0.1, false) << std::endl;
-        std::cout << "Structure Loss: " << structure.Loss(0.1, true) << std::endl;
+        structure.setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
+        {
+            LogNormalDist loss = structure.Loss(0, false);
+            std::cout << "Structure Loss: " << loss.get_mean_X() << ", " << loss.get_sigma_lnX() << std::endl;
+        }
+        {
+            LogNormalDist loss = structure.Loss(0, true);
+            std::cout << "Structure Loss: " << loss.get_mean_X() << ", " << loss.get_sigma_lnX() << std::endl;
+        }
+        {
+            LogNormalDist loss = structure.Loss(1, false);
+            std::cout << "Structure Loss: " << loss.get_mean_X() << ", " << loss.get_sigma_lnX() << std::endl;
+        }
+        {
+            LogNormalDist loss = structure.Loss(1, true);
+            std::cout << "Structure Loss: " << loss.get_mean_X() << ", " << loss.get_sigma_lnX() << std::endl;
+        }
     }
 }

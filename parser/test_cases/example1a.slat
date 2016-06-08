@@ -43,6 +43,9 @@ lossfn LOSS_1 simple [0.03,0.4],
 
 compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 1;
 
+structure BUILDING COMPGROUP_1;
+rebuildcost BUILDING 14E6, 0.35 --mu mean_x --sd sd_ln_x;
+
 # Set up integration parameters:
 integration maq 1E-6 1024;
 
@@ -67,13 +70,9 @@ recorder annloss COMPGROUP_1 1.0:1.0:100.0 --lambda 0.06 example1a_annual_loss.t
 
 recorder lossrate COMPGROUP_1 1E-4:4.8E-3:1.2 example1a_loss_rate.txt --new;
 
-recorder imrate IM_1 0.01:0.01:2.50 example1a_im_rate --new;
-recorder losstotal IM_1 0.01:0.01:1.0; # example1a_loss_c_total --new;
-recorder losstotal IM_1 0.01:0.01:1.0 example1a_loss_c_total;
-recorder losstotal IM_1 0.01:0.01:1.0 example1a_loss_c_total.txt --new ;
+recorder structloss BUILDING --collapse $linvalues example1a_loss_c_total --new;
+recorder structloss BUILDING --nocollapse $linvalues example1a_loss_nc_total --new;
 
-#recorder losstotal IM_1 --collapse $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) example1a_loss_c_total --new;
-#recorder losstotal IM_1 --nocollapse $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) example1a_loss_nc_total --new;
 analyze;
 
 

@@ -7,7 +7,8 @@ script : (WS | command)*;
 command : (title_command | detfn_command | probfn_command | im_command | edp_command
 	| fragfn_command | lossfn_command | compgroup_command | print_command 
 	| integration_command | recorder_command | analyze_command | set_command 
-	| importprobfn_command | collapse_command) SEMICOLON ;
+	| importprobfn_command | collapse_command | structure_command
+	| rebuildcost_command) SEMICOLON ;
 
 title_command : TITLE STRING;
 
@@ -75,6 +76,11 @@ lossfn_named_array : LBRACKET lossfn_dict (COMMA lossfn_dict)* RBRACKET;
 
 compgroup_command : COMPGROUP ID ID ID ID INTEGER;
 
+structure_command : STRUCTURE ID id_list;
+id_list: ID (COMMA ID)*;
+
+rebuildcost_command : REBUILDCOST ID lognormal_dist;
+
 print_command : (print_message | print_function | print_title) print_options?;
 
 print_message : PRINT MESSAGE (STRING | python_script | var_ref)?;
@@ -89,12 +95,13 @@ integration_method : MAQ;
 recorder_command : RECORDER ((recorder_type ID recorder_at recorder_cols?) 
                   | ((DSRATE | COLLRATE) ID)
                   | ((LOSSRATE | COLLAPSE) ID recorder_at)
-		  | (ANNLOSS ID recorder_at LAMBDA_FLAG lambda_value))
+		  | (ANNLOSS ID recorder_at LAMBDA_FLAG lambda_value)
+		  | (STRUCTLOSS ID collapse_type? recorder_at recorder_cols?))
 		  print_options?;
 lambda_value: numerical_scalar;
 
 recorder_type : DETFN | PROBFN | IMRATE | EDPIM | EDPRATE | DSEDP
-	      | DSIM | LOSSDS | LOSSEDP | LOSSIM | LOSSTOTAL;
+	      | DSIM | LOSSDS | LOSSEDP | LOSSIM;
 recorder_at : (float_array | (FLOAT_VAL COLON FLOAT_VAL COLON FLOAT_VAL) | python_script | var_ref);
 float_array : FLOAT_VAL (COMMA FLOAT_VAL)*;
 collapse_type : COLLAPSE_FLAG | NOCOLLAPSE_FLAG;

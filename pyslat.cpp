@@ -25,6 +25,7 @@
 #include "loss_functions.h"
 #include "comp_group.h"
 #include "maq.h"
+#include "structure.h"
 #include <iostream>
 using namespace SLAT;
 
@@ -51,7 +52,7 @@ namespace SLAT {
 
     enum FUNCTION_TYPE { NLH, PLC, LIN, LOGLOG };
     enum LOGNORMAL_PARAM_TYPE { MEAN_X, MEDIAN_X, MEAN_LN_X, SD_X, SD_LN_X };
-    
+
     DeterministicFnWrapper *factory(FUNCTION_TYPE t, python::list params)
     {
         DeterministicFn *result = NULL;
@@ -396,6 +397,7 @@ namespace SLAT {
         std::shared_ptr<LogNormalDist> dist;
         friend FragilityFnWrapper *MakeFragilityFn(python::list);
         friend LossFnWrapper *MakeLossFn(python::list);        
+        friend class StructureWrapper;
     };
 
     LogNormalDistWrapper *MakeLogNormalDist(python::dict parameters)
@@ -558,6 +560,8 @@ namespace SLAT {
         double lambda_loss(double loss) { return wrapper->lambda_loss(loss); };
     private:
         std::shared_ptr<CompGroup> wrapper;
+        
+        friend class StructureWrapper;
     };
     
     CompGroupWrapper *MakeCompGroup(EDPWrapper edp, FragilityFnWrapper frag_fn, LossFnWrapper loss_fn, int count)
@@ -567,6 +571,30 @@ namespace SLAT {
                                         frag_fn.fragility,
                                         loss_fn.loss, 
                                         count));
+    }
+    
+    class StructureWrapper {
+    public:
+        StructureWrapper(std::shared_ptr<Structure> structure) { wrapper = structure; };
+        void AddCompGroup(CompGroupWrapper cg) {
+            wrapper->AddCompGroup(cg.wrapper);
+        };
+        LogNormalDistWrapper Loss(double im, bool consider_collapse) {
+            return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->Loss(im, consider_collapse))));
+        };
+        void setRebuildCost(LogNormalDistWrapper cost) {
+            wrapper->setRebuildCost(*cost.dist);
+        };
+        LogNormalDistWrapper getRebuildCost(void) {
+            return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->getRebuildCost())));
+        };
+    private:
+        std::shared_ptr<Structure> wrapper;
+    };
+
+    StructureWrapper *MakeStructure() 
+    {
+        return new StructureWrapper(std::make_shared<Structure>());
     }
 
     void IntegrationSettings(double tolerance, unsigned int max_evals)
@@ -695,7 +723,18 @@ namespace SLAT {
         python::def("MakeCompGroup", 
                     MakeCompGroup,
                     python::return_value_policy<python::manage_new_object>());
+
+        python::class_<StructureWrapper>("Structure", python::no_init)
+            .def("AddCompGroup", &StructureWrapper::AddCompGroup)
+            .def("Loss", &StructureWrapper::Loss)
+            .def("setRebuildCost", &StructureWrapper::setRebuildCost)
+            .def("getRebuildCost", &StructureWrapper::getRebuildCost)
+            ;
+
         
+        python::def("MakeStructure", 
+                    MakeStructure,
+                    python::return_value_policy<python::manage_new_object>());
         
     }
 }

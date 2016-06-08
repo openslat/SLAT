@@ -10,7 +10,7 @@ from slatParserListener import slatParserListener
 import glob
 from distutils import text_file
 import numbers
-import  pyslat
+import pyslat
 import math
 import numpy as np
 from contextlib import redirect_stdout
@@ -23,6 +23,20 @@ def frange(start, stop, step):
 
 def preprocess_string(s):        
     return s.strip('\'"').replace('\\\"', '\"').replace('\\\'', '\'').replace('\\\\', '\\')
+
+class lognormaldist:
+    def __init__(self, dist):
+        self._dist = dist
+
+    def mean(self):
+        return self._dist.get_mean_X()
+
+    def sd_ln(self):
+        return self._dist.get_sigma_lnX();
+
+    def __str__(self):
+        return("Log Normal Distribution: mean: {}, sd_ln_x: {}.".format(
+            self.mean(), self.sd_ln()))
 
 class detfn:
     def __init__(self, id, type, parameters):
@@ -293,7 +307,27 @@ class compgroup:
             self._frag.id(),
             self._loss.id(),
             self._count))
-                 
+
+class structure:
+    def __init__(self):
+        super().__init__()
+        self._structure = pyslat.MakeStructure()
+
+    def __str__(self):
+        return "Structure"
+
+    def AddCompGroup(self, group):
+        self._structure.AddCompGroup(group.function())
+
+    def setRebuildCost(self, cost):
+        self._structure.setRebuildCost(cost)
+
+    def getRebuildCost(self):
+        return lognormaldist(self._structure.getRebuildCost())
+
+    def Loss(self, im, consider_collapse):
+        return lognormaldist(self._structure.Loss(im, consider_collapse))
+                     
 class recorder:
     def __init__(self, type, function, options, columns, at):
         super().__init__()
@@ -309,6 +343,8 @@ class recorder:
                 columns.append("DS{}".format(i + 1))
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_ln_x', 'sd_ln_x']
+        elif (type == 'structloss') and columns == None:
+            columns = ['mean_x', 'sd_ln_x']
         self._columns = columns
 
     def __str__(self):
@@ -332,7 +368,7 @@ class recorder:
                       'lossds': ['DS', None],
                       'lossedp': ['EDP', None],
                       'lossim': ['IM', None],
-                      'losstotal': ['IM', 'mean_x'],
+                      'structloss': ['IM', None],
                       'annloss': ['t', ["E[ALt]"]],
                       'lossrate': ['t', 'Rate'],
                       'collapse': ['IM', 'p(Collapse)']}
@@ -381,8 +417,8 @@ class recorder:
                                 yval = self._function.E_Loss_EDP(x)
                             elif self._type == 'lossim':
                                 yval = self._function.E_Loss_IM(x)
-                            elif self._type == 'losstotal':
-                                yval = -1  # TODO
+                            elif self._type == 'structloss':
+                                yval = self._function.Loss(x, self._options['collapse']).mean()
                             else:
                                 yval = self._function.Mean(x)
                         elif y == 'mean_ln_x':
@@ -394,8 +430,8 @@ class recorder:
                                 yval = self._function.SD_ln_Loss_EDP(x)
                             elif self._type == 'lossim':
                                 yval = self._function.SD_ln_Loss_IM(x)
-                            elif self._type == 'losstotal':
-                                yval = -1  # TODO
+                            elif self._type == 'structloss':
+                                yval = self._function.Loss(x, self._options['collapse']).sd_ln()
                             else:
                                 yval = self._function.SD_ln(x)
                         elif y == 'sd_x':
@@ -447,6 +483,7 @@ class SlatInterpreter(slatParserListener):
         self._fragfns = dict()
         self._lossfns = dict()
         self._compgroups = dict()
+        self._structures = dict()
         self._recorders = []
         self._title = []
 
@@ -716,6 +753,34 @@ class SlatInterpreter(slatParserListener):
                                                    self._lossfns.get(loss_id),
                                                    count)
 
+    def exitStructure_command(self, ctx:slatParser.Structure_commandContext):
+        id = ctx.ID().getText();
+        s = structure()
+        groups = []
+        for g in ctx.id_list().ID():
+            groups.append(g.getText())
+            s.AddCompGroup(self._compgroups[g.getText()])
+        print("Create structure {} from {}.".format(id, groups));
+        self._structures[id] = s
+
+    def exitRebuildcost_command(self, ctx:slatParser.Rebuildcost_commandContext):
+        id = ctx.ID().getText()
+        options = self._stack.pop()
+        params = self._stack.pop()
+        mu = params[0]
+        sd = params[1]
+        
+        print("Rebuild cost for {}: {}, {}.".format(id, mu, sd))
+        self._structures[id].setRebuildCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
+        print(self._structures[id].getRebuildCost())
+        print(self._structures[id].Loss(0.01, 0))
+        print(self._structures[id].Loss(0.01, 1))
+        print(self._structures[id].Loss(0.1106, 0))
+        print(self._structures[id].Loss(0.1106, 1))
+        print(self._structures[id].Loss(1.003, 0))
+        print(self._structures[id].Loss(1.003, 1))
+
+    
     # Exit a parse tree produced by slatParser#print_command.
     def exitPrint_command(self, ctx:slatParser.Print_commandContext):
         if ctx.print_options():
@@ -842,9 +907,18 @@ class SlatInterpreter(slatParserListener):
             type = 'collapse'
         elif ctx.COLLRATE():
             type = 'collrate'
+        elif ctx.STRUCTLOSS():
+            type = 'structloss'
         else:
             raise ValueError("Unhandled recorder type")
 
+        if type == 'structloss':
+            if ctx.collapse_type() and \
+               ctx.collapse_type().COLLAPSE_FLAG():
+                options['collapse'] = True
+            else:
+                options['collapse'] = False
+                
         id = ctx.ID().getText()
 
         if type == "dsrate" or type == 'dsedp' or type == 'dsim':
@@ -860,8 +934,8 @@ class SlatInterpreter(slatParserListener):
         elif type == 'lossds' or type == 'lossedp' or type == 'lossim' \
              or type == 'annloss' or type == 'lossrate':
             function = self._compgroups.get(id)
-        elif type == 'losstotal':
-            function = None # TODO
+        elif type == 'structloss':
+            function = self._structures.get(id)
         else:
             raise ValueError("Unhandled recorder type")
 
