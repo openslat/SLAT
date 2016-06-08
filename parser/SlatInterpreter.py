@@ -31,6 +31,15 @@ class lognormaldist:
     def mean(self):
         return self._dist.get_mean_X()
 
+    def median(self):
+        return self._dist.get_median_X()
+
+    def mean_ln(self):
+        return self._dist.get_mu_lnX()
+
+    def sd(self):
+        return self._dist.get_sigma_X();
+    
     def sd_ln(self):
         return self._dist.get_sigma_lnX();
 
@@ -344,7 +353,7 @@ class recorder:
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_ln_x', 'sd_ln_x']
         elif (type == 'structloss') and columns == None:
-            columns = ['mean_x', 'sd_ln_x']
+            columns = ['mean_ln_x', 'sd_ln_x']
         self._columns = columns
 
     def __str__(self):
@@ -422,9 +431,15 @@ class recorder:
                             else:
                                 yval = self._function.Mean(x)
                         elif y == 'mean_ln_x':
-                            yval = self._function.MeanLn(x)
+                            if self._type == 'structloss':
+                                yval = self._function.Loss(x, self._options['collapse']).mean_ln()
+                            else:
+                                yval = self._function.MeanLn(x)
                         elif y == 'median_x':
-                            yval = self._function.Median(x)
+                            if self._type == 'structloss':
+                                yval = self._function.Loss(x, self._options['collapse']).median()
+                            else:
+                                yval = self._function.Median(x)
                         elif y == 'sd_ln_x':
                             if self._type == 'lossedp':
                                 yval = self._function.SD_ln_Loss_EDP(x)
@@ -435,7 +450,10 @@ class recorder:
                             else:
                                 yval = self._function.SD_ln(x)
                         elif y == 'sd_x':
-                            yval = self._function.SD(x)
+                            if self._type == 'structloss':
+                                yval = self._function.Loss(x, self._options['collapse']).sd(x)
+                            else:
+                                yval = self._function.SD(x)
                         else:
                             yval = "+++++++++"
                         line = "{}{:>15.6}".format(line, yval)

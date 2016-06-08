@@ -47,6 +47,7 @@
 #+PROPERTY: header-args:R  :session *R-1*
 #+PROPERTY: header-args    :exports both
 
+\clearpage
 * Initialisation
   The code in this section reads in the input data, as well as the results
   produces by the old ("paleo") and new ("neo") versions of SLAT.
@@ -79,7 +80,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo2.im) = c("IM", "lambda")
 
-    neo.im <- read.csv("example1_im_rate.txt", 
+    neo.im <- read.csv("example1a_im_rate", 
                        header=TRUE, sep="")
 
     input.im <- read.csv(
@@ -117,7 +118,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:im-rate
   #+RESULTS: im-rate
-  [[file:/tmp/babel-1789nf2/figure-1789nwM.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752IwU.pdf]]
 
   Compare the two versions (assumes same IM values are used):
   #+BEGIN_SRC R
@@ -127,7 +128,7 @@
   #+END_SRC
 
   #+RESULTS:
-  : Max difference is 0.04%
+  : Max difference is 100.00%
 
 
 * EDP IM
@@ -144,7 +145,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo2.edp.im) = c("IM", "mean_x", "sd_ln_x")
 
-    neo.edp.im <- read.csv("example1_im_edp.txt",
+    neo.edp.im <- read.csv("example1a_im_edp.txt",
         header=TRUE, sep="")
   #+END_SRC
   
@@ -211,7 +212,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:edp-im-mean
   #+RESULTS: edp-im-mean
-  [[file:/tmp/babel-1789nf2/figure-1789frp.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752vVb.pdf]]
 
   #+NAME: edp-im-mean-zoom
   #+HEADER: :results graphics
@@ -239,7 +240,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:edp-im-mean-zoom
   #+RESULTS: edp-im-mean-zoom
-  [[file:/tmp/babel-1789nf2/figure-1789yQ2.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752W0t.pdf]]
 
   #+NAME: edp-im-sd-ln
   #+HEADER: :results graphics
@@ -254,7 +255,7 @@
     lines(neo.edp.im$sd_ln_x ~ neo.edp.im$IM, col=2,
   	lwd=3)
 
-    points(paleo2.edp.im$mean_x ~ paleo2.edp.im$IM,
+    points(paleo2.edp.im$sd_ln_x ~ paleo2.edp.im$IM,
   	 col=3)
 
     legend(x="topright",
@@ -266,7 +267,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:edp-im-sd-ln
   #+RESULTS: edp-im-sd-ln
-  [[file:/tmp/babel-36639js/figure-3663OpL.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752SrH.pdf]]
 
 * EDP Rate
   Read the EDP rate data:
@@ -282,7 +283,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo2.edp.rate) = c("EDP", "lambda")
 
-    neo.edp.rate <- read.csv("example1_edp_rate.txt", 
+    neo.edp.rate <- read.csv("example1a_edp_rate.txt", 
         header=TRUE, sep="")
   #+END_SRC
   
@@ -318,10 +319,10 @@
          type="p", col=1)
 
     lines(neo.edp.rate$lambda ~ neo.edp.rate$EDP, col=2,
-  	lwd=3)
+        lwd=3)
 
-    points(paleo2.edp.rate$lambda ~ paleo2.edp.rate$EDP, col=3)
-
+    points(paleo2.edp.rate$lambda ~ paleo2.edp.rate$EDP,
+  	 col=3)
 
     legend(x="topright",
          legend=c("Paleo", "Neo", "Paleo2"),
@@ -332,7 +333,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:edp-rate
   #+RESULTS: edp-rate
-  [[file:/tmp/babel-36639js/figure-3663w3y.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752vjD.pdf]]
 
 * COLLAPSE
   Read the COLLAPSE-IM data:
@@ -348,7 +349,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo2.collapse.im) = c("IM", "pCollapse")
 
-    neo.collapse.im <- read.csv("example1_collapse.txt", 
+    neo.collapse.im <- read.csv("example1a_collapse.txt", 
         header=TRUE, sep="")
     names(neo.collapse.im) = c("IM", "pCollapse")
   #+END_SRC
@@ -356,7 +357,7 @@
   #+RESULTS:
 
   Compare the two versions (assumes same IM values are used):
-  #+BEGIN_SRC R 
+  #+BEGIN_SRC R :results value
     diff <- paleo.collapse.im$pCollapse -
         neo.collapse.im$pCollapse
     denom <- paleo.collapse.im$pCollapse
@@ -389,12 +390,13 @@
          type="p", col=1)
 
     lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, 
-  	col=2, lwd=3)
+        col=2, lwd=3)
 
-    points(paleo2.collapse.im$pCollapse ~ paleo2.collapse.im$IM, col=3)
+    points(paleo2.collapse.im$pCollapse ~ 
+  	 paleo2.collapse.im$IM, col=3)
 
 
-    legend(x="topright",
+    legend(x="right",
          legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
@@ -410,14 +412,17 @@
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R  
     palette(c("red", "blue", "green"))
-    plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, log="y", 
+    plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, 
+         log="y", 
          xlab="IM", ylab="pCollapse", main="COLLAPSE Rate",
-	 xlim=c(0, 0.5),
+         xlim=c(0, 0.5),
          type="p", col=1)
 
-    lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, col=2)
+    lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, 
+  	col=2)
 
-    points(paleo2.collapse.im$pCollapse ~ paleo2.collapse.im$IM, col=3)
+    points(paleo2.collapse.im$pCollapse ~ 
+  	 paleo2.collapse.im$IM, col=3)
 
     legend(x="topright",
          legend=c("Paleo", "Neo", "Paleo2"),
@@ -435,15 +440,18 @@
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R 
     palette(c("red", "blue", "green"))
-    plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, log="y", 
+    plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM,
+         log="y", 
          xlab="IM", ylab="pCollapse", main="COLLAPSE Rate",
-	 xlim=c(1.5, 2.0),
-	 ylim=c(0.9, 1.0),
+         xlim=c(1.5, 2.0),
+         ylim=c(0.9, 1.0),
          type="p", col=1)
 
-    lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, col=2)
+    lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, 
+  	col=2)
 
-    points(paleo2.collapse.im$pCollapse ~ paleo2.collapse.im$IM, col=3)
+    points(paleo2.collapse.im$pCollapse ~
+  	 paleo2.collapse.im$IM, col=3)
 
     legend(x="topright",
          legend=c("Paleo", "Neo", "Paleo2"),
@@ -459,18 +467,21 @@
   
   The overall rate of collapse:
   #+BEGIN_SRC R  :results value 
-    paleo.rate <- scan(paste(results.dir, "collapse-rate", sep=""), skip=3)
-    paleo2.rate <- scan(paste(results2.dir, "collapse-rate", sep=""), skip=3)
-    neo.rate <- as.numeric(scan("example1_collrate.txt", what="string")[8])
+    paleo.rate <- scan(paste(results.dir, "collapse-rate", 
+                             sep=""), skip=3)
+    paleo2.rate <- scan(paste(results2.dir, "collapse-rate", 
+                              sep=""), skip=3)
+    neo.rate <- as.numeric(scan("example1a_collrate.txt", 
+                                what="string")[8])
     paste(
         sprintf("Paleo: %e; Neo: %e; error: %3.2f%%", 
                 paleo.rate,
                 neo.rate, 
-                (100 * abs(neo.rate - paleo.rate)/paleo.rate)),
+                (100*abs(neo.rate - paleo.rate)/paleo.rate)),
         sprintf("Paleo: %e; Paleo2: %e; error: %3.2f%%", 
                 paleo.rate,
                 paleo2.rate, 
-                (100 * abs(paleo2.rate - paleo.rate)/paleo.rate)),
+                (100*abs(paleo2.rate-paleo.rate)/paleo.rate)),
         sep="\n")
   #+END_SRC
   
@@ -491,7 +502,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo2.loss.im) = c("IM", "mean_x", "sd_ln_x")
 
-    neo.loss.im <- read.csv("example1_loss_im.txt", 
+    neo.loss.im <- read.csv("example1a_loss_im.txt", 
         header=TRUE, sep="")
   #+END_SRC
   
@@ -524,7 +535,8 @@
   #+BEGIN_SRC R  
     palette(c("red", "blue", "green"))
     plot(paleo.loss.im$mean_x ~ paleo.loss.im$IM, log="y", 
-         xlab="IM", ylab="Mean Loss", main="Loss-IM Relationship",
+         xlab="IM", ylab="Mean Loss",
+	 main="Loss-IM Relationship",
          type="p", col=1, lwd=5)
 
     lines(neo.loss.im$mean_x ~ neo.loss.im$IM, col=2, lwd=3)
@@ -548,7 +560,8 @@
   #+BEGIN_SRC R  
     palette(c("red", "blue", "green"))
     plot(paleo.loss.im$mean_x ~ paleo.loss.im$IM, log="y", 
-         xlab="IM", ylab="Mean Loss", main="Loss-IM Relationship",
+         xlab="IM", ylab="Mean Loss",
+	 main="Loss-IM Relationship",
 	 xlim=c(0.001, 0.10), ylim=c(1E-12, 1E0),
          type="p", col=1)
 
@@ -594,7 +607,8 @@
   #+BEGIN_SRC R  
     palette(c("red", "blue", "green"))
     plot(paleo.loss.im$sd_ln_x ~ paleo.loss.im$IM, log="", 
-         xlab="IM", ylab="sd(ln(Loss))", main="Loss-IM Relationship",
+         xlab="IM", ylab="sd(ln(Loss))", 
+         main="Loss-IM Relationship",
          type="p", col=1)
 
     lines(neo.loss.im$sd_ln_x ~ neo.loss.im$IM, col=2)
@@ -626,15 +640,15 @@
         skip=3, header=FALSE, sep="")
     names(paleo2.loss.edp) = c("EDP", "mean_x", "sd_ln_x")
 
-    neo.loss.edp <- read.csv("example1_loss_edp.txt", 
+    neo.loss.edp <- read.csv("example1a_loss_edp.txt", 
         header=TRUE, sep="")
   #+END_SRC
   
   #+RESULTS:
 
   #+BEGIN_SRC R 
-    diff <- paleo.loss.edp$mean-x - neo.loss.edp$mean-x
-    denom <- paleo.loss.edp$mean-x
+    diff <- paleo.loss.edp$mean_x - neo.loss.edp$mean_x
+    denom <- paleo.loss.edp$mean_x
     denom[denom == 0] <- NA
     diff.pct <- diff / denom
 
@@ -647,6 +661,11 @@
                 100 * mean(diff.pct, na.rm=TRUE)),
         sep="\n")
   #+END_SRC
+
+  #+RESULTS:
+  | Max abs(error) is 5.000000e-05 (0.03%). |
+  | Mean error is 1.506201e-06 (0.00%).     |
+
   #+BEGIN_SRC R 
     diff <- paleo.loss.edp$sd_ln_x - neo.loss.edp$sd_ln_x
     denom <- paleo.loss.edp$sd_ln_x
@@ -662,6 +681,11 @@
                 100 * mean(diff.pct, na.rm=TRUE)),
         sep="\n")
   #+END_SRC
+
+  #+RESULTS:
+  | Max abs(error) is 5.000000e-04 (0.05%). |
+  | Mean error is 4.953020e-06 (0.00%).     |
+
   Plot it:
   #+NAME: loss.edp-mean
   #+HEADER: :results graphics
@@ -669,15 +693,17 @@
   #+BEGIN_SRC R
     palette(c("red", "blue", "green"))
     plot(paleo.loss.edp$mean_x ~ paleo.loss.edp$EDP, log="xy", 
-         xlab="EDP", ylab="Mean(Loss)", main="Loss-EDP Relationship",
+         xlab="EDP", ylab="Mean(Loss)",
+         main="Loss-EDP Relationship",
          type="p", col=1, lwd=5)
 
     lines(neo.loss.edp$mean_x ~ neo.loss.edp$EDP, 
-  	col=2, lwd=3)
+        col=2, lwd=3)
 
-    points(paleo2.loss.edp$mean_x ~ paleo2.loss.edp$EDP,col=3)
+    points(paleo2.loss.edp$mean_x ~ paleo2.loss.edp$EDP,
+  	 col=3)
 
-    legend(x="topright",
+    legend(x="right",
          legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
@@ -688,7 +714,8 @@
   #+BEGIN_SRC R  
     palette(c("red", "blue", "green"))
     plot(paleo.loss.edp$mean_x ~ paleo.loss.edp$EDP, log="xy", 
-         xlab="EDP", ylab="Mean(Loss)", main="Loss-EDP Relationship",
+         xlab="EDP", ylab="Mean(Loss)",
+	 main="Loss-EDP Relationship",
          xlim=c(0.05, 0.10),
          ylim=c(5E-1, 1E0),
          type="p", col=1, lwd=5)
@@ -698,19 +725,19 @@
 
     points(paleo2.loss.edp$mean_x ~ paleo2.loss.edp$EDP, col=3)
 
-    legend(x="topright",
+    legend(x="right",
          legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
 
   #+RESULTS: loss.edp-mean-zoom
-  [[file:/tmp/babel-1772V7h/figure-1772jIe.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752ssh.pdf]]
 
   #+CAPTION: Loss-EDP rate calculations
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.edp-mean
   #+RESULTS: loss.edp-mean
-  [[file:/tmp/babel-1789nf2/figure-1789TYW.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-175259b.pdf]]
 
 
   #+NAME: loss.edp-sd
@@ -719,14 +746,15 @@
   #+BEGIN_SRC R  
     palette(c("red", "blue", "green"))
     plot(paleo.loss.edp$sd_ln_x ~ paleo.loss.edp$EDP, log="", 
-         xlab="EDP", ylab="sd(ln(Loss))", main="Loss-EDP Relationship",
+         xlab="EDP", ylab="sd(ln(Loss))",
+	 main="Loss-EDP Relationship",
          type="p", col=1, lwd=5)
     lines(neo.loss.edp$sd_ln_x ~ neo.loss.edp$EDP, 
   	col=2, lwd=3)
 
     points(paleo.loss.edp$sd_ln_x ~ paleo.loss.edp$EDP, col=3)
 
-    legend(x="topright",
+    legend(x="right",
          legend=c("Paleo", "Neo"),
          fill=palette())
   #+END_SRC
@@ -735,7 +763,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.edp-sd
   #+RESULTS: loss.edp-sd
-  [[file:/tmp/babel-1789nf2/figure-1789Q9c.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752ngK.pdf]]
 
 
   #+NAME: loss.edp-sd-zoom
@@ -744,7 +772,8 @@
   #+BEGIN_SRC R 
     palette(c("red", "blue", "green"))
     plot(paleo.loss.edp$sd_ln_x ~ paleo.loss.edp$EDP, log="", 
-         xlab="EDP", ylab="sd(ln(Loss))", main="Loss-EDP Relationship",
+         xlab="EDP", ylab="sd(ln(Loss))",
+	 main="Loss-EDP Relationship",
          xlim=c(0.08, 0.12),
          ylim=c(0.4, 0.85),
          type="p", col=1, lwd=5)
@@ -763,7 +792,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.edp-sd-zoom
   #+RESULTS: loss.edp-sd-zoom
-  [[file:/tmp/babel-1789nf2/figure-1789WwH.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752kGv.pdf]]
 
 * Annual Loss
   
@@ -771,22 +800,24 @@
     paleo.loss.edp <- read.csv(
         paste(results.dir, "pg-edp", sep=""),
         skip=3, header=FALSE, sep="")
-    names(paleo.loss.edp) = c("EDP", "mean_x", "sd_ln_x")
+    names(paleo.loss.edp) = c("EDP", "mean_x",
+             "sd_ln_x")
 
     paleo2.loss.edp <- read.csv(
         paste(results.dir, "pg-edp", sep=""),
         skip=3, header=FALSE, sep="")
-    names(paleo2.loss.edp) = c("EDP", "mean_x", "sd_ln_x")
+    names(paleo2.loss.edp) = c("EDP", "mean_x",
+             "sd_ln_x")
 
-    neo.loss.edp <- read.csv("example1_loss_edp.txt", 
+    neo.loss.edp <- read.csv("example1a_loss_edp.txt", 
         header=TRUE, sep="")
   #+END_SRC
   
   #+RESULTS:
 
   #+BEGIN_SRC R 
-    diff <- paleo.loss.edp$mean-x - neo.loss.edp$mean-x
-    denom <- paleo.loss.edp$mean-x
+    diff <- paleo.loss.edp$mean_x - neo.loss.edp$mean_x
+    denom <- paleo.loss.edp$mean_x
     denom[denom == 0] <- NA
     diff.pct <- diff / denom
 
@@ -799,3 +830,213 @@
                 100 * mean(diff.pct, na.rm=TRUE)),
         sep="\n")
   #+END_SRC
+
+  #+RESULTS:
+  | Max abs(error) is 5.000000e-05 (0.03%). |
+  | Mean error is 1.506201e-06 (0.00%).     |
+
+* Total Loss
+  Read the Total Loss data:
+  #+BEGIN_SRC R   :results output
+    paleo.structloss.c <- read.csv(
+        paste(results.dir, "tlossc", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.structloss.c) = c("IM", "mean_ln_x", "sd_ln_x")
+
+    paleo.structloss.nc <- read.csv(
+        paste(results.dir, "tlossnc", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.structloss.nc) = c("IM", "mean_ln_x", "sd_ln_x")
+
+    neo.structloss.c <- read.csv("example1a_loss_c_total", 
+        header=TRUE, sep="")
+
+    neo.structloss.nc <- read.csv("example1a_loss_nc_total", 
+        header=TRUE, sep="")
+  #+END_SRC
+  
+  #+RESULTS:
+* Non-Collapse
+  #+BEGIN_SRC R 
+    diff <- paleo.structloss.nc$mean_ln_x -
+        neo.structloss.nc$mean_ln_x
+    denom <- paleo.structloss.nc$mean_ln_x
+    denom[denom == 0] <- NA
+    diff.pct <- diff / denom
+
+    paste(
+        sprintf("Max abs(error) is %e (%3.2f%%).",
+                max(abs(diff)),
+                100 * max(abs(diff.pct), na.rm=TRUE)),
+
+        sprintf("Mean error is %e (%3.2f%%).",
+                mean(diff),
+                100 * mean(diff.pct, na.rm=TRUE)),
+        sep="\n")
+  #+END_SRC
+
+  #+RESULTS:
+  | Max abs(error) is 1.040000e-02 (1.05%). |
+  | Mean error is -5.910834e-04 (-0.06%).   |
+
+  #+BEGIN_SRC R 
+    diff <- paleo.structloss.nc$sd_ln_x - 
+        neo.structloss.nc$sd_ln_x
+    denom <- paleo.structloss.nc$sd_ln_x
+    denom[denom == 0] <- NA
+    diff.pct <- diff / denom
+
+    paste(
+        sprintf("Max abs(error) is %e (%3.2f%%).",
+                max(abs(diff)),
+                100 * max(abs(diff.pct), na.rm=TRUE)),
+        sprintf("Mean error is %e (%3.2f%%).",
+                mean(diff),
+                100 * mean(diff.pct, na.rm=TRUE)),
+        sep="\n")
+  #+END_SRC
+
+  #+RESULTS:
+  | Max abs(error) is 1.340000e+00 (100.00%). |
+  | Mean error is 4.142432e-01 (100.00%).     |
+
+  Plot it:
+  #+NAME: structloss.nc-mean
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R
+    palette(c("red", "blue"))
+    plot(paleo.structloss.nc$mean_ln_x ~
+         paleo.structloss.nc$IM, log="xy", 
+         xlab="IM", ylab="Mean(ln(Loss))", 
+         main="Total Loss, No Collapse",
+         type="p", col=1, lwd=5)
+
+    lines(neo.structloss.nc$mean_ln_x ~ neo.structloss.nc$IM, 
+        col=2, lwd=3)
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+RESULTS: structloss.nc-mean
+  [[file:/tmp/babel-1752Epe/figure-1752-hv.pdf]]
+
+
+  #+NAME: structloss.nc-sd
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R  
+    palette(c("red", "blue"))
+    plot(paleo.structloss.nc$sd_ln_x ~ paleo.structloss.nc$IM, 
+         log="", xlab="EDP", ylab="sd(ln(Loss))", 
+         main="Total Loss, No Collapse",
+         ylim=c(0, max(paleo.structloss.nc$sd_ln_x)),
+         type="p", col=1, lwd=5)
+    lines(neo.structloss.nc$sd_ln_x ~ neo.structloss.nc$IM, 
+        col=2, lwd=3)
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: Loss-EDP calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:structloss.nc-sd
+  #+RESULTS: structloss.nc-sd
+  [[file:/tmp/babel-1752Epe/figure-1752KAL.pdf]]
+
+
+
+* Collapse
+  #+BEGIN_SRC R 
+    diff <- paleo.structloss.c$mean_ln_x - 
+        neo.structloss.c$mean_ln_x
+    denom <- paleo.structloss.c$mean_ln_x
+    denom[denom == 0] <- NA
+    diff.pct <- diff / denom
+
+    paste(
+        sprintf("Max abs(error) is %e (%3.2f%%).",
+                max(abs(diff)),
+                100 * max(abs(diff.pct), na.rm=TRUE)),
+        sprintf("Mean error is %e (%3.2f%%).",
+                mean(diff),
+                100 * mean(diff.pct, na.rm=TRUE)),
+        sep="\n")
+  #+END_SRC
+
+  #+RESULTS:
+  | Max abs(error) is 5.000000e+02 (0.11%). |
+  | Mean error is -2.800722e+01 (-0.00%).   |
+
+  #+BEGIN_SRC R 
+    diff <- paleo.structloss.c$sd_ln_x - 
+        neo.structloss.c$sd_ln_x
+    denom <- paleo.structloss.c$sd_ln_x
+    denom[denom == 0] <- NA
+    diff.pct <- diff / denom
+
+    paste(
+        sprintf("Max abs(error) is %e (%3.2f%%).",
+                max(abs(diff)),
+                100 * max(abs(diff.pct), na.rm=TRUE)),
+        sprintf("Mean error is %e (%3.2f%%).",
+                mean(diff),
+                100 * mean(diff.pct, na.rm=TRUE)),
+        sep="\n")
+  #+END_SRC
+
+  #+RESULTS:
+  | Max abs(error) is 3.886000e+00 (100.00%). |
+  | Mean error is 9.389256e-01 (100.00%).     |
+
+  Plot it:
+  #+NAME: structloss.c-mean
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R
+    palette(c("red", "blue"))
+    plot(paleo.structloss.c$mean_ln_x ~ paleo.structloss.c$IM, 
+         log="xy", xlab="IM", ylab="Mean(ln(Loss))", 
+         main="Total Loss, Collapse",
+         type="p", col=1, lwd=5)
+
+    lines(neo.structloss.c$mean_ln_x ~ neo.structloss.c$IM, 
+        col=2, lwd=3)
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+RESULTS: structloss.c-mean
+  [[file:/tmp/babel-1752Epe/figure-1752lH2.pdf]]
+
+
+  #+NAME: structloss.c-sd
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R  
+    palette(c("red", "blue"))
+    plot(paleo.structloss.c$sd_ln_x ~ paleo.structloss.c$IM, log="", 
+         xlab="EDP", ylab="sd(ln(Loss))", main="Total Loss, Collapse",
+	 ylim=c(0, max(paleo.structloss.c$sd_ln_x)),
+         type="p", col=1, lwd=5)
+    lines(neo.structloss.c$sd_ln_x ~ neo.structloss.c$IM, 
+  	col=2, lwd=3)
+
+    legend(x="topright",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: Loss-EDP calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:structloss.c-sd
+  #+RESULTS: structloss.c-sd
+  [[file:/tmp/babel-1752Epe/figure-1752xlR.pdf]]
+
+

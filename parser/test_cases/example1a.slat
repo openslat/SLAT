@@ -50,12 +50,10 @@ rebuildcost BUILDING 14E6, 0.35 --mu mean_x --sd sd_ln_x;
 integration maq 1E-6 1024;
 
 # Set up recorders:
-#recorder imrate IM_1 0.01:0.01:2.50 example1a_im_rate.txt --new;
-#recorder imrate IM_1 $(numpy.arange(0.01, 1.01, 0.01)) example1a_im_rate.txt --new;
 #set values $(numpy.arange(0.0, 1.01, 0.01);
 set logvalues $(list(map(math.exp, math.log(0.01) + numpy.arange(0, 199, 1) * math.log(2.5/0.01)/198)));
 set linvalues $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198);
-recorder imrate IM_1 $logvalues example1a_im_rate.txt --new;
+recorder imrate IM_1 $logvalues example1a_im_rate --new;
 recorder collapse IM_1 $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) example1a_collapse.txt --new;
 recorder collrate IM_1 example1a_collrate.txt --new;
 recorder edpim EDP_1  $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) --cols mean_x, sd_ln_x, 0.16, 0.50, 0.84 example1a_im_edp.txt --new;

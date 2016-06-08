@@ -236,19 +236,19 @@ int main(int argc, char **argv)
         structure.setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
         {
             LogNormalDist loss = structure.Loss(0, false);
-            std::cout << "Structure Loss: " << loss.get_mean_X() << ", " << loss.get_sigma_lnX() << std::endl;
+            std::cout << "Structure Loss: " << loss.get_mu_lnX() << ", " << loss.get_sigma_lnX() << std::endl;
         }
         {
             LogNormalDist loss = structure.Loss(0, true);
-            std::cout << "Structure Loss: " << loss.get_mean_X() << ", " << loss.get_sigma_lnX() << std::endl;
+            std::cout << "Structure Loss: " << loss.get_mu_lnX() << ", " << loss.get_sigma_lnX() << std::endl;
         }
         {
             LogNormalDist loss = structure.Loss(1, false);
-            std::cout << "Structure Loss: " << loss.get_mean_X() << ", " << loss.get_sigma_lnX() << std::endl;
+            std::cout << "Structure Loss: " << loss.get_mu_lnX() << ", " << loss.get_sigma_lnX() << std::endl;
         }
         {
             LogNormalDist loss = structure.Loss(1, true);
-            std::cout << "Structure Loss: " << loss.get_mean_X() << ", " << loss.get_sigma_lnX() << std::endl;
+            std::cout << "Structure Loss: " << loss.get_mu_lnX() << ", " << loss.get_sigma_lnX() << std::endl;
         }
     }
 }
