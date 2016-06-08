@@ -841,12 +841,12 @@
     paleo.structloss.c <- read.csv(
         paste(results.dir, "tlossc", sep=""),
         skip=3, header=FALSE, sep="")
-    names(paleo.structloss.c) = c("IM", "mean_ln_x", "sd_ln_x")
+    names(paleo.structloss.c) = c("IM", "mean_x", "sd_ln_x")
 
     paleo.structloss.nc <- read.csv(
         paste(results.dir, "tlossnc", sep=""),
         skip=3, header=FALSE, sep="")
-    names(paleo.structloss.nc) = c("IM", "mean_ln_x", "sd_ln_x")
+    names(paleo.structloss.nc) = c("IM", "mean_x", "sd_ln_x")
 
     neo.structloss.c <- read.csv("example1a_loss_c_total", 
         header=TRUE, sep="")
@@ -858,9 +858,9 @@
   #+RESULTS:
 * Non-Collapse
   #+BEGIN_SRC R 
-    diff <- paleo.structloss.nc$mean_ln_x -
-        neo.structloss.nc$mean_ln_x
-    denom <- paleo.structloss.nc$mean_ln_x
+    diff <- paleo.structloss.nc$mean_x -
+        neo.structloss.nc$mean_x
+    denom <- paleo.structloss.nc$mean_x
     denom[denom == 0] <- NA
     diff.pct <- diff / denom
 
@@ -906,13 +906,13 @@
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R
     palette(c("red", "blue"))
-    plot(paleo.structloss.nc$mean_ln_x ~
+    plot(paleo.structloss.nc$mean_x ~
          paleo.structloss.nc$IM, log="xy", 
-         xlab="IM", ylab="Mean(ln(Loss))", 
+         xlab="IM", ylab="Mean(Loss)", 
          main="Total Loss, No Collapse",
          type="p", col=1, lwd=5)
 
-    lines(neo.structloss.nc$mean_ln_x ~ neo.structloss.nc$IM, 
+    lines(neo.structloss.nc$mean_x ~ neo.structloss.nc$IM, 
         col=2, lwd=3)
 
     legend(x="topright",
@@ -952,9 +952,9 @@
 
 * Collapse
   #+BEGIN_SRC R 
-    diff <- paleo.structloss.c$mean_ln_x - 
-        neo.structloss.c$mean_ln_x
-    denom <- paleo.structloss.c$mean_ln_x
+    diff <- paleo.structloss.c$mean_x - 
+        neo.structloss.c$mean_x
+    denom <- paleo.structloss.c$mean_x
     denom[denom == 0] <- NA
     diff.pct <- diff / denom
 
@@ -999,12 +999,12 @@
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R
     palette(c("red", "blue"))
-    plot(paleo.structloss.c$mean_ln_x ~ paleo.structloss.c$IM, 
-         log="xy", xlab="IM", ylab="Mean(ln(Loss))", 
+    plot(paleo.structloss.c$mean_x ~ paleo.structloss.c$IM, 
+         log="xy", xlab="IM", ylab="Mean(Loss)", 
          main="Total Loss, Collapse",
          type="p", col=1, lwd=5)
 
-    lines(neo.structloss.c$mean_ln_x ~ neo.structloss.c$IM, 
+    lines(neo.structloss.c$mean_x ~ neo.structloss.c$IM, 
         col=2, lwd=3)
 
     legend(x="topright",
@@ -1013,7 +1013,7 @@
   #+END_SRC
 
   #+RESULTS: structloss.c-mean
-  [[file:/tmp/babel-1752Epe/figure-1752lH2.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752qno.pdf]]
 
 
   #+NAME: structloss.c-sd
@@ -1037,6 +1037,6 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:structloss.c-sd
   #+RESULTS: structloss.c-sd
-  [[file:/tmp/babel-1752Epe/figure-1752xlR.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-175267C.pdf]]
 
 

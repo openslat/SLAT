@@ -32,17 +32,23 @@ namespace SLAT {
         double mu_nc, sigma_nc = 0;
         for_each(components.begin(),
                  components.end(), 
-                 [&mu_nc, im] (std::shared_ptr<CompGroup> cg) {
+                 [&mu_nc, &sigma_nc, im] (std::shared_ptr<CompGroup> cg) {
                      mu_nc = mu_nc + cg->E_loss_IM(im);
+                     sigma_nc = sigma_nc + cg->SD_ln_loss_IM(im) *
+                         cg->SD_ln_loss_IM(im);
                  });
+        LogNormalDist nc_dist = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mu_nc, sqrt(sigma_nc));
+
 
         if (consider_collapse) {
+            std::vector<LogNormalDist> dists = { nc_dist, rebuild_cost };
             double pCollapse = this->im->pCollapse(im);
-            double mu_c = mu_nc * (1.0 - pCollapse) + rebuild_cost.get_mean_X() * pCollapse;
-            double sigma_c = 0;
-            return LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(mu_c, sigma_c);
+            std::vector<double> weights = { 1.0 - pCollapse, pCollapse };
+            
+            LogNormalDist c_dist = LogNormalDist::AddWeightedDistributions(dists, weights); 
+            return c_dist;
         } else {
-            return LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(mu_nc, sigma_nc);
+            return nc_dist;
         }
     }
 }

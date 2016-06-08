@@ -353,7 +353,7 @@ class recorder:
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_ln_x', 'sd_ln_x']
         elif (type == 'structloss') and columns == None:
-            columns = ['mean_ln_x', 'sd_ln_x']
+            columns = ['mean_x', 'sd_ln_x']
         self._columns = columns
 
     def __str__(self):

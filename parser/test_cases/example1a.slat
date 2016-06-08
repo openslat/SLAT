@@ -44,7 +44,7 @@ lossfn LOSS_1 simple [0.03,0.4],
 compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 1;
 
 structure BUILDING COMPGROUP_1;
-rebuildcost BUILDING 14E6, 0.35 --mu mean_x --sd sd_ln_x;
+rebuildcost BUILDING 10, 0.35 --mu mean_x --sd sd_ln_x;
 
 # Set up integration parameters:
 integration maq 1E-6 1024;
