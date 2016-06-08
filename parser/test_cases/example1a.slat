@@ -21,12 +21,14 @@ detfn IM_FUNC loglog    [0.01, 0.376775], [0.02, 0.155158], [0.04, 0.054048],
 #detfn SIGMA_EDP powerlaw 0.5, 0.0;
 
 #probfn EDPIM_FUNC lognormal MU_EDP, SIGMA_EDP --mu mean_x --sd sd_ln_x;
-importprobfn EDPIM_FUNC  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
+importprobfn EDPIM_FUNC_1  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
+importprobfn EDPIM_FUNC_2  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP2.txt;
 
 # Define relationships:
 im IM_1 IM_FUNC;
 collapse IM_1 0.9, 0.470 --mu mean_x --sd sd_ln_x;
-edp EDP_1 IM_1 EDPIM_FUNC;
+edp EDP_1 IM_1 EDPIM_FUNC_1;
+edp EDP_2 IM_1 EDPIM_FUNC_2;
 
 # Fragility, loss, component group:
 fragfn FRAG_1 [0.0062, 0.4],
@@ -56,8 +58,10 @@ set linvalues $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198);
 recorder imrate IM_1 $logvalues example1a_im_rate --new;
 recorder collapse IM_1 $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) example1a_collapse.txt --new;
 recorder collrate IM_1 example1a_collrate.txt --new;
-recorder edpim EDP_1  $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) --cols mean_x, sd_ln_x, 0.16, 0.50, 0.84 example1a_im_edp.txt --new;
-recorder edprate EDP_1 $(list(map(math.exp, math.log(0.001) + numpy.arange(0, 149, 1) * math.log(0.15/0.001)/148)))  example1a_edp_rate.txt --new;
+recorder edpim EDP_1  $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) --cols mean_x, sd_ln_x, 0.16, 0.50, 0.84 example1a_im_edp_1.txt --new;
+recorder edprate EDP_1 $(list(map(math.exp, math.log(0.001) + numpy.arange(0, 149, 1) * math.log(0.15/0.001)/148)))  example1a_edp_1_rate.txt --new;
+recorder edpim EDP_2  $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) --cols mean_x, sd_ln_x, 0.16, 0.50, 0.84 example1a_im_edp_2.txt --new;
+recorder edprate EDP_2 $(list(map(math.exp, math.log(0.001) + numpy.arange(0, 149, 1) * math.log(0.15/0.001)/148)))  example1a_edp_2_rate.txt --new;
 recorder dsedp COMPGROUP_1 0.0:0.001:0.200  example1a_ds_edp.txt --new;
 
 recorder dsrate COMPGROUP_1;

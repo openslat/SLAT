@@ -130,210 +130,367 @@
   #+RESULTS:
   : Max difference is 100.00%
 
+* EDP #1
+** EDP IM
+   Read the EDP IM data:
+   #+BEGIN_SRC R   :results output
+     ## Read in the IM data:
+     paleo.edp1.im <- read.csv(
+         paste(results.dir, "edp-im-1", sep=""),
+         skip=3, header=FALSE, sep="")
+     names(paleo.edp1.im) = c("IM", "mean_x", "sd_ln_x")
 
-* EDP IM
-  Read the EDP IM data:
-  #+BEGIN_SRC R   :results output
-    ## Read in the IM data:
-    paleo.edp.im <- read.csv(
-        paste(results.dir, "edp-im-1", sep=""),
-        skip=3, header=FALSE, sep="")
-    names(paleo.edp.im) = c("IM", "mean_x", "sd_ln_x")
-
-    paleo2.edp.im <- read.csv(
-        paste(results.dir, "edp-im-1", sep=""),
-        skip=3, header=FALSE, sep="")
-    names(paleo2.edp.im) = c("IM", "mean_x", "sd_ln_x")
-
-    neo.edp.im <- read.csv("example1a_im_edp.txt",
-        header=TRUE, sep="")
-  #+END_SRC
+     neo.edp1.im <- read.csv("example1a_im_edp_1.txt",
+         header=TRUE, sep="")
+   #+END_SRC
   
-  #+RESULTS:
+   #+RESULTS:
+   : Error in file(file, "rt") : cannot open the connection
+   : In addition: Warning message:
+   : In file(file, "rt") :
+   :   cannot open file 'example1a_im_edp.txt': No such file or directory
 
-  #+BEGIN_SRC R
-    paste(
-        sprintf("Max abs(mean error) is %3.2f%%.", 
-                100 * max(abs(neo.edp.im$mean_x - 
-  				paleo.edp.im$mean_x)
-  			/ paleo.edp.im$mean_x)),
-        sprintf("Mean (mean error) is %3.2f%%.", 
-                100 * mean((neo.edp.im$mean_x - 
-                                paleo.edp.im$mean_x)
-  			 / paleo.edp.im$mean_x)),
-        sep="\n")
-  #+END_SRC
+   #+BEGIN_SRC R
+     paste(
+         sprintf("Max abs(mean error) is %3.2f%%.", 
+                 100 * max(abs(neo.edp1.im$mean_x - 
+  				 paleo.edp1.im$mean_x)
+  			 / paleo.edp1.im$mean_x)),
+         sprintf("Mean (mean error) is %3.2f%%.", 
+                 100 * mean((neo.edp1.im$mean_x - 
+                                 paleo.edp1.im$mean_x)
+  			  / paleo.edp1.im$mean_x)),
+         sep="\n")
+   #+END_SRC
 
-  #+RESULTS:
-  | Max abs(mean error) is 0.05%. |
-  | Mean (mean error) is 0.00%.   |
+   #+RESULTS:
+   | Max abs(mean error) is NaN%. |
+   | Mean (mean error) is NaN%.   |
 
-  #+BEGIN_SRC R
-    paste(
-        sprintf("Max abs(sd_ln_x error) is %3.2f%%.", 
-                100 * max(abs(neo.edp.im$sd_ln_x - 
-    			      paleo.edp.im$sd_ln_x)
-    		      / paleo.edp.im$sd_ln_x)),
-        sprintf("Mean sd_ln_x error is %3.2f%%.", 
-                100 * mean((neo.edp.im$sd_ln_x - 
-    			      paleo.edp.im$sd_ln_x)
-    		      / paleo.edp.im$sd_ln_x)),
-        sep="\n")
-  #+END_SRC
+   #+BEGIN_SRC R
+     paste(
+         sprintf("Max abs(sd_ln_x error) is %3.2f%%.", 
+                 100 * max(abs(neo.edp1.im$sd_ln_x - 
+    			       paleo.edp1.im$sd_ln_x)
+    		       / paleo.edp1.im$sd_ln_x)),
+         sprintf("Mean sd_ln_x error is %3.2f%%.", 
+                 100 * mean((neo.edp1.im$sd_ln_x - 
+    			       paleo.edp1.im$sd_ln_x)
+    		       / paleo.edp1.im$sd_ln_x)),
+         sep="\n")
+   #+END_SRC
 
-  #+RESULTS:
-  | Max abs(sd_ln_x error) is 1.21%. |
-  | Mean sd_ln_x error is 0.03%.     |
+   #+RESULTS:
+   | Max abs(sd_ln_x error) is NaN%. |
+   | Mean sd_ln_x error is NaN%.     |
 
-  Plot it (Figure [[fig:edp-im-mean]]):
-  #+NAME: edp-im-mean
-  #+HEADER: :results graphics
-  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-  #+BEGIN_SRC R 
-      palette(c("red", "blue", "green"))
-      plot(paleo.edp.im$mean_x ~ paleo.edp.im$IM, log="", 
-  	 xlab="IM", ylab="EDP", main="mean(EDP)-IM",
-	 lwd=5,
-  	 type="p", col=1)
+   Plot it (Figure [[fig:edp-1-im-mean]]):
+   #+NAME: edp-1-im-mean
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R 
+       palette(c("red", "blue"))
+       plot(paleo.edp1.im$mean_x ~ paleo.edp1.im$IM, log="", 
+  	  xlab="IM", ylab="EDP", main="mean(EDP 1)-IM",
+	  lwd=5,
+  	  type="p", col=1)
 
-      lines(neo.edp.im$mean_x ~ neo.edp.im$IM, col=2, lwd=3)
+       lines(neo.edp1.im$mean_x ~ neo.edp1.im$IM, col=2, lwd=3)
 
-      points(paleo2.edp.im$mean_x ~ paleo2.edp.im$IM,
-          col=3)
+       legend(x="right", legend=c("Paleo", "Neo"),
+  	  fill=palette())
+   #+END_SRC
 
-      legend(x="right",
-  	 legend=c("Paleo", "Neo", "Paleo2"),
-  	 fill=palette())
-  #+END_SRC
+   #+RESULTS:
 
-  #+RESULTS:
+   #+CAPTION: men(EDP) vs. IM
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-1-im-mean
+   #+RESULTS: edp-1-im-mean
+   [[file:/tmp/babel-1752Epe/figure-1752I_a.pdf]]
 
-  #+CAPTION: men(EDP) vs. IM
-  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-  #+NAME: fig:edp-im-mean
-  #+RESULTS: edp-im-mean
-  [[file:/tmp/babel-1752Epe/figure-1752vVb.pdf]]
+   #+NAME: edp-1-im-mean-zoom
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R 
+     palette(c("red", "blue"))
+     plot(paleo.edp1.im$mean_x ~ paleo.edp1.im$IM, log="", 
+          xlab="IM", ylab="EDP", main="mean(EDP 1)-IM",
+          lwd=5,
+          xlim=c(0.8, 1.2),
+          type="p", col=1)
 
-  #+NAME: edp-im-mean-zoom
-  #+HEADER: :results graphics
-  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-  #+BEGIN_SRC R 
-    palette(c("red", "blue", "green"))
-    plot(paleo.edp.im$mean_x ~ paleo.edp.im$IM, log="", 
-         xlab="IM", ylab="EDP", main="mean(EDP)-IM",
-         lwd=5,
-         xlim=c(0.8, 1.2),
-         type="p", col=1)
+     lines(neo.edp1.im$mean_x ~ neo.edp1.im$IM, col=2,
+  	 lwd=3)
 
-    lines(neo.edp.im$mean_x ~ neo.edp.im$IM, col=2,
-  	lwd=3)
+     legend(x="topright", legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
 
-    points(paleo2.edp.im$mean_x ~ paleo2.edp.im$IM,
-  	col=3)
+   #+Caption: men(EDP) vs. IM
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-1-im-mean-zoom
+   #+RESULTS: edp-1-im-mean-zoom
+   [[file:/tmp/babel-1752Epe/figure-1752W0t.pdf]]
 
-    legend(x="topright",
-         legend=c("Paleo", "Neo", "Paleo2"),
-         fill=palette())
-  #+END_SRC
+   #+NAME: edp-1-im-sd-ln
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R  
+     palette(c("red", "blue"))
+     plot(paleo.edp1.im$sd_ln_x ~ paleo.edp1.im$IM, log="", 
+          xlab="IM", ylab="EDP", main="sd(ln(EDP 1))-IM",
+          lwd=5,
+          type="p", col=1)
 
-  #+Caption: men(EDP) vs. IM
-  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-  #+NAME: fig:edp-im-mean-zoom
-  #+RESULTS: edp-im-mean-zoom
-  [[file:/tmp/babel-1752Epe/figure-1752W0t.pdf]]
+     lines(neo.edp1.im$sd_ln_x ~ neo.edp1.im$IM, col=2,
+  	 lwd=3)
 
-  #+NAME: edp-im-sd-ln
-  #+HEADER: :results graphics
-  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-  #+BEGIN_SRC R  
-    palette(c("red", "blue", "green"))
-    plot(paleo.edp.im$sd_ln_x ~ paleo.edp.im$IM, log="", 
-         xlab="IM", ylab="EDP", main="sd(ln(EDP))-IM",
-         lwd=5,
-         type="p", col=1)
+     legend(x="topright", legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
 
-    lines(neo.edp.im$sd_ln_x ~ neo.edp.im$IM, col=2,
-  	lwd=3)
+   #+CAPTION: sd(ln(EDP)) vs. IM
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-1-im-sd-ln
+   #+RESULTS: edp-1-im-sd-ln
+   [[file:/tmp/babel-1752Epe/figure-1752SrH.pdf]]
 
-    points(paleo2.edp.im$sd_ln_x ~ paleo2.edp.im$IM,
-  	 col=3)
+** EDP Rate
+   Read the EDP rate data:
+   #+BEGIN_SRC R   :results output
+     ## Read in the IM data:
+     paleo.edp1.rate <- read.csv(
+         paste(results.dir, "edp-1-rate.txt", sep=""),
+         skip=3, header=FALSE, sep="")
+     names(paleo.edp1.rate) = c("EDP", "lambda")
 
-    legend(x="topright",
-         legend=c("Paleo", "Neo", "Paleo2"),
-         fill=palette())
-  #+END_SRC
-
-  #+CAPTION: sd(ln(EDP)) vs. IM
-  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-  #+NAME: fig:edp-im-sd-ln
-  #+RESULTS: edp-im-sd-ln
-  [[file:/tmp/babel-1752Epe/figure-1752SrH.pdf]]
-
-* EDP Rate
-  Read the EDP rate data:
-  #+BEGIN_SRC R   :results output
-    ## Read in the IM data:
-    paleo.edp.rate <- read.csv(
-        paste(results.dir, "edp-rate.txt", sep=""),
-        skip=3, header=FALSE, sep="")
-    names(paleo.edp.rate) = c("EDP", "lambda")
-
-    paleo2.edp.rate <- read.csv(
-        paste(results.dir, "edp-rate.txt", sep=""),
-        skip=3, header=FALSE, sep="")
-    names(paleo2.edp.rate) = c("EDP", "lambda")
-
-    neo.edp.rate <- read.csv("example1a_edp_rate.txt", 
-        header=TRUE, sep="")
-  #+END_SRC
+     neo.edp1.rate <- read.csv("example1a_edp_1_rate.txt", 
+         header=TRUE, sep="")
+   #+END_SRC
   
-  #+RESULTS:
+   #+RESULTS:
 
-  #+BEGIN_SRC R   :results value 
-    diff <- (paleo.edp.rate$lambda
-                 - neo.edp.rate$lambda)
-    diff.pct <- diff / paleo.edp.rate$lambda
-    paste(
-        sprintf("Max abs(error) is %e (%3.2f%%).",
-                max(abs(diff)),
-                100 * max(abs(diff.pct))),
-        sprintf("Mean error is %e (%3.2f%%).",
-                mean(diff), 
-                100 * mean(diff.pct)),
-        sep="\n")
-  #+END_SRC
+   #+BEGIN_SRC R   :results value 
+     diff <- (paleo.edp1.rate$lambda
+                  - neo.edp1.rate$lambda)
+     diff.pct <- diff / paleo.edp1.rate$lambda
+     paste(
+         sprintf("Max abs(error) is %e (%3.2f%%).",
+                 max(abs(diff)),
+                 100 * max(abs(diff.pct))),
+         sprintf("Mean error is %e (%3.2f%%).",
+                 mean(diff), 
+                 100 * mean(diff.pct)),
+         sep="\n")
+   #+END_SRC
 
-  #+RESULTS:
-  | Max abs(error) is 9.499000e-03 (8.23%). |
-  | Mean error is 1.757726e-03 (0.58%).     |
+   #+RESULTS:
+   | Max abs(error) is 9.499000e-03 (8.23%). |
+   | Mean error is 1.757726e-03 (0.58%).     |
 
-  Plot it (Figure [[fig:edp-rate]]):
-  #+NAME: edp-rate
-  #+HEADER: :results graphics
-  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-  #+BEGIN_SRC R  
-    palette(c("red", "blue", "green"))
-    plot(paleo.edp.rate$lambda ~ paleo.edp.rate$EDP, log="xy", 
-         xlab="EDP", ylab="lambda", main="EDP Rate",
-         lwd=5,
-         type="p", col=1)
+   Plot it (Figure [[fig:edp-1-rate]]):
+   #+NAME: edp-1-rate
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R  
+     palette(c("red", "blue"))
+     plot(paleo.edp1.rate$lambda ~ paleo.edp1.rate$EDP, log="xy", 
+          xlab="EDP", ylab="lambda", main="EDP #1 Rate",
+          lwd=5,
+          type="p", col=1)
 
-    lines(neo.edp.rate$lambda ~ neo.edp.rate$EDP, col=2,
-        lwd=3)
+     lines(neo.edp1.rate$lambda ~ neo.edp1.rate$EDP, col=2,
+         lwd=3)
 
-    points(paleo2.edp.rate$lambda ~ paleo2.edp.rate$EDP,
-  	 col=3)
+     legend(x="topright", legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
 
-    legend(x="topright",
-         legend=c("Paleo", "Neo", "Paleo2"),
-         fill=palette())
-  #+END_SRC
+   #+CAPTION: EDP rate calculations
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-1-rate
+   #+RESULTS: edp-1-rate
+   [[file:/tmp/babel-1752Epe/figure-1752vjD.pdf]]
 
-  #+CAPTION: EDP rate calculations
-  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-  #+NAME: fig:edp-rate
-  #+RESULTS: edp-rate
-  [[file:/tmp/babel-1752Epe/figure-1752vjD.pdf]]
+* EDP #2
+** EDP IM
+   Read the EDP IM data:
+   #+BEGIN_SRC R   :results output
+     ## Read in the IM data:
+     paleo.edp2.im <- read.csv(
+         paste(results.dir, "edp-im-2", sep=""),
+         skip=3, header=FALSE, sep="")
+     names(paleo.edp2.im) = c("IM", "mean_x", "sd_ln_x")
+
+     neo.edp2.im <- read.csv("example1a_im_edp_2.txt",
+         header=TRUE, sep="")
+   #+END_SRC
+  
+   #+RESULTS:
+
+   #+BEGIN_SRC R
+     paste(
+         sprintf("Max abs(mean error) is %3.2f%%.", 
+                 100 * max(abs(neo.edp2.im$mean_x - 
+  				 paleo.edp2.im$mean_x)
+  			 / paleo.edp2.im$mean_x)),
+         sprintf("Mean (mean error) is %3.2f%%.", 
+                 100 * mean((neo.edp2.im$mean_x - 
+                                 paleo.edp2.im$mean_x)
+  			  / paleo.edp2.im$mean_x)),
+         sep="\n")
+   #+END_SRC
+
+   #+RESULTS:
+   | Max abs(mean error) is 0.00%. |
+   | Mean (mean error) is 0.00%.   |
+
+   #+BEGIN_SRC R
+     paste(
+         sprintf("Max abs(sd_ln_x error) is %3.2f%%.", 
+                 100 * max(abs(neo.edp2.im$sd_ln_x - 
+    			       paleo.edp2.im$sd_ln_x)
+    		       / paleo.edp2.im$sd_ln_x)),
+         sprintf("Mean sd_ln_x error is %3.2f%%.", 
+                 100 * mean((neo.edp2.im$sd_ln_x - 
+    			       paleo.edp2.im$sd_ln_x)
+    		       / paleo.edp2.im$sd_ln_x)),
+         sep="\n")
+   #+END_SRC
+
+   #+RESULTS:
+   | Max abs(sd_ln_x error) is 33.49%. |
+   | Mean sd_ln_x error is 0.88%.      |
+
+   Plot it (Figure [[fig:edp-2-im-mean]]):
+   #+NAME: edp-2-im-mean
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R 
+       palette(c("red", "blue"))
+       plot(paleo.edp2.im$mean_x ~ paleo.edp2.im$IM, log="", 
+  	  xlab="IM", ylab="EDP", main="mean(EDP 2)-IM",
+	  lwd=5,
+  	  type="p", col=1)
+
+       lines(neo.edp2.im$mean_x ~ neo.edp2.im$IM, col=2, lwd=3)
+
+       legend(x="right", legend=c("Paleo", "Neo"),
+  	  fill=palette())
+   #+END_SRC
+
+   #+RESULTS:
+
+   #+CAPTION: men(EDP) vs. IM
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-2-im-mean
+   #+RESULTS: edp-2-im-mean
+   [[file:/tmp/babel-1752Epe/figure-1752vVb.pdf]]
+
+   #+NAME: edp-2-im-mean-zoom
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R 
+     palette(c("red", "blue"))
+     plot(paleo.edp2.im$mean_x ~ paleo.edp2.im$IM, log="", 
+          xlab="IM", ylab="EDP", main="mean(EDP 2)-IM",
+          lwd=5,
+          xlim=c(0.8, 1.2),
+          type="p", col=1)
+
+     lines(neo.edp2.im$mean_x ~ neo.edp2.im$IM, col=2,
+  	 lwd=3)
+
+     legend(x="topright", legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
+
+   #+Caption: men(EDP) vs. IM
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-2-im-mean-zoom
+   #+RESULTS: edp-2-im-mean-zoom
+   [[file:/tmp/babel-1752Epe/figure-1752W0t.pdf]]
+
+   #+NAME: edp-2-im-sd-ln
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R  
+     palette(c("red", "blue"))
+     plot(paleo.edp2.im$sd_ln_x ~ paleo.edp2.im$IM, log="", 
+          xlab="IM", ylab="EDP", main="sd(ln(EDP 2))-IM",
+          lwd=5,
+          type="p", col=1)
+
+     lines(neo.edp2.im$sd_ln_x ~ neo.edp2.im$IM, col=2,
+  	 lwd=3)
+
+     legend(x="topright", legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
+
+   #+CAPTION: sd(ln(EDP)) vs. IM
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-2-im-sd-ln
+   #+RESULTS: edp-2-im-sd-ln
+   [[file:/tmp/babel-1752Epe/figure-1752SrH.pdf]]
+
+** EDP Rate
+   Read the EDP rate data:
+   #+BEGIN_SRC R   :results output
+     ## Read in the IM data:
+     paleo.edp2.rate <- read.csv(
+         paste(results.dir, "edp-2-rate.txt", sep=""),
+         skip=3, header=FALSE, sep="")
+     names(paleo.edp2.rate) = c("EDP", "lambda")
+
+     neo.edp2.rate <- read.csv("example1a_edp_2_rate.txt", 
+         header=TRUE, sep="")
+   #+END_SRC
+  
+   #+RESULTS:
+
+   #+BEGIN_SRC R   :results value 
+     diff <- (paleo.edp2.rate$lambda
+                  - neo.edp2.rate$lambda)
+     diff.pct <- diff / paleo.edp2.rate$lambda
+     paste(
+         sprintf("Max abs(error) is %e (%3.2f%%).",
+                 max(abs(diff)),
+                 100 * max(abs(diff.pct))),
+         sprintf("Mean error is %e (%3.2f%%).",
+                 mean(diff), 
+                 100 * mean(diff.pct)),
+         sep="\n")
+   #+END_SRC
+
+   #+RESULTS:
+   | Max abs(error) is 9.499000e-03 (8.23%). |
+   | Mean error is 1.757726e-03 (0.58%).     |
+
+   Plot it (Figure [[fig:edp-2-rate]]):
+   #+NAME: edp-2-rate
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R  
+     palette(c("red", "blue"))
+     plot(paleo.edp2.rate$lambda ~ paleo.edp2.rate$EDP, log="xy", 
+          xlab="EDP", ylab="lambda", main="EDP #2 Rate",
+          lwd=5,
+          type="p", col=1)
+
+     lines(neo.edp2.rate$lambda ~ neo.edp2.rate$EDP, col=2,
+         lwd=3)
+
+     legend(x="topright", legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
+
+   #+CAPTION: EDP rate calculations
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-2-rate
+   #+RESULTS: edp-2-rate
+   [[file:/tmp/babel-1752Epe/figure-1752vjD.pdf]]
 
 * COLLAPSE
   Read the COLLAPSE-IM data:
