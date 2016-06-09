@@ -1,8 +1,8 @@
 ifeq ($(shell uname), Linux)
-all: main unit_tests pyslat.so doc 
+all: main unit_tests pyslat.so doc total_loss_debug
 
 clean:
-	rm -f *.a *.o *.so main unit_tests
+	rm -f *.a *.o *.so main unit_tests total_loss_debug
 else
 all: main unit_tests pyslat.pyd doc 
 
@@ -89,10 +89,13 @@ libslat.dll: functions.o relationships.o maq.o fragility.o lognormaldist.o loss_
 endif
 
 main.o: main.cpp functions.h relationships.h maq.h replaceable.h fragility.h lognormaldist.h loss_functions.h
+total_loss_debug.o: total_loss_debug.cpp functions.h relationships.h maq.h replaceable.h fragility.h lognormaldist.h loss_functions.h
 
 ifeq ($(shell uname), Linux)
 main: main.o libslat.so
 	$(CC) -fPIC main.o -L. -lslat -o main ${LDFLAGS}
+total_loss_debug: total_loss_debug.o libslat.so
+	$(CC) -fPIC total_loss_debug.o -L. -lslat -o total_loss_debug ${LDFLAGS}
 else
 main: main.o libslat.dll
 	$(CC) main.o -L. -o main \
