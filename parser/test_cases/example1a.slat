@@ -43,7 +43,7 @@ lossfn LOSS_1 simple [0.03,0.4],
 		     [1.00, 0.4]
               --mu mean_x --sd sd_ln_x;
 
-compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 1;
+compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 20;
 
 structure BUILDING COMPGROUP_1;
 rebuildcost BUILDING 10, 0.35 --mu mean_x --sd sd_ln_x;

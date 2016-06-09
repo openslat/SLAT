@@ -562,7 +562,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:collapse-im
   #+RESULTS: collapse-im
-  [[file:/tmp/babel-1789nf2/figure-1789jGM.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752CHO.pdf]]
 
   #+NAME: collapse-im-zoom
   #+HEADER: :results graphics
@@ -570,7 +570,7 @@
   #+BEGIN_SRC R  
     palette(c("red", "blue", "green"))
     plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, 
-         log="y", 
+         log="y", lwd=5,
          xlab="IM", ylab="pCollapse", main="COLLAPSE Rate",
          xlim=c(0, 0.5),
          type="p", col=1)
@@ -590,7 +590,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:collapse-im-zoom
   #+RESULTS: collapse-im-zoom
-  [[file:/tmp/babel-36639js/figure-3663BYR.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-17522vm.pdf]]
 
   #+NAME: collapse-im-zoom2
   #+HEADER: :results graphics
@@ -598,7 +598,7 @@
   #+BEGIN_SRC R 
     palette(c("red", "blue", "green"))
     plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM,
-         log="y", 
+         log="y", lwd=5,
          xlab="IM", ylab="pCollapse", main="COLLAPSE Rate",
          xlim=c(1.5, 2.0),
          ylim=c(0.9, 1.0),
@@ -619,7 +619,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:collapse-im-zoom2
   #+RESULTS: collapse-im-zoom2
-  [[file:/tmp/babel-1789nf2/figure-1789SSd.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-17527Cy.pdf]]
 
   
   The overall rate of collapse:
@@ -709,7 +709,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.im-mean
   #+RESULTS: loss.im-mean
-  [[file:/tmp/babel-36639js/figure-3663Fct.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752lVG.pdf]]
 
   #+NAME: loss.im-mean-zoom
   #+HEADER: :results graphics
@@ -719,14 +719,14 @@
     plot(paleo.loss.im$mean_x ~ paleo.loss.im$IM, log="y", 
          xlab="IM", ylab="Mean Loss",
 	 main="Loss-IM Relationship",
-	 xlim=c(0.001, 0.10), ylim=c(1E-12, 1E0),
+	 xlim=c(0.001, 0.10), ylim=c(1, 20),
          type="p", col=1)
 
     lines(neo.loss.im$mean_x ~ neo.loss.im$IM, col=2)
 
     points(paleo.loss.im$mean_x ~ paleo.loss.im$IM, col=3)
 
-    legend(x="topright",
+    legend(x="right",
          legend=c("Paleo", "Neo", "Paleo2"),
          fill=palette())
   #+END_SRC
@@ -735,7 +735,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.im-mean-zoom
   #+RESULTS: loss.im-mean-zoom
-  [[file:/tmp/babel-36639js/figure-3663qUC.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752zgT.pdf]]
 
   #+BEGIN_SRC R 
     diff <- paleo.loss.im$sd_ln_x - neo.loss.im$sd_ln_x
@@ -754,8 +754,8 @@
   #+END_SRC
 
   #+RESULTS:
-  | Max abs(error) is 2.000000e-03 (0.50%). |
-  | Mean error is 1.249447e-04 (0.03%).     |
+  | Max abs(error) is NaN (-Inf%). |
+  | Mean error is NaN (NaN%).      |
 
 
   #+NAME: loss.im-sd
@@ -781,7 +781,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.im-sd
   #+RESULTS: loss.im-sd
-  [[file:/tmp/babel-1772V7h/figure-1772H3N.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752nJs.pdf]]
 
 
 * LOSS-EDP
@@ -874,7 +874,7 @@
          xlab="EDP", ylab="Mean(Loss)",
 	 main="Loss-EDP Relationship",
          xlim=c(0.05, 0.10),
-         ylim=c(5E-1, 1E0),
+         ylim=c(9, 20),
          type="p", col=1, lwd=5)
 
     lines(neo.loss.edp$mean_x ~ neo.loss.edp$EDP, 
@@ -888,13 +888,13 @@
   #+END_SRC
 
   #+RESULTS: loss.edp-mean-zoom
-  [[file:/tmp/babel-1752Epe/figure-1752ssh.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752P3t.pdf]]
 
   #+CAPTION: Loss-EDP rate calculations
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.edp-mean
   #+RESULTS: loss.edp-mean
-  [[file:/tmp/babel-1752Epe/figure-175259b.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752NDI.pdf]]
 
 
   #+NAME: loss.edp-sd
@@ -920,7 +920,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.edp-sd
   #+RESULTS: loss.edp-sd
-  [[file:/tmp/babel-1752Epe/figure-1752ngK.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-1752ofP.pdf]]
 
 
   #+NAME: loss.edp-sd-zoom
@@ -932,7 +932,7 @@
          xlab="EDP", ylab="sd(ln(Loss))",
 	 main="Loss-EDP Relationship",
          xlim=c(0.08, 0.12),
-         ylim=c(0.4, 0.85),
+         ylim=c(0.4, 0.6),
          type="p", col=1, lwd=5)
 
     lines(neo.loss.edp$sd_ln_x ~ neo.loss.edp$EDP, 
@@ -949,7 +949,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:loss.edp-sd-zoom
   #+RESULTS: loss.edp-sd-zoom
-  [[file:/tmp/babel-1752Epe/figure-1752kGv.pdf]]
+  [[file:/tmp/babel-1752Epe/figure-17521wJ.pdf]]
 
 * Annual Loss
   

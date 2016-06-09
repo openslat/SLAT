@@ -224,14 +224,17 @@ namespace SLAT {
 
                         double d = deriv;
                         //double d = this->edp->P_exceedence(im, edp);
-                        double e = this->E_loss_EDP(edp);
+                        if (this->count != 20) {
+                            std::cout << "ERROR: "  << this->count << std::endl;
+                        }
+                        double e = this->E_loss_EDP(edp) / this->count;
                         double sd = this->SD_loss_EDP(edp);
                         result = (e * e + sd * sd) * std::abs(d);
                     }
                     return result;
                 }, local_settings); 
             if (result.successful) {
-                double mean_x = E_loss_IM(im);
+                double mean_x = E_loss_IM(im) / this->count;
                 double sigma_x = sqrt(result.integral  - mean_x * mean_x);
                 double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
                 return sigma_lnx;
