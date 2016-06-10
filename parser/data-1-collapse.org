@@ -146,6 +146,8 @@
          header=TRUE, sep="")
    #+END_SRC
 
+   #+RESULTS:
+
    Compare the mean and standard deviation (in log space) of the EDP #1-IM
    relationship:
    #+BEGIN_SRC R
@@ -639,7 +641,7 @@
    Read the LOSS-IM data for group #1:
    #+BEGIN_SRC R   :results output
      paleo.loss1.im <- read.csv(
-         paste(results.dir, "pg-im", sep=""),
+         paste(results.dir, "pg-1-im", sep=""),
          skip=3, header=FALSE, sep="")
      names(paleo.loss1.im) = c("IM", "mean_x", "sd_ln_x")
 
@@ -692,7 +694,7 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:loss1.im-mean
    #+RESULTS: loss1.im-mean
-   [[file:/tmp/babel-1752Epe/figure-1752PH1.pdf]]
+   [[file:/tmp/babel-1752Epe/figure-1752u3v.pdf]]
 
    #+NAME: loss1.im-mean-zoom
    #+HEADER: :results graphics
@@ -931,8 +933,8 @@ l
    #+END_SRC
 
    #+RESULTS:
-   | Max abs(error) is NaN (-Inf%). |
-   | Mean error is NaN (NaN%).      |
+   | Max abs(error) is 5.763e+00 (100.00%). |
+   | Mean error is 7.713e-02 (1.43%).       |
 
 
 
@@ -959,7 +961,7 @@ l
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:loss2.im-mean
    #+RESULTS: loss2.im-mean
-   [[file:/tmp/babel-1752Epe/figure-1752eAi.pdf]]
+   [[file:/tmp/babel-1752Epe/figure-1752h0d.pdf]]
 
    #+NAME: loss2.im-mean-zoom
    #+HEADER: :results graphics
@@ -1280,9 +1282,6 @@ l
      lines(neo.structloss.nc$mean_x ~ neo.structloss.nc$IM, 
          col=2, lwd=3)
 
-     lines(neo.loss1.im$mean_x ~ neo.loss1.im$IM)
-     lines(neo.loss2.im$mean_x ~ neo.loss2.im$IM)
-     
      legend(x="topright",
           legend=c("Paleo", "Neo"),
           fill=palette())
@@ -1308,9 +1307,6 @@ l
      lines(neo.structloss.nc$sd_ln_x ~ neo.structloss.nc$IM, 
          col=2, lwd=3)
   
-     lines(neo.loss1.im$sd_ln_x ~ neo.loss1.im$IM)
-     lines(neo.loss2.im$sd_ln_x ~ neo.loss2.im$IM)
-
      legend(x="topright",
           legend=c("Paleo", "Neo"),
           fill=palette())
