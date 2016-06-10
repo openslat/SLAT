@@ -1361,7 +1361,7 @@ l
                  mean(diff),
                  100 * mean(diff.pct, na.rm=TRUE)),
          sep="\n    ")
-9   #+END_SRC
+   #+END_SRC
 
    #+RESULTS:
    | Standard Deviation of loss, considering collapse: |

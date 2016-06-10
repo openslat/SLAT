@@ -66,8 +66,9 @@ lossfn LOSS_1 simple [0.03, 0.4],
 
 compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 20;
 compgroup COMPGROUP_2 EDP_2 FRAG_1 LOSS_1 18;
+compgroup COMPGROUP_3 EDP_2 FRAG_1 LOSS_1  4;
 
-structure BUILDING COMPGROUP_1, COMPGROUP_2;
+structure BUILDING COMPGROUP_1, COMPGROUP_2, COMPGROUP_3;
 rebuildcost BUILDING 10, 0.35 --mu mean_x --sd sd_ln_x;
 
 # Set up integration parameters:
