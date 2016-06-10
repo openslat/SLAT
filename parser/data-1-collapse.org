@@ -828,7 +828,7 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:loss1.edp-mean
    #+RESULTS: loss1.edp-mean
-   [[file:/tmp/babel-1752Epe/figure-1752ppp.pdf]]
+   [[file:/tmp/babel-1752Epe/figure-17529OM.pdf]]
 
    #+NAME: loss1.edp-mean-zoom
    #+HEADER: :results graphics
@@ -839,7 +839,6 @@
           xlab="EDP", ylab="Mean(Loss)",
 	  main="Loss-EDP Relationship",
           xlim=c(0.05, 0.10),
-          ylim=c(9, 20),
           type="p", col=1, lwd=5)
 
      lines(neo.loss1.edp$mean_x ~ neo.loss1.edp$EDP, 
@@ -854,6 +853,7 @@ l
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:loss1.edp-mean-zoom
    #+RESULTS: loss1.edp-mean-zoom
+   [[file:/tmp/babel-1752Epe/figure-1752KgG.pdf]]
 
 
 
@@ -866,6 +866,7 @@ l
           xlab="EDP", ylab="sd(ln(Loss))",
 	  main="Loss-EDP Relationship",
           type="p", col=1, lwd=5)
+
      lines(neo.loss1.edp$sd_ln_x ~ neo.loss1.edp$EDP, 
   	 col=2, lwd=3)
 
@@ -880,7 +881,7 @@ l
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:loss1.edp-sd
    #+RESULTS: loss1.edp-sd
-   [[file:/tmp/babel-1752Epe/figure-1752vQu.pdf]]
+   [[file:/tmp/babel-1752Epe/figure-1752-If.pdf]]
 
 
 \clearpage
@@ -971,7 +972,7 @@ l
      plot(paleo.loss2.im$mean_x ~ paleo.loss2.im$IM, log="y", 
           xlab="IM", ylab="Mean Loss",
 	  main="Loss-IM Relationship",
-	  xlim=c(0.10, 0.30), ylim=c(1E-6, 1E-1),
+	  xlim=c(0.10, 0.30), 
           type="p", col=1)
 
      lines(neo.loss2.im$mean_x ~ neo.loss2.im$IM, col=2)
@@ -985,7 +986,7 @@ l
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:loss2.im-mean-zoom
    #+RESULTS: loss2.im-mean-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752B5H.pdf]]
+   [[file:/tmp/babel-1752Epe/figure-1752LaZ.pdf]]
 
 
    #+NAME: loss2.im-sd
@@ -1125,7 +1126,6 @@ l
           xlab="EDP", ylab="Mean(Loss)",
 	  main="Loss-EDP Relationship",
           xlim=c(0.05, 0.10),
-          ylim=c(9, 20),
           type="p", col=1, lwd=5)
 
      lines(neo.loss2.edp$mean_x ~ neo.loss2.edp$EDP, 
@@ -1139,7 +1139,7 @@ l
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:loss2.edp-mean-zoom
    #+RESULTS: loss2.edp-mean-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752NDI.pdf]]
+   [[file:/tmp/babel-1752Epe/figure-1752_Cy.pdf]]
 
 
 
@@ -1178,7 +1178,6 @@ l
           xlab="EDP", ylab="sd(ln(Loss))",
 	  main="Loss-EDP Relationship",
           xlim=c(0.08, 0.12),
-          ylim=c(0.4, 0.6),
           type="p", col=1, lwd=5)
 
      lines(neo.loss2.edp$sd_ln_x ~ neo.loss2.edp$EDP, 
@@ -1193,7 +1192,7 @@ l
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:loss2.edp-sd-zoom
    #+RESULTS: loss2.edp-sd-zoom
-   [[file:/tmp/babel-1752Epe/figure-17521wJ.pdf]]
+   [[file:/tmp/babel-1752Epe/figure-1752MUs.pdf]]
 
 \clearpage
 * Total Loss

@@ -52,16 +52,16 @@ edp EDP_3 IM_1 EDPIM_FUNC_3;
 edp EDP_4 IM_1 EDPIM_FUNC_4;
 
 # Fragility, loss, component group:
-fragfn FRAG_1 [0.0062, 0.4],
-              [0.0230, 0.4],
-              [0.0440, 0.4],
-	      [0.0564, 0.4] 
+fragfn FRAG_1 [0.005, 0.40],
+              [0.010, 0.45],
+	      [0.030, 0.50],
+	      [0.060, 0.60]
         --mu mean_x --sd sd_ln_x;
 
-lossfn LOSS_1 simple [0.03, 0.4], 
-       	      	     [0.08, 0.4],
-		     [0.25, 0.4],
-		     [1.00, 0.4]
+lossfn LOSS_1 simple [1143, 0.42],
+                     [3214, 0.40],
+		     [4900, 0.37],
+		     [4900, 0.37]
               --mu mean_x --sd sd_ln_x;
 
 compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 20;
