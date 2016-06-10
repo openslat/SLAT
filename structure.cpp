@@ -29,15 +29,20 @@ namespace SLAT {
     
     LogNormalDist Structure::Loss(double im, bool consider_collapse)
     {
-        double mu_nc, sigma_nc = 0;
+        std::vector<LogNormalDist> dists;
+        int num_components = 0;
         for_each(components.begin(),
                  components.end(), 
-                 [&mu_nc, &sigma_nc, im] (std::shared_ptr<CompGroup> cg) {
-                     mu_nc = mu_nc + cg->E_loss_IM(im);
-                     sigma_nc = sigma_nc + cg->SD_ln_loss_IM(im) *
-                         cg->SD_ln_loss_IM(im);
+                 [&num_components, &dists, im] (std::shared_ptr<CompGroup> cg) {
+                     num_components++;
+                     dists.push_back(cg->LossDist_IM(im));
                  });
-        LogNormalDist nc_dist = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mu_nc, sqrt(sigma_nc));
+
+        std::cerr << "Loss(" << im << ", " << consider_collapse << ")" << std::endl;
+        for (size_t i=0; i < dists.size(); i++) {
+            std::cerr << "    " << dists[i].get_mean_X() << ", " << dists[i].get_sigma_X() << std::endl;
+        }
+        LogNormalDist nc_dist = LogNormalDist::AddDistributions(dists);
 
 
         if (consider_collapse) {

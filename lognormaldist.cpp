@@ -129,6 +129,33 @@ namespace SLAT {
             new_var_X += (mean_X * mean_X + sd_X * sd_X) * weights[i];
         }
         new_var_X -= new_mean_X * new_mean_X;
+        new_var_X = abs(new_var_X);
+        return LogNormalDist_from_mean_X_and_sigma_X(new_mean_X, sqrt(new_var_X));
+    }
+
+    LogNormalDist LogNormalDist::AddDistributions(
+        const std::vector<LogNormalDist> distributions) 
+    {
+        double new_mean_X = 0;
+        double new_var_X = 0;
+
+        for (size_t i=0; i < distributions.size(); i++) {
+            double mean_X = distributions[i].get_mean_X();
+            new_mean_X += mean_X;
+
+            double sd_X_i = distributions[i].get_sigma_X();
+            
+            for (size_t j=i; j < distributions.size(); j++) {
+                double sd_X_j = distributions[j].get_sigma_X();
+
+                if (i == j) {
+                    new_var_X += sd_X_i * sd_X_j;
+                } else {
+                    new_var_X += 0 * sd_X_i * sd_X_j;
+                }
+            }
+        }
+        std::cout << " ---> " << new_mean_X << ", " << new_var_X << std::endl;
         return LogNormalDist_from_mean_X_and_sigma_X(new_mean_X, sqrt(new_var_X));
     }
 

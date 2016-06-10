@@ -37,15 +37,16 @@ fragfn FRAG_1 [0.0062, 0.4],
 	      [0.0564, 0.4] 
         --mu mean_x --sd sd_ln_x;
 
-lossfn LOSS_1 simple [0.03,0.4], 
+lossfn LOSS_1 simple [0.03, 0.4], 
        	      	     [0.08, 0.4],
 		     [0.25, 0.4],
 		     [1.00, 0.4]
               --mu mean_x --sd sd_ln_x;
 
 compgroup COMPGROUP_1 EDP_1 FRAG_1 LOSS_1 20;
+compgroup COMPGROUP_2 EDP_2 FRAG_1 LOSS_1 18;
 
-structure BUILDING COMPGROUP_1;
+structure BUILDING COMPGROUP_1, COMPGROUP_2;
 rebuildcost BUILDING 10, 0.35 --mu mean_x --sd sd_ln_x;
 
 # Set up integration parameters:
@@ -65,8 +66,11 @@ recorder edprate EDP_2 $(list(map(math.exp, math.log(0.001) + numpy.arange(0, 14
 recorder dsedp COMPGROUP_1 0.0:0.001:0.200  example1a_ds_edp.txt --new;
 
 recorder dsrate COMPGROUP_1;
-recorder lossedp COMPGROUP_1 $(0.001 + numpy.arange(0, 149, 1) * (0.15 - 0.001)/148) --cols mean_x, sd_ln_x example1a_loss_edp.txt --new;
-recorder lossim COMPGROUP_1 $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198 )  --cols mean_x, sd_ln_x example1a_loss_im.txt --new;
+recorder lossedp COMPGROUP_1 $(0.001 + numpy.arange(0, 149, 1) * (0.15 - 0.001)/148) --cols mean_x, sd_ln_x example1a_loss_1_edp.txt --new;
+recorder lossim COMPGROUP_1 $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198 )  --cols mean_x, sd_ln_x example1a_loss_1_im.txt --new;
+
+recorder lossedp COMPGROUP_2 $(0.001 + numpy.arange(0, 149, 1) * (0.15 - 0.001)/148) --cols mean_x, sd_ln_x example1a_loss_2_edp.txt --new;
+recorder lossim COMPGROUP_2 $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198 )  --cols mean_x, sd_ln_x example1a_loss_2_im.txt --new;
 
 recorder annloss COMPGROUP_1 1.0:1.0:100.0 --lambda 0.06 example1a_annual_loss.txt --new;
 

@@ -38,6 +38,8 @@ namespace SLAT {
         static LogNormalDist AddWeightedDistributions(
             const std::vector<LogNormalDist> distributions, 
             const std::vector<double> weights);
+        static LogNormalDist AddDistributions(
+            const std::vector<LogNormalDist> distributions);
     private:
         double mu_lnX;
         double sigma_lnX;

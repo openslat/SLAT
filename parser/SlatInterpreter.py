@@ -1046,6 +1046,10 @@ class SlatInterpreter(slatParserListener):
         #sigma.append(sigma[N - 2] + (sigma[N-1] - sigma[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
         mu_func = detfn("anonymous", 'linear', [x.copy(), mu.copy()])
         sigma_func = detfn("anonymous", 'linear', [x.copy(), sigma.copy()])
+        print("IMPORT")
+        print(x)
+        print(mu)
+        print(sigma)
         id = ctx.ID().getText()
         self._probfns[id] = probfn(id, 'lognormal', 
                                    [pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X, mu_func],

@@ -146,12 +146,12 @@ int main(int argc, char **argv)
     structure.AddCompGroup(cgroup2);
     structure.setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
 
-    std::vector<double> im_vals = [0.0, 0.001, 0.01, 0.1, 0.5, 1.0, 1.5, 2.0];
-    for_each(im_vals.begin(), im_vals.end(), [] (double im) {
-            LogNormalDist loss = structure.Loss(im, false);
-            std::cout << "Structure Loss: " << loss.get_mu_lnX() << ", " << loss.get_sigma_lnX() << std::endl;
-
-            LogNormalDist loss = structure.Loss(im, true);
-            std::cout << "Structure Loss: " << loss.get_mu_lnX() << ", " << loss.get_sigma_lnX() << std::endl;
-    }
+    //std::vector<double> im_vals = {0.0, 0.001, 0.01, 0.1, 0.5, 1.0, 1.5, 2.0};
+    std::vector<double> im_vals = {1.0};
+    for_each(im_vals.begin(), im_vals.end(), [&structure] (double im) {
+            for (int collapse=0; collapse < 1; collapse++) {
+                LogNormalDist loss = structure.Loss(im, collapse);
+                std::cout << "Structure Loss: " << loss.get_mu_lnX() << ", " << loss.get_sigma_lnX() << std::endl;
+            }
+        });
 }
