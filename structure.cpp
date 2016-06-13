@@ -38,10 +38,10 @@ namespace SLAT {
                      dists.push_back(cg->LossDist_IM(im));
                  });
 
-        std::cerr << "Loss(" << im << ", " << consider_collapse << ")" << std::endl;
-        for (size_t i=0; i < dists.size(); i++) {
-            std::cerr << "    " << dists[i].get_mean_X() << ", " << dists[i].get_sigma_X() << std::endl;
-        }
+        // std::cerr << "Loss(" << im << ", " << consider_collapse << ")" << std::endl;
+        // for (size_t i=0; i < dists.size(); i++) {
+        //     std::cerr << "    " << dists[i].get_mean_X() << ", " << dists[i].get_sigma_X() << std::endl;
+        // }
         LogNormalDist nc_dist = LogNormalDist::AddDistributions(dists);
 
 

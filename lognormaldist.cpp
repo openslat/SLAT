@@ -155,7 +155,6 @@ namespace SLAT {
                 }
             }
         }
-        std::cout << " ---> " << new_mean_X << ", " << new_var_X << std::endl;
         return LogNormalDist_from_mean_X_and_sigma_X(new_mean_X, sqrt(new_var_X));
     }
 

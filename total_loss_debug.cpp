@@ -126,17 +126,17 @@ int main(int argc, char **argv)
     std::shared_ptr<EDP> edp2 = std::make_shared<EDP>(im_rate_rel, edp2_im_relationship);
 
     std::vector<LogNormalDist> fragility_distributions(
-        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
-                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
-                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
-                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)});
+        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.005, 0.4),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.01, 0.45),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.5),
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.06, 0.6)});
     std::shared_ptr<FragilityFn> fragFn = std::make_shared<FragilityFn>(fragility_distributions);
 
     std::shared_ptr<LossFn> lossFn = std::make_shared<LossFn>(
-        std::vector<LogNormalDist>({ LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
-                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
-                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
-                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
+        std::vector<LogNormalDist>({ LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1143, 0.42),
+                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(3214, 0.4),
+                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(4900, 0.37),
+                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(4900, 0.37)}));
 
     std::shared_ptr<CompGroup> cgroup1 = std::make_shared<CompGroup>(edp1, fragFn, lossFn, 1);
     std::shared_ptr<CompGroup> cgroup2 = std::make_shared<CompGroup>(edp2, fragFn, lossFn, 1);
@@ -147,7 +147,7 @@ int main(int argc, char **argv)
     structure.setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
 
     //std::vector<double> im_vals = {0.0, 0.001, 0.01, 0.1, 0.5, 1.0, 1.5, 2.0};
-    std::vector<double> im_vals = {1.0};
+    std::vector<double> im_vals = {0.04};
     for_each(im_vals.begin(), im_vals.end(), [&structure] (double im) {
             for (int collapse=0; collapse < 1; collapse++) {
                 LogNormalDist loss = structure.Loss(im, collapse);

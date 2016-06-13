@@ -151,6 +151,7 @@ namespace SLAT {
             double mean_x = E_loss_IM(im) / this->count;
             double sigma_x = sqrt(result.integral  - mean_x * mean_x);
             double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
+            if (mean_x == 0) sigma_lnx = sigma_x;
             return sigma_lnx;
         } else {
             return 0; //NAN;;

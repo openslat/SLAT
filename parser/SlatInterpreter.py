@@ -352,7 +352,8 @@ class recorder:
                 columns.append("DS{}".format(i + 1))
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_ln_x', 'sd_ln_x']
-        elif (type == 'structloss') and columns == None:
+        elif (type == 'structloss' or type == 'lossedp' or type =='lossim') \
+             and columns == None:
             columns = ['mean_x', 'sd_ln_x']
         self._columns = columns
 
@@ -474,6 +475,7 @@ class recorder:
                 
             
     def run(self):
+        #print("RUN {}".format(self))
         destination = self._options.get('filename')
         if destination != None:
             if self._options.get('append'):
@@ -517,6 +519,7 @@ class SlatInterpreter(slatParserListener):
     # Enter a parse tree produced by slatParser#command.
     def enterCommand(self, ctx:slatParser.CommandContext):
         self._stack = []
+        print(ctx.getText())
     
     # Exit a parse tree produced by slatParser#command.
     def exitCommand(self, ctx:slatParser.CommandContext):
@@ -928,7 +931,7 @@ class SlatInterpreter(slatParserListener):
         elif ctx.STRUCTLOSS():
             type = 'structloss'
         else:
-            raise ValueError("Unhandled recorder type")
+            raise ValueError("Unhandled recorder type: {}")
 
         if type == 'structloss':
             if ctx.collapse_type() and \
@@ -999,9 +1002,6 @@ class SlatInterpreter(slatParserListener):
     # Exit a parse tree produced by slatParser#python_script.
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
         expression =  ctx.python_expression().getText()
-        print("-----")
-        print(expression)
-        print("-----")
         value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np, "list":list, "map": map})
         print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
         self._stack.append(value)
@@ -1010,6 +1010,7 @@ class SlatInterpreter(slatParserListener):
     def exitAnalyze_command(self, ctx:slatParser.Analyze_commandContext):
         print("Perform analysis:")
         for rec in self._recorders:
+            print(rec)
             rec.run()
 
     # Exit a parse tree produced by slatParser#set_command.

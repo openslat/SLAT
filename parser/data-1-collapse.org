@@ -481,6 +481,179 @@
    [[file:/tmp/babel-1752Epe/figure-1752vjD.pdf]]
 
 \clearpage
+* EDP #21
+** EDP IM
+   Read the EDP #21 IM data:
+   #+BEGIN_SRC R   :results output
+     ## Read in the IM data:
+     paleo.edp21.im <- read.csv(
+         paste(results.dir, "edp-im-21", sep=""),
+         skip=3, header=FALSE, sep="")
+     names(paleo.edp21.im) = c("IM", "mean_x", "sd_ln_x")
+
+     neo.edp21.im <- read.csv("example1a_im_edp_21.txt",
+         header=TRUE, sep="")
+   #+END_SRC
+  
+   #+RESULTS:
+
+   Compare the mean and standard deviation:
+   #+BEGIN_SRC R
+     paste(
+         sprintf("Max abs(mean error) is %3.2f%%.", 
+                 100 * max(abs(neo.edp21.im$mean_x - 
+  				 paleo.edp21.im$mean_x)
+  			 / paleo.edp21.im$mean_x)),
+         sprintf("Mean (mean error) is %3.2f%%.", 
+                 100 * mean((neo.edp21.im$mean_x - 
+                                 paleo.edp21.im$mean_x)
+  			  / paleo.edp21.im$mean_x)),
+         sep="\n")
+   #+END_SRC
+
+   #+BEGIN_SRC R
+     paste(
+         sprintf("Max abs(sd_ln_x error) is %3.2f%%.", 
+                 100 * max(abs(neo.edp21.im$sd_ln_x - 
+    			       paleo.edp21.im$sd_ln_x)
+    		       / paleo.edp21.im$sd_ln_x)),
+         sprintf("Mean sd_ln_x error is %3.2f%%.", 
+                 100 * mean((neo.edp21.im$sd_ln_x - 
+    			       paleo.edp21.im$sd_ln_x)
+    		       / paleo.edp21.im$sd_ln_x)),
+         sep="\n")
+   #+END_SRC
+
+   Plot the mean (Figure [[fig:edp-21-im-mean]] and [[fig:edp-21-im-mean-zoom]]) and
+   standard deviation (Figure [[fig:edp-21-im-sd-ln]]):d
+   #+NAME: edp-21-im-mean
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R 
+       palette(c("red", "blue"))
+       plot(paleo.edp21.im$mean_x ~ paleo.edp21.im$IM, log="", 
+  	  xlab="IM", ylab="EDP", main="mean(EDP 21)-IM",
+	  lwd=5,
+  	  type="p", col=1)
+
+       lines(neo.edp21.im$mean_x ~ neo.edp21.im$IM, col=2, lwd=3)
+
+       legend(x="right", legend=c("Paleo", "Neo"),
+  	  fill=palette())
+   #+END_SRC
+
+   #+RESULTS:
+
+   #+CAPTION: men(EDP #21) vs. IM
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-21-im-mean
+   #+RESULTS: edp-21-im-mean
+   [[file:/tmp/babel-1752Epe/figure-1752vVb.pdf]]
+
+   #+NAME: edp-21-im-mean-zoom
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R 
+     palette(c("red", "blue"))
+     plot(paleo.edp21.im$mean_x ~ paleo.edp21.im$IM, log="", 
+          xlab="IM", ylab="EDP", main="mean(EDP 21)-IM",
+          lwd=5,
+          xlim=c(0.8, 1.2),
+          type="p", col=1)
+
+     lines(neo.edp21.im$mean_x ~ neo.edp21.im$IM, col=2,
+  	 lwd=3)
+
+     legend(x="topright", legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
+
+   #+Caption: men(EDP #21) vs. IM
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-21-im-mean-zoom
+   #+RESULTS: edp-21-im-mean-zoom
+   [[file:/tmp/babel-1752Epe/figure-1752W0t.pdf]]
+
+   #+NAME: edp-21-im-sd-ln
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R  
+     palette(c("red", "blue"))
+     plot(paleo.edp21.im$sd_ln_x ~ paleo.edp21.im$IM, log="", 
+          xlab="IM", ylab="EDP", main="sd(ln(EDP 21))-IM",
+          lwd=5,
+          type="p", col=1)
+
+     lines(neo.edp21.im$sd_ln_x ~ neo.edp21.im$IM, col=2,
+  	 lwd=3)
+
+     legend(x="topright", legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
+
+   #+CAPTION: sd(ln(EDP #21)) vs. IM
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-21-im-sd-ln
+   #+RESULTS: edp-21-im-sd-ln
+   [[file:/tmp/babel-1752Epe/figure-1752SrH.pdf]]
+
+** EDP Rate
+   Read the EDP #21 rate data:
+   #+BEGIN_SRC R   :results output
+     ## Read in the IM data:
+     paleo.edp21.rate <- read.csv(
+         paste(results.dir, "edp-21-rate.txt", sep=""),
+         skip=3, header=FALSE, sep="")
+     names(paleo.edp21.rate) = c("EDP", "lambda")
+
+     neo.edp21.rate <- read.csv("example1a_edp_21_rate.txt", 
+         header=TRUE, sep="")
+   #+END_SRC
+  
+   Compare the mean and standard deviation:
+   #+BEGIN_SRC R   :results value 
+     diff <- (paleo.edp21.rate$lambda
+                  - neo.edp21.rate$lambda)
+     diff.pct <- diff / paleo.edp21.rate$lambda
+     paste(
+         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
+                 max(abs(diff)),
+                 100 * max(abs(diff.pct))),
+         sprintf("Mean error is %5.3e (%3.2f%%).",
+                 mean(diff), 
+                 100 * mean(diff.pct)),
+         sep="\n")
+   #+END_SRC
+
+   #+RESULTS:
+   | Max abs(error) is 9.499000e-03 (8.23%). |
+   | Mean error is 1.757726e-03 (0.58%).     |
+
+   Plot the rate (Figure [[fig:edp-21-rate]]):
+   #+NAME: edp-21-rate
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R  
+     palette(c("red", "blue"))
+     plot(paleo.edp21.rate$lambda ~ paleo.edp21.rate$EDP, log="xy", 
+          xlab="EDP", ylab="lambda", main="EDP #21 Rate",
+          lwd=5,
+          type="p", col=1)
+
+     lines(neo.edp21.rate$lambda ~ neo.edp21.rate$EDP, col=2,
+         lwd=3)
+
+     legend(x="topright", legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
+
+   #+CAPTION: EDP #21 rate calculations
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:edp-21-rate
+   #+RESULTS: edp-21-rate
+   [[file:/tmp/babel-1752Epe/figure-1752vjD.pdf]]
+
+\clearpage
 * COLLAPSE
   Read the COLLAPSE-IM data:
   #+BEGIN_SRC R   :results output
