@@ -1,137 +1,24 @@
-# This is an example file
-title 'Example File';
-title '------------';
-title 'This title has several lines.';
-print title example1a_out.txt --new;
-
-# Define the IM function:
-#                        v_asy, IM_asy, alpha
-#detfn IM_FUNC hyperbolic 1221,   29.8,  62.2;
-detfn IM_FUNC loglog    [0.01, 0.376775], [0.02, 0.155158], [0.04, 0.054048],
-        [0.06, 0.027886], [0.08, 0.017241], [0.1, 0.011857],  [0.2, 0.003656],
-	[0.3, 0.001628],  [0.4, 0.000794],  [0.5, 0.000405],  [0.6, 0.000214],
-	[0.7, 0.000115],  [0.8, 0.000064],  [0.9, 0.000037],  [1.0, 0.000021],
-	[1.1, 0.000013],  [1.2, 7.00E-06],  [1.3, 4.00E-06],  [1.4, 3.00E-06],
-	[1.5, 1.80E-06],  [1.6, 1.00E-06],  [1.7, 7.00E-07],  [1.8, 4.00E-07],
-	[1.9, 2.00E-07],  [2.0, 1.00E-07];
-
-# Define the EDP-IM functions:
-#                          a    b
-#detfn MU_EDP powerlaw    0.1, 1.5;
-#detfn SIGMA_EDP powerlaw 0.5, 0.0;
-
-#probfn EDPIM_FUNC lognormal MU_EDP, SIGMA_EDP --mu mean_x --sd sd_ln_x;
-importprobfn EDPIM_FUNC_1  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
-importprobfn EDPIM_FUNC_2  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP2.txt;
-importprobfn EDPIM_FUNC_3  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP3.txt;
-importprobfn EDPIM_FUNC_4  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP4.txt;
-importprobfn EDPIM_FUNC_5  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP5.txt;
-importprobfn EDPIM_FUNC_6  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP6.txt;
-importprobfn EDPIM_FUNC_7  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP7.txt;
-importprobfn EDPIM_FUNC_8  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP8.txt;
-importprobfn EDPIM_FUNC_9  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP9.txt;
-importprobfn EDPIM_FUNC_10  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP10.txt;
-importprobfn EDPIM_FUNC_11  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP11.txt;
-importprobfn EDPIM_FUNC_12  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP12.txt;
-importprobfn EDPIM_FUNC_13  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP13.txt;
-importprobfn EDPIM_FUNC_14  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP14.txt;
-importprobfn EDPIM_FUNC_15  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP15.txt;
-importprobfn EDPIM_FUNC_16  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP16.txt;
-importprobfn EDPIM_FUNC_17  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP17.txt;
-importprobfn EDPIM_FUNC_18  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP18.txt;
-importprobfn EDPIM_FUNC_19  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP19.txt;
-importprobfn EDPIM_FUNC_20  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP20.txt;
-importprobfn EDPIM_FUNC_21  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP21.txt;
-
-# Define relationships:
-im IM_1 IM_FUNC;
-collapse IM_1 0.9, 0.470 --mu mean_x --sd sd_ln_x;
-edp EDP_1 IM_1 EDPIM_FUNC_1;
-edp EDP_2 IM_1 EDPIM_FUNC_2;
-edp EDP_3 IM_1 EDPIM_FUNC_3;
-edp EDP_4 IM_1 EDPIM_FUNC_4;
-edp EDP_5 IM_1 EDPIM_FUNC_5;
-edp EDP_6 IM_1 EDPIM_FUNC_6;
-edp EDP_7 IM_1 EDPIM_FUNC_7;
-edp EDP_8 IM_1 EDPIM_FUNC_8;
-edp EDP_9 IM_1 EDPIM_FUNC_9;
-edp EDP_10 IM_1 EDPIM_FUNC_10;
-edp EDP_11 IM_1 EDPIM_FUNC_11;
-edp EDP_12 IM_1 EDPIM_FUNC_12;
-edp EDP_13 IM_1 EDPIM_FUNC_13;
-edp EDP_14 IM_1 EDPIM_FUNC_14;
-edp EDP_15 IM_1 EDPIM_FUNC_15;
-edp EDP_16 IM_1 EDPIM_FUNC_16;
-edp EDP_17 IM_1 EDPIM_FUNC_17;
-edp EDP_18 IM_1 EDPIM_FUNC_18;
-edp EDP_19 IM_1 EDPIM_FUNC_19;
-edp EDP_20 IM_1 EDPIM_FUNC_20;
-edp EDP_21 IM_1 EDPIM_FUNC_21;
-
-# Fragility, loss, component group:
-fragfn FRAG_2 [0.005, 0.40],
-              [0.010, 0.45],
-	      [0.030, 0.50],
-	      [0.060, 0.60]
-        --mu mean_x --sd sd_ln_x;
-
-lossfn LOSS_2 simple [1143, 0.42],
-                     [3214, 0.40],
-		     [4900, 0.37],
-		     [4900, 0.37]
-              --mu mean_x --sd sd_ln_x;
-
-fragfn FRAG_3 [0.004, 0.39],
-              [0.0095, 0.25],
-	      [0.02, 0.62],
-	      [0.0428, 0.36]
-        --mu mean_x --sd sd_ln_x;
-
-lossfn LOSS_3 simple [590, 0.59],
-                     [2360, 0.63],
-		     [5900, 0.67],
-		     [5900, 0.67]
-              --mu mean_x --sd sd_ln_x;
-
-fragfn FRAG_105 [0.0039, 0.17],
-                [0.0085, 0.23]
-        --mu mean_x --sd sd_ln_x;
-
-lossfn LOSS_105 simple [29.9, 0.2],
-                     [187.7, 0.2]
-              --mu mean_x --sd sd_ln_x;
-
-
-compgroup COMPGROUP_1 EDP_2 FRAG_2 LOSS_2 20;
-compgroup COMPGROUP_2 EDP_2 FRAG_2 LOSS_2 18;
-compgroup COMPGROUP_3 EDP_4 FRAG_2 LOSS_2 4;
-compgroup COMPGROUP_4 EDP_4 FRAG_2 LOSS_2 18;
-compgroup COMPGROUP_5 EDP_6 FRAG_2 LOSS_2 4;
-compgroup COMPGROUP_6 EDP_6 FRAG_2 LOSS_2 18;
-compgroup COMPGROUP_7 EDP_8 FRAG_2 LOSS_2 4;
-compgroup COMPGROUP_8 EDP_8 FRAG_2 LOSS_2 18;
-compgroup COMPGROUP_9 EDP_10 FRAG_2 LOSS_2 4;
-compgroup COMPGROUP_10 EDP_10 FRAG_2 LOSS_2 18;
-compgroup COMPGROUP_11 EDP_12 FRAG_2 LOSS_2 4;
-compgroup COMPGROUP_12 EDP_12 FRAG_2 LOSS_2 18;
-compgroup COMPGROUP_13 EDP_14 FRAG_2 LOSS_2 4;
-compgroup COMPGROUP_14 EDP_14 FRAG_2 LOSS_2 18;
-compgroup COMPGROUP_15 EDP_16 FRAG_2 LOSS_2 4;
-compgroup COMPGROUP_16 EDP_16 FRAG_2 LOSS_2 18;
-compgroup COMPGROUP_17 EDP_18 FRAG_2 LOSS_2 4;
-compgroup COMPGROUP_18 EDP_18 FRAG_2 LOSS_2 18;
-compgroup COMPGROUP_19 EDP_20 FRAG_2 LOSS_2 4;
-compgroup COMPGROUP_20 EDP_20 FRAG_2 LOSS_2 18;
-compgroup COMPGROUP_21 EDP_2 FRAG_3 LOSS_3 16;
-compgroup COMPGROUP_22 EDP_4 FRAG_3 LOSS_3 16;
-compgroup COMPGROUP_23 EDP_6 FRAG_3 LOSS_3 16;
-compgroup COMPGROUP_24 EDP_8 FRAG_3 LOSS_3 16;
-compgroup COMPGROUP_25 EDP_10 FRAG_3 LOSS_3 16;
-compgroup COMPGROUP_26 EDP_12 FRAG_3 LOSS_3 16;
-compgroup COMPGROUP_27 EDP_14 FRAG_3 LOSS_3 16;
-compgroup COMPGROUP_28 EDP_16 FRAG_3 LOSS_3 16;
-compgroup COMPGROUP_29 EDP_18 FRAG_3 LOSS_3 16;
-compgroup COMPGROUP_30 EDP_20 FRAG_3 LOSS_3 16;
+(let ((value ""))
+  (dolist (k
+	   '((31  105    2  721)
+	     (32  105    4  721)
+	     (33  105    6  721)
+	     (34  105    8  721)
+	     (35  105   10  721)
+	     (36  105   12  721)
+	     (37  105   14  721)
+	     (38  105   16  721)
+	     (39  105   18  721)
+	     (40  105   20  721))
+	   value)
+    (setq value (format "%s\ncompgroup COMPGROUP_%d EDP_%d FRAG_%d LOSS_%d %d;"
+			value
+			(car k)
+			(caddr k)
+			(cadr k)
+			(cadr k)
+			(cadddr k)))))
+"
 compgroup COMPGROUP_31 EDP_2 FRAG_105 LOSS_105 721;
 compgroup COMPGROUP_32 EDP_4 FRAG_105 LOSS_105 721;
 compgroup COMPGROUP_33 EDP_6 FRAG_105 LOSS_105 721;
@@ -141,34 +28,25 @@ compgroup COMPGROUP_36 EDP_12 FRAG_105 LOSS_105 721;
 compgroup COMPGROUP_37 EDP_14 FRAG_105 LOSS_105 721;
 compgroup COMPGROUP_38 EDP_16 FRAG_105 LOSS_105 721;
 compgroup COMPGROUP_39 EDP_18 FRAG_105 LOSS_105 721;
-compgroup COMPGROUP_40 EDP_20 FRAG_105 LOSS_105 721;
+compgroup COMPGROUP_40 EDP_20 FRAG_105 LOSS_105 721;"
 
-structure BUILDING COMPGROUP_1, COMPGROUP_2, COMPGROUP_3, COMPGROUP_4,
-	    COMPGROUP_5, COMPGROUP_6, COMPGROUP_7, COMPGROUP_8, 
-	    COMPGROUP_9, COMPGROUP_10, COMPGROUP_11, COMPGROUP_12,
-            COMPGROUP_13, COMPGROUP_14, COMPGROUP_15, COMPGROUP_16,
-	    COMPGROUP_17, COMPGROUP_18, COMPGROUP_19, COMPGROUP_20,
-	    COMPGROUP_21, COMPGROUP_22, COMPGROUP_23, COMPGROUP_24,
-	    COMPGROUP_25, COMPGROUP_26, COMPGROUP_27, COMPGROUP_28,
-	    COMPGROUP_29, COMPGROUP_30, COMPGROUP_31, COMPGROUP_32,
-	    COMPGROUP_33, COMPGROUP_34, COMPGROUP_35, COMPGROUP_36,
- 	    COMPGROUP_37, COMPGROUP_38, COMPGROUP_39, COMPGROUP_40;
 
-rebuildcost BUILDING 10, 0.35 --mu mean_x --sd sd_ln_x;
 
-# Set up integration parameters:
-integration maq 1E-6 1024;
+(let ((result "structure BUILDING"))
+  (dotimes (i 40 result)
+    (setq result (format "%s COMPGROUP_%d%s" result (+ 1 i) (if (eq i 39) ";" ",")))))
+"structure BUILDING COMPGROUP_1, COMPGROUP_2, COMPGROUP_3, COMPGROUP_4, COMPGROUP_5, COMPGROUP_6, COMPGROUP_7, COMPGROUP_8, COMPGROUP_9, COMPGROUP_10, COMPGROUP_11, COMPGROUP_12, COMPGROUP_13, COMPGROUP_14, COMPGROUP_15, COMPGROUP_16, COMPGROUP_17, COMPGROUP_18, COMPGROUP_19, COMPGROUP_20, COMPGROUP_21, COMPGROUP_22, COMPGROUP_23, COMPGROUP_24, COMPGROUP_25, COMPGROUP_26, COMPGROUP_27, COMPGROUP_28, COMPGROUP_29, COMPGROUP_30, COMPGROUP_31, COMPGROUP_32, COMPGROUP_33, COMPGROUP_34, COMPGROUP_35, COMPGROUP_36, COMPGROUP_37, COMPGROUP_38, COMPGROUP_39, COMPGROUP_40;"
 
-# Set up recorders:
-set logvalues $(list(map(math.exp, math.log(0.01) + numpy.arange(0, 199, 1) * math.log(2.5/0.01)/198)));
-set linvalues $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198);
-set lossimvalues $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198 );
-set lossedpvalues $(0.001 + numpy.arange(0, 149, 1) * (0.15 - 0.001)/148);
 
-recorder imrate IM_1 $logvalues example1a_im_rate --new;
-
-recorder collapse IM_1 $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) example1a_collapse.txt --new;
-recorder collrate IM_1 example1a_collrate.txt --new;
+(let ((result ""))
+  (dotimes (edp 21 result)
+    (setq result
+	  (format "%s\n\nrecorder edpim EDP_%d $linvalues --cols mean_x, sd_ln_x example1a_im_edp_%d.txt --new;"
+		  result (+ 1 edp) (+ edp 1)))
+    (setq result
+	  (format "%s\nrecorder edprate EDP_%d $logvalues example1a_edp_%d_rate.txt --new;"
+		  result (+ 1 edp) (+ edp 1)))))
+"
 
 recorder edpim EDP_1 $linvalues --cols mean_x, sd_ln_x example1a_im_edp_1.txt --new;
 recorder edprate EDP_1 $logvalues example1a_edp_1_rate.txt --new;
@@ -231,7 +109,30 @@ recorder edpim EDP_20 $linvalues --cols mean_x, sd_ln_x example1a_im_edp_20.txt 
 recorder edprate EDP_20 $logvalues example1a_edp_20_rate.txt --new;
 
 recorder edpim EDP_21 $linvalues --cols mean_x, sd_ln_x example1a_im_edp_21.txt --new;
-recorder edprate EDP_21 $logvalues example1a_edp_21_rate.txt --new;
+recorder edprate EDP_21 $logvalues example1a_edp_21_rate.txt --new;"
+
+
+
+
+
+    
+(let ((result ""))
+  (dotimes (cg 40 result)
+    (setq result
+	  (format "%s\n\nrecorder lossedp COMPGROUP_%d $lossedpvalues example1a_loss_%d_edp.txt --new;"
+		  result (+ cg 1) (+ cg 1)))
+    (setq result
+	  (format "%s\nrecorder lossim COMPGROUP_%d $lossimvalues example1a_loss_%d_im.txt --new;"
+		  result (+ 1 cg) (+ cg 1)))
+    (setq result
+	  (format "%s\n### recorder dsrate COMPGROUP_%d;" result (+ 1 cg)))
+    (setq result
+	  (format "%s\nrecorder dsedp COMPGROUP_%d 0.0:0.01:0.200 example1a_ds_edp_%d.txt --new;"
+		  result (+ 1 cg) (+ cg 1)))
+    (setq result
+	  (format "%s\nrecorder lossrate COMPGROUP_%d 1E-4:4.8E-3:1.2 example1a_loss_rate_%d.txt --new;"
+		  result (+ 1 cg) (+ cg 1)))))
+"
 
 recorder lossedp COMPGROUP_1 $lossedpvalues example1a_loss_1_edp.txt --new;
 recorder lossim COMPGROUP_1 $lossimvalues example1a_loss_1_im.txt --new;
@@ -471,16 +372,5 @@ recorder lossedp COMPGROUP_40 $lossedpvalues example1a_loss_40_edp.txt --new;
 recorder lossim COMPGROUP_40 $lossimvalues example1a_loss_40_im.txt --new;
 ### recorder dsrate COMPGROUP_40;
 recorder dsedp COMPGROUP_40 0.0:0.01:0.200 example1a_ds_edp_40.txt --new;
-recorder lossrate COMPGROUP_40 1E-4:4.8E-3:1.2 example1a_loss_rate_40.txt --new;
-
-
-recorder annloss COMPGROUP_1 1.0:1.0:100.0 --lambda 0.06 example1a_annual_loss.txt --new;
-
-recorder lossrate COMPGROUP_1 1E-4:4.8E-3:1.2 example1a_loss_rate.txt --new;
-
-recorder structloss BUILDING --collapse $linvalues example1a_loss_c_total --new;
-recorder structloss BUILDING --nocollapse $linvalues example1a_loss_nc_total --new;
-
-analyze;
-
+recorder lossrate COMPGROUP_40 1E-4:4.8E-3:1.2 example1a_loss_rate_40.txt --new;"
 
