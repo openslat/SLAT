@@ -45,25 +45,24 @@
 #+STARTUP: align
 #+STARTUP: noinlineimages
 #+PROPERTY: header-args:R  :session *R-1*
-#+PROPERTY: header-args    :exports results
+#+PROPERTY: header-args    :exports both
 
 \clearpage
 * Initialisation
   The code in this section reads in the input data, as well as the results
   produces by the old ("paleo") and new ("neo") versions of SLAT.
 
-  Set up variables to make it easier to get to the files:
   #+BEGIN_SRC R  :results output
+    library(xtable)
+
     num.edps <- 21
     num.cgs <- 115
 
+
+    ##Set up variables to make it easier to get to the files:
     paleo.dir = paste("~/SLATv1.15_Public/",
         "example1a_collapse/", sep="")
     results.dir = paste(paleo.dir, "results/", sep="")
-
-    paleo2.dir = paste("~/SLATv1.15_Public/",
-        "example2_10storeybuilding/", sep="")
-    results2.dir = paste(paleo2.dir, "results/", sep="")
 
     ## Read in the IM data:
     paleo.im <- read.csv(
@@ -71,22 +70,10 @@
         skip=3, header=FALSE, sep="")
     names(paleo.im) = c("IM", "lambda")
 
-
-    paleo2.im <- read.csv(
-        paste(results2.dir, "im-rate", sep=""),
-        skip=3, header=FALSE, sep="")
-    names(paleo2.im) = c("IM", "lambda")
-
     neo.im <- read.csv("example1a_im_rate", 
                        header=TRUE, sep="")
 
-    input.im <- read.csv(
-        paste(paleo.dir, "IMrateSa15data.txt", sep=""),
-        skip=2, header=FALSE, sep="")
-    names(input.im) = c("IM", "lambda")
-
     ## Read the EDP-IM data
-    ##+BEGIN_SRC R   :results output
     paleo.edp.im = list()
     neo.edp.im = list()
 
@@ -102,162 +89,250 @@
             header=TRUE, sep="")
         names(neo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
     }
+
+    ## Read the EDP-Rate data
+    paleo.edp.rate = list()
+    neo.edp.rate = list()
+
+    for (i in seq(num.edps)) {
+        ## Read data from old SLAT:
+        paleo.edp.rate[[i]] <- read.csv(
+            sprintf("%sedp-%d-rate.txt", results.dir, i),
+            skip=3, header=FALSE, sep="")
+        names(paleo.edp.rate[[i]]) = c("EDP", "lambda")
+
+        neo.edp.rate[[i]] <- read.csv(
+            sprintf("example1a_edp_%d_rate.txt", i),
+            header=TRUE, sep="")
+        names(neo.edp.rate[[i]]) = c("EDP", "lambda")
+    }
+
+
+    compare <- function(a, b)  {
+        result <-data.frame(Value = c(max(abs(a-b)),
+                                mean(abs(a-b)),
+                                100 * max(abs(a-b)/a)))
+        rownames(result) <- c("max(abs(difference))",
+                              "mean(abs(difference))",
+                              "percent(abs(difference))")
+        return(result)
+    }
   #+END_SRC
 
   #+RESULTS:
 
 \clearpage
-* IM
+* IM 								     :export:
+  Compare the IM rate of exceedence as calculated by both versions:
+  #+BEGIN_SRC R :results output latex :exports results
+    xtable(compare(paleo.im$lambda, neo.im$lambda)
+         , caption="Comparison of IM Rate calculations.",
+  	 digits=c(5))
+  #+END_SRC
+
   Plot it (Figure [[fig:im-rate]]):
+  <<code:im-rate-plot>>
   #+NAME: im-rate
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R
-     palette(c("red", "blue", "green", "cyan"))
+     palette(c("red", "blue"))
      plot(paleo.im$lambda ~ paleo.im$IM, log="xy", 
   	xlab="IM", ylab="lambda", main="IM Rate",
-  	type="l", lwd=5, col=1,
+  	type="l", lwd=3, col=1,
   	xlim=c(0.01, 3.0), ylim=c(1E-8, 1E0),
   	pch=25)
 
-    lines(neo.im$lambda ~ neo.im$IM, lwd=3, col=2, pch=24)
-
-    points(input.im$lambda ~ input.im$IM, col=3)
-
-    lines(paleo2.im$lambda ~ paleo2.im$IM, col=4, lwd=1)
+    lines(neo.im$lambda ~ neo.im$IM, lwd=1, col=2)
 
     legend(x="topright",
-  	 legend=c("Paleo", "Neo", "Input", "Paleo2"),
+  	 legend=c("Paleo", "Neo"),
   	 fill=palette())
   #+END_SRC
 
-  #+CAPTION: IM rate calculations
+  #+CAPTION: IM rate comparison ([[code:im-rate-plot][code]]).
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:im-rate
   #+RESULTS: im-rate
-  [[file:/tmp/babel-1752Epe/figure-1752IwU.pdf]]
-
-  Compare the two versions (assumes same IM values are used):
-  #+BEGIN_SRC R
-    sprintf("Max difference in IM rate is %3.2f%%",
-        100 * max(abs(paleo.im$lambda - neo.im$lambda)
-  		/ paleo.im$lambda))
-  #+END_SRC
-
-  #+RESULTS:
-  : Max difference is 100.00%
+  [[file:/tmp/babel-1757XZc/figure-1757hSv.pdf]]
 
 \clearpage
 * EDP
 ** Acceleration
-   #+BEGIN_SRC R :colnames yes :results output
-     edp.columns <- data.frame(
-         Index=seq(1, num.edps, 1),
-         Label=c("Ground Floor Accel", "2nd Story Drift", "2nd Story Accel",
-             "3rd Floor Drift", "3rd Floor Accel", "4th Floor Drift", "4th Floor Accel",
-             "5th Floor Drift", "5th Floor Accel", "6th Floor Drift", "6th Floor Accel",
-             "7th Floor Drift", "7th Floor Accel", "8th Floor Drift", "8th Floor Accel",
-             "9th Floor Drift", "9th Floor Accel", "10th Floor Drift", "10th Floor Accel",
-             "Roof Drift", "Roof Accel"),
-         stringsAsFactors=FALSE)
+*** Mean
+    #+BEGIN_SRC R :colnames yes :results output
+      edp.columns <- data.frame(
+          Index=seq(1, num.edps, 1),
+          Label=c("Ground Floor Accel", "2nd Story Drift", "2nd Story Accel",
+              "3rd Floor Drift", "3rd Floor Accel", "4th Floor Drift", "4th Floor Accel",
+              "5th Floor Drift", "5th Floor Accel", "6th Floor Drift", "6th Floor Accel",
+              "7th Floor Drift", "7th Floor Accel", "8th Floor Drift", "8th Floor Accel",
+              "9th Floor Drift", "9th Floor Accel", "10th Floor Drift", "10th Floor Accel",
+              "Roof Drift", "Roof Accel"),
+          stringsAsFactors=FALSE)
 
-     acceleration.cols = edp.columns[seq(1, num.edps, 2),]
-     drift.cols = edp.columns[seq(2, num.edps, 2),]
+      acceleration.cols = edp.columns[seq(1, num.edps, 2),]
+      drift.cols = edp.columns[seq(2, num.edps, 2),]
 
-     edp.comparion <- as.data.frame(matrix(nrow=length(acceleration.cols$Index), ncol=7), stringsasfactors=FALSE)
-     names(edp.comparion) <- c("Floor", "mean.max", "mean.avg", "mean.pct", "sd.max", "sd.avg", "sd.pct")
-     for (i in 1:nrow(acceleration.cols)) {
-         index <- acceleration.cols[i,]$Index
-         edp.comparion[i,]$Floor <- acceleration.cols[i,]$Label
-         edp.comparion[i,]$mean.max <- max(paleo.edp.im[[index]]$mean.x - neo.edp.im[[index]]$mean.x)
-         edp.comparion[i,]$mean.avg <- mean(abs(paleo.edp.im[[index]]$mean.x - neo.edp.im[[index]]$mean.x))
-         edp.comparion[i,]$mean.pct <- 100 * max(abs(paleo.edp.im[[index]]$mean.x - neo.edp.im[[index]]$mean.x)/paleo.edp.im[[index]]$mean.x)
+      edp.comparion <- as.data.frame(matrix(nrow=length(acceleration.cols$Index), ncol=7), stringsasfactors=FALSE)
+      names(edp.comparion) <- c("Floor", "mean.max", "mean.avg", "mean.pct", "sd.max", "sd.avg", "sd.pct")
+      for (i in 1:nrow(acceleration.cols)) {
+          index <- acceleration.cols[i,]$Index
+          edp.comparion[i,]$Floor <- acceleration.cols[i,]$Label
+          edp.comparion[i,]$mean.max <- max(paleo.edp.im[[index]]$mean.x - neo.edp.im[[index]]$mean.x)
+          edp.comparion[i,]$mean.avg <- mean(abs(paleo.edp.im[[index]]$mean.x - neo.edp.im[[index]]$mean.x))
+          edp.comparion[i,]$mean.pct <- 100 * max(abs(paleo.edp.im[[index]]$mean.x - neo.edp.im[[index]]$mean.x)/paleo.edp.im[[index]]$mean.x)
 
-         edp.comparion[i,]$sd.max <- max(paleo.edp.im[[index]]$sd.lnx - neo.edp.im[[index]]$sd.lnx)
-         edp.comparion[i,]$sd.avg <- mean(abs(paleo.edp.im[[index]]$sd.lnx - neo.edp.im[[index]]$sd.lnx))
-         edp.comparion[i,]$sd.pct <- 100 * max(abs(paleo.edp.im[[index]]$sd.lnx - neo.edp.im[[index]]$sd.lnx)/paleo.edp.im[[index]]$sd.lnx)
-     }
-     print(edp.comparion, digits=3)
-   #+END_SRC
+          edp.comparion[i,]$sd.max <- max(paleo.edp.im[[index]]$sd.lnx - neo.edp.im[[index]]$sd.lnx)
+          edp.comparion[i,]$sd.avg <- mean(abs(paleo.edp.im[[index]]$sd.lnx - neo.edp.im[[index]]$sd.lnx))
+          edp.comparion[i,]$sd.pct <- 100 * max(abs(paleo.edp.im[[index]]$sd.lnx - neo.edp.im[[index]]$sd.lnx)/paleo.edp.im[[index]]$sd.lnx)
+      }
+      print(edp.comparion, digits=3)
+    #+END_SRC
 
-   #+RESULTS:
-   #+begin_example
-		   Floor mean.max mean.avg mean.pct   sd.max   sd.avg sd.pct
-   1  Ground Floor Accel  4.9e-04 8.25e-05   0.0453 0.000762 0.000210  1.211
-   2     2nd Story Accel  5.0e-04 1.14e-04   0.0449 0.004579 0.001590  3.984
-   3     3rd Floor Accel  4.5e-04 1.97e-04   0.0444 0.004110 0.000710  2.073
-   4     4th Floor Accel  4.8e-04 4.31e-05   0.0460 0.005366 0.000628  2.425
-   5     5th Floor Accel  4.9e-05 1.37e-05   0.0200 0.003829 0.000601  2.631
-   6     6th Floor Accel  5.0e-05 3.51e-05   0.0283 0.001284 0.000688  4.641
-   7     7th Floor Accel  4.9e-05 3.49e-05   0.0363 0.002423 0.000529  1.987
-   8     8th Floor Accel  5.0e-05 3.45e-05   0.0430 0.003344 0.000390  2.103
-   9     9th Floor Accel  5.0e-05 1.50e-05   0.0335 0.001795 0.001071  7.123
-   10   10th Floor Accel  5.0e-05 3.46e-05   0.0256 0.001811 0.000672  6.094
-   11         Roof Accel  5.0e-05 3.43e-05   0.0291 0.001746 0.000251  0.882
-#+end_example
+    #+RESULTS:
+    #+begin_example
+		    Floor mean.max mean.avg mean.pct   sd.max   sd.avg sd.pct
+    1  Ground Floor Accel  4.9e-04 8.25e-05   0.0453 0.000762 0.000210  1.211
+    2     2nd Story Accel  5.0e-04 1.14e-04   0.0449 0.004579 0.001590  3.984
+    3     3rd Floor Accel  4.5e-04 1.97e-04   0.0444 0.004110 0.000710  2.073
+    4     4th Floor Accel  4.8e-04 4.31e-05   0.0460 0.005366 0.000628  2.425
+    5     5th Floor Accel  4.9e-05 1.37e-05   0.0200 0.003829 0.000601  2.631
+    6     6th Floor Accel  5.0e-05 3.51e-05   0.0283 0.001284 0.000688  4.641
+    7     7th Floor Accel  4.9e-05 3.49e-05   0.0363 0.002423 0.000529  1.987
+    8     8th Floor Accel  5.0e-05 3.45e-05   0.0430 0.003344 0.000390  2.103
+    9     9th Floor Accel  5.0e-05 1.50e-05   0.0335 0.001795 0.001071  7.123
+    10   10th Floor Accel  5.0e-05 3.46e-05   0.0256 0.001811 0.000672  6.094
+    11         Roof Accel  5.0e-05 3.43e-05   0.0291 0.001746 0.000251  0.882
+ #+end_example
 
-   #+NAME: accel-im-mean
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R
-     palette(rainbow(nrow(acceleration.cols)))
+    #+NAME: accel-im-mean
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      palette(rainbow(nrow(acceleration.cols)))
 
-     x.range <- c()
-     y.range <- c()
-     for (i in acceleration.cols$Index) {
-         x.range <-range(x.range, paleo.edp.im[[i]]$IM)
-         y.range <-range(y.range, paleo.edp.im[[i]]$mean.x)
-     }
-     plot(NULL, xlim=x.range, ylim=y.range, 
-          xlab="IM", ylab="Mean Acceleration",
-          main="Mean Acceleration vs. IM")
+      x.range <- c()
+      y.range <- c()
+      for (i in acceleration.cols$Index) {
+          x.range <-range(x.range, paleo.edp.im[[i]]$IM)
+          y.range <-range(y.range, paleo.edp.im[[i]]$mean.x)
+      }
+      plot(NULL, xlim=x.range, ylim=y.range, 
+           xlab="IM", ylab="Mean Acceleration",
+           main="Mean Acceleration vs. IM")
 
-     for (i in 1:nrow(acceleration.cols)) {
-         index = acceleration.cols[i,]$Index
-         lines(paleo.edp.im[[index]]$mean.x ~ paleo.edp.im[[index]]$IM, col=i, lwd=3)
+      for (i in 1:nrow(acceleration.cols)) {
+          index = acceleration.cols[i,]$Index
+          lines(paleo.edp.im[[index]]$mean.x ~ paleo.edp.im[[index]]$IM, col=i, lwd=3)
 
-         lines(neo.edp.im[[index]]$mean.x ~ neo.edp.im[[index]]$IM, lwd=1)
-     }
-     legend(x="topleft", legend=acceleration.cols$Label, fill=palette())
-   #+END_SRC
+          lines(neo.edp.im[[index]]$mean.x ~ neo.edp.im[[index]]$IM, lwd=1)
+      }
+      legend(x="topleft", legend=acceleration.cols$Label, fill=palette())
+    #+END_SRC
 
-   #+CAPTION: mean(Acceleration EDP) vs. IM
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:accel-im-mean
-   #+RESULTS: accel-im-mean
-   [[file:/tmp/babel-1757XZc/figure-1757ama.pdf]]
+    #+CAPTION: mean(Acceleration EDP) vs. IM
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:accel-im-mean
+    #+RESULTS: accel-im-mean
+    [[file:/tmp/babel-1757XZc/figure-1757ama.pdf]]
+*** Standard Deviation
+    #+NAME: accel-im-sd-lnx
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      palette(rainbow(nrow(acceleration.cols)))
 
-   #+NAME: accel-im-sd-lnx
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R
-     palette(rainbow(nrow(acceleration.cols)))
+      x.range <- c()
+      y.range <- c()
+      for (i in acceleration.cols$Index) {
+          x.range <-range(x.range, paleo.edp.im[[i]]$IM)
+          y.range <-range(y.range, paleo.edp.im[[i]]$sd.lnx)
+      }
+      plot(NULL, xlim=x.range, ylim=y.range, 
+           xlab="IM", ylab="Sd Acceleration",
+           main="Sd Acceleration vs. IM")
 
-     x.range <- c()
-     y.range <- c()
-     for (i in acceleration.cols$Index) {
-         x.range <-range(x.range, paleo.edp.im[[i]]$IM)
-         y.range <-range(y.range, paleo.edp.im[[i]]$sd.lnx)
-     }
-     plot(NULL, xlim=x.range, ylim=y.range, 
-          xlab="IM", ylab="Sd Acceleration",
-          main="Sd Acceleration vs. IM")
+      for (i in 1:nrow(acceleration.cols)) {
+          index = acceleration.cols[i,]$Index
+          lines(paleo.edp.im[[index]]$sd.lnx ~ paleo.edp.im[[index]]$IM, col=i, lwd=3)
 
-     for (i in 1:nrow(acceleration.cols)) {
-         index = acceleration.cols[i,]$Index
-         lines(paleo.edp.im[[index]]$sd.lnx ~ paleo.edp.im[[index]]$IM, col=i, lwd=3)
+          lines(neo.edp.im[[index]]$sd.lnx ~ neo.edp.im[[index]]$IM, lwd=1)
+      }
+      legend(x="topright", legend=acceleration.cols$Label, fill=palette())
+    #+END_SRC
 
-         lines(neo.edp.im[[index]]$sd.lnx ~ neo.edp.im[[index]]$IM, lwd=1)
-     }
-     legend(x="topright", legend=acceleration.cols$Label, fill=palette())
-   #+END_SRC
+    #+CAPTION: SD(ln(Acceleration EDP)) vs. IM
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:accel-im-sd-lnx
+    #+RESULTS: accel-im-sd-lnx
+    [[file:/tmp/babel-1757XZc/figure-17570Bb.pdf]]
 
-   #+CAPTION: SD(ln(Acceleration EDP)) vs. IM
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:accel-im-sd-lnx
-   #+RESULTS: accel-im-sd-lnx
-   [[file:/tmp/babel-1757XZc/figure-17570Bb.pdf]]
+*** Rate
+    #+BEGIN_SRC R :results output :colnames yes
+      edp.comparion <- as.data.frame(matrix(nrow=length(acceleration.cols$Index), ncol=4), stringsasfactors=FALSE)
+      names(edp.comparion) <- c("Floor", "mean", "avg", "pct")
+      for (i in 1:nrow(acceleration.cols)) {
+          index <- acceleration.cols[i,]$Index
+          edp.comparion[i,]$Floor <- acceleration.cols[i,]$Label
+          edp.comparion[i,]$mean <- max(paleo.edp.rate[[index]]$lambda - neo.edp.rate[[index]]$lambda)
+          edp.comparion[i,]$avg <- mean(abs(paleo.edp.rate[[index]]$lambda - neo.edp.rate[[index]]$lambda))
+          edp.comparion[i,]$pct <- 100 * max(abs(paleo.edp.rate[[index]]$lambda - neo.edp.rate[[index]]$lambda)/paleo.edp.rate[[index]]$lambda)
+      }
+      print(edp.comparion, digits=3)
+     #+END_SRC
+
+     #+RESULTS:
+     #+begin_example
+		     Floor     mean      avg   pct
+     1  Ground Floor Accel 0.009499 1.78e-03  8.23
+     2     2nd Story Accel 0.004025 7.62e-05 10.96
+     3     3rd Floor Accel 0.004132 6.20e-05 13.84
+     4     4th Floor Accel 0.004621 7.44e-05 14.25
+     5     5th Floor Accel 0.004596 7.41e-05 14.29
+     6     6th Floor Accel 0.004326 6.32e-05 12.86
+     7     7th Floor Accel 0.000621 4.56e-05 11.55
+     8     8th Floor Accel 0.003985 6.77e-05 11.77
+     9     9th Floor Accel 0.000529 4.74e-05 10.58
+     10   10th Floor Accel 0.000525 4.74e-05  9.36
+     11         Roof Accel 0.000905 5.83e-05 13.21
+ #+end_example
+
+    #+NAME: accel-im-lambda
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      palette(rainbow(nrow(acceleration.cols)))
+
+      x.range <- c()
+      y.range <- c()
+      for (i in acceleration.cols$Index) {
+          x.range <-range(x.range, paleo.edp.rate[[i]]$EDP)
+          y.range <-range(y.range, paleo.edp.rate[[i]]$lambda)
+      }
+      plot(NULL, xlim=x.range, ylim=y.range, 
+           xlab="EDP", ylab="Lambda",
+	   log="y",
+           main="Lambda(Acceleration) vs. EDP")
+
+      for (i in 1:nrow(acceleration.cols)) {
+          index = acceleration.cols[i,]$Index
+          lines(paleo.edp.rate[[index]]$lambda ~ paleo.edp.rate[[index]]$EDP, col=i, lwd=3)
+
+          lines(neo.edp.rate[[index]]$lambda ~ neo.edp.rate[[index]]$EDP, lwd=1)
+      }
+      legend(x="topright", legend=acceleration.cols$Label, fill=palette())
+    #+END_SRC
+
+    #+CAPTION: SD(ln(Acceleration EDP)) vs. IM
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:accel-im-lambda
+    #+RESULTS: accel-im-lambda
+    [[file:/tmp/babel-1757XZc/figure-17571Ci.pdf]]
+
+
 ** Drift   
+*** Mean
    #+BEGIN_SRC R :colnames yes :results output
      edp.comparion <- as.data.frame(matrix(nrow=length(drift.cols$Index), ncol=7), stringsasfactors=FALSE)
      names(edp.comparion) <- c("Floor", "mean.max", "mean.avg", "mean.pct", "sd.max", "sd.avg", "sd.pct")
