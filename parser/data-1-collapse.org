@@ -145,6 +145,27 @@
         names(neo.loss.edp[[i]]) = c("EDP","mean.x","sd.lnx")
     }
 
+    ##Read the Total Loss data:
+    paleo.structloss.c <- read.csv(
+        paste(results.dir, "tlossc", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.structloss.c) = c("IM", "mean.x", "sd.lnx")
+
+    paleo.structloss.nc <- read.csv(
+        paste(results.dir, "tlossnc", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
+
+    neo.structloss.c <- read.csv("example1a_loss_c_total", 
+                                 header=TRUE, sep="")
+    names(neo.structloss.c) = c("IM", "mean.x", "sd.lnx")
+
+    neo.structloss.nc <- read.csv("example1a_loss_nc_total", 
+  				header=TRUE, sep="")
+    names(neo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
+  #+END_SRC
+
+  #+RESULTS:
 
     ## Function for comparing data sets, for convenience:
     compare <- function(a, b)  {
@@ -653,75 +674,445 @@
 
 \clearpage
 * Component Groups
-** Loss-IM Relation
   #+BEGIN_SRC R :results output latex :exports both
     ## This data comes from the old Example 2 input file, desc
     ## ribing the component groups:
     cgs.descrip <- data.frame(
 
-        matrix( c(1, 2, 2, 20, 2, 2, 2, 18, 3, 2, 4, 4, 4, 2, 4,
-    18, 5, 2, 6, 4, 6, 2, 6, 18, 7, 2, 8, 4, 8, 2, 8, 18, 9, 2,
-    10, 4, 10, 2, 10, 18, 11, 2, 12, 4, 12, 2, 12, 18, 13, 2,
-    14, 4, 14, 2, 14, 18, 15, 2, 16, 4, 16, 2, 16, 18, 17, 2,
-    18, 4, 18, 2, 18, 18, 19, 2, 20, 4, 20, 2, 20, 18, 21, 3, 2,
-    16, 22, 3, 4, 16, 23, 3, 6, 16, 24, 3, 8, 16, 25, 3, 10, 16,
-    26, 3, 12, 16, 27, 3, 14, 16, 28, 3, 16, 16, 29, 3, 18, 16,
-    30, 3, 20, 16, 31, 105, 2, 721, 32, 105, 4, 721, 33, 105, 6,
-    721, 34, 105, 8, 721, 35, 105, 10, 721, 36, 105, 12, 721,
-    37, 105, 14, 721, 38, 105, 16, 721, 39, 105, 18, 721, 40,
-    105, 20, 721, 41, 107, 2, 99, 42, 107, 4, 99, 43, 107, 6,
-    99, 44, 107, 8, 99, 45, 107, 10, 99, 46, 107, 12, 99, 47,
-    107, 14, 99, 48, 107, 16, 99, 49, 107, 18, 99, 50, 107, 20,
-    99, 51, 203, 3, 693, 52, 203, 5, 693, 53, 203, 7, 693, 54,
-    203, 9, 693, 55, 203, 11, 693, 56, 203, 13, 693, 57, 203,
-    15, 693, 58, 203, 17, 693, 59, 203, 19, 693, 60, 203, 21,
-    693, 61, 211, 3, 23, 62, 211, 5, 23, 63, 211, 7, 23, 64,
-    211, 9, 23, 65, 211, 11, 23, 66, 211, 13, 23, 67, 211, 15,
-    23, 68, 211, 17, 23, 69, 211, 19, 23, 70, 211, 21, 23, 71,
-    208, 1, 53, 72, 208, 3, 53, 73, 208, 5, 53, 74, 208, 7, 53,
-    75, 208, 9, 53, 76, 208, 11, 53, 77, 208, 13, 53, 78, 208,
-    15, 53, 79, 208, 17, 53, 80, 208, 19, 53, 81, 209, 5, 16,
-    82, 209, 11, 16, 83, 209, 19, 16, 84, 205, 21, 4, 85, 204,
-    1, 2, 86, 106, 2, 721, 87, 106, 4, 721, 88, 106, 6, 721, 89,
-    106, 8, 721, 90, 106, 10, 721, 91, 106, 12, 721, 92, 106,
-    14, 721, 93, 106, 16, 721, 94, 106, 18, 721, 95, 106, 20,
-    721, 96, 108, 2, 10, 97, 108, 4, 10, 98, 108, 6, 10, 99,
-    108, 8, 10, 100, 108, 10, 10, 101, 108, 12, 10, 102, 108,
-    14, 10, 103, 108, 16, 10, 104, 108, 18, 10, 105, 108, 20,
-    10, 106, 214, 1, 10, 107, 214, 3, 10, 108, 214, 5, 10, 109,
-    214, 7, 10, 110, 214, 9, 10, 111, 214, 11, 10, 112, 214, 13,
-    10, 113, 214, 15, 10, 114, 214, 17, 10, 115, 214, 19, 10 ),
+        matrix( c(1, 2, 2, 20, 2, 2, 2, 18, 3, 2, 4, 4, 4,
+    2, 4, 18, 5, 2, 6, 4, 6, 2, 6, 18, 7, 2, 8, 4, 8, 2, 8,
+    18, 9, 2, 10, 4, 10, 2, 10, 18, 11, 2, 12, 4, 12, 2,
+    12, 18, 13, 2, 14, 4, 14, 2, 14, 18, 15, 2, 16, 4, 16,
+    2, 16, 18, 17, 2, 18, 4, 18, 2, 18, 18, 19, 2, 20, 4,
+    20, 2, 20, 18, 21, 3, 2, 16, 22, 3, 4, 16, 23, 3, 6,
+    16, 24, 3, 8, 16, 25, 3, 10, 16, 26, 3, 12, 16, 27, 3,
+    14, 16, 28, 3, 16, 16, 29, 3, 18, 16, 30, 3, 20, 16,
+    31, 105, 2, 721, 32, 105, 4, 721, 33, 105, 6, 721, 34,
+    105, 8, 721, 35, 105, 10, 721, 36, 105, 12, 721, 37,
+    105, 14, 721, 38, 105, 16, 721, 39, 105, 18, 721, 40,
+    105, 20, 721, 41, 107, 2, 99, 42, 107, 4, 99, 43, 107,
+    6, 99, 44, 107, 8, 99, 45, 107, 10, 99, 46, 107, 12,
+    99, 47, 107, 14, 99, 48, 107, 16, 99, 49, 107, 18, 99,
+    50, 107, 20, 99, 51, 203, 3, 693, 52, 203, 5, 693, 53,
+    203, 7, 693, 54, 203, 9, 693, 55, 203, 11, 693, 56,
+    203, 13, 693, 57, 203, 15, 693, 58, 203, 17, 693, 59,
+    203, 19, 693, 60, 203, 21, 693, 61, 211, 3, 23, 62,
+    211, 5, 23, 63, 211, 7, 23, 64, 211, 9, 23, 65, 211,
+    11, 23, 66, 211, 13, 23, 67, 211, 15, 23, 68, 211, 17,
+    23, 69, 211, 19, 23, 70, 211, 21, 23, 71, 208, 1, 53,
+    72, 208, 3, 53, 73, 208, 5, 53, 74, 208, 7, 53, 75,
+    208, 9, 53, 76, 208, 11, 53, 77, 208, 13, 53, 78, 208,
+    15, 53, 79, 208, 17, 53, 80, 208, 19, 53, 81, 209, 5,
+    16, 82, 209, 11, 16, 83, 209, 19, 16, 84, 205, 21, 4,
+    85, 204, 1, 2, 86, 106, 2, 721, 87, 106, 4, 721, 88,
+    106, 6, 721, 89, 106, 8, 721, 90, 106, 10, 721, 91,
+    106, 12, 721, 92, 106, 14, 721, 93, 106, 16, 721, 94,
+    106, 18, 721, 95, 106, 20, 721, 96, 108, 2, 10, 97,
+    108, 4, 10, 98, 108, 6, 10, 99, 108, 8, 10, 100, 108,
+    10, 10, 101, 108, 12, 10, 102, 108, 14, 10, 103, 108,
+    16, 10, 104, 108, 18, 10, 105, 108, 20, 10, 106, 214,
+    1, 10, 107, 214, 3, 10, 108, 214, 5, 10, 109, 214, 7,
+    10, 110, 214, 9, 10, 111, 214, 11, 10, 112, 214, 13,
+    10, 113, 214, 15, 10, 114, 214, 17, 10, 115, 214, 19,
+    10),
                ncol=4, byrow=TRUE) )
 
     names(cgs.descrip) <- c("Index","Type","EDP","Quantity") 
     component.types <- levels(factor(cgs.descrip$Type))
+#+END_SRC
 
-    cg.summary <- as.data.frame(matrix(nrow=num.cgs, ncol=6))
-    names(cg.summary) <- c("mean.max", "mean.avg", "mean.pct",
+** Loss-EDP Relation
+   #+BEGIN_SRC R :results output latex :exports both
+    ## This data comes from the old Example 2 input file, desc
+    ## ribing the component groups:
+    cg.edp.summary <- as.data.frame(matrix(nrow=num.cgs, ncol=6))
+    names(cg.edp.summary) <- c("mean.max", "mean.avg", "mean.pct",
+    		       "sd.max", "sd.avg", "sd.pct")
+
+    for (i in 1:num.cgs) {
+        temp <- compare(paleo.loss.edp[[i]]$mean.x, 
+                        neo.loss.edp[[i]]$mean.x)
+        cg.edp.summary[i,]$mean.max <- temp[1,]
+        cg.edp.summary[i,]$mean.avg <- temp[2,]
+        cg.edp.summary[i,]$mean.pct <- temp[3,]
+
+        temp <- compare(paleo.loss.edp[[i]]$sd.lnx,
+                        neo.loss.edp[[i]]$sd.lnx)
+        cg.edp.summary[i,]$sd.max <- temp[1,]
+        cg.edp.summary[i,]$sd.avg <- temp[2,]
+        cg.edp.summary[i,]$sd.pct <- temp[3,]
+    }
+   #+END_SRC
+
+    
+   #+BEGIN_SRC R :results output :exports both
+    ## Function to print summary table of  group-EDP relations
+    print.cg.edp.summary <- function(CG) {
+        print(
+            xtable(
+                cg.edp.summary[cgs.descrip
+  			 [cgs.descrip$Type==CG,]$Index,],
+                caption=sprintf("Comparison of Component
+    			      Groups of type #%s.", CG),
+                digits=3))
+    }
+   #+END_SRC
+
+   #+BEGIN_SRC R :results output :exports both
+    ## Function to plot component group-EDP relations
+    plot_cg_edp <- function(CG) {
+        par(mfrow=c(2,1))
+        components<-cgs.descrip[cgs.descrip$Type == CG,]$Index
+        palette(rainbow(max(length(components), 2)))
+
+        x.range <- c()
+        y.range <- c()
+        for (c in components) {
+            x.range<-range(x.range, paleo.loss.edp[[c]]$EDP)
+            y.range<-range(y.range,paleo.loss.edp[[c]]$mean.x)
+
+            x.range<-range(x.range, neo.loss.edp[[c]]$EDP)
+            y.range<-range(y.range,neo.loss.edp[[c]]$mean.x)
+        }
+        plot(NULL, xlim=x.range, ylim=y.range, 
+             xlab="EDP", ylab="Mean(Loss)",
+             log="",
+             main=sprintf("Mean(Loss) vs. EDP, Component #%d", 
+                 CG))
+
+        for (i in 1:length(components)) {
+            index = components[i]
+            lines(paleo.loss.edp[[index]]$mean.x ~ 
+  		paleo.loss.edp[[index]]$EDP, 
+  		col=i, lwd=3)
+
+            lines(neo.loss.edp[[index]]$mean.x ~ 
+  		neo.loss.edp[[index]]$EDP, lwd=1)
+        }
+        ##legend(x="topright", legend=components, fill=palette())
+
+        x.range <- c()
+        y.range <- c()
+        for (c in components) {
+            x.range<-range(x.range,paleo.loss.edp[[c]]$EDP)
+            y.range<-range(y.range,paleo.loss.edp[[c]]$sd.lnx)
+
+            x.range<-range(x.range,neo.loss.edp[[c]]$EDP)
+            y.range<-range(y.range,neo.loss.edp[[c]]$sd.lnx)
+        }
+        plot(NULL, xlim=x.range, ylim=y.range, 
+             xlab="EDP", ylab="SD(ln(Loss))",
+             log="",
+             main=sprintf(
+                 "SD(ln(Loss)) vs. EDP, Component #%d",
+                 CG))
+
+        for (i in 1:length(components)) {
+            index = components[i]
+            lines(paleo.loss.edp[[index]]$sd.lnx ~
+  		paleo.loss.edp[[index]]$EDP,
+  		col=i, lwd=3)
+
+            lines(neo.loss.edp[[index]]$sd.lnx ~ 
+  		neo.loss.edp[[index]]$EDP, 
+  		lwd=1)
+        }
+        legend(x="topright", legend=components, fill=palette(), 
+               ncol=4)
+    }
+   #+END_SRC
+
+   #+RESULTS:
+
+   \clearpage
+*** Component Type #2
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 2
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-2-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(2)
+    #+END_SRC
+
+    #+CAPTION: Components of type #2
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-2-edp
+    #+RESULTS: cg-2-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #3
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 3
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-3-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #3
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-3-edp
+    #+RESULTS: cg-3-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #105
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 105
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-105-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #105
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-105-edp
+    #+RESULTS: cg-105-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #106
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 106
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-106-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #106
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-106-edp
+    #+RESULTS: cg-106-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #107
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 107
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-107-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #107
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-107-edp
+    #+RESULTS: cg-107-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #108
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 108
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-108-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #108
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-108-edp
+    #+RESULTS: cg-108-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #203
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 203
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-203-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #203
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-203-edp
+    #+RESULTS: cg-203-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #204
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 204
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-204-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #204
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-204-edp
+    #+RESULTS: cg-204-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #205
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 205
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-205-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #205
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-205-edp
+    #+RESULTS: cg-205-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #208
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 208
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-208-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #208
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-208-edp
+    #+RESULTS: cg-208-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #209
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 209
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-209-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #209
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-209-edp
+    #+RESULTS: cg-209-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #211
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 211
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-211-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #211
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-211-edp
+    #+RESULTS: cg-211-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #214
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 214
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-214-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #214
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-214-edp
+    #+RESULTS: cg-214-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+** Loss-IM Relation
+  #+BEGIN_SRC R :results output latex :exports both
+    cg.im.summary <- as.data.frame(matrix(nrow=num.cgs, ncol=6))
+    names(cg.im.summary) <- c("mean.max", "mean.avg", "mean.pct",
     		       "sd.max", "sd.avg", "sd.pct")
 
     for (i in 1:num.cgs) {
         temp <- compare(paleo.loss.im[[i]]$mean.x, 
                         neo.loss.im[[i]]$mean.x)
-        cg.summary[i,]$mean.max <- temp[1,]
-        cg.summary[i,]$mean.avg <- temp[2,]
-        cg.summary[i,]$mean.pct <- temp[3,]
+        cg.im.summary[i,]$mean.max <- temp[1,]
+        cg.im.summary[i,]$mean.avg <- temp[2,]
+        cg.im.summary[i,]$mean.pct <- temp[3,]
 
         temp <- compare(paleo.loss.im[[i]]$sd.lnx,
                         neo.loss.im[[i]]$sd.lnx)
-        cg.summary[i,]$sd.max <- temp[1,]
-        cg.summary[i,]$sd.avg <- temp[2,]
-        cg.summary[i,]$sd.pct <- temp[3,]
+        cg.im.summary[i,]$sd.max <- temp[1,]
+        cg.im.summary[i,]$sd.avg <- temp[2,]
+        cg.im.summary[i,]$sd.pct <- temp[3,]
     }
 #+END_SRC
 
     
   #+BEGIN_SRC R :results output :exports both
     ## Function to print summary table of  group-IM relations
-    print.cg.summary <- function(CG) {
+    print.cg.im.summary <- function(CG) {
         print(
             xtable(
-                cg.summary[cgs.descrip
+                cg.im.summary[cgs.descrip
   			 [cgs.descrip$Type==CG,]$Index,],
                 caption=sprintf("Comparison of Component
     			      Groups of type #%s.", CG),
@@ -741,6 +1132,9 @@
         for (c in components) {
             x.range<-range(x.range, paleo.loss.im[[c]]$IM)
             y.range<-range(y.range,paleo.loss.im[[c]]$mean.x)
+
+            x.range<-range(x.range, neo.loss.im[[c]]$IM)
+            y.range<-range(y.range,neo.loss.im[[c]]$mean.x)
         }
         plot(NULL, xlim=x.range, ylim=y.range, 
              xlab="IM", ylab="Mean(Loss)",
@@ -764,6 +1158,9 @@
         for (c in components) {
             x.range<-range(x.range,paleo.loss.im[[c]]$IM)
             y.range<-range(y.range,paleo.loss.im[[c]]$sd.lnx)
+
+            x.range<-range(x.range,neo.loss.im[[c]]$IM)
+            y.range<-range(y.range,neo.loss.im[[c]]$sd.lnx)
         }
         plot(NULL, xlim=x.range, ylim=y.range, 
              xlab="IM", ylab="SD(ln(Loss))",
@@ -791,7 +1188,7 @@
 *** Component Type #2
     #+BEGIN_SRC R :results output latex :exports both
       CG = 2
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-2-im
@@ -811,7 +1208,7 @@
 *** Component Type #3
     #+BEGIN_SRC R :results output latex :exports both
       CG = 3
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-3-im
@@ -831,7 +1228,7 @@
 *** Component Type #105
     #+BEGIN_SRC R :results output latex :exports both
       CG = 105
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-105-im
@@ -851,7 +1248,7 @@
 *** Component Type #106
     #+BEGIN_SRC R :results output latex :exports both
       CG = 106
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-106-im
@@ -871,7 +1268,7 @@
 *** Component Type #107
     #+BEGIN_SRC R :results output latex :exports both
       CG = 107
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-107-im
@@ -891,7 +1288,7 @@
 *** Component Type #108
     #+BEGIN_SRC R :results output latex :exports both
       CG = 108
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-108-im
@@ -911,7 +1308,7 @@
 *** Component Type #203
     #+BEGIN_SRC R :results output latex :exports both
       CG = 203
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-203-im
@@ -931,7 +1328,7 @@
 *** Component Type #204
     #+BEGIN_SRC R :results output latex :exports both
       CG = 204
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-204-im
@@ -951,7 +1348,7 @@
 *** Component Type #205
     #+BEGIN_SRC R :results output latex :exports both
       CG = 205
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-205-im
@@ -971,7 +1368,7 @@
 *** Component Type #208
     #+BEGIN_SRC R :results output latex :exports both
       CG = 208
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-208-im
@@ -991,7 +1388,7 @@
 *** Component Type #209
     #+BEGIN_SRC R :results output latex :exports both
       CG = 209
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-209-im
@@ -1011,7 +1408,7 @@
 *** Component Type #211
     #+BEGIN_SRC R :results output latex :exports both
       CG = 211
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-211-im
@@ -1031,7 +1428,7 @@
 *** Component Type #214
     #+BEGIN_SRC R :results output latex :exports both
       CG = 214
-      print.cg.summary(CG)
+      print.cg.im.summary(CG)
     #+END_SRC
 
     #+NAME: cg-214-im
@@ -1049,944 +1446,48 @@
 
 \clearpage
 *** Loss-IM Relation
-* PG #1
-** LOSS-IM
-   Read the LOSS-IM data for group #1:
-   #+BEGIN_SRC R   :results output
-     paleo.loss1.im <- read.csv(
-         paste(results.dir, "pg-1-im", sep=""),
-         skip=3, header=FALSE, sep="")
-     names(paleo.loss1.im) = c("IM", "mean_x", "sd_ln_x")
-
-     neo.loss1.im <- read.csv("example1a_loss_1_im.txt", 
-         header=TRUE, sep="")
-   #+END_SRC
-  
-   #+RESULTS:
-
-   Compare the mean error:
-   #+BEGIN_SRC R 
-     diff <- paleo.loss1.im$mean_x - neo.loss1.im$mean_x
-     denom <- paleo.loss1.im$mean_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-   #+RESULTS:
-   | Max abs(error) is 2.100e-01 (1.06%). |
-   | Mean error is -1.241e-02 (-0.06%).   |
-
-   Plot the mean (Figures [[fig:loss1.im-mean]] and [[fig:loss1.im-mean-zoom]]):
-   #+NAME: loss1.im-mean
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue"))
-     plot(paleo.loss1.im$mean_x ~ paleo.loss1.im$IM, log="y", 
-          xlab="IM", ylab="Mean Loss",
-	  main="Loss-IM Relationship",
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss1.im$mean_x ~ neo.loss1.im$IM, col=2, lwd=3)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-IM calculations (Group #1)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss1.im-mean
-   #+RESULTS: loss1.im-mean
-   [[file:/tmp/babel-1752Epe/figure-1752u3v.pdf]]
-
-   #+NAME: loss1.im-mean-zoom
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue"))
-     plot(paleo.loss1.im$mean_x ~ paleo.loss1.im$IM, log="y", 
-          xlab="IM", ylab="Mean Loss",
-	  main="Loss-IM Relationship",
-	  xlim=c(0.001, 0.10), ylim=c(1, 20),
-          type="p", col=1)
-
-     lines(neo.loss1.im$mean_x ~ neo.loss1.im$IM, col=2)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-IM calculations (Group #1)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss1.im-mean-zoom
-   #+RESULTS: loss1.im-mean-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752POp.pdf]]
-
-   #+BEGIN_SRC R 
-     diff <- paleo.loss1.im$sd_ln_x - neo.loss1.im$sd_ln_x
-     denom <- paleo.loss1.im$sd_ln_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-
-   #+NAME: loss1.im-sd
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss1.im$sd_ln_x ~ paleo.loss1.im$IM, log="", 
-          xlab="IM", ylab="sd(ln(Loss))", 
-          main="Loss-IM Relationship",
-          type="p", col=1)
-
-     lines(neo.loss1.im$sd_ln_x ~ neo.loss1.im$IM, col=2)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: LOSS1.IM rate calculations (Group #1)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss1.im-sd
-   #+RESULTS: loss1.im-sd
-   [[file:/tmp/babel-1752Epe/figure-17521AR.pdf]]
-
-** LOSS-EDP
-   Read the LOSS-EDP data for group #1:
-   #+BEGIN_SRC R   :results output
-     paleo.loss1.edp <- read.csv(
-         paste(results.dir, "pg-1-edp", sep=""),
-         skip=3, header=FALSE, sep="")
-     names(paleo.loss1.edp) = c("EDP", "mean_x", "sd_ln_x")
-
-     neo.loss1.edp <- read.csv("example1a_loss_1_edp.txt", 
-         header=TRUE, sep="")
-   #+END_SRC
-  
-   Compare the means and standard deviations:
-   #+BEGIN_SRC R 
-     diff <- paleo.loss1.edp$mean_x - neo.loss1.edp$mean_x
-     denom <- paleo.loss1.edp$mean_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-   #+BEGIN_SRC R 
-     diff <- paleo.loss1.edp$sd_ln_x - neo.loss1.edp$sd_ln_x
-     denom <- paleo.loss1.edp$sd_ln_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-   Plot the mean (Figures [[fig:loss1.edp-mean]] and [[fig:loss1.edp-mean-zoom]]) and
-   standard deviation (Figure [[fig:loss1.edp-sd]]):
-   #+NAME: loss1.edp-mean
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss1.edp$mean_x ~ paleo.loss1.edp$EDP, log="xy", 
-          xlab="EDP", ylab="Mean(Loss)",
-          main="Loss-EDP Relationship",
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss1.edp$mean_x ~ neo.loss1.edp$EDP, 
-         col=2, lwd=3)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-   #+CAPTION: Loss-EDP rate calculations (group #1)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss1.edp-mean
-   #+RESULTS: loss1.edp-mean
-   [[file:/tmp/babel-1752Epe/figure-17529OM.pdf]]
-
-   #+NAME: loss1.edp-mean-zoom
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss1.edp$mean_x ~ paleo.loss1.edp$EDP, log="xy", 
-          xlab="EDP", ylab="Mean(Loss)",
-	  main="Loss-EDP Relationship",
-          xlim=c(0.05, 0.10),
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss1.edp$mean_x ~ neo.loss1.edp$EDP, 
-  	 col=2, lwd=3)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-l
-   #+CAPTION: Loss-EDP rate calculations (group #1)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss1.edp-mean-zoom
-   #+RESULTS: loss1.edp-mean-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752KgG.pdf]]
-
-
-
-   #+NAME: loss1.edp-sd
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss1.edp$sd_ln_x ~ paleo.loss1.edp$EDP, log="", 
-          xlab="EDP", ylab="sd(ln(Loss))",
-	  main="Loss-EDP Relationship",
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss1.edp$sd_ln_x ~ neo.loss1.edp$EDP, 
-  	 col=2, lwd=3)
-
-     points(paleo.loss1.edp$sd_ln_x ~ paleo.loss1.edp$EDP, col=3)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-EDP calculations
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss1.edp-sd
-   #+RESULTS: loss1.edp-sd
-   [[file:/tmp/babel-1752Epe/figure-1752-If.pdf]]
-
-
-\clearpage
-* PG #2
-** LOSS-IM
-   Read the LOSS-IM data for group #2:
-   #+BEGIN_SRC R   :results output
-     paleo.loss2.im <- read.csv(
-         paste(results.dir, "pg-2-im", sep=""),
-         skip=3, header=FALSE, sep="")
-     names(paleo.loss2.im) = c("IM", "mean_x", "sd_ln_x")
-
-     neo.loss2.im <- read.csv("example1a_loss_2_im.txt", 
-         header=TRUE, sep="")
-   #+END_SRC
-  
-   #+RESULTS:
-
-   Compare the means and standard deviations:
-   #+BEGIN_SRC R 
-     diff <- paleo.loss2.im$mean_x - neo.loss2.im$mean_x
-     denom <- paleo.loss2.im$mean_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-   #+BEGIN_SRC R 
-     diff <- paleo.loss2.im$sd_ln_x - neo.loss2.im$sd_ln_x
-     denom <- paleo.loss2.im$sd_ln_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-   #+RESULTS:
-   | Max abs(error) is 5.763e+00 (100.00%). |
-   | Mean error is 7.713e-02 (1.43%).       |
-
-
-
-   Plot the mean (Figures [[fig:loss2.im-mean]] and [[fig:loss2.im-mean-zoom]]) and
-   standard deviation (Figures [[fig:loss2.im-sd]] and [[fig:loss2.im-sd-zoom]]):
-   #+NAME: loss2.im-mean
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss2.im$mean_x ~ paleo.loss2.im$IM, log="y", 
-          xlab="IM", ylab="Mean Loss",
-	  main="Loss-IM Relationship",
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss2.im$mean_x ~ neo.loss2.im$IM, col=2, lwd=3)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-IM calculations (group #2)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss2.im-mean
-   #+RESULTS: loss2.im-mean
-   [[file:/tmp/babel-1752Epe/figure-1752h0d.pdf]]
-
-   #+NAME: loss2.im-mean-zoom
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss2.im$mean_x ~ paleo.loss2.im$IM, log="y", 
-          xlab="IM", ylab="Mean Loss",
-	  main="Loss-IM Relationship",
-	  xlim=c(0.10, 0.30), 
-          type="p", col=1)
-
-     lines(neo.loss2.im$mean_x ~ neo.loss2.im$IM, col=2)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-IM calculations (group #2)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss2.im-mean-zoom
-   #+RESULTS: loss2.im-mean-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752LaZ.pdf]]
-
-
-   #+NAME: loss2.im-sd
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss2.im$sd_ln_x ~ paleo.loss2.im$IM, log="", 
-          xlab="IM", ylab="sd(ln(Loss))", 
-          main="Loss-IM Relationship",
-          type="p", col=1)
-
-     lines(neo.loss2.im$sd_ln_x ~ neo.loss2.im$IM, col=2)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: LOSS2.IM rate calculations (group #2)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss2.im-sd
-   #+RESULTS: loss2.im-sd
-   [[file:/tmp/babel-1752Epe/figure-17521hg.pdf]]
-
-   #+NAME: loss2.im-sd-zoom
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss2.im$sd_ln_x ~ paleo.loss2.im$IM, log="", 
-          xlab="IM", ylab="sd(ln(Loss))",
-	  xlim=c(0.01, 0.30),
-          main="Loss-IM Relationship",
-          type="p", col=1)
-
-     lines(neo.loss2.im$sd_ln_x ~ neo.loss2.im$IM, col=2)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: LOSS2.IM rate calculations (group #2)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss2.im-sd-zoom
-   #+RESULTS: loss2.im-sd-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752P9g.pdf]]
-
-** LOSS-EDP
-   Read the LOSS-EDP data for group #2:
-   #+BEGIN_SRC R   :results output
-     paleo.loss2.edp <- read.csv(
-         paste(results.dir, "pg-2-edp", sep=""),
-         skip=3, header=FALSE, sep="")
-     names(paleo.loss2.edp) = c("EDP", "mean_x", "sd_ln_x")
-
-     neo.loss2.edp <- read.csv("example1a_loss_2_edp.txt", 
-         header=TRUE, sep="")
-   #+END_SRC
-  
-   #+RESULTS:
-
-   Compare the means and standard deviations:
-   #+BEGIN_SRC R 
-     diff <- paleo.loss2.edp$mean_x - neo.loss2.edp$mean_x
-     denom <- paleo.loss2.edp$mean_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-   #+RESULTS:
-   | Max abs(error) is 5.000000e-05 (0.03%). |
-   | Mean error is 1.506201e-06 (0.00%).     |
-
-   #+BEGIN_SRC R 
-     diff <- paleo.loss2.edp$sd_ln_x - neo.loss2.edp$sd_ln_x
-     denom <- paleo.loss2.edp$sd_ln_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-   #+RESULTS:
-   | Max abs(error) is 5.000000e-04 (0.05%). |
-   | Mean error is 4.953020e-06 (0.00%).     |
-
-   Plot the means (Figures [[fig:loss2.edp-mean]] and [[fig:loss2.edp-mean-zoom]]) and
-   standard deviation (Figures [[fig:loss2.edp-sd]] and [[fig:loss2.edp-sd-zoom]]):
-   #+NAME: loss2.edp-mean
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss2.edp$mean_x ~ paleo.loss2.edp$EDP, log="xy", 
-          xlab="EDP", ylab="Mean(Loss)",
-          main="Loss-EDP Relationship",
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss2.edp$mean_x ~ neo.loss2.edp$EDP, 
-         col=2, lwd=3)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-EDP rate calculations (group #2)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss2.edp-mean
-   #+RESULTS: loss2.edp-mean
-   [[file:/tmp/babel-1752Epe/figure-1752NDI.pdf]]
-
-   #+NAME: loss2.edp-mean-zoom
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss2.edp$mean_x ~ paleo.loss2.edp$EDP, log="xy", 
-          xlab="EDP", ylab="Mean(Loss)",
-	  main="Loss-EDP Relationship",
-          xlim=c(0.05, 0.10),
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss2.edp$mean_x ~ neo.loss2.edp$EDP, 
-  	 col=2, lwd=3)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-   #+CAPTION: Loss-EDP rate calculations (group #2)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss2.edp-mean-zoom
-   #+RESULTS: loss2.edp-mean-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752_Cy.pdf]]
-
-
-
-   #+NAME: loss2.edp-sd
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss2.edp$sd_ln_x ~ paleo.loss2.edp$EDP, log="", 
-          xlab="EDP", ylab="sd(ln(Loss))",
-	  main="Loss-EDP Relationship",
-          type="p", col=1, lwd=5)
-     lines(neo.loss2.edp$sd_ln_x ~ neo.loss2.edp$EDP, 
-  	 col=2, lwd=3)
-
-     points(paleo.loss2.edp$sd_ln_x ~ paleo.loss2.edp$EDP, col=3)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-EDP calculations (group #2)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss2.edp-sd
-   #+RESULTS: loss2.edp-sd
-   [[file:/tmp/babel-1752Epe/figure-1752ofP.pdf]]
-
-
-   #+NAME: loss2.edp-sd-zoom
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R 
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss2.edp$sd_ln_x ~ paleo.loss2.edp$EDP, log="", 
-          xlab="EDP", ylab="sd(ln(Loss))",
-	  main="Loss-EDP Relationship",
-          xlim=c(0.08, 0.12),
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss2.edp$sd_ln_x ~ neo.loss2.edp$EDP, 
-  	 col=2, lwd=3)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-EDP calculations (group #2)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss2.edp-sd-zoom
-   #+RESULTS: loss2.edp-sd-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752MUs.pdf]]
-
-\clearpage
-* PG #31
-** LOSS-IM
-   Read the LOSS-IM data for group #31:
-   #+BEGIN_SRC R   :results output
-     paleo.loss31.im <- read.csv(
-         paste(results.dir, "pg-31-im", sep=""),
-         skip=3, header=FALSE, sep="")
-     names(paleo.loss31.im) = c("IM", "mean_x", "sd_ln_x")
-
-     neo.loss31.im <- read.csv("example1a_loss_31_im.txt", 
-         header=TRUE, sep="")
-   #+END_SRC
-  
-   #+RESULTS:
-
-   Compare the means and standard deviations:
-   #+BEGIN_SRC R 
-     diff <- paleo.loss31.im$mean_x - neo.loss31.im$mean_x
-     denom <- paleo.loss31.im$mean_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-   #+BEGIN_SRC R 
-     diff <- paleo.loss31.im$sd_ln_x - neo.loss31.im$sd_ln_x
-     denom <- paleo.loss31.im$sd_ln_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-   #+RESULTS:
-   | Max abs(error) is 5.763e+00 (100.00%). |
-   | Mean error is 7.713e-02 (1.43%).       |
-
-
-
-   Plot the mean (Figures [[fig:loss31.im-mean]] and [[fig:loss31.im-mean-zoom]]) and
-   standard deviation (Figures [[fig:loss31.im-sd]] and [[fig:loss31.im-sd-zoom]]):
-   #+NAME: loss31.im-mean
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss31.im$mean_x ~ paleo.loss31.im$IM, log="y", 
-          xlab="IM", ylab="Mean Loss",
-	  main="Loss-IM Relationship",
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss31.im$mean_x ~ neo.loss31.im$IM, col=2, lwd=3)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-IM calculations (group #31)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss31.im-mean
-   #+RESULTS: loss31.im-mean
-   [[file:/tmp/babel-1752Epe/figure-1752h0d.pdf]]
-
-   #+NAME: loss31.im-mean-zoom
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss31.im$mean_x ~ paleo.loss31.im$IM, log="y", 
-          xlab="IM", ylab="Mean Loss",
-	  main="Loss-IM Relationship",
-	  xlim=c(0.10, 0.30), 
-          type="p", col=1)
-
-     lines(neo.loss31.im$mean_x ~ neo.loss31.im$IM, col=2)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-IM calculations (group #31)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss31.im-mean-zoom
-   #+RESULTS: loss31.im-mean-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752LaZ.pdf]]
-
-
-   #+NAME: loss31.im-sd
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss31.im$sd_ln_x ~ paleo.loss31.im$IM, log="", 
-          xlab="IM", ylab="sd(ln(Loss))", 
-          main="Loss-IM Relationship",
-          type="p", col=1)
-
-     lines(neo.loss31.im$sd_ln_x ~ neo.loss31.im$IM, col=2)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: LOSS31.IM rate calculations (group #31)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss31.im-sd
-   #+RESULTS: loss31.im-sd
-   [[file:/tmp/babel-1752Epe/figure-17521hg.pdf]]
-
-   #+NAME: loss31.im-sd-zoom
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss31.im$sd_ln_x ~ paleo.loss31.im$IM, log="", 
-          xlab="IM", ylab="sd(ln(Loss))",
-	  xlim=c(0.01, 0.30),
-          main="Loss-IM Relationship",
-          type="p", col=1)
-
-     lines(neo.loss31.im$sd_ln_x ~ neo.loss31.im$IM, col=2)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: LOSS31.IM rate calculations (group #31)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss31.im-sd-zoom
-   #+RESULTS: loss31.im-sd-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752P9g.pdf]]
-
-** LOSS-EDP
-   Read the LOSS-EDP data for group #31:
-   #+BEGIN_SRC R   :results output
-     paleo.loss31.edp <- read.csv(
-         paste(results.dir, "pg-31-edp", sep=""),
-         skip=3, header=FALSE, sep="")
-     names(paleo.loss31.edp) = c("EDP", "mean_x", "sd_ln_x")
-
-     neo.loss31.edp <- read.csv("example1a_loss_31_edp.txt", 
-         header=TRUE, sep="")
-   #+END_SRC
-  
-   #+RESULTS:
-
-   Compare the means and standard deviations:
-   #+BEGIN_SRC R 
-     diff <- paleo.loss31.edp$mean_x - neo.loss31.edp$mean_x
-     denom <- paleo.loss31.edp$mean_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-   #+RESULTS:
-   | Max abs(error) is 5.000000e-05 (0.03%). |
-   | Mean error is 1.506201e-06 (0.00%).     |
-
-   #+BEGIN_SRC R 
-     diff <- paleo.loss31.edp$sd_ln_x - neo.loss31.edp$sd_ln_x
-     denom <- paleo.loss31.edp$sd_ln_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n")
-   #+END_SRC
-
-   #+RESULTS:
-   | Max abs(error) is 5.000000e-04 (0.05%). |
-   | Mean error is 4.953020e-06 (0.00%).     |
-
-   Plot the means (Figures [[fig:loss31.edp-mean]] and [[fig:loss31.edp-mean-zoom]]) and
-   standard deviation (Figures [[fig:loss31.edp-sd]] and [[fig:loss31.edp-sd-zoom]]):
-   #+NAME: loss31.edp-mean
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss31.edp$mean_x ~ paleo.loss31.edp$EDP, log="xy", 
-          xlab="EDP", ylab="Mean(Loss)",
-          main="Loss-EDP Relationship",
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss31.edp$mean_x ~ neo.loss31.edp$EDP, 
-         col=2, lwd=3)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-EDP rate calculations (group #31)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss31.edp-mean
-   #+RESULTS: loss31.edp-mean
-   [[file:/tmp/babel-1752Epe/figure-1752NDI.pdf]]
-
-   #+NAME: loss31.edp-mean-zoom
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss31.edp$mean_x ~ paleo.loss31.edp$EDP, log="xy", 
-          xlab="EDP", ylab="Mean(Loss)",
-	  main="Loss-EDP Relationship",
-          xlim=c(0.05, 0.10),
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss31.edp$mean_x ~ neo.loss31.edp$EDP, 
-  	 col=2, lwd=3)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-   #+CAPTION: Loss-EDP rate calculations (group #31)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss31.edp-mean-zoom
-   #+RESULTS: loss31.edp-mean-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752_Cy.pdf]]
-
-
-
-   #+NAME: loss31.edp-sd
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss31.edp$sd_ln_x ~ paleo.loss31.edp$EDP, log="", 
-          xlab="EDP", ylab="sd(ln(Loss))",
-	  main="Loss-EDP Relationship",
-          type="p", col=1, lwd=5)
-     lines(neo.loss31.edp$sd_ln_x ~ neo.loss31.edp$EDP, 
-  	 col=2, lwd=3)
-
-     points(paleo.loss31.edp$sd_ln_x ~ paleo.loss31.edp$EDP, col=3)
-
-     legend(x="right",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-EDP calculations (group #31)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss31.edp-sd
-   #+RESULTS: loss31.edp-sd
-   [[file:/tmp/babel-1752Epe/figure-1752ofP.pdf]]
-
-
-   #+NAME: loss31.edp-sd-zoom
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R 
-     palette(c("red", "blue", "green"))
-     plot(paleo.loss31.edp$sd_ln_x ~ paleo.loss31.edp$EDP, log="", 
-          xlab="EDP", ylab="sd(ln(Loss))",
-	  main="Loss-EDP Relationship",
-          xlim=c(0.08, 0.12),
-          type="p", col=1, lwd=5)
-
-     lines(neo.loss31.edp$sd_ln_x ~ neo.loss31.edp$EDP, 
-  	 col=2, lwd=3)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Loss-EDP calculations (group #31)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:loss31.edp-sd-zoom
-   #+RESULTS: loss31.edp-sd-zoom
-   [[file:/tmp/babel-1752Epe/figure-1752MUs.pdf]]
-
-\clearpage
 * Total Loss
-  Read the Total Loss data:
-  #+BEGIN_SRC R   :results output
-    paleo.structloss.c <- read.csv(
-        paste(results.dir, "tlossc", sep=""),
-         skip=3, header=FALSE, sep="")
-    names(paleo.structloss.c) = c("IM", "mean_x", "sd_ln_x")
 
-    paleo.structloss.nc <- read.csv(
-        paste(results.dir, "tlossnc", sep=""),
-        skip=3, header=FALSE, sep="")
-    names(paleo.structloss.nc) = c("IM", "mean_x", "sd_ln_x")
-
-    neo.structloss.c <- read.csv("example1a_loss_c_total", 
-        header=TRUE, sep="")
-
-    neo.structloss.nc <- read.csv("example1a_loss_nc_total", 
-        header=TRUE, sep="")
-  #+END_SRC
-  
-  #+RESULTS:
 ** Non-Collapse
    Compare the means and standard deviations:
-   #+BEGIN_SRC R
-     diff <- paleo.structloss.nc$mean_x -
-         neo.structloss.nc$mean_x
-     denom <- paleo.structloss.nc$mean_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("mean valus:"),
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n    ")
+   #+BEGIN_SRC R :results output latex 
+     xtable(compare(paleo.structloss.nc$mean.x,
+      	      neo.structloss.nc$mean.x),
+         caption="Comparison of Meean(Loss) without Collapse",
+   	 digits=c(5))
    #+END_SRC
 
    #+RESULTS:
-   | mean valus:                          |
-   | Max abs(error) is 1.525e-01 (0.67%). |
-   | Mean error is -4.376e-03 (-0.02%).   |
+   #+BEGIN_EXPORT latex
+   % latex table generated in R 3.2.2 by xtable 1.8-2 package
+   % Thu Jun 16 15:08:03 2016
+   \begin{table}[ht]
+   \centering
+   \begin{tabular}{rr}
+     \hline
+    & Value \\ 
+     \hline
+   max(abs(difference)) &   -Inf \\ 
+     mean(abs(difference)) &  \\ 
+     percent(abs(difference)) &   -Inf \\ 
+      \hline
+   \end{tabular}
+   \caption{Comparison of Meean(Loss) without Collapse} 
+   \end{table}
+   Warning messages:
+   1: In max(abs(a - b)) : no non-missing arguments to max; returning -Inf
+   2: In max(abs(a - b)/a) : no non-missing arguments to max; returning -Inf
+   #+END_EXPORT
 
-   #+BEGIN_SRC R 
-     diff <- paleo.structloss.nc$sd_ln_x - 
-         neo.structloss.nc$sd_ln_x
-     denom <- paleo.structloss.nc$sd_ln_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
 
-     paste(
-         sprintf("standard deviations:"),
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n   ")
+   #+BEGIN_SRC R :results output latex
+     xtable(compare(paleo.structloss.nc$sd.lnx,
+   		 neo.structloss.nc$sd.lnx),
+   	 caption="Comparison of sd(ln(Loss)) without Collapse",
+   	 digits=c(5))
    #+END_SRC
 
    #+RESULTS:
-   | standard deviations:                  |
-   | Max abs(error) is 6.151e-02 (14.33%). |
-   | Mean error is -4.376e-02 (-10.51%).   |
 
    Plot the mean (Figure [[fig:structloss.nc-mean]]) and standard deviation (Figure
    [[fig:structloss.nc-sd]]):
@@ -1995,14 +1496,14 @@ l
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R
      palette(c("red", "blue"))
-     plot(paleo.structloss.nc$mean_x ~
+     plot(paleo.structloss.nc$mean.x ~
           paleo.structloss.nc$IM, log="",
 	  xlim=c(0, 1.5), ylim=c(0, 10E6),
           xlab="IM", ylab="Mean(Loss)", 
           main="Total Loss, No Collapse",
           type="p", col=1, lwd=5)
 
-     lines(neo.structloss.nc$mean_x ~ neo.structloss.nc$IM, 
+     lines(neo.structloss.nc$mean.x ~ neo.structloss.nc$IM, 
          col=2, lwd=3)
 
      legend(x="topright",
@@ -2015,7 +1516,7 @@ l
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.nc-mean
    #+RESULTS: structloss.nc-mean
-   [[file:/tmp/babel-1757XZc/figure-17572zh.pdf]]
+   [[file:/tmp/babel-1757XZc/figure-1757ctC.pdf]]
 
 
    #+NAME: structloss.nc-sd
@@ -2023,11 +1524,11 @@ l
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R  
      palette(c("red", "blue"))
-     plot(paleo.structloss.nc$sd_ln_x ~ paleo.structloss.nc$IM,
+     plot(paleo.structloss.nc$sd.lnx ~ paleo.structloss.nc$IM,
           log="", xlab="IM", ylab="sd(ln(Loss))", 
           main="Total Loss, No Collapse",
           type="p", col=1, lwd=5)
-     lines(neo.structloss.nc$sd_ln_x ~ neo.structloss.nc$IM, 
+     lines(neo.structloss.nc$sd.lnx ~ neo.structloss.nc$IM, 
          col=2, lwd=3)
   
      legend(x="topright",
@@ -2040,56 +1541,26 @@ l
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.nc-sd
    #+RESULTS: structloss.nc-sd
-   [[file:/tmp/babel-1757XZc/figure-17576YY.pdf]]
+   [[file:/tmp/babel-1757XZc/figure-1757QWb.pdf]]
 
 
 ** Collapse
    Compare the means and standard deviations:
-   #+BEGIN_SRC R 
-     diff <- paleo.structloss.c$mean_x - 
-         neo.structloss.c$mean_x
-     denom <- paleo.structloss.c$mean_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Mean loss, considering collapse:"),
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n    ")
+   #+BEGIN_SRC R :results output latex 
+     xtable(compare(paleo.structloss.c$mean.x,
+      	      neo.structloss.c$mean.x),
+         caption="Comparison of Meean(Loss) with Collapse",
+   	 digits=c(5))
    #+END_SRC
 
-   #+RESULTS:
-   | Mean loss, considering collapse:     |
-   | Max abs(error) is 1.203e-01 (0.62%). |
-   | Mean error is -1.849e-03 (-0.01%).   |
 
-   #+BEGIN_SRC R 
-     diff <- paleo.structloss.c$sd_ln_x - 
-         neo.structloss.c$sd_ln_x
-     denom <- paleo.structloss.c$sd_ln_x
-     denom[denom == 0] <- NA
-     diff.pct <- diff / denom
-
-     paste(
-         sprintf("Standard Deviation of loss, considering collapse:"),
-         sprintf("Max abs(error) is %5.3e (%3.2f%%).",
-                 max(abs(diff)),
-                 100 * max(abs(diff.pct), na.rm=TRUE)),
-         sprintf("Mean error is %5.3e (%3.2f%%).",
-                 mean(diff),
-                 100 * mean(diff.pct, na.rm=TRUE)),
-         sep="\n    ")
+   #+BEGIN_SRC R :results output latex
+     xtable(compare(paleo.structloss.c$sd.lnx,
+   		 neo.structloss.c$sd.lnx),
+   	 caption="Comparison of sd(ln(Loss)) with Collapse",
+   	 digits=c(5))
    #+END_SRC
-
-   #+RESULTS:
-   | Standard Deviation of loss, considering collapse: |
-   | Max abs(error) is 4.402e-02 (8.88%).              |
-   | Mean error is -1.777e-02 (-3.56%).                |
+   Compare the means and standard deviations:
 
    Plot the mean (Figure [[fig:structloss.c-mean]]) and standard deviation (Figure
    [[fig:structloss.c-sd]]):
@@ -2098,13 +1569,13 @@ l
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R
      palette(c("red", "blue"))
-     plot(paleo.structloss.c$mean_x ~ paleo.structloss.c$IM, 
+     plot(paleo.structloss.c$mean.x ~ paleo.structloss.c$IM, 
           log="", xlab="IM", ylab="Mean(Loss)",
 	  xlim=c(0, 1.5), ylim=c(0, 20E6),
           main="Total Loss, Collapse",
           type="p", col=1, lwd=5)
 
-     lines(neo.structloss.c$mean_x ~ neo.structloss.c$IM, 
+     lines(neo.structloss.c$mean.x ~ neo.structloss.c$IM, 
          col=2, lwd=3)
 
      legend(x="topright",
@@ -2116,7 +1587,7 @@ l
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.c-mean
    #+RESULTS: structloss.c-mean
-   [[file:/tmp/babel-1757XZc/figure-1757CLJ.pdf]]
+   [[file:/tmp/babel-1757XZc/figure-1757E_z.pdf]]
 
 
    #+NAME: structloss.c-sd
@@ -2124,11 +1595,11 @@ l
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R  
      palette(c("red", "blue"))
-     plot(paleo.structloss.c$sd_ln_x ~ paleo.structloss.c$IM, log="", 
+     plot(paleo.structloss.c$sd.lnx ~ paleo.structloss.c$IM, log="", 
           xlab="EDP", ylab="sd(ln(Loss))", main="Total Loss, Collapse",
-	  ylim=c(0, max(paleo.structloss.c$sd_ln_x)),
+	  ylim=c(0, max(paleo.structloss.c$sd.lnx)),
           type="p", col=1, lwd=5)
-     lines(neo.structloss.c$sd_ln_x ~ neo.structloss.c$IM, 
+     lines(neo.structloss.c$sd.lnx ~ neo.structloss.c$IM, 
   	 col=2, lwd=3)
 
      legend(x="topright",
@@ -2140,10 +1611,16 @@ l
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.c-sd
    #+RESULTS: structloss.c-sd
-   [[file:/tmp/babel-1752Epe/figure-1752gLO.pdf]]
+   [[file:/tmp/babel-1757XZc/figure-1757dnV.pdf]]
 
 
-** Temp								   :noexport:
+** Scratch							   :noexport:
+   :PROPERTIES:
+   :header-args: :eval no-export
+   :END:
+#+PROPERTY: header-args    :exports both
+
+   Code to check sample points are the same
    EDP-IM relationships:
    #+BEGIN_SRC sh :results output
    for i in $(seq 21); do    
@@ -2239,126 +1716,246 @@ l
       max_p=$(tail -2 $f | awk -e 'BEGIN{RS="\r\n"} {print $1}')
       count_p=$(wc -l $f | awk -e '{print $1 - 4}')
       echo $i":" $min_n $min_p "; " $max_n $max_p "; " $count_n $count_p
+      echo $i":" \
+           $(guile -c "(display (- $min_n $min_p))") \
+           $(guile -c "(display (- $max_n $max_p))") \
+           $(guile -c "(display (- $count_n $count_p))")
+
    done
    #+END_SRC
 
    #+RESULTS:
    #+begin_example
    1: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   1: 0.0 0.0 0
    2: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   2: 0.0 0.0 0
    3: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   3: 0.0 0.0 0
    4: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   4: 0.0 0.0 0
    5: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   5: 0.0 0.0 0
    6: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   6: 0.0 0.0 0
    7: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   7: 0.0 0.0 0
    8: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   8: 0.0 0.0 0
    9: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   9: 0.0 0.0 0
    10: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   10: 0.0 0.0 0
    11: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   11: 0.0 0.0 0
    12: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   12: 0.0 0.0 0
    13: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   13: 0.0 0.0 0
    14: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   14: 0.0 0.0 0
    15: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   15: 0.0 0.0 0
    16: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   16: 0.0 0.0 0
    17: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   17: 0.0 0.0 0
    18: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   18: 0.0 0.0 0
    19: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   19: 0.0 0.0 0
    20: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   21: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 149
+   20: 0.0 0.0 0
+   21: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   21: 0.0 0.0 0
    22: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   22: 0.0 0.0 0
    23: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   23: 0.0 0.0 0
    24: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   24: 0.0 0.0 0
    25: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   25: 0.0 0.0 0
    26: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   26: 0.0 0.0 0
    27: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   27: 0.0 0.0 0
    28: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   28: 0.0 0.0 0
    29: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   29: 0.0 0.0 0
    30: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   31: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 149
+   30: 0.0 0.0 0
+   31: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   31: 0.0 0.0 0
    32: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   32: 0.0 0.0 0
    33: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   33: 0.0 0.0 0
    34: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   34: 0.0 0.0 0
    35: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   35: 0.0 0.0 0
    36: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   36: 0.0 0.0 0
    37: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   37: 0.0 0.0 0
    38: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   38: 0.0 0.0 0
    39: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   39: 0.0 0.0 0
    40: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   41: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 149
+   40: 0.0 0.0 0
+   41: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   41: 0.0 0.0 0
    42: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   42: 0.0 0.0 0
    43: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   43: 0.0 0.0 0
    44: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   44: 0.0 0.0 0
    45: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   45: 0.0 0.0 0
    46: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   46: 0.0 0.0 0
    47: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   47: 0.0 0.0 0
    48: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   48: 0.0 0.0 0
    49: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   49: 0.0 0.0 0
    50: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   50: 0.0 0.0 0
    51: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   51: 0.0 0.0 0
    52: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   52: 0.0 0.0 0
    53: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   53: 0.0 0.0 0
    54: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   54: 0.0 0.0 0
    55: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   55: 0.0 0.0 0
    56: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   56: 0.0 0.0 0
    57: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   57: 0.0 0.0 0
    58: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   58: 0.0 0.0 0
    59: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   59: 0.0 0.0 0
    60: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   60: 0.0 0.0 0
    61: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   61: 0.0 0.0 0
    62: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   62: 0.0 0.0 0
    63: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   63: 0.0 0.0 0
    64: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   64: 0.0 0.0 0
    65: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   65: 0.0 0.0 0
    66: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   66: 0.0 0.0 0
    67: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   67: 0.0 0.0 0
    68: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   68: 0.0 0.0 0
    69: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   69: 0.0 0.0 0
    70: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   71: 0.001 1.0000E-03 ;  0.1 0.1500 ;  199 149
+   70: 0.0 0.0 0
+   71: 0.001 1.0000E-03 ;  0.15 0.1500 ;  149 149
+   71: 0.0 0.0 0
    72: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   72: 0.0 0.0 0
    73: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   73: 0.0 0.0 0
    74: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   74: 0.0 0.0 0
    75: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   75: 0.0 0.0 0
    76: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   76: 0.0 0.0 0
    77: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   77: 0.0 0.0 0
    78: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   78: 0.0 0.0 0
    79: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   79: 0.0 0.0 0
    80: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   80: 0.0 0.0 0
    81: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   81: 0.0 0.0 0
    82: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   82: 0.0 0.0 0
    83: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   83: 0.0 0.0 0
    84: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   85: 0.05 1.0000E-03 ;  5.0 0.1500 ;  199 149
-   86: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 149
-   87: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   88: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   89: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   90: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   91: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   92: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   93: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   94: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   95: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   96: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 149
-   97: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   98: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   99: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   100: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   101: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   102: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   103: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   104: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   105: 0.05 1.0000E-03 ;  5.0 0.1000 ;  199 199
-   106: 0.05 1.0000E-03 ;  5.0 0.1500 ;  199 149
+   84: 0.0 0.0 0
+   85: 0.001 1.0000E-03 ;  0.15 0.1500 ;  149 149
+   85: 0.0 0.0 0
+   86: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   86: 0.0 0.0 0
+   87: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   87: 0.0 0.0 0
+   88: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   88: 0.0 0.0 0
+   89: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   89: 0.0 0.0 0
+   90: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   90: 0.0 0.0 0
+   91: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   91: 0.0 0.0 0
+   92: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   92: 0.0 0.0 0
+   93: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   93: 0.0 0.0 0
+   94: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   94: 0.0 0.0 0
+   95: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   95: 0.0 0.0 0
+   96: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   96: 0.0 0.0 0
+   97: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   97: 0.0 0.0 0
+   98: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   98: 0.0 0.0 0
+   99: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   99: 0.0 0.0 0
+   100: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   100: 0.0 0.0 0
+   101: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   101: 0.0 0.0 0
+   102: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   102: 0.0 0.0 0
+   103: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   103: 0.0 0.0 0
+   104: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   104: 0.0 0.0 0
+   105: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   105: 0.0 0.0 0
+   106: 0.001 1.0000E-03 ;  0.15 0.1500 ;  149 149
+   106: 0.0 0.0 0
    107: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   107: 0.0 0.0 0
    108: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   108: 0.0 0.0 0
    109: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   109: 0.0 0.0 0
    110: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   110: 0.0 0.0 0
    111: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   111: 0.0 0.0 0
    112: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   112: 0.0 0.0 0
    113: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   113: 0.0 0.0 0
    114: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   114: 0.0 0.0 0
    115: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   115: 0.0 0.0 0
 #+end_example
 
    Loss-im
@@ -2373,126 +1970,130 @@ l
       min_p=$(head -4 $f | tail -1 | awk -e '{print $1}')
       max_p=$(tail -2 $f | awk -e 'BEGIN{RS="\r\n"} {print $1}')
       count_p=$(wc -l $f | awk -e '{print $1 - 4}')
-      echo $min_n $min_p "; " $max_n $max_p "; " $count_n $count_p
+      #echo  $min_n  $min_p "; " $max_n - $max_p "; " $count_n - $count_p
+      echo $(guile -c "(display (- $min_n $min_p))") \
+           $(guile -c "(display (- $max_n $max_p))") \
+           $(guile -c "(display (- $count_n $count_p))")
    done
+   
    #+END_SRC
 
    #+RESULTS:
    #+begin_example
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
 #+end_example
 

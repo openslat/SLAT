@@ -126,7 +126,8 @@ lossfn LOSS_211 simple [900, 1.0]
 fragfn FRAG_208 [1.2, 0.6]
         --mu mean_x --sd sd_ln_x;
 
-lossfn LOSS_208 simple [1000, 0.4]
+#lossfn LOSS_208 simple [1000, 0.4]
+lossfn LOSS_208 simple [1783.33, 0.4]
               --mu mean_x --sd sd_ln_x;
 
 fragfn FRAG_209 [0.8, 0.5]
@@ -335,6 +336,7 @@ set lossedpvalues1 $(0.001 + numpy.arange(0, 149, 1) * (0.10 - 0.001)/148);
 set lossedpvalues2 $(0.001 + numpy.arange(0, 199, 1) * (0.10 - 0.001)/198);
 set lossedpvalues3 $(0.05 + numpy.arange(0, 199, 1) * (5.0 - 0.05)/198);
 set lossedpvalues4 $(0.001 + numpy.arange(0, 149, 1) * (0.15 - 0.001)/148);
+set lossedpvalues5 $(0.001 + numpy.arange(0, 149, 1) * (0.10 - 0.001)/148);
 
 recorder imrate IM_1 $logvalues example1a_im_rate --new;
 
@@ -526,7 +528,7 @@ recorder lossim COMPGROUP_20 $lossimvalues example1a_loss_20_im.txt --new;
 recorder dsedp COMPGROUP_20 0.0:0.01:0.200 example1a_ds_edp_20.txt --new;
 recorder lossrate COMPGROUP_20 1E-4:4.8E-3:1.2 example1a_loss_rate_20.txt --new;
 
-recorder lossedp COMPGROUP_21 $lossedpvalues2 example1a_loss_21_edp.txt --new;
+recorder lossedp COMPGROUP_21 $lossedpvalues5 example1a_loss_21_edp.txt --new;
 recorder lossim COMPGROUP_21 $lossimvalues example1a_loss_21_im.txt --new;
 ### recorder dsrate COMPGROUP_21;
 recorder dsedp COMPGROUP_21 0.0:0.01:0.200 example1a_ds_edp_21.txt --new;
@@ -586,7 +588,7 @@ recorder lossim COMPGROUP_30 $lossimvalues example1a_loss_30_im.txt --new;
 recorder dsedp COMPGROUP_30 0.0:0.01:0.200 example1a_ds_edp_30.txt --new;
 recorder lossrate COMPGROUP_30 1E-4:4.8E-3:1.2 example1a_loss_rate_30.txt --new;
 
-recorder lossedp COMPGROUP_31 $lossedpvalues2 example1a_loss_31_edp.txt --new;
+recorder lossedp COMPGROUP_31 $lossedpvalues5 example1a_loss_31_edp.txt --new;
 recorder lossim COMPGROUP_31 $lossimvalues example1a_loss_31_im.txt --new;
 ### recorder dsrate COMPGROUP_31;
 recorder dsedp COMPGROUP_31 0.0:0.01:0.200 example1a_ds_edp_31.txt --new;
@@ -646,7 +648,7 @@ recorder lossim COMPGROUP_40 $lossimvalues example1a_loss_40_im.txt --new;
 recorder dsedp COMPGROUP_40 0.0:0.01:0.200 example1a_ds_edp_40.txt --new;
 recorder lossrate COMPGROUP_40 1E-4:4.8E-3:1.2 example1a_loss_rate_40.txt --new;
 
-recorder lossedp COMPGROUP_41 $lossedpvalues2 example1a_loss_41_edp.txt --new;
+recorder lossedp COMPGROUP_41 $lossedpvalues5 example1a_loss_41_edp.txt --new;
 recorder lossim COMPGROUP_41 $lossimvalues example1a_loss_41_im.txt --new;
 ### recorder dsrate COMPGROUP_41;
 recorder dsedp COMPGROUP_41 0.0:0.01:0.200 example1a_ds_edp_41.txt --new;
@@ -916,121 +918,121 @@ recorder lossim COMPGROUP_85 $lossimvalues example1a_loss_85_im.txt --new;
 recorder dsedp COMPGROUP_85 0.0:0.01:0.200 example1a_ds_edp_85.txt --new;
 recorder lossrate COMPGROUP_85 1E-4:4.8E-3:1.2 example1a_loss_rate_85.txt --new;
 
-recorder lossedp COMPGROUP_86 $lossedpvalues3 example1a_loss_86_edp.txt --new;
+recorder lossedp COMPGROUP_86 $lossedpvalues1 example1a_loss_86_edp.txt --new;
 recorder lossim COMPGROUP_86 $lossimvalues example1a_loss_86_im.txt --new;
 ### recorder dsrate COMPGROUP_86;
 recorder dsedp COMPGROUP_86 0.0:0.01:0.200 example1a_ds_edp_86.txt --new;
 recorder lossrate COMPGROUP_86 1E-4:4.8E-3:1.2 example1a_loss_rate_86.txt --new;
 
-recorder lossedp COMPGROUP_87 $lossedpvalues3 example1a_loss_87_edp.txt --new;
+recorder lossedp COMPGROUP_87 $lossedpvalues2 example1a_loss_87_edp.txt --new;
 recorder lossim COMPGROUP_87 $lossimvalues example1a_loss_87_im.txt --new;
 ### recorder dsrate COMPGROUP_87;
 recorder dsedp COMPGROUP_87 0.0:0.01:0.200 example1a_ds_edp_87.txt --new;
 recorder lossrate COMPGROUP_87 1E-4:4.8E-3:1.2 example1a_loss_rate_87.txt --new;
 
-recorder lossedp COMPGROUP_88 $lossedpvalues3 example1a_loss_88_edp.txt --new;
+recorder lossedp COMPGROUP_88 $lossedpvalues2 example1a_loss_88_edp.txt --new;
 recorder lossim COMPGROUP_88 $lossimvalues example1a_loss_88_im.txt --new;
 ### recorder dsrate COMPGROUP_88;
 recorder dsedp COMPGROUP_88 0.0:0.01:0.200 example1a_ds_edp_88.txt --new;
 recorder lossrate COMPGROUP_88 1E-4:4.8E-3:1.2 example1a_loss_rate_88.txt --new;
 
-recorder lossedp COMPGROUP_89 $lossedpvalues3 example1a_loss_89_edp.txt --new;
+recorder lossedp COMPGROUP_89 $lossedpvalues2 example1a_loss_89_edp.txt --new;
 recorder lossim COMPGROUP_89 $lossimvalues example1a_loss_89_im.txt --new;
 ### recorder dsrate COMPGROUP_89;
 recorder dsedp COMPGROUP_89 0.0:0.01:0.200 example1a_ds_edp_89.txt --new;
 recorder lossrate COMPGROUP_89 1E-4:4.8E-3:1.2 example1a_loss_rate_89.txt --new;
 
-recorder lossedp COMPGROUP_90 $lossedpvalues3 example1a_loss_90_edp.txt --new;
+recorder lossedp COMPGROUP_90 $lossedpvalues2 example1a_loss_90_edp.txt --new;
 recorder lossim COMPGROUP_90 $lossimvalues example1a_loss_90_im.txt --new;
 ### recorder dsrate COMPGROUP_90;
 recorder dsedp COMPGROUP_90 0.0:0.01:0.200 example1a_ds_edp_90.txt --new;
 recorder lossrate COMPGROUP_90 1E-4:4.8E-3:1.2 example1a_loss_rate_90.txt --new;
 
-recorder lossedp COMPGROUP_91 $lossedpvalues3 example1a_loss_91_edp.txt --new;
+recorder lossedp COMPGROUP_91 $lossedpvalues2 example1a_loss_91_edp.txt --new;
 recorder lossim COMPGROUP_91 $lossimvalues example1a_loss_91_im.txt --new;
 ### recorder dsrate COMPGROUP_91;
 recorder dsedp COMPGROUP_91 0.0:0.01:0.200 example1a_ds_edp_91.txt --new;
 recorder lossrate COMPGROUP_91 1E-4:4.8E-3:1.2 example1a_loss_rate_91.txt --new;
 
-recorder lossedp COMPGROUP_92 $lossedpvalues3 example1a_loss_92_edp.txt --new;
+recorder lossedp COMPGROUP_92 $lossedpvalues2 example1a_loss_92_edp.txt --new;
 recorder lossim COMPGROUP_92 $lossimvalues example1a_loss_92_im.txt --new;
 ### recorder dsrate COMPGROUP_92;
 recorder dsedp COMPGROUP_92 0.0:0.01:0.200 example1a_ds_edp_92.txt --new;
 recorder lossrate COMPGROUP_92 1E-4:4.8E-3:1.2 example1a_loss_rate_92.txt --new;
 
-recorder lossedp COMPGROUP_93 $lossedpvalues3 example1a_loss_93_edp.txt --new;
+recorder lossedp COMPGROUP_93 $lossedpvalues2 example1a_loss_93_edp.txt --new;
 recorder lossim COMPGROUP_93 $lossimvalues example1a_loss_93_im.txt --new;
 ### recorder dsrate COMPGROUP_93;
 recorder dsedp COMPGROUP_93 0.0:0.01:0.200 example1a_ds_edp_93.txt --new;
 recorder lossrate COMPGROUP_93 1E-4:4.8E-3:1.2 example1a_loss_rate_93.txt --new;
 
-recorder lossedp COMPGROUP_94 $lossedpvalues3 example1a_loss_94_edp.txt --new;
+recorder lossedp COMPGROUP_94 $lossedpvalues2 example1a_loss_94_edp.txt --new;
 recorder lossim COMPGROUP_94 $lossimvalues example1a_loss_94_im.txt --new;
 ### recorder dsrate COMPGROUP_94;
 recorder dsedp COMPGROUP_94 0.0:0.01:0.200 example1a_ds_edp_94.txt --new;
 recorder lossrate COMPGROUP_94 1E-4:4.8E-3:1.2 example1a_loss_rate_94.txt --new;
 
-recorder lossedp COMPGROUP_95 $lossedpvalues3 example1a_loss_95_edp.txt --new;
+recorder lossedp COMPGROUP_95 $lossedpvalues2 example1a_loss_95_edp.txt --new;
 recorder lossim COMPGROUP_95 $lossimvalues example1a_loss_95_im.txt --new;
 ### recorder dsrate COMPGROUP_95;
 recorder dsedp COMPGROUP_95 0.0:0.01:0.200 example1a_ds_edp_95.txt --new;
 recorder lossrate COMPGROUP_95 1E-4:4.8E-3:1.2 example1a_loss_rate_95.txt --new;
 
-recorder lossedp COMPGROUP_96 $lossedpvalues3 example1a_loss_96_edp.txt --new;
+recorder lossedp COMPGROUP_96 $lossedpvalues1 example1a_loss_96_edp.txt --new;
 recorder lossim COMPGROUP_96 $lossimvalues example1a_loss_96_im.txt --new;
 ### recorder dsrate COMPGROUP_96;
 recorder dsedp COMPGROUP_96 0.0:0.01:0.200 example1a_ds_edp_96.txt --new;
 recorder lossrate COMPGROUP_96 1E-4:4.8E-3:1.2 example1a_loss_rate_96.txt --new;
 
-recorder lossedp COMPGROUP_97 $lossedpvalues3 example1a_loss_97_edp.txt --new;
+recorder lossedp COMPGROUP_97 $lossedpvalues2 example1a_loss_97_edp.txt --new;
 recorder lossim COMPGROUP_97 $lossimvalues example1a_loss_97_im.txt --new;
 ### recorder dsrate COMPGROUP_97;
 recorder dsedp COMPGROUP_97 0.0:0.01:0.200 example1a_ds_edp_97.txt --new;
 recorder lossrate COMPGROUP_97 1E-4:4.8E-3:1.2 example1a_loss_rate_97.txt --new;
 
-recorder lossedp COMPGROUP_98 $lossedpvalues3 example1a_loss_98_edp.txt --new;
+recorder lossedp COMPGROUP_98 $lossedpvalues2 example1a_loss_98_edp.txt --new;
 recorder lossim COMPGROUP_98 $lossimvalues example1a_loss_98_im.txt --new;
 ### recorder dsrate COMPGROUP_98;
 recorder dsedp COMPGROUP_98 0.0:0.01:0.200 example1a_ds_edp_98.txt --new;
 recorder lossrate COMPGROUP_98 1E-4:4.8E-3:1.2 example1a_loss_rate_98.txt --new;
 
-recorder lossedp COMPGROUP_99 $lossedpvalues3 example1a_loss_99_edp.txt --new;
+recorder lossedp COMPGROUP_99 $lossedpvalues2 example1a_loss_99_edp.txt --new;
 recorder lossim COMPGROUP_99 $lossimvalues example1a_loss_99_im.txt --new;
 ### recorder dsrate COMPGROUP_99;
 recorder dsedp COMPGROUP_99 0.0:0.01:0.200 example1a_ds_edp_99.txt --new;
 recorder lossrate COMPGROUP_99 1E-4:4.8E-3:1.2 example1a_loss_rate_99.txt --new;
 
-recorder lossedp COMPGROUP_100 $lossedpvalues3 example1a_loss_100_edp.txt --new;
+recorder lossedp COMPGROUP_100 $lossedpvalues2 example1a_loss_100_edp.txt --new;
 recorder lossim COMPGROUP_100 $lossimvalues example1a_loss_100_im.txt --new;
 ### recorder dsrate COMPGROUP_100;
 recorder dsedp COMPGROUP_100 0.0:0.01:0.200 example1a_ds_edp_100.txt --new;
 recorder lossrate COMPGROUP_100 1E-4:4.8E-3:1.2 example1a_loss_rate_100.txt --new;
 
-recorder lossedp COMPGROUP_101 $lossedpvalues3 example1a_loss_101_edp.txt --new;
+recorder lossedp COMPGROUP_101 $lossedpvalues2 example1a_loss_101_edp.txt --new;
 recorder lossim COMPGROUP_101 $lossimvalues example1a_loss_101_im.txt --new;
 ### recorder dsrate COMPGROUP_101;
 recorder dsedp COMPGROUP_101 0.0:0.01:0.200 example1a_ds_edp_101.txt --new;
 recorder lossrate COMPGROUP_101 1E-4:4.8E-3:1.2 example1a_loss_rate_101.txt --new;
 
-recorder lossedp COMPGROUP_102 $lossedpvalues3 example1a_loss_102_edp.txt --new;
+recorder lossedp COMPGROUP_102 $lossedpvalues2 example1a_loss_102_edp.txt --new;
 recorder lossim COMPGROUP_102 $lossimvalues example1a_loss_102_im.txt --new;
 ### recorder dsrate COMPGROUP_102;
 recorder dsedp COMPGROUP_102 0.0:0.01:0.200 example1a_ds_edp_102.txt --new;
 recorder lossrate COMPGROUP_102 1E-4:4.8E-3:1.2 example1a_loss_rate_102.txt --new;
 
-recorder lossedp COMPGROUP_103 $lossedpvalues3 example1a_loss_103_edp.txt --new;
+recorder lossedp COMPGROUP_103 $lossedpvalues2 example1a_loss_103_edp.txt --new;
 recorder lossim COMPGROUP_103 $lossimvalues example1a_loss_103_im.txt --new;
 ### recorder dsrate COMPGROUP_103;
 recorder dsedp COMPGROUP_103 0.0:0.01:0.200 example1a_ds_edp_103.txt --new;
 recorder lossrate COMPGROUP_103 1E-4:4.8E-3:1.2 example1a_loss_rate_103.txt --new;
 
-recorder lossedp COMPGROUP_104 $lossedpvalues3 example1a_loss_104_edp.txt --new;
+recorder lossedp COMPGROUP_104 $lossedpvalues2 example1a_loss_104_edp.txt --new;
 recorder lossim COMPGROUP_104 $lossimvalues example1a_loss_104_im.txt --new;
 ### recorder dsrate COMPGROUP_104;
 recorder dsedp COMPGROUP_104 0.0:0.01:0.200 example1a_ds_edp_104.txt --new;
 recorder lossrate COMPGROUP_104 1E-4:4.8E-3:1.2 example1a_loss_rate_104.txt --new;
 
-recorder lossedp COMPGROUP_105 $lossedpvalues3 example1a_loss_105_edp.txt --new;
+recorder lossedp COMPGROUP_105 $lossedpvalues2 example1a_loss_105_edp.txt --new;
 recorder lossim COMPGROUP_105 $lossimvalues example1a_loss_105_im.txt --new;
 ### recorder dsrate COMPGROUP_105;
 recorder dsedp COMPGROUP_105 0.0:0.01:0.200 example1a_ds_edp_105.txt --new;
@@ -1104,5 +1106,6 @@ recorder structloss BUILDING --collapse $linvalues example1a_loss_c_total --new;
 recorder structloss BUILDING --nocollapse $linvalues example1a_loss_nc_total --new;
 
 analyze;
+
 
 
