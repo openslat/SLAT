@@ -1424,7 +1424,7 @@
    #+BEGIN_SRC R :results output latex 
      xtable(compare(paleo.structloss.nc$mean.x,
       	      neo.structloss.nc$mean.x),
-         caption="Comparison of Meean(Loss) without Collapse",
+         caption="Comparison of Mean(Loss) without Collapse",
    	 digits=c(5))
    #+END_SRC
 
@@ -1443,7 +1443,7 @@
      percent(abs(difference)) &   -Inf \\ 
       \hline
    \end{tabular}
-   \caption{Comparison of Meean(Loss) without Collapse} 
+   \caption{Comparison of Mean(Loss) without Collapse} 
    \end{table}
    Warning messages:
    1: In max(abs(a - b)) : no non-missing arguments to max; returning -Inf
@@ -1520,7 +1520,7 @@
    #+BEGIN_SRC R :results output latex 
      xtable(compare(paleo.structloss.c$mean.x,
       	      neo.structloss.c$mean.x),
-         caption="Comparison of Meean(Loss) with Collapse",
+         caption="Comparison of Mean(Loss) with Collapse",
    	 digits=c(5))
    #+END_SRC
 
@@ -2066,5 +2066,86 @@
    0.0 0.0 0
    0.0 0.0 0
    0.0 0.0 0
+#+end_example
+
+*** Per-unit cost
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+     per.unit.cost <- function(low.count, price.at.low, 
+                               high.count, price.at.high,
+                               n)
+     {
+         if (n <= low.count) {
+             unit.price <- price.at.low
+         } else if (n >= high.count) {
+             unit.price <- price.at.high
+         } else {
+             ratio = (n - low.count)/(high.count - low.count)
+             #total.price.low <- price.at.low * low.count
+             #total.price.high <- price.at.high * high.count
+
+             #total.price.n <- total.price.low + ratio * (total.price.high - total.price.low)
+             #unit.price <- total.price.n / n
+	     unit.price <- price.at.low + ratio * (price.at.high - price.at.low)
+         }
+
+         return(unit.price)
+     }
+
+     cost <- function(count) {
+         sapply(count, function(n) {
+             low.count <- 9
+             high.count <- 900
+             price.at.low <- 58.4
+             price.at.high <- 43.2
+
+             return(n * per.unit.cost(low.count, price.at.low, 
+                                      high.count, price.at.high,
+                                      n))
+         })}
+
+     plot(cost, from=0, to = 1000)
+    #+END_SRC
+
+    #+RESULTS:
+    [[file:/tmp/babel-1757XZc/figure-1757I4F.pdf]]
+
+
+    #+BEGIN_SRC R :results output
+      print("203--693 units")
+      print(per.unit.cost(9,  58.4, 900,  43.2, 693))
+      print(per.unit.cost(9, 297.9, 900, 277.8, 693))
+      print("")
+      print("204--2 units")
+      print(per.unit.cost(3, 56000, 5, 33600, 2))
+      print("")
+      print("205--4 units")
+      print(per.unit.cost(2, 220000, 8, 150000, 4))
+      print("")
+      print("208--53 units")
+      print(per.unit.cost(10, 2500, 100, 1000, 53))
+      print("")
+      print("209--16 units")
+      print(per.unit.cost(2, 50000, 6, 40000, 16))
+    #+END_SRC
+
+    #+RESULTS:
+    #+begin_example
+    [1] "203--693 units"
+    [1] 46.73131
+    [1] 282.4697
+    [1] ""
+    [1] "204--2 units"
+    [1] 56000
+    [1] ""
+    [1] "205--4 units"
+    [1] 196666.7
+    [1] ""
+    [1] "208--53 units"
+    [1] 1783.333
+    [1] ""
+    [1] "209--16 units"
+    [1] 40000
 #+end_example
 

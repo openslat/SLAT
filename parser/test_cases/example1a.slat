@@ -106,8 +106,11 @@ fragfn FRAG_203 [0.55, 0.4],
                 [1.0, 0.4]
         --mu mean_x --sd sd_ln_x;
 
-lossfn LOSS_203 simple [43.2, 0.4],
-                     [277.8, 0.4]
+#lossfn LOSS_203 simple [43.2, 0.4],
+#                     [277.8, 0.4]
+#              --mu mean_x --sd sd_ln_x;
+lossfn LOSS_203 simple [46.73131, 0.4],
+                     [282.4967, 0.4]
               --mu mean_x --sd sd_ln_x;
 
 fragfn FRAG_211 [32, 1.4]
@@ -119,8 +122,8 @@ lossfn LOSS_211 simple [900, 1.0]
 fragfn FRAG_208 [1.2, 0.6]
         --mu mean_x --sd sd_ln_x;
 
-lossfn LOSS_208 simple [1000, 0.4]
-#lossfn LOSS_208 simple [1783.33, 0.4]
+#lossfn LOSS_208 simple [1000, 0.4]
+lossfn LOSS_208 simple [1783.333, 0.4]
               --mu mean_x --sd sd_ln_x;
 
 fragfn FRAG_209 [0.8, 0.5]
@@ -132,13 +135,16 @@ lossfn LOSS_209 simple [40000, 0.4]
 fragfn FRAG_205 [1.6, 0.5]
         --mu mean_x --sd sd_ln_x;
 
-lossfn LOSS_205 simple [150000, 0.6]
+#lossfn LOSS_205 simple [150000, 0.6]
+#              --mu mean_x --sd sd_ln_x;
+lossfn LOSS_205 simple [196666.7, 0.6]
               --mu mean_x --sd sd_ln_x;
 
 fragfn FRAG_204 [0.4, 0.3]
         --mu mean_x --sd sd_ln_x;
 
-lossfn LOSS_204 simple [33600, 0.2]
+#lossfn LOSS_204 simple [33600, 0.2]
+lossfn LOSS_204 simple [56000, 0.2]
               --mu mean_x --sd sd_ln_x;
 
 fragfn FRAG_106 [0.0039, 0.17]
