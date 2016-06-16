@@ -5,8 +5,6 @@ title 'This title has several lines.';
 print title example1a_out.txt --new;
 
 # Define the IM function:
-#                        v_asy, IM_asy, alpha
-#detfn IM_FUNC hyperbolic 1221,   29.8,  62.2;
 detfn IM_FUNC loglog    [0.01, 0.376775], [0.02, 0.155158], [0.04, 0.054048],
         [0.06, 0.027886], [0.08, 0.017241], [0.1, 0.011857],  [0.2, 0.003656],
 	[0.3, 0.001628],  [0.4, 0.000794],  [0.5, 0.000405],  [0.6, 0.000214],
@@ -16,11 +14,6 @@ detfn IM_FUNC loglog    [0.01, 0.376775], [0.02, 0.155158], [0.04, 0.054048],
 	[1.9, 2.00E-07],  [2.0, 1.00E-07];
 
 # Define the EDP-IM functions:
-#                          a    b
-#detfn MU_EDP powerlaw    0.1, 1.5;
-#detfn SIGMA_EDP powerlaw 0.5, 0.0;
-
-#probfn EDPIM_FUNC lognormal MU_EDP, SIGMA_EDP --mu mean_x --sd sd_ln_x;
 importprobfn EDPIM_FUNC_1  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
 importprobfn EDPIM_FUNC_2  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP2.txt;
 importprobfn EDPIM_FUNC_3  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP3.txt;
@@ -98,7 +91,7 @@ fragfn FRAG_105 [0.0039, 0.17],
         --mu mean_x --sd sd_ln_x;
 
 lossfn LOSS_105 simple [29.9, 0.2],
-                     [187.7, 0.2]
+                     [178.7, 0.2]
               --mu mean_x --sd sd_ln_x;
 
 fragfn FRAG_107 [0.04, 0.36],
@@ -126,8 +119,8 @@ lossfn LOSS_211 simple [900, 1.0]
 fragfn FRAG_208 [1.2, 0.6]
         --mu mean_x --sd sd_ln_x;
 
-#lossfn LOSS_208 simple [1000, 0.4]
-lossfn LOSS_208 simple [1783.33, 0.4]
+lossfn LOSS_208 simple [1000, 0.4]
+#lossfn LOSS_208 simple [1783.33, 0.4]
               --mu mean_x --sd sd_ln_x;
 
 fragfn FRAG_209 [0.8, 0.5]
@@ -177,9 +170,6 @@ lossfn LOSS_214 simple [  200.0, 0.63],
 		       [ 3600.0, 0.63],
 		       [10000.0, 0.63]
               --mu mean_x --sd sd_ln_x;
-
-
-# 209 205 204 106 108 214	      
 
 compgroup COMPGROUP_1 EDP_2 FRAG_2 LOSS_2 20;
 compgroup COMPGROUP_2 EDP_2 FRAG_2 LOSS_2 18;

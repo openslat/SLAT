@@ -163,9 +163,6 @@
     neo.structloss.nc <- read.csv("example1a_loss_nc_total", 
   				header=TRUE, sep="")
     names(neo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
-  #+END_SRC
-
-  #+RESULTS:
 
     ## Function for comparing data sets, for convenience:
     compare <- function(a, b)  {
@@ -179,7 +176,6 @@
     }
   #+END_SRC
 
-  #+RESULTS:
 
 \clearpage
 * IM
@@ -189,6 +185,8 @@
          , caption="Comparison of IM Rate calculations.",
   	 digits=c(5))
   #+END_SRC
+
+  #+RESULTS:
 
   Plot it (Figure [[fig:im-rate]]):
   <<code:im-rate-plot>>
@@ -214,7 +212,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:im-rate
   #+RESULTS: im-rate
-  [[file:/tmp/babel-1757XZc/figure-1757hSv.pdf]]
+  [[file:/tmp/babel-1757XZc/figure-1757ges.pdf]]
 
 \clearpage
 * EDP
@@ -277,32 +275,6 @@
     #+END_SRC
 
     #+RESULTS:
-    #+BEGIN_EXPORT latex
-    % latex table generated in R 3.2.2 by xtable 1.8-2 package
-    % Thu Jun 16 11:16:48 2016
-    \begin{table}[ht]
-    \centering
-    \begin{tabular}{lrrrrrr}
-      \hline
-    Floor & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
-      \hline
-    Ground Floor Accel & 0.00049 & 0.00008 & 0.04533 & 0.00397 & 0.00021 & 1.21122 \\ 
-      2nd Story Accel & 0.00050 & 0.00011 & 0.04492 & 0.01877 & 0.00159 & 3.98408 \\ 
-      3rd Floor Accel & 0.00050 & 0.00020 & 0.04444 & 0.00819 & 0.00071 & 2.07286 \\ 
-      4th Floor Accel & 0.00048 & 0.00004 & 0.04603 & 0.00883 & 0.00063 & 2.42488 \\ 
-      5th Floor Accel & 0.00005 & 0.00001 & 0.02002 & 0.00890 & 0.00060 & 2.63128 \\ 
-      6th Floor Accel & 0.00005 & 0.00004 & 0.02828 & 0.00817 & 0.00069 & 4.64056 \\ 
-      7th Floor Accel & 0.00005 & 0.00003 & 0.03626 & 0.00538 & 0.00053 & 1.98672 \\ 
-      8th Floor Accel & 0.00005 & 0.00003 & 0.04297 & 0.00334 & 0.00039 & 2.10314 \\ 
-      9th Floor Accel & 0.00005 & 0.00002 & 0.03351 & 0.02071 & 0.00107 & 7.12268 \\ 
-      10th Floor Accel & 0.00005 & 0.00003 & 0.02556 & 0.01621 & 0.00067 & 6.09369 \\ 
-      Roof Accel & 0.00005 & 0.00003 & 0.02907 & 0.00222 & 0.00025 & 0.88240 \\ 
-       \hline
-    \end{tabular}
-    \caption{Comparison of EDP-IM calculations 
-			for acceleration EDPs.} 
-    \end{table}
-    #+END_EXPORT
 
     Plot the mean (Figure [[fig:accel-im-mean]]) and standard deviation (Figure [[fig:accel-im-sd-lnx]]):
     <<code:accel-im-mean>>
@@ -378,7 +350,6 @@
     #+RESULTS: accel-im-sd-lnx
     [[file:/tmp/babel-1757XZc/figure-17570Bb.pdf]]
 
-\clearpagel
 \clearpage
 *** Rate Relationship
     Compare the EDP-RATE calculations, for acceleration-type EDPS:
@@ -445,7 +416,7 @@
     #+RESULTS: accel-im-lambda
     [[file:/tmp/babel-1757XZc/figure-17571Ci.pdf]]
 
-\clearpagel
+\clearpage
 ** Drift   
 *** EDP-IM Relationship
     Compare the mean and standard deviation calculations for the EDP values
