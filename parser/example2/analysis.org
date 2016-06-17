@@ -1,4 +1,4 @@
-#+Title:     SLAT: Example 1 with Collapse Added
+#+Title:     SLAT: Example 2
 #+AUTHOR:    Michael Gauland
 #+EMAIL:     michael.gauland@canterbury.ac.nz
 #+DATE:      {{{time(%Y-%m-%d %H:%M)}}}
@@ -44,7 +44,7 @@
 #+STARTUP: overview
 #+STARTUP: align
 #+STARTUP: noinlineimages
-#+PROPERTY: header-args:R  :session *R-1*
+#+PROPERTY: header-args:R  :session *R-2*
 #+PROPERTY: header-args    :exports both
 
 \clearpage
@@ -70,7 +70,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo.im) = c("IM", "lambda")
 
-    neo.im <- read.csv("example1a_im_rate", 
+    neo.im <- read.csv("results/im_rate", 
                        header=TRUE, sep="")
 
     ## Read the EDP-IM data
@@ -85,7 +85,7 @@
         names(paleo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
 
         neo.edp.im[[i]] <- read.csv(
-            sprintf("example1a_im_edp_%d.txt", i),
+            sprintf("results/im_edp_%d.txt", i),
             header=TRUE, sep="")
         names(neo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
     }
@@ -102,7 +102,7 @@
         names(paleo.edp.rate[[i]]) = c("EDP", "lambda")
 
         neo.edp.rate[[i]] <- read.csv(
-            sprintf("example1a_edp_%d_rate.txt", i),
+            sprintf("results/edp_%d_rate.txt", i),
             header=TRUE, sep="")
         names(neo.edp.rate[[i]]) = c("EDP", "lambda")
     }
@@ -113,7 +113,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo.collapse.im) = c("IM", "pCollapse")
 
-    neo.collapse.im <- read.csv("example1a_collapse.txt", 
+    neo.collapse.im <- read.csv("results/collapse.txt", 
                                 header=TRUE, sep="")
     names(neo.collapse.im) = c("IM", "pCollapse")
 
@@ -130,7 +130,7 @@
         names(paleo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
         neo.loss.im[[i]] <- read.csv(
-            sprintf("example1a_loss_%d_im.txt", i),
+            sprintf("results/loss_%d_im.txt", i),
             header=TRUE, sep="")
         names(neo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
@@ -140,7 +140,7 @@
         names(paleo.loss.edp[[i]])=c("EDP","mean.x","sd.lnx")
 
         neo.loss.edp[[i]] <- read.csv(
-            sprintf("example1a_loss_%d_edp.txt", i),
+            sprintf("results/loss_%d_edp.txt", i),
             header=TRUE, sep="")
         names(neo.loss.edp[[i]]) = c("EDP","mean.x","sd.lnx")
     }
@@ -156,11 +156,11 @@
         skip=3, header=FALSE, sep="")
     names(paleo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
 
-    neo.structloss.c <- read.csv("example1a_loss_c_total", 
+    neo.structloss.c <- read.csv("results/loss_c_total", 
                                  header=TRUE, sep="")
     names(neo.structloss.c) = c("IM", "mean.x", "sd.lnx")
 
-    neo.structloss.nc <- read.csv("example1a_loss_nc_total", 
+    neo.structloss.nc <- read.csv("results/loss_nc_total", 
   				header=TRUE, sep="")
     names(neo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
 
@@ -630,7 +630,7 @@
   #+BEGIN_SRC R  :results value 
     paleo.rate <- scan(paste(results.dir, "collapse-rate", 
                              sep=""), skip=3)
-    neo.rate <- as.numeric(scan("example1a_collrate.txt", 
+    neo.rate <- as.numeric(scan("results/collrate.txt", 
                                 what="string")[8])
     paste(
         sprintf("Paleo: %5.3e; Neo: %5.3e; error: %3.2f%%", 
