@@ -1,0 +1,2154 @@
+#+Title:     SLAT: Redbook Example
+#+AUTHOR:    Michael Gauland
+#+EMAIL:     michael.gauland@canterbury.ac.nz
+#+DATE:      {{{time(%Y-%m-%d %H:%M)}}}
+#+DESCRIPTION: 
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:6 num:t toc:4 \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
+#+OPTIONS:   TeX:dvipng LaTeX:dvipng skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+OPTIONS:   timestamp:t email:t
+#+OPTIONS:   ':t
+#+INFOJS_OPT: view:nil toc:t ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [a4paper]
+#+LATEX_HEADER: \usepackage{unicode-math}
+#+LaTex_header: \usepackage{epstopdf}
+#+LATEX_HEADER: \usepackage{register}
+#+LATEX_HEADER: \usepackage{bytefield}
+#+LATEX_HEADER: \usepackage{parskip}
+#+LATEX_HEADER: \usepackage{tabulary}
+#+LATEX_HEADER: \usepackage[section]{placeins}
+#+LATEX_HEADER: \usepackage[htt]{hyphenat}
+#+LATEX_HEADER: \setlength{\parindent}{0pt}
+#+LATEX_HEADER: \lstset{keywordstyle=\color{blue}\bfseries}
+#+LATEX_HEADER: \newfontfamily\listingsfont[Scale=.7]{DejaVu Sans Mono}
+#+LATEX_HEADER: \lstset{basicstyle=\listingsfont}
+#+LATEX_HEADER: \lstset{showspaces=false}
+#+LATEX_HEADER: \lstset{columns=fixed}
+#+LATEX_HEADER: \lstset{extendedchars=true}
+#+LATEX_HEADER: \lstset{frame=shadowbox}
+#+LATEX_HEADER: \lstset{basicstyle=\ttfamily}
+#+LATEX_HEADER: \definecolor{mygray}{gray}{0.8}
+#+LATEX_HEADER: \lstset{rulesepcolor=\color{mygray}}
+#+LATEX_HEADER: \lstdefinelanguage{dash}{rulecolor=\color{green},rulesepcolor=\color{mygray},frameround=ffff,backgroundcolor=\color{white}}
+#+LATEX_HEADER: \lstdefinelanguage{fundamental}{basicstyle=\ttfamily\scriptsize,rulesepcolor=\color{cyan},frameround=tttt,backgroundcolor=\color{white},breaklines=true}
+#+LATEX_HEADER: \usepackage{pst-circ}
+#+LATEX_HEADER: \usepackage[hang,small,bf]{caption}
+#+LATEX_HEADER: \setlength{\captionmargin}{20pt}
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+#+STARTUP: overview
+#+STARTUP: align
+#+STARTUP: noinlineimages
+#+PROPERTY: header-args:R  :session *R-RB*
+#+PROPERTY: header-args    :exports both
+
+\clearpage
+* Initialisation
+  The code in this section reads in the input data, as well as the results
+  produces by the old ("paleo") and new ("neo") versions of SLAT.
+
+  #+BEGIN_SRC R  :results output :exports both
+    library(xtable)
+
+    num.edps <- 21
+    num.cgs <- 125
+
+
+    ##Set up variables to make it easier to get to the files:
+    paleo.dir = paste("~/SLATv1.15_Public/",
+        "1_Processing/", sep="")
+    results.dir = paste(paleo.dir, "results/", sep="")
+
+    ## Read in the IM data:
+    paleo.im <- read.csv(
+        paste(results.dir, "im-rate.txt", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.im) = c("IM", "lambda")
+
+    neo.im <- read.csv("results/im_rate", 
+                       header=TRUE, sep="")
+
+    ## Read the EDP-IM data
+    paleo.edp.im = list()
+    neo.edp.im = list()
+
+    for (i in seq(num.edps)) {
+        ## Read data from old SLAT:
+        paleo.edp.im[[i]] <- read.csv(
+            sprintf("%sedp-im-%d", results.dir, i),
+            skip=3, header=FALSE, sep="")
+        names(paleo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
+
+        neo.edp.im[[i]] <- read.csv(
+            sprintf("results/im_edp_%d.txt", i),
+            header=TRUE, sep="")
+        names(neo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
+    }
+
+    ## Read the EDP-Rate data
+    paleo.edp.rate = list()
+    neo.edp.rate = list()
+
+    for (i in seq(num.edps)) {
+        ## Read data from old SLAT:
+        paleo.edp.rate[[i]] <- read.csv(
+            sprintf("%sedp-%d-rate.txt", results.dir, i),
+            skip=3, header=FALSE, sep="")
+        names(paleo.edp.rate[[i]]) = c("EDP", "lambda")
+
+        neo.edp.rate[[i]] <- read.csv(
+            sprintf("results/edp_%d_rate.txt", i),
+            header=TRUE, sep="")
+        names(neo.edp.rate[[i]]) = c("EDP", "lambda")
+    }
+
+    ## Read the colapse-im data:
+    paleo.collapse.im <- read.csv(
+        paste(results.dir, "collapse-im", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.collapse.im) = c("IM", "pCollapse")
+
+    neo.collapse.im <- read.csv("results/collapse.txt", 
+                                header=TRUE, sep="")
+    names(neo.collapse.im) = c("IM", "pCollapse")
+
+    ## Read the Component Group loss data
+    paleo.loss.im <- list()
+    paleo.loss.edp <- list()
+    neo.loss.im <- list()
+    neo.loss.edp <- list()
+
+    for (i in seq(num.cgs)) {
+        paleo.loss.im[[i]] <- read.csv(
+            sprintf("%spg-%s-im", results.dir, i),
+            skip=3, header=FALSE, sep="")
+        names(paleo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
+
+        neo.loss.im[[i]] <- read.csv(
+            sprintf("results/loss_%d_im.txt", i),
+            header=TRUE, sep="")
+        names(neo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
+
+        paleo.loss.edp[[i]] <- read.csv(
+            sprintf("%spg-%s-edp", results.dir, i),
+            skip=3, header=FALSE, sep="")
+        names(paleo.loss.edp[[i]])=c("EDP","mean.x","sd.lnx")
+
+        neo.loss.edp[[i]] <- read.csv(
+            sprintf("results/loss_%d_edp.txt", i),
+            header=TRUE, sep="")
+        names(neo.loss.edp[[i]]) = c("EDP","mean.x","sd.lnx")
+    }
+
+    ##Read the Total Loss data:
+    paleo.structloss.c <- read.csv(
+        paste(results.dir, "tlossc", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.structloss.c) = c("IM", "mean.x", "sd.lnx")
+
+    paleo.structloss.nc <- read.csv(
+        paste(results.dir, "tlossnc", sep=""),
+        skip=3, header=FALSE, sep="")
+    names(paleo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
+
+    neo.structloss.c <- read.csv("results/loss_c_total", 
+                                 header=TRUE, sep="")
+    names(neo.structloss.c) = c("IM", "mean.x", "sd.lnx")
+
+    neo.structloss.nc <- read.csv("results/loss_nc_total", 
+  				header=TRUE, sep="")
+    names(neo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
+
+    ## Function for comparing data sets, for convenience:
+    compare <- function(a, b)  {
+        result <-data.frame(Value = c(max(abs(a-b)),
+                                mean(abs(a-b)),
+                                100 * max(abs(a-b)/a)))
+        rownames(result) <- c("max(abs(difference))",
+                              "mean(abs(difference))",
+                              "percent(abs(difference))")
+        return(result)
+    }
+  #+END_SRC
+
+
+\clearpage
+* IM
+  Compare the IM rate of exceedence as calculated by both versions:
+  #+BEGIN_SRC R :results output latex :exports both
+    xtable(compare(paleo.im$lambda, neo.im$lambda)
+         , caption="Comparison of IM Rate calculations.",
+  	 digits=c(5))
+  #+END_SRC
+
+  #+RESULTS:
+
+  Plot it (Figure [[fig:im-rate]]):
+  <<code:im-rate-plot>>
+  #+NAME: im-rate
+  #+HEADER: :results graphics :exports both
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R
+     palette(c("red", "blue"))
+     plot(paleo.im$lambda ~ paleo.im$IM, log="xy", 
+  	xlab="IM", ylab="lambda", main="IM Rate",
+  	type="l", lwd=3, col=1,
+  	xlim=c(0.01, 3.0), ylim=c(1E-8, 1E0),
+  	pch=25)
+
+    lines(neo.im$lambda ~ neo.im$IM, lwd=1, col=2)
+
+    legend(x="topright",
+  	 legend=c("Paleo", "Neo"),
+  	 fill=palette())
+  #+END_SRC
+
+  #+CAPTION: IM rate comparison ([[code:im-rate-plot][code]]).
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:im-rate
+  #+RESULTS: im-rate
+  [[file:/tmp/babel-1757XZc/figure-1757ges.pdf]]
+
+\clearpage
+* EDP
+** Acceleration
+*** EDP-IM Relationship
+    Compare the mean and standard deviation calculations for the EDP values
+    representing acceleration. For each EDP, this table shows the maximum
+    absolute difference between the two programs, the mean absolute difference,
+    and the maximum percentage difference for both the mean and standard
+    deviation calculations:
+    #+BEGIN_SRC R :results output latex :exports both
+      edp.columns <- data.frame(
+          Index=seq(1, num.edps, 1),
+          Label=c("Ground Floor Accel",
+              "2nd Story Drift", "2nd Story Accel",
+              "3rd Floor Drift", "3rd Floor Accel",
+              "4th Floor Drift", "4th Floor Accel",
+              "5th Floor Drift", "5th Floor Accel",
+              "6th Floor Drift", "6th Floor Accel",
+              "7th Floor Drift", "7th Floor Accel",
+              "8th Floor Drift", "8th Floor Accel",
+              "9th Floor Drift", "9th Floor Accel",
+              "10th Floor Drift", "10th Floor Accel",
+              "Roof Drift", "Roof Accel"),
+          stringsAsFactors=FALSE)
+
+      acceleration.cols = edp.columns[seq(1, num.edps, 2),]
+      drift.cols = edp.columns[seq(2, num.edps, 2),]
+
+      edp.comparion <- as.data.frame(
+          matrix(nrow=length(acceleration.cols$Index), ncol=7),
+          stringsasfactors=FALSE)
+      names(edp.comparion) <- c("Floor", "mean.max", "mean.avg",
+                                "mean.pct", "sd.max", "sd.avg",
+                                "sd.pct")
+
+      for (i in 1:nrow(acceleration.cols)) {
+          index <- acceleration.cols[i,]$Index
+          edp.comparion[i,]$Floor <- acceleration.cols[i,]$Label
+
+          temp <- compare(paleo.edp.im[[index]]$mean.x,
+                          neo.edp.im[[index]]$mean.x)
+
+          edp.comparion[i,]$mean.max <- temp[1,]
+          edp.comparion[i,]$mean.avg <- temp[2,]
+          edp.comparion[i,]$mean.pct <- temp[3,]
+
+          temp <- compare(paleo.edp.im[[index]]$sd.lnx,
+                          neo.edp.im[[index]]$sd.lnx)
+          edp.comparion[i,]$sd.max <- temp[1,]
+          edp.comparion[i,]$sd.avg <- temp[2,]
+          edp.comparion[i,]$sd.pct <- temp[3,]
+      }
+      print(
+          xtable(edp.comparion, 
+                 caption="Comparison of EDP-IM calculations 
+                          for acceleration EDPs.",
+                 digits=c(5)),
+          include.rownames=FALSE)
+    #+END_SRC
+
+    #+RESULTS:
+
+    Plot the mean (Figure [[fig:accel-im-mean]]) and standard deviation (Figure [[fig:accel-im-sd-lnx]]):
+    <<code:accel-im-mean>>
+    #+NAME: accel-im-mean
+    #+HEADER: :results graphics :exports both
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      palette(rainbow(nrow(acceleration.cols)))
+
+      x.range <- c()
+      y.range <- c()
+      for (i in acceleration.cols$Index) {
+          x.range <-range(x.range, paleo.edp.im[[i]]$IM)
+          y.range <-range(y.range, paleo.edp.im[[i]]$mean.x)
+      }
+      plot(NULL, xlim=x.range, ylim=y.range, 
+           xlab="IM", ylab="Mean Acceleration",
+           main="Mean Acceleration vs. IM")
+
+      for (i in 1:nrow(acceleration.cols)) {
+          index = acceleration.cols[i,]$Index
+          lines(paleo.edp.im[[index]]$mean.x ~
+                paleo.edp.im[[index]]$IM, 
+                col=i, lwd=3)
+
+          lines(neo.edp.im[[index]]$mean.x ~ 
+                neo.edp.im[[index]]$IM, 
+                lwd=1)
+      }
+      legend(x="topleft", legend=acceleration.cols$Label,
+    	 fill=palette())
+    #+END_SRC
+
+    #+CAPTION: mean(Acceleration EDP) vs. IM ([[code:accel-im-mean][code]]).
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:accel-im-mean
+    #+RESULTS: accel-im-mean
+    [[file:/tmp/babel-1757XZc/figure-1757ama.pdf]]
+
+    #+NAME: accel-im-sd-lnx
+    #+HEADER: :results graphics :exports both
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      palette(rainbow(nrow(acceleration.cols)))
+
+      x.range <- c()
+      y.range <- c()
+      for (i in acceleration.cols$Index) {
+          x.range <-range(x.range, paleo.edp.im[[i]]$IM)
+          y.range <-range(y.range, paleo.edp.im[[i]]$sd.lnx)
+      }
+      plot(NULL, xlim=x.range, ylim=y.range, 
+           xlab="IM", ylab="Sd Acceleration",
+           main="Sd Acceleration vs. IM")
+
+      for (i in 1:nrow(acceleration.cols)) {
+          index = acceleration.cols[i,]$Index
+          lines(paleo.edp.im[[index]]$sd.lnx ~ 
+                paleo.edp.im[[index]]$IM, 
+                col=i, lwd=3)
+
+          lines(neo.edp.im[[index]]$sd.lnx ~ 
+                neo.edp.im[[index]]$IM, 
+                lwd=1)
+      }
+      legend(x="topright", legend=acceleration.cols$Label,
+    	 fill=palette())
+    #+END_SRC
+
+    #+CAPTION: SD(ln(Acceleration EDP)) vs. IM ([[accel-im-sd-lnx][code]])
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:accel-im-sd-lnx
+    #+RESULTS: accel-im-sd-lnx
+    [[file:/tmp/babel-1757XZc/figure-17570Bb.pdf]]
+
+\clearpage
+*** Rate Relationship
+    Compare the EDP-RATE calculations, for acceleration-type EDPS:
+    #+BEGIN_SRC R :results output latex :exports both
+      edp.comparion <- as.data.frame(
+          matrix(nrow=length(acceleration.cols$Index), ncol=4),
+          stringsasfactors=FALSE)
+
+      names(edp.comparion) <- c("Floor", "mean", "avg", "pct")
+
+      for (i in 1:nrow(acceleration.cols)) {
+          index <- acceleration.cols[i,]$Index
+          edp.comparion[i,]$Floor <- acceleration.cols[i,]$Label
+
+          temp <- compare(paleo.edp.rate[[index]]$lambda,
+                          neo.edp.rate[[index]]$lambda)
+
+          edp.comparion[i,]$mean <- temp[1,]
+          edp.comparion[i,]$avg <- temp[2,]
+          edp.comparion[i,]$pct <- temp[3,]
+      }
+      print(xtable(edp.comparion,
+                   caption="Comparion of EDP-RATE calculations, for 
+    			acceleration-type EDPs",
+                   digits=5),
+    	include.rownames=FALSE)
+     #+END_SRC
+
+     #+RESULTS:
+
+     Plot the calculated curves (Figure [[fig:accel-im-lambda]]):
+    #+NAME: accel-im-lambda
+    #+HEADER: :results graphics :exports both
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      palette(rainbow(nrow(acceleration.cols)))
+
+      x.range <- c()
+      y.range <- c()
+      for (i in acceleration.cols$Index) {
+          x.range <-range(x.range, paleo.edp.rate[[i]]$EDP)
+          y.range <-range(y.range, paleo.edp.rate[[i]]$lambda)
+      }
+      plot(NULL, xlim=x.range, ylim=y.range, 
+           xlab="EDP", ylab="Lambda",
+           log="y",
+           main="Lambda(Acceleration) vs. EDP")
+
+      for (i in 1:nrow(acceleration.cols)) {
+          index = acceleration.cols[i,]$Index
+          lines(paleo.edp.rate[[index]]$lambda ~
+                paleo.edp.rate[[index]]$EDP, col=i, lwd=3)
+
+          lines(neo.edp.rate[[index]]$lambda ~
+                neo.edp.rate[[index]]$EDP, lwd=1)
+      }
+      legend(x="topright", legend=acceleration.cols$Label,
+    	 fill=palette())
+    #+END_SRC
+
+    #+CAPTION: SD(ln(Acceleration EDP)) vs. IM ([[accel-im-lambda][code]])
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:accel-im-lambda
+    #+RESULTS: accel-im-lambda
+    [[file:/tmp/babel-1757XZc/figure-17571Ci.pdf]]
+
+\clearpage
+** Drift   
+*** EDP-IM Relationship
+    Compare the mean and standard deviation calculations for the EDP values
+    representing drift. For each EDP, this table shows the maximum
+    absolute difference between the two programs, the mean absolute difference,
+    and the maximum percentage difference for both the mean and standard
+    deviation calculations:
+    #+BEGIN_SRC R :results output latex :exports both
+      edp.comparion <- as.data.frame(
+          matrix(nrow=length(drift.cols$Index), ncol=7),
+          stringsasfactors=FALSE)
+
+      names(edp.comparion) <- c("Floor", "mean.max", "mean.avg",
+                                "mean.pct", "sd.max", "sd.avg", 
+                                "sd.pct")
+
+      for (i in 1:nrow(drift.cols)) {
+          index <- drift.cols[i,]$Index
+          edp.comparion[i,]$Floor <- drift.cols[i,]$Label
+
+          temp <- compare(paleo.edp.im[[index]]$mean.x,
+                          neo.edp.im[[index]]$mean.x)
+          edp.comparion[i,]$mean.max <- temp[1,]
+          edp.comparion[i,]$mean.avg <- temp[2,]
+          edp.comparion[i,]$mean.pct <- temp[3,]
+
+          temp <- compare(paleo.edp.im[[index]]$sd.lnx,
+                          neo.edp.im[[index]]$sd.lnx)
+          edp.comparion[i,]$sd.max <- temp[1,]
+          edp.comparion[i,]$sd.avg <- temp[2,]
+          edp.comparion[i,]$sd.pct <- temp[3,]
+      }
+      print(xtable(edp.comparion, 
+                   caption="Comparison of EDP-IM calculations
+    			for drift EDPs.",
+                   digits=c(5)),
+    	include.rownames=FALSE)
+    #+END_SRC
+
+    Plot the mean (Figure [[fig:drift-im-mean]]) and standard deviation (Figure [[fig:drift-im-sd-lnx]]):
+    #+NAME: drift-im-mean
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      palette(rainbow(nrow(drift.cols)))
+
+      x.range <- c()
+      y.range <- c()
+      for (i in drift.cols$Index) {
+          x.range <-range(x.range, paleo.edp.im[[i]]$IM)
+          y.range <-range(y.range, paleo.edp.im[[i]]$mean.x)
+      }
+      plot(NULL, xlim=x.range, ylim=y.range, 
+           xlab="IM", ylab="Mean Drift",
+           main="Mean Drift vs. IM")
+
+      for (i in 1:nrow(drift.cols)) {
+          index = drift.cols[i,]$Index
+          lines(paleo.edp.im[[index]]$mean.x ~
+                paleo.edp.im[[index]]$IM, col=i, lwd=3)
+
+          lines(neo.edp.im[[index]]$mean.x ~
+                neo.edp.im[[index]]$IM, lwd=1)
+      }
+      legend(x="topleft", legend=drift.cols$Label,
+    	 fill=palette())
+    #+END_SRC
+
+    #+CAPTION: mean(Drift EDP) vs. IM ([[drift-im-mean][code]]).
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:drift-im-mean
+    #+RESULTS: drift-im-mean
+    [[file:/tmp/babel-1757XZc/figure-1757ama.pdf]]
+
+    #+NAME: drift-im-sd-lnx
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      palette(rainbow(nrow(drift.cols)))
+
+      x.range <- c()
+      y.range <- c()
+      for (i in drift.cols$Index) {
+          x.range <-range(x.range, paleo.edp.im[[i]]$IM)
+          y.range <-range(y.range, paleo.edp.im[[i]]$sd.lnx)
+      }
+      plot(NULL, xlim=x.range, ylim=y.range, 
+           xlab="IM", ylab="Sd Drift",
+           main="Sd Drift vs. IM")
+
+      for (i in 1:nrow(drift.cols)) {
+          index = drift.cols[i,]$Index
+          lines(paleo.edp.im[[index]]$sd.lnx ~
+                paleo.edp.im[[index]]$IM, col=i, lwd=3)
+
+          lines(neo.edp.im[[index]]$sd.lnx ~
+                neo.edp.im[[index]]$IM, lwd=1)
+      }
+      legend(x="topright", legend=drift.cols$Label, 
+    	 fill=palette())
+    #+END_SRC
+
+    #+CAPTION: SD(ln(Drift EDP)) vs. IM ([[drift-im-sd-lnx][code]])
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:drift-im-sd-lnx
+    #+RESULTS: drift-im-sd-lnx
+    [[file:/tmp/babel-1757XZc/figure-17570Bb.pdf]]
+
+\clearpage
+*** Rate Relationship
+    Compare the EDP-RATE calculations, for drift-type EDPS:
+    #+BEGIN_SRC R :results output latex
+      edp.comparion <- as.data.frame(
+          matrix(nrow=length(drift.cols$Index), ncol=4),
+          stringsasfactors=FALSE)
+
+      names(edp.comparion) <- c("Floor", "mean", "avg", "pct")
+
+      for (i in 1:nrow(drift.cols)) {
+          index <- drift.cols[i,]$Index
+          edp.comparion[i,]$Floor <- drift.cols[i,]$Label
+
+          temp <- compare(paleo.edp.rate[[index]]$lambda,
+                          neo.edp.rate[[index]]$lambda)
+          edp.comparion[i,]$mean <- temp[1,]
+          edp.comparion[i,]$avg <- temp[2,]
+          edp.comparion[i,]$pct <- temp[3,]
+      }
+      print(xtable(edp.comparion,
+                   caption="Comparion of EDP-RATE calculations,
+    			for drift-type EDPs",
+                   digits=5),
+    	include.rownames=FALSE)
+     #+END_SRC
+
+     #+RESULTS:
+
+     Plot the calculated curves (Figure [[fig:drift-im-lambda]]):
+    #+NAME: drift-im-lambda
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      palette(rainbow(nrow(drift.cols)))
+
+      x.range <- c()
+      y.range <- c()
+      for (i in drift.cols$Index) {
+          x.range <-range(x.range, paleo.edp.rate[[i]]$EDP)
+          y.range <-range(y.range, paleo.edp.rate[[i]]$lambda)
+      }
+      plot(NULL, xlim=x.range, ylim=y.range, 
+           xlab="EDP", ylab="Lambda",
+           log="y",
+           main="Lambda(Drift) vs. EDP")
+
+      for (i in 1:nrow(drift.cols)) {
+          index = drift.cols[i,]$Index
+          lines(paleo.edp.rate[[index]]$lambda ~ 
+                paleo.edp.rate[[index]]$EDP, col=i, lwd=3)
+
+          lines(neo.edp.rate[[index]]$lambda ~ 
+                neo.edp.rate[[index]]$EDP, lwd=1)
+      }
+      legend(x="topright", legend=drift.cols$Label, 
+    	 fill=palette())
+    #+END_SRC
+
+    #+CAPTION: SD(ln(Drift EDP)) vs. IM ([[drift-im-lambda][code]])
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:drift-im-lambda
+    #+RESULTS: drift-im-lambda
+    [[file:/tmp/babel-1757XZc/figure-17571Ci.pdf]]
+\clearpage
+* COLLAPSE
+  Compare the two versions:
+  #+BEGIN_SRC R :results output latex
+    xtable(compare(paleo.collapse.im$pCollapse,
+    	       neo.collapse.im$pCollapse),
+  	 caption="Comparison of Collapse-IM calculations.",
+  	 digits=c(5))
+  #+END_SRC
+
+  #+RESULTS:
+
+  Plot it the collapse curves:
+  #+NAME: collapse-im
+  #+HEADER: :results graphics
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+BEGIN_SRC R 
+    palette(c("red", "blue"))
+    plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, 
+         log="", lwd=5,
+         xlab="IM", ylab="pCollapse", main="COLLAPSE Rate",
+         type="p", col=1)
+
+    lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, 
+        col=2, lwd=3)
+
+    legend(x="right",
+         legend=c("Paleo", "Neo"),
+         fill=palette())
+  #+END_SRC
+
+  #+CAPTION: Probability of Collapse calculations
+  #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+  #+NAME: fig:collapse-im
+  #+RESULTS: collapse-im
+  [[file:/tmp/babel-1757XZc/figure-1757lVt.pdf]]
+
+  The overall rate of collapse:
+  #+BEGIN_SRC R  :results value 
+    paleo.rate <- scan(paste(results.dir, "collapse-rate", 
+                             sep=""), skip=3)
+    neo.rate <- as.numeric(scan("results/collrate.txt", 
+                                what="string")[8])
+    paste(
+        sprintf("Paleo: %5.3e; Neo: %5.3e; error: %3.2f%%", 
+                paleo.rate,
+                neo.rate, 
+                (100*abs(neo.rate - paleo.rate)/paleo.rate)),
+        sep="\n")
+  #+END_SRC
+  
+  #+RESULTS:
+  : Paleo: 2.125e-04; Neo: 2.159e-04; error: 1.57%
+
+\clearpage
+* Component Groups
+  #+BEGIN_SRC R :results output latex :exports both
+    ## This data comes from the old Example 2 input file, desc
+    ## ribing the component groups:
+    cgs.descrip <- data.frame(
+
+        matrix( c(1, 2, 2, 20, 2, 2, 2, 32, 3, 2, 4, 20, 4,
+    2, 4, 32, 5, 2, 6, 20, 6, 2, 6, 32, 7, 2, 8, 20, 8, 2,
+    8, 32, 9, 2, 10, 20, 10, 2, 10, 32, 11, 2, 12, 20, 12,
+    2, 12, 32, 13, 2, 14, 20, 14, 2, 14, 32, 15, 2, 16, 20,
+    16, 2, 16, 32, 17, 2, 18, 20, 18, 2, 18, 32, 19, 2, 20,
+    20, 20, 2, 20, 32, 21, 3, 2, 20, 22, 3, 4, 20, 23, 3,
+    6, 20, 24, 3, 8, 20, 25, 3, 10, 20, 26, 3, 12, 20, 27,
+    3, 14, 20, 28, 3, 16, 20, 29, 3, 18, 20, 30, 3, 20, 20,
+    31, 105, 2, 728, 32, 105, 4, 728, 33, 105, 6, 728, 34,
+    105, 8, 728, 35, 105, 10, 728, 36, 105, 12, 728, 37,
+    105, 14, 728, 38, 105, 16, 728, 39, 105, 18, 728, 40,
+    105, 20, 728, 41, 106, 2, 728, 42, 106, 4, 728, 43,
+    106, 6, 728, 44, 106, 8, 728, 45, 106, 10, 728, 46,
+    106, 12, 728, 47, 106, 14, 728, 48, 106, 16, 728, 49,
+    106, 18, 728, 50, 106, 20, 728, 51, 107, 2, 157, 52,
+    107, 4, 157, 53, 107, 6, 157, 54, 107, 8, 157, 55, 107,
+    10, 157, 56, 107, 12, 157, 57, 107, 14, 157, 58, 107,
+    16, 157, 59, 107, 18, 157, 60, 107, 20, 157, 61, 203,
+    3, 728, 62, 203, 5, 728, 63, 203, 7, 728, 64, 203, 9,
+    728, 65, 203, 11, 728, 66, 203, 13, 728, 67, 203, 15,
+    728, 68, 203, 17, 728, 69, 203, 19, 728, 70, 203, 21,
+    728, 71, 211, 3, 73, 72, 211, 5, 73, 73, 211, 7, 73,
+    74, 211, 9, 73, 75, 211, 11, 73, 76, 211, 13, 73, 77,
+    211, 15, 73, 78, 211, 17, 73, 79, 211, 19, 73, 80, 211,
+    21, 73, 81, 205, 21, 4, 82, 214, 1, 10, 83, 214, 3, 10,
+    84, 214, 5, 10, 85, 214, 7, 10, 86, 214, 9, 10, 87,
+    214, 11, 10, 88, 214, 13, 10, 89, 214, 15, 10, 90, 214,
+    17, 10, 91, 214, 19, 10, 92, 108, 2, 10, 93, 108, 4,
+    10, 94, 108, 6, 10, 95, 108, 8, 10, 96, 108, 10, 10,
+    97, 108, 12, 10, 98, 108, 14, 10, 99, 108, 16, 10, 100,
+    108, 18, 10, 101, 108, 20, 10, 102, 208, 1, 53, 103,
+    208, 3, 53, 104, 208, 5, 53, 105, 208, 7, 53, 106, 208,
+    9, 53, 107, 208, 11, 53, 108, 208, 13, 53, 109, 208,
+    15, 53, 110, 208, 17, 53, 111, 208, 19, 53, 112, 209,
+    5, 16, 113, 209, 11, 16, 114, 209, 19, 16, 115, 210, 1,
+    80, 116, 210, 3, 80, 117, 210, 5, 80, 118, 210, 7, 80,
+    119, 210, 9, 80, 120, 210, 11, 80, 121, 210, 13, 80,
+    122, 210, 15, 80, 123, 210, 17, 80, 124, 210, 19, 80,
+    125, 204, 1, 2),
+               ncol=4, byrow=TRUE) )
+
+    names(cgs.descrip) <- c("Index","Type","EDP","Quantity") 
+    component.types <- levels(factor(cgs.descrip$Type))
+#+END_SRC
+
+** Loss-EDP Relation
+   #+BEGIN_SRC R :results output latex :exports both
+    ## This data comes from the old Example 2 input file, desc
+    ## ribing the component groups:
+    cg.edp.summary <- as.data.frame(matrix(nrow=num.cgs, ncol=6))
+    names(cg.edp.summary) <- c("mean.max", "mean.avg", "mean.pct",
+    		       "sd.max", "sd.avg", "sd.pct")
+
+    for (i in 1:num.cgs) {
+        temp <- compare(paleo.loss.edp[[i]]$mean.x, 
+                        neo.loss.edp[[i]]$mean.x)
+        cg.edp.summary[i,]$mean.max <- temp[1,]
+        cg.edp.summary[i,]$mean.avg <- temp[2,]
+        cg.edp.summary[i,]$mean.pct <- temp[3,]
+
+        temp <- compare(paleo.loss.edp[[i]]$sd.lnx,
+                        neo.loss.edp[[i]]$sd.lnx)
+        cg.edp.summary[i,]$sd.max <- temp[1,]
+        cg.edp.summary[i,]$sd.avg <- temp[2,]
+        cg.edp.summary[i,]$sd.pct <- temp[3,]
+    }
+   #+END_SRC
+
+    
+   #+BEGIN_SRC R :results output :exports both
+    ## Function to print summary table of  group-EDP relations
+    print.cg.edp.summary <- function(CG) {
+        print(
+            xtable(
+                cg.edp.summary[cgs.descrip
+  			 [cgs.descrip$Type==CG,]$Index,],
+                caption=sprintf("Comparison of Component
+    			      Groups of type #%s.", CG),
+                digits=3))
+    }
+   #+END_SRC
+
+   #+BEGIN_SRC R :results output :exports both
+    ## Function to plot component group-EDP relations
+    plot_cg_edp <- function(CG) {
+        par(mfrow=c(2,1))
+        components<-cgs.descrip[cgs.descrip$Type == CG,]$Index
+        palette(rainbow(max(length(components), 2)))
+
+        x.range <- c()
+        y.range <- c()
+        for (c in components) {
+            x.range<-range(x.range, paleo.loss.edp[[c]]$EDP)
+            y.range<-range(y.range,paleo.loss.edp[[c]]$mean.x)
+
+            x.range<-range(x.range, neo.loss.edp[[c]]$EDP)
+            y.range<-range(y.range,neo.loss.edp[[c]]$mean.x)
+        }
+        plot(NULL, xlim=x.range, ylim=y.range, 
+             xlab="EDP", ylab="Mean(Loss)",
+             log="",
+             main=sprintf("Mean(Loss) vs. EDP, Component #%d", 
+                 CG))
+
+        for (i in 1:length(components)) {
+            index = components[i]
+            lines(paleo.loss.edp[[index]]$mean.x ~ 
+  		paleo.loss.edp[[index]]$EDP, 
+  		col=i, lwd=3)
+
+            lines(neo.loss.edp[[index]]$mean.x ~ 
+  		neo.loss.edp[[index]]$EDP, lwd=1)
+        }
+        ##legend(x="topright", legend=components, fill=palette())
+
+        x.range <- c()
+        y.range <- c()
+        for (c in components) {
+            x.range<-range(x.range,paleo.loss.edp[[c]]$EDP)
+            y.range<-range(y.range,paleo.loss.edp[[c]]$sd.lnx)
+
+            x.range<-range(x.range,neo.loss.edp[[c]]$EDP)
+            y.range<-range(y.range,neo.loss.edp[[c]]$sd.lnx)
+        }
+        plot(NULL, xlim=x.range, ylim=y.range, 
+             xlab="EDP", ylab="SD(ln(Loss))",
+             log="",
+             main=sprintf(
+                 "SD(ln(Loss)) vs. EDP, Component #%d",
+                 CG))
+
+        for (i in 1:length(components)) {
+            index = components[i]
+            lines(paleo.loss.edp[[index]]$sd.lnx ~
+  		paleo.loss.edp[[index]]$EDP,
+  		col=i, lwd=3)
+
+            lines(neo.loss.edp[[index]]$sd.lnx ~ 
+  		neo.loss.edp[[index]]$EDP, 
+  		lwd=1)
+        }
+        legend(x="topright", legend=components, fill=palette(), 
+               ncol=4)
+    }
+   #+END_SRC
+
+   #+RESULTS:
+
+   \clearpage
+*** Component Type #2
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 2
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-2-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(2)
+    #+END_SRC
+
+    #+CAPTION: Components of type #2
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-2-edp
+    #+RESULTS: cg-2-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #3
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 3
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-3-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #3
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-3-edp
+    #+RESULTS: cg-3-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #105
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 105
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-105-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #105
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-105-edp
+    #+RESULTS: cg-105-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #106
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 106
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-106-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #106
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-106-edp
+    #+RESULTS: cg-106-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #107
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 107
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-107-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #107
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-107-edp
+    #+RESULTS: cg-107-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #108
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 108
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-108-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #108
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-108-edp
+    #+RESULTS: cg-108-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #203
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 203
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-203-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #203
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-203-edp
+    #+RESULTS: cg-203-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #204
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 204
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-204-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #204
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-204-edp
+    #+RESULTS: cg-204-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #205
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 205
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-205-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #205
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-205-edp
+    #+RESULTS: cg-205-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #208
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 208
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-208-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #208
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-208-edp
+    #+RESULTS: cg-208-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #209
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 209
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-209-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #209
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-209-edp
+    #+RESULTS: cg-209-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #211
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 211
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-211-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #211
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-211-edp
+    #+RESULTS: cg-211-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+*** Component Type #214
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 214
+      print.cg.edp.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-214-edp
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_edp(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #214
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-214-edp
+    #+RESULTS: cg-214-edp
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+    \clearpage
+** Loss-IM Relation
+  #+BEGIN_SRC R :results output latex :exports both
+    cg.im.summary <- as.data.frame(matrix(nrow=num.cgs, ncol=6))
+    names(cg.im.summary) <- c("mean.max", "mean.avg", "mean.pct",
+    		       "sd.max", "sd.avg", "sd.pct")
+
+    for (i in 1:num.cgs) {
+        temp <- compare(paleo.loss.im[[i]]$mean.x, 
+                        neo.loss.im[[i]]$mean.x)
+        cg.im.summary[i,]$mean.max <- temp[1,]
+        cg.im.summary[i,]$mean.avg <- temp[2,]
+        cg.im.summary[i,]$mean.pct <- temp[3,]
+
+        temp <- compare(paleo.loss.im[[i]]$sd.lnx,
+                        neo.loss.im[[i]]$sd.lnx)
+        cg.im.summary[i,]$sd.max <- temp[1,]
+        cg.im.summary[i,]$sd.avg <- temp[2,]
+        cg.im.summary[i,]$sd.pct <- temp[3,]
+    }
+#+END_SRC
+
+    
+  #+BEGIN_SRC R :results output :exports both
+    ## Function to print summary table of  group-IM relations
+    print.cg.im.summary <- function(CG) {
+        print(
+            xtable(
+                cg.im.summary[cgs.descrip
+  			 [cgs.descrip$Type==CG,]$Index,],
+                caption=sprintf("Comparison of Component
+    			      Groups of type #%s.", CG),
+                digits=3))
+    }
+    #+END_SRC
+
+  #+BEGIN_SRC R :results output :exports both
+    ## Function to plot component group-IM relations
+    plot_cg_im <- function(CG) {
+        par(mfrow=c(2,1))
+        components<-cgs.descrip[cgs.descrip$Type == CG,]$Index
+        palette(rainbow(max(length(components), 2)))
+
+        x.range <- c()
+        y.range <- c()
+        for (c in components) {
+            x.range<-range(x.range, paleo.loss.im[[c]]$IM)
+            y.range<-range(y.range,paleo.loss.im[[c]]$mean.x)
+
+            x.range<-range(x.range, neo.loss.im[[c]]$IM)
+            y.range<-range(y.range,neo.loss.im[[c]]$mean.x)
+        }
+        plot(NULL, xlim=x.range, ylim=y.range, 
+             xlab="IM", ylab="Mean(Loss)",
+             log="",
+             main=sprintf("Mean(Loss) vs. IM, Component #%d", 
+                 CG))
+
+        for (i in 1:length(components)) {
+            index = components[i]
+            lines(paleo.loss.im[[index]]$mean.x ~ 
+  		paleo.loss.im[[index]]$IM, 
+  		col=i, lwd=3)
+
+            lines(neo.loss.im[[index]]$mean.x ~ 
+  		neo.loss.im[[index]]$IM, lwd=1)
+        }
+        ##legend(x="topright", legend=components, fill=palette())
+
+        x.range <- c()
+        y.range <- c()
+        for (c in components) {
+            x.range<-range(x.range,paleo.loss.im[[c]]$IM)
+            y.range<-range(y.range,paleo.loss.im[[c]]$sd.lnx)
+
+            x.range<-range(x.range,neo.loss.im[[c]]$IM)
+            y.range<-range(y.range,neo.loss.im[[c]]$sd.lnx)
+        }
+        plot(NULL, xlim=x.range, ylim=y.range, 
+             xlab="IM", ylab="SD(ln(Loss))",
+             log="",
+             main=sprintf(
+                 "SD(ln(Loss)) vs. IM, Component #%d",
+                 CG))
+
+        for (i in 1:length(components)) {
+            index = components[i]
+            lines(paleo.loss.im[[index]]$sd.lnx ~
+  		paleo.loss.im[[index]]$IM,
+  		col=i, lwd=3)
+
+            lines(neo.loss.im[[index]]$sd.lnx ~ 
+  		neo.loss.im[[index]]$IM, 
+  		lwd=1)
+        }
+        legend(x="topright", legend=components, fill=palette(), 
+               ncol=4)
+    }
+  #+END_SRC
+
+\clearpage
+*** Component Type #2
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 2
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-2-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(2)
+    #+END_SRC
+
+    #+CAPTION: Components of type #2
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-2-im
+    #+RESULTS: cg-2-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #3
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 3
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-3-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #3
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-3-im
+    #+RESULTS: cg-3-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #105
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 105
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-105-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #105
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-105-im
+    #+RESULTS: cg-105-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #106
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 106
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-106-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #106
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-106-im
+    #+RESULTS: cg-106-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #107
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 107
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-107-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #107
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-107-im
+    #+RESULTS: cg-107-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #108
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 108
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-108-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #108
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-108-im
+    #+RESULTS: cg-108-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #203
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 203
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-203-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #203
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-203-im
+    #+RESULTS: cg-203-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #204
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 204
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-204-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #204
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-204-im
+    #+RESULTS: cg-204-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #205
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 205
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-205-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #205
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-205-im
+    #+RESULTS: cg-205-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #208
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 208
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-208-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #208
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-208-im
+    #+RESULTS: cg-208-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #209
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 209
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-209-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #209
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-209-im
+    #+RESULTS: cg-209-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #211
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 211
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-211-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #211
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-211-im
+    #+RESULTS: cg-211-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Component Type #214
+    #+BEGIN_SRC R :results output latex :exports both
+      CG = 214
+      print.cg.im.summary(CG)
+    #+END_SRC
+
+    #+NAME: cg-214-im
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+      plot_cg_im(CG)
+    #+END_SRC
+
+    #+CAPTION: Components of type #214
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:cg-214-im
+    #+RESULTS: cg-214-im
+    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+
+\clearpage
+*** Loss-IM Relation
+* Total Loss
+
+** Non-Collapse
+   Compare the means and standard deviations:
+   #+BEGIN_SRC R :results output latex 
+     xtable(compare(paleo.structloss.nc$mean.x,
+      	      neo.structloss.nc$mean.x),
+         caption="Comparison of Mean(Loss) without Collapse",
+   	 digits=c(5))
+   #+END_SRC
+
+   #+RESULTS:
+   #+BEGIN_EXPORT latex
+   % latex table generated in R 3.2.2 by xtable 1.8-2 package
+   % Thu Jun 16 15:08:03 2016
+   \begin{table}[ht]
+   \centering
+   \begin{tabular}{rr}
+     \hline
+    & Value \\ 
+     \hline
+   max(abs(difference)) &   -Inf \\ 
+     mean(abs(difference)) &  \\ 
+     percent(abs(difference)) &   -Inf \\ 
+      \hline
+   \end{tabular}
+   \caption{Comparison of Mean(Loss) without Collapse} 
+   \end{table}
+   Warning messages:
+   1: In max(abs(a - b)) : no non-missing arguments to max; returning -Inf
+   2: In max(abs(a - b)/a) : no non-missing arguments to max; returning -Inf
+   #+END_EXPORT
+
+
+   #+BEGIN_SRC R :results output latex
+     xtable(compare(paleo.structloss.nc$sd.lnx,
+   		 neo.structloss.nc$sd.lnx),
+   	 caption="Comparison of sd(ln(Loss)) without Collapse",
+   	 digits=c(5))
+   #+END_SRC
+
+   #+RESULTS:
+
+   Plot the mean (Figure [[fig:structloss.nc-mean]]) and standard deviation (Figure
+   [[fig:structloss.nc-sd]]):
+   #+NAME: structloss.nc-mean
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R
+     palette(c("red", "blue"))
+     plot(paleo.structloss.nc$mean.x ~
+          paleo.structloss.nc$IM, log="",
+	  xlim=c(0, 1.5), ylim=c(0, 10E6),
+          xlab="IM", ylab="Mean(Loss)", 
+          main="Total Loss, No Collapse",
+          type="p", col=1, lwd=5)
+
+     lines(neo.structloss.nc$mean.x ~ neo.structloss.nc$IM, 
+         col=2, lwd=3)
+
+     legend(x="topright",
+          legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
+
+   #+CAPTION: Mean Total Loss 
+   #+CAPTION: (*not* considering collapse)
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.nc-mean
+   #+RESULTS: structloss.nc-mean
+   [[file:/tmp/babel-1757XZc/figure-1757ctC.pdf]]
+
+
+   #+NAME: structloss.nc-sd
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R  
+     palette(c("red", "blue"))
+     plot(paleo.structloss.nc$sd.lnx ~ paleo.structloss.nc$IM,
+          log="", xlab="IM", ylab="sd(ln(Loss))", 
+          main="Total Loss, No Collapse",
+          type="p", col=1, lwd=5)
+     lines(neo.structloss.nc$sd.lnx ~ neo.structloss.nc$IM, 
+         col=2, lwd=3)
+  
+     legend(x="topright",
+          legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
+
+   #+CAPTION: Standard deviation of total loss
+   #+CAPTION: (*not* considering collapse)
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.nc-sd
+   #+RESULTS: structloss.nc-sd
+   [[file:/tmp/babel-1757XZc/figure-1757QWb.pdf]]
+
+
+** Collapse
+   Compare the means and standard deviations:
+   #+BEGIN_SRC R :results output latex 
+     xtable(compare(paleo.structloss.c$mean.x,
+      	      neo.structloss.c$mean.x),
+         caption="Comparison of Mean(Loss) with Collapse",
+   	 digits=c(5))
+   #+END_SRC
+
+
+   #+BEGIN_SRC R :results output latex
+     xtable(compare(paleo.structloss.c$sd.lnx,
+   		 neo.structloss.c$sd.lnx),
+   	 caption="Comparison of sd(ln(Loss)) with Collapse",
+   	 digits=c(5))
+   #+END_SRC
+   Compare the means and standard deviations:
+
+   Plot the mean (Figure [[fig:structloss.c-mean]]) and standard deviation (Figure
+   [[fig:structloss.c-sd]]):
+   #+NAME: structloss.c-mean
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R
+     palette(c("red", "blue"))
+     plot(paleo.structloss.c$mean.x ~ paleo.structloss.c$IM, 
+          log="", xlab="IM", ylab="Mean(Loss)",
+	  xlim=c(0, 1.5), ylim=c(0, 20E6),
+          main="Total Loss, Collapse",
+          type="p", col=1, lwd=5)
+
+     lines(neo.structloss.c$mean.x ~ neo.structloss.c$IM, 
+         col=2, lwd=3)
+
+     legend(x="topright",
+          legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
+
+   #+CAPTION: Mean of total loss, considering collapse.
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.c-mean
+   #+RESULTS: structloss.c-mean
+   [[file:/tmp/babel-1757XZc/figure-1757E_z.pdf]]
+
+
+   #+NAME: structloss.c-sd
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R  
+     palette(c("red", "blue"))
+     plot(paleo.structloss.c$sd.lnx ~ paleo.structloss.c$IM, log="", 
+          xlab="EDP", ylab="sd(ln(Loss))", main="Total Loss, Collapse",
+	  ylim=c(0, max(paleo.structloss.c$sd.lnx)),
+          type="p", col=1, lwd=5)
+     lines(neo.structloss.c$sd.lnx ~ neo.structloss.c$IM, 
+  	 col=2, lwd=3)
+
+     legend(x="topright",
+          legend=c("Paleo", "Neo"),
+          fill=palette())
+   #+END_SRC
+
+   #+CAPTION: Standard deviation of loss, considering collapse
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.c-sd
+   #+RESULTS: structloss.c-sd
+   [[file:/tmp/babel-1757XZc/figure-1757dnV.pdf]]
+
+
+** Scratch							   :noexport:
+   :PROPERTIES:
+   :header-args: :eval no-export
+   :END:
+#+PROPERTY: header-args    :exports both
+
+   Code to check sample points are the same
+   EDP-IM relationships:
+   #+BEGIN_SRC sh :results output
+   for i in $(seq 21); do    
+      f=example1a_im_edp_${i}.txt
+      min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
+      max_n=$(tail -1 $f | awk -e '{print $1}')
+      count_n=$(wc -l $f | awk -e '{print $1 - 1}')
+
+      f=~/SLATv1.15_Public/example1a_collapse/results/edp-im-${i}
+      min_p=$(head -4 $f | tail -1 | awk -e '{print $1}')
+      max_p=$(tail -2 $f | awk -e 'BEGIN{RS="\r\n"} {print $1}')
+      count_p=$(wc -l $f | awk -e '{print $1 - 4}')
+      echo $min_n $min_p "; " $max_n $max_p "; " $count_n $count_p
+   done
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+#+end_example
+
+   EDP-rate relationships
+   #+BEGIN_SRC sh :results output
+   for i in $(seq 21); do    
+      f=example1a_edp_${i}_rate.txt
+      min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
+      max_n=$(tail -1 $f | awk -e '{print $1}')
+      count_n=$(wc -l $f | awk -e '{print $1 - 1}')
+
+      f=~/SLATv1.15_Public/example1a_collapse/results/edp-${i}-rate.txt
+      min_p=$(head -4 $f | tail -1 | awk -e '{print $1}')
+      max_p=$(tail -2 $f | awk -e 'BEGIN{RS="\r\n"} {print $1}')
+      count_p=$(wc -l $f | awk -e '{print $1 - 4}')
+      echo $min_n $min_p "; " $max_n $max_p "; " $count_n $count_p
+   done
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   0.001 1.0000E-03 ;  0.15 0.1500 ;  149 149
+   0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+#+end_example
+
+   Loss-edp
+   #+BEGIN_SRC sh :results output
+   for i in $(seq 115); do    
+      f=example1a_loss_${i}_edp.txt
+      min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
+      max_n=$(tail -1 $f | awk -e '{print $1}')
+      count_n=$(wc -l $f | awk -e '{print $1 - 1}')
+
+      f=~/SLATv1.15_Public/example1a_collapse/results/pg-${i}-edp
+      min_p=$(head -4 $f | tail -1 | awk -e '{print $1}')
+      max_p=$(tail -2 $f | awk -e 'BEGIN{RS="\r\n"} {print $1}')
+      count_p=$(wc -l $f | awk -e '{print $1 - 4}')
+      echo $i":" $min_n $min_p "; " $max_n $max_p "; " $count_n $count_p
+      echo $i":" \
+           $(guile -c "(display (- $min_n $min_p))") \
+           $(guile -c "(display (- $max_n $max_p))") \
+           $(guile -c "(display (- $count_n $count_p))")
+
+   done
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   1: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   1: 0.0 0.0 0
+   2: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   2: 0.0 0.0 0
+   3: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   3: 0.0 0.0 0
+   4: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   4: 0.0 0.0 0
+   5: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   5: 0.0 0.0 0
+   6: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   6: 0.0 0.0 0
+   7: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   7: 0.0 0.0 0
+   8: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   8: 0.0 0.0 0
+   9: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   9: 0.0 0.0 0
+   10: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   10: 0.0 0.0 0
+   11: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   11: 0.0 0.0 0
+   12: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   12: 0.0 0.0 0
+   13: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   13: 0.0 0.0 0
+   14: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   14: 0.0 0.0 0
+   15: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   15: 0.0 0.0 0
+   16: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   16: 0.0 0.0 0
+   17: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   17: 0.0 0.0 0
+   18: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   18: 0.0 0.0 0
+   19: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   19: 0.0 0.0 0
+   20: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   20: 0.0 0.0 0
+   21: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   21: 0.0 0.0 0
+   22: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   22: 0.0 0.0 0
+   23: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   23: 0.0 0.0 0
+   24: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   24: 0.0 0.0 0
+   25: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   25: 0.0 0.0 0
+   26: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   26: 0.0 0.0 0
+   27: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   27: 0.0 0.0 0
+   28: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   28: 0.0 0.0 0
+   29: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   29: 0.0 0.0 0
+   30: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   30: 0.0 0.0 0
+   31: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   31: 0.0 0.0 0
+   32: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   32: 0.0 0.0 0
+   33: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   33: 0.0 0.0 0
+   34: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   34: 0.0 0.0 0
+   35: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   35: 0.0 0.0 0
+   36: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   36: 0.0 0.0 0
+   37: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   37: 0.0 0.0 0
+   38: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   38: 0.0 0.0 0
+   39: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   39: 0.0 0.0 0
+   40: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   40: 0.0 0.0 0
+   41: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   41: 0.0 0.0 0
+   42: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   42: 0.0 0.0 0
+   43: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   43: 0.0 0.0 0
+   44: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   44: 0.0 0.0 0
+   45: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   45: 0.0 0.0 0
+   46: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   46: 0.0 0.0 0
+   47: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   47: 0.0 0.0 0
+   48: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   48: 0.0 0.0 0
+   49: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   49: 0.0 0.0 0
+   50: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   50: 0.0 0.0 0
+   51: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   51: 0.0 0.0 0
+   52: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   52: 0.0 0.0 0
+   53: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   53: 0.0 0.0 0
+   54: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   54: 0.0 0.0 0
+   55: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   55: 0.0 0.0 0
+   56: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   56: 0.0 0.0 0
+   57: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   57: 0.0 0.0 0
+   58: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   58: 0.0 0.0 0
+   59: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   59: 0.0 0.0 0
+   60: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   60: 0.0 0.0 0
+   61: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   61: 0.0 0.0 0
+   62: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   62: 0.0 0.0 0
+   63: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   63: 0.0 0.0 0
+   64: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   64: 0.0 0.0 0
+   65: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   65: 0.0 0.0 0
+   66: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   66: 0.0 0.0 0
+   67: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   67: 0.0 0.0 0
+   68: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   68: 0.0 0.0 0
+   69: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   69: 0.0 0.0 0
+   70: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   70: 0.0 0.0 0
+   71: 0.001 1.0000E-03 ;  0.15 0.1500 ;  149 149
+   71: 0.0 0.0 0
+   72: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   72: 0.0 0.0 0
+   73: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   73: 0.0 0.0 0
+   74: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   74: 0.0 0.0 0
+   75: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   75: 0.0 0.0 0
+   76: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   76: 0.0 0.0 0
+   77: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   77: 0.0 0.0 0
+   78: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   78: 0.0 0.0 0
+   79: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   79: 0.0 0.0 0
+   80: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   80: 0.0 0.0 0
+   81: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   81: 0.0 0.0 0
+   82: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   82: 0.0 0.0 0
+   83: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   83: 0.0 0.0 0
+   84: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   84: 0.0 0.0 0
+   85: 0.001 1.0000E-03 ;  0.15 0.1500 ;  149 149
+   85: 0.0 0.0 0
+   86: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   86: 0.0 0.0 0
+   87: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   87: 0.0 0.0 0
+   88: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   88: 0.0 0.0 0
+   89: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   89: 0.0 0.0 0
+   90: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   90: 0.0 0.0 0
+   91: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   91: 0.0 0.0 0
+   92: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   92: 0.0 0.0 0
+   93: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   93: 0.0 0.0 0
+   94: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   94: 0.0 0.0 0
+   95: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   95: 0.0 0.0 0
+   96: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
+   96: 0.0 0.0 0
+   97: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   97: 0.0 0.0 0
+   98: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   98: 0.0 0.0 0
+   99: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   99: 0.0 0.0 0
+   100: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   100: 0.0 0.0 0
+   101: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   101: 0.0 0.0 0
+   102: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   102: 0.0 0.0 0
+   103: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   103: 0.0 0.0 0
+   104: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   104: 0.0 0.0 0
+   105: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
+   105: 0.0 0.0 0
+   106: 0.001 1.0000E-03 ;  0.15 0.1500 ;  149 149
+   106: 0.0 0.0 0
+   107: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   107: 0.0 0.0 0
+   108: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   108: 0.0 0.0 0
+   109: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   109: 0.0 0.0 0
+   110: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   110: 0.0 0.0 0
+   111: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   111: 0.0 0.0 0
+   112: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   112: 0.0 0.0 0
+   113: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   113: 0.0 0.0 0
+   114: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   114: 0.0 0.0 0
+   115: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   115: 0.0 0.0 0
+#+end_example
+
+   Loss-im
+   #+BEGIN_SRC sh :results output
+   for i in $(seq 115); do    
+      f=example1a_loss_${i}_im.txt
+      min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
+      max_n=$(tail -1 $f | awk -e '{print $1}')
+      count_n=$(wc -l $f | awk -e '{print $1 - 1}')
+
+      f=~/SLATv1.15_Public/example1a_collapse/results/pg-${i}-im
+      min_p=$(head -4 $f | tail -1 | awk -e '{print $1}')
+      max_p=$(tail -2 $f | awk -e 'BEGIN{RS="\r\n"} {print $1}')
+      count_p=$(wc -l $f | awk -e '{print $1 - 4}')
+      #echo  $min_n  $min_p "; " $max_n - $max_p "; " $count_n - $count_p
+      echo $(guile -c "(display (- $min_n $min_p))") \
+           $(guile -c "(display (- $max_n $max_p))") \
+           $(guile -c "(display (- $count_n $count_p))")
+   done
+   
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+   0.0 0.0 0
+#+end_example
+
+*** Per-unit cost
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R
+     per.unit.cost <- function(low.count, price.at.low, 
+                               high.count, price.at.high,
+                               n)
+     {
+         if (n <= low.count) {
+             unit.price <- price.at.low
+         } else if (n >= high.count) {
+             unit.price <- price.at.high
+         } else {
+             ratio = (n - low.count)/(high.count - low.count)
+             #total.price.low <- price.at.low * low.count
+             #total.price.high <- price.at.high * high.count
+
+             #total.price.n <- total.price.low + ratio * (total.price.high - total.price.low)
+             #unit.price <- total.price.n / n
+	     unit.price <- price.at.low + ratio * (price.at.high - price.at.low)
+         }
+
+         return(unit.price)
+     }
+
+     cost <- function(count) {
+         sapply(count, function(n) {
+             low.count <- 9
+             high.count <- 900
+             price.at.low <- 58.4
+             price.at.high <- 43.2
+
+             return(n * per.unit.cost(low.count, price.at.low, 
+                                      high.count, price.at.high,
+                                      n))
+         })}
+
+     plot(cost, from=0, to = 1000)
+    #+END_SRC
+
+    #+RESULTS:
+    [[file:/tmp/babel-1757XZc/figure-1757I4F.pdf]]
+
+
+    #+BEGIN_SRC R :results output
+      print("203--693 units")
+      print(per.unit.cost(9,  58.4, 900,  43.2, 693))
+      print(per.unit.cost(9, 297.9, 900, 277.8, 693))
+      print("")
+      print("204--2 units")
+      print(per.unit.cost(3, 56000, 5, 33600, 2))
+      print("")
+      print("205--4 units")
+      print(per.unit.cost(2, 220000, 8, 150000, 4))
+      print("")
+      print("208--53 units")
+      print(per.unit.cost(10, 2500, 100, 1000, 53))
+      print("")
+      print("209--16 units")
+      print(per.unit.cost(2, 50000, 6, 40000, 16))
+    #+END_SRC
+
+    #+RESULTS:
+    #+begin_example
+    [1] "203--693 units"
+    [1] 46.73131
+    [1] 282.4697
+    [1] ""
+    [1] "204--2 units"
+    [1] 56000
+    [1] ""
+    [1] "205--4 units"
+    [1] 196666.7
+    [1] ""
+    [1] "208--53 units"
+    [1] 1783.333
+    [1] ""
+    [1] "209--16 units"
+    [1] 40000
+#+end_example
+
