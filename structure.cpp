@@ -47,11 +47,15 @@ namespace SLAT {
 
         if (consider_collapse) {
             std::vector<LogNormalDist> dists = { nc_dist, rebuild_cost };
-            double pCollapse = this->im->pCollapse(im);
-            std::vector<double> weights = { 1.0 - pCollapse, pCollapse };
+            if (this->im != NULL) {
+                double pCollapse = this->im->pCollapse(im);
+                std::vector<double> weights = { 1.0 - pCollapse, pCollapse };
             
-            LogNormalDist c_dist = LogNormalDist::AddWeightedDistributions(dists, weights); 
-            return c_dist;
+                LogNormalDist c_dist = LogNormalDist::AddWeightedDistributions(dists, weights); 
+                return c_dist;
+            } else {
+                return LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(NAN, NAN);
+            };
         } else {
             return nc_dist;
         }

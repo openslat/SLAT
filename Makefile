@@ -58,7 +58,7 @@ LIBHDRS=$(LIBSRCS:.cpp=.h)
 LIBOBJS=$(LIBSRCS:.cpp=.o)
 
 UNIT_SRCS = unit_test.cpp functions_test.cpp relationships_test.cpp maq_test.cpp \
-	fragility_test.cpp lognormaldist_test.cpp comp_group_test.cpp
+	fragility_test.cpp lognormaldist_test.cpp comp_group_test.cpp structure_test.cpp
 UNIT_OBJS = $(UNIT_SRCS:.cpp=.o)
 
 %.o : %.cpp
@@ -117,6 +117,7 @@ relationships_test.o: relationships_test.cpp relationships.h functions.h replace
 maq_test.o: maq_test.cpp maq.h relationships.h functions.h replaceable.h
 fragility_test.o: fragility_test.cpp fragility.h
 comp_group_test.o: comp_group_test.cpp comp_group.h 
+structure_test.o: structure_test.cpp structure.h
 unit_test.o: unit_test.cpp
 
 ifeq ($(shell uname), Linux)
