@@ -55,10 +55,10 @@ namespace SLAT {
  * 
  * @return The value of f(x).
  */
-  double wrapper(double x,  std::function<double (double)> *f)
-  {
-    return (*f)(x);
-  }
+    double wrapper(double x,  std::function<double (double)> *f)
+    {
+        return (*f)(x);
+    }
 
     IM::IM( std::shared_ptr<DeterministicFn> func) 
     {
@@ -76,7 +76,7 @@ namespace SLAT {
 
     double IM::lambda(double x)
     {
-      return f->ValueAt(x);
+        return f->ValueAt(x);
     }
 
     std::string IM::ToString(void) const 
@@ -103,8 +103,8 @@ namespace SLAT {
          * the function 'wrapper()' (above).
          */
         std::function<double (double)> local_lambda = [this] (double x) {
-	  double result = this->lambda(x);
-	  return result;
+            double result = this->lambda(x);
+            return result;
         };
 
         /*
@@ -126,20 +126,24 @@ namespace SLAT {
 
     double IM::CollapseRate(void)
     {
-        Integration::MAQ_RESULT result;
-        result =  Integration::MAQ(
-            [this] (double im) -> double {
-                double d = this->DerivativeAt(im);
-                double p = this->pCollapse(im);
-                double result = fabs(d) * p;
-                return result;
-            }, local_settings); 
-        if (result.successful) {
-            return result.integral;
+        if (collapse) {
+            Integration::MAQ_RESULT result;
+            result =  Integration::MAQ(
+                [this] (double im) -> double {
+                    double d = this->DerivativeAt(im);
+                    double p = this->pCollapse(im);
+                    double result = fabs(d) * p;
+                    return result;
+                }, local_settings); 
+            if (result.successful) {
+                return result.integral;
+            } else {
+                // Log error
+                return NAN;
+            };
         } else {
-            // Log error
-            return NAN;
-        };
+            return 0;
+        }
     }
 
 
@@ -153,8 +157,8 @@ namespace SLAT {
          * the function 'wrapper()' (above).
          */
         std::function<double (double)> local_lambda = [this] (double x) {
-	  double result = this->lambda(x);
-	  return result;
+            double result = this->lambda(x);
+            return result;
         };
 
         /*
