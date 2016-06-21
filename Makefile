@@ -1,13 +1,16 @@
 ifeq ($(shell uname), Linux)
-all: main unit_tests pyslat.so doc total_loss_debug
+all: main unit_tests pyslat.so doc total_loss_debug interp
 
 clean:
 	rm -f *.a *.o *.so main unit_tests total_loss_debug
+
+ANTLR=java -jar /usr/local/lib/antlr-4.5.2-complete.jar -Dlanguage=Python3
 else
-all: main unit_tests pyslat.pyd doc 
+all: main unit_tests pyslat.pyd doc interp
 
 clean:
 	rm -f *.a *.o *.dll main unit_tests
+ANTLR=java -jar ../../antlr-4.5.3-complete.jar -Dlanguage=Python3
 endif
 
 CFLAGS=-g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
@@ -164,3 +167,10 @@ endif
 doc: $(OBJS) $(HEADERS)
 	doxygen
 
+interp: parser/slatLexer.py parser/slatParser.py
+
+parser/slatParser.py: parser/slatParser.g4
+	cd parser && $(ANTLR) slatParser.g4
+
+parser/slatLexer.py: parser/slatLexer.g4
+	cd parser && $(ANTLR) slatLexer.g4
