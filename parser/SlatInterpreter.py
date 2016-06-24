@@ -10,7 +10,7 @@ from slatParserListener import slatParserListener
 import glob
 from distutils import text_file
 import numbers
-import pyslatcore as pyslat
+import pyslat
 import math
 import numpy as np
 from contextlib import redirect_stdout
