@@ -1,12 +1,12 @@
 ifeq ($(shell uname), Linux)
-all: main unit_tests pyslat.so doc total_loss_debug interp
+all: main unit_tests pyslatcore.so doc total_loss_debug interp
 
 clean:
 	rm -f *.a *.o *.so main unit_tests total_loss_debug
 
 ANTLR=java -jar /usr/local/lib/antlr-4.5.2-complete.jar -Dlanguage=Python3
 else
-all: main unit_tests pyslat.pyd doc interp
+all: main unit_tests pyslatcore.pyd doc interp
 
 clean:
 	rm -f *.a *.o *.dll main unit_tests
@@ -133,32 +133,32 @@ endif
 
 
 ifeq ($(shell uname), Linux)
-pyslat.o: pyslat.cpp functions.h relationships.h replaceable.h
+pyslatcore.o: pyslatcore.cpp functions.h relationships.h replaceable.h
 	$(CC) -c $(CFLAGS) `pkg-config --cflags python3` -o $@ $<
-pyslat.so: pyslat.o libslat.so
-	$(CC) -fPIC -shared -Wl,-soname,pyslat.so -o pyslat.so pyslat.o ${LDFLAGS} -L. -lslat \
+pyslatcore.so: pyslatcore.o libslat.so
+	$(CC) -fPIC -shared -Wl,-soname,pyslatcore.so -o pyslatcore.so pyslatcore.o ${LDFLAGS} -L. -lslat \
 	`pkg-config --libs python3` -lboost_python-py34
 else
-pyslat.o: pyslat.cpp $(LIBHDRS)
+pyslatcore.o: pyslatcore.cpp $(LIBHDRS)
 	$(CC) -c $(CFLAGS) -dD -o $@ $<
-pyslat.pyd: pyslat.o libslat.dll
-	$(CC) -shared pyslat.o \
-	-shared -o pyslat.pyd \
+pyslatcore.pyd: pyslatcore.o libslat.dll
+	$(CC) -shared pyslatcore.o \
+	-shared -o pyslatcore.pyd \
 	-Wl,--dll \
 	-Wl,--export-all-symbols \
-	-Wl,--out-implib,pyslat.a \
+	-Wl,--out-implib,pyslatcore.a \
 	-L. -lslat \
 	${LDFLAGS} \
         -L$(PYLIB) \
 	-lpython3.5 -lboost_python3-mt
 endif
 
-# pyslat.pyd: pyslat.o libslat.dll
-# 	$(CC) -shared pyslat.o \
-# 	-shared -o pyslat.pyd \
+# pyslatcore.pyd: pyslatcore.o libslat.dll
+# 	$(CC) -shared pyslatcore.o \
+# 	-shared -o pyslatcore.pyd \
 # 	-Wl,--dll \
 # 	-Wl,--export-all-symbols \
-# 	-Wl,--out-implib,pyslat.a \
+# 	-Wl,--out-implib,pyslatcore.a \
 # 	-L. -lslat \
 # 	${LDFLAGS} \
 #         -L$(PYLIB) \

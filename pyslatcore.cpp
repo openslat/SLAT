@@ -1,5 +1,5 @@
 /**
- * @file   pyslat.cpp
+ * @file   pyslatcore.cpp
  * @author Michael Gauland <michael.gauland@canterbury.ac.nz>
  * @date   Fri Dec  4 10:45:30 2015
  * 
@@ -605,7 +605,7 @@ namespace SLAT {
 
 // Python requires an exported function called init<module-name> in every
 // extension module. This is where we build the module contents.
-    BOOST_PYTHON_MODULE(pyslat)
+    BOOST_PYTHON_MODULE(pyslatcore)
     {
         python::def("IntegrationSettings", IntegrationSettings);
         
