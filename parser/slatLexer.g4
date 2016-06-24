@@ -67,6 +67,8 @@ HYPERBOLIC: 'hyperbolic';
 POWERLAW: 'powerlaw';
 LOGLOG: ' loglog';
 LINEAR: 'linear';
+LINFLAG: '--linear';
+LOGFLAG: '--log';
 COMMA: ',';
 SEMICOLON: ';';
 COLON: ':';

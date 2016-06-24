@@ -21,6 +21,15 @@ def frange(start, stop, step):
         yield i
         i += step
 
+def logrange(start, end, count):
+    return(list(map(math.exp, 
+             math.log(start) + np.arange(0, count, 1)
+             * math.log(end/start)/(count - 1))))
+
+def linrange(start, end, count):
+    return(list(frange(start, end, (end - start)/(count - 1))))
+
+
 def preprocess_string(s):        
     return s.strip('\'"').replace('\\\"', '\"').replace('\\\'', '\'').replace('\\\\', '\\')
 
@@ -273,8 +282,6 @@ class compgroup:
                                           frag.function(),
                                           loss.function(),
                                           count)
-        print(self)
-        print(self.E_annual_loss())
         
     def fragfn(self):
         return self._frag
@@ -345,6 +352,10 @@ class recorder:
         self._function = function
         self._options = options
         self._at = at
+
+        if not type == 'dsrate' and not type == 'collrate' \
+           and at==None:
+            raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
 
         if (type =='dsedp' or type == 'dsim') and columns == None:
             columns = []
@@ -911,8 +922,11 @@ class SlatInterpreter(slatParserListener):
             options['lambda'] = self._stack.pop()
             
         if ctx.recorder_at():
+            print("AT: " )
             at = self._stack.pop()
+            print(at)
         else:
+            print("NO AT")
             at = None
 
         type = ctx.recorder_type()
@@ -974,6 +988,24 @@ class SlatInterpreter(slatParserListener):
                 end = float(floats[2].getText())
                 self._stack.append(frange(start, end, incr))
 
+    def exitCounted_at(self, ctx:slatParser.Counted_atContext):
+        floats = ctx.FLOAT_VAL()
+        start = float(floats[0].getText())
+        end = float(floats[1].getText())
+        count = int(ctx.INTEGER().getText())
+
+        if ctx.LINFLAG():
+            self._stack.append(list(frange(start, end, (end - start) / (count - 1))))
+            print(self._stack)
+        elif ctx.LOGFLAG():
+            self._stack.append(
+                list(map(math.exp, 
+                         math.log(start) + np.arange(0, count, 1)
+                         * math.log(end/start)/(count - 1))))
+        else:
+            raise ValueError("Must specify --log or --linear")
+        
+        
     # Exit a parse tree produced by slatParser#float_array.
     def exitFloat_array(self, ctx:slatParser.Float_arrayContext):
         vals = []
@@ -1002,9 +1034,10 @@ class SlatInterpreter(slatParserListener):
     # Exit a parse tree produced by slatParser#python_script.
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
         expression =  ctx.python_expression().getText()
-        value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np, "list":list, "map": map})
+        value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np, "list":list, "map": map, "logrange": logrange, "linrange": linrange})
         print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
         self._stack.append(value)
+        print(self._stack)
 
     # Exit a parse tree produced by slatParser#analyze_command.
     def exitAnalyze_command(self, ctx:slatParser.Analyze_commandContext):

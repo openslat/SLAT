@@ -102,7 +102,10 @@ lambda_value: numerical_scalar;
 
 recorder_type : DETFN | PROBFN | IMRATE | EDPIM | EDPRATE | DSEDP
 	      | DSIM | LOSSDS | LOSSEDP | LOSSIM;
-recorder_at : (float_array | (FLOAT_VAL COLON FLOAT_VAL COLON FLOAT_VAL) | python_script | var_ref);
+recorder_at : float_array | (FLOAT_VAL COLON FLOAT_VAL COLON FLOAT_VAL) 
+	    | python_script | var_ref | counted_at;
+counted_at: FLOAT_VAL COLON FLOAT_VAL (LINFLAG | LOGFLAG) INTEGER;
+
 float_array : FLOAT_VAL (COMMA FLOAT_VAL)*;
 collapse_type : COLLAPSE_FLAG | NOCOLLAPSE_FLAG;
 
