@@ -12,6 +12,7 @@
 
 #include <memory>
 #include <algorithm>
+#include <utility>
 #include "comp_group.h"
 #include "structure.h"
 
@@ -27,7 +28,7 @@ namespace SLAT {
         components.push_back(cg);
     }
     
-    LogNormalDist Structure::Loss(double im, bool consider_collapse)
+    LogNormalDist Structure::LossNC(double im)
     {
         std::vector<LogNormalDist> dists;
         int num_components = 0;
@@ -37,12 +38,12 @@ namespace SLAT {
                      num_components++;
                      dists.push_back(cg->LossDist_IM(im));
                  });
+        return LogNormalDist::AddDistributions(dists);
+    }
 
-        // std::cerr << "Loss(" << im << ", " << consider_collapse << ")" << std::endl;
-        // for (size_t i=0; i < dists.size(); i++) {
-        //     std::cerr << "    " << dists[i].get_mean_X() << ", " << dists[i].get_sigma_X() << std::endl;
-        // }
-        LogNormalDist nc_dist = LogNormalDist::AddDistributions(dists);
+    LogNormalDist Structure::Loss(double im, bool consider_collapse)
+    {
+        LogNormalDist nc_dist = LossNC(im);
 
 
         if (consider_collapse) {
@@ -59,5 +60,15 @@ namespace SLAT {
         } else {
             return nc_dist;
         }
+    }
+
+    std::pair<LogNormalDist, LogNormalDist> Structure::DeaggregatedLoss(double im)
+    {
+        LogNormalDist loss_nc = LossNC(im);
+        LogNormalDist locc_c = rebuild_cost;
+        double p = this->im->pCollapse(im);
+
+        return std::make_pair(loss_nc.WeighDistribution(1.0 - p),
+                              locc_c.WeighDistribution(p));
     }
 }

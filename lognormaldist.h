@@ -18,6 +18,7 @@ namespace SLAT {
     class LogNormalDist {
     public:
         LogNormalDist();
+        LogNormalDist(const LogNormalDist &other);
         static LogNormalDist LogNormalDist_from_mu_lnX_and_sigma_lnX(double mu_lnX, double sigma_lnX);
         static LogNormalDist LogNormalDist_from_mean_X_and_sigma_lnX(double mean_X, double sigma_lnX);
         static LogNormalDist LogNormalDist_from_median_X_and_sigma_lnX(double median_X, double sigma_lnX);
@@ -34,6 +35,8 @@ namespace SLAT {
         double get_mean_X(void) const;
         double get_sigma_lnX(void) const;
         double get_sigma_X(void) const;
+
+        LogNormalDist WeighDistribution(double weight);
 
         static LogNormalDist AddWeightedDistributions(
             const std::vector<LogNormalDist> distributions, 

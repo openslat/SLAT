@@ -1,5 +1,5 @@
 /**
- * @file   pyslat.cpp
+ * @file   pyslatcore.cpp
  * @author Michael Gauland <michael.gauland@canterbury.ac.nz>
  * @date   Fri Dec  4 10:45:30 2015
  * 
@@ -582,6 +582,21 @@ namespace SLAT {
         LogNormalDistWrapper Loss(double im, bool consider_collapse) {
             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->Loss(im, consider_collapse))));
         };
+        python::list DeaggregatedLoss(double im) {
+            std::pair<LogNormalDist, LogNormalDist> values = wrapper->DeaggregatedLoss(im);
+            
+            python::list result;
+            {
+                std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(values.first);
+                result.append(LogNormalDistWrapper(temp));
+            }
+
+            {
+                std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(values.second);
+                result.append(LogNormalDistWrapper(temp));
+            }
+            return result;
+        }
         void setRebuildCost(LogNormalDistWrapper cost) {
             wrapper->setRebuildCost(*cost.dist);
         };
@@ -605,7 +620,7 @@ namespace SLAT {
 
 // Python requires an exported function called init<module-name> in every
 // extension module. This is where we build the module contents.
-    BOOST_PYTHON_MODULE(pyslat)
+    BOOST_PYTHON_MODULE(pyslatcore)
     {
         python::def("IntegrationSettings", IntegrationSettings);
         
@@ -727,6 +742,7 @@ namespace SLAT {
         python::class_<StructureWrapper>("Structure", python::no_init)
             .def("AddCompGroup", &StructureWrapper::AddCompGroup)
             .def("Loss", &StructureWrapper::Loss)
+            .def("DeaggregatedLoss", &StructureWrapper::DeaggregatedLoss)
             .def("setRebuildCost", &StructureWrapper::setRebuildCost)
             .def("getRebuildCost", &StructureWrapper::getRebuildCost)
             ;

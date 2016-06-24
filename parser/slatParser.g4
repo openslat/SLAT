@@ -8,7 +8,7 @@ command : (title_command | detfn_command | probfn_command | im_command | edp_com
 	| fragfn_command | lossfn_command | compgroup_command | print_command 
 	| integration_command | recorder_command | analyze_command | set_command 
 	| importprobfn_command | collapse_command | structure_command
-	| rebuildcost_command) SEMICOLON ;
+	| importimfn_command | rebuildcost_command) SEMICOLON;
 
 title_command : TITLE STRING;
 
@@ -92,13 +92,14 @@ print_options : file_spec (APPEND_OPTION | NEW_OPTION)?;
 integration_command : INTEGRATION integration_method numerical_scalar (INTEGER | var_ref | python_script);
 integration_method : MAQ;
 
-recorder_command : RECORDER ((recorder_type ID recorder_at recorder_cols?) 
+recorder_command : RECORDER recorder_id ((recorder_type ID recorder_at recorder_cols?) 
                   | ((DSRATE | COLLRATE) ID)
-                  | ((LOSSRATE | COLLAPSE) ID recorder_at)
+                  | ((LOSSRATE | COLLAPSE | DEAGG) ID recorder_at)
 		  | (ANNLOSS ID recorder_at LAMBDA_FLAG lambda_value)
 		  | (STRUCTLOSS ID collapse_type? recorder_at recorder_cols?))
 		  print_options?;
 lambda_value: numerical_scalar;
+recorder_id : ID;
 
 recorder_type : DETFN | PROBFN | IMRATE | EDPIM | EDPRATE | DSEDP
 	      | DSIM | LOSSDS | LOSSEDP | LOSSIM;
@@ -121,3 +122,5 @@ analyze_command : ANALYZE;
 set_command : SET ID (python_script | var_ref | parameters);
 
 importprobfn_command : IMPORTPROBFN ID file_spec;
+
+importimfn_command : IMPORTIMFN ID file_spec;

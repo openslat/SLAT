@@ -28,9 +28,11 @@ namespace SLAT {
         static Integration::IntegrationSettings class_settings;
 
         LogNormalDist Loss(double im, bool consider_collapse);
+        std::pair<LogNormalDist, LogNormalDist> DeaggregatedLoss(double im);
         void setRebuildCost(LogNormalDist dist) { rebuild_cost = dist; };
         LogNormalDist getRebuildCost(void) { return rebuild_cost; };
     private:
+        LogNormalDist LossNC(double im);
         std::vector<std::shared_ptr<CompGroup>> components;
         std::shared_ptr<IM> im;
         LogNormalDist rebuild_cost;

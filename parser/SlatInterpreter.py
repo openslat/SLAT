@@ -9,497 +9,13 @@ from slatParser import slatParser
 from slatParserListener import slatParserListener
 import glob
 from distutils import text_file
-import numbers
 import pyslat
 import math
 import numpy as np
 from contextlib import redirect_stdout
 
-def frange(start, stop, step):
-    i = start
-    while i <= stop + step/2:
-        yield i
-        i += step
-
-def logrange(start, end, count):
-    return(list(map(math.exp, 
-             math.log(start) + np.arange(0, count, 1)
-             * math.log(end/start)/(count - 1))))
-
-def linrange(start, end, count):
-    return(list(frange(start, end, (end - start)/(count - 1))))
-
-
 def preprocess_string(s):        
     return s.strip('\'"').replace('\\\"', '\"').replace('\\\'', '\'').replace('\\\\', '\\')
-
-class lognormaldist:
-    def __init__(self, dist):
-        self._dist = dist
-
-    def mean(self):
-        return self._dist.get_mean_X()
-
-    def median(self):
-        return self._dist.get_median_X()
-
-    def mean_ln(self):
-        return self._dist.get_mu_lnX()
-
-    def sd(self):
-        return self._dist.get_sigma_X();
-    
-    def sd_ln(self):
-        return self._dist.get_sigma_lnX();
-
-    def __str__(self):
-        return("Log Normal Distribution: mean: {}, sd_ln_x: {}.".format(
-            self.mean(), self.sd_ln()))
-
-class detfn:
-    def __init__(self, id, type, parameters):
-        if type == 'power law':
-            fntype = pyslat.FUNCTION_TYPE.PLC
-        elif type == 'hyperbolic':
-            fntype = pyslat.FUNCTION_TYPE.NLH
-        elif type == 'loglog':
-            fntype = pyslat.FUNCTION_TYPE.LOGLOG
-        elif type == 'linear':
-            fntype = pyslat.FUNCTION_TYPE.LIN
-        else:
-            raise ValueError("Invalid detfn type: {}".format(type))
-            
-        self._id = id
-        self._type = type
-        self._parameters = parameters.copy()
-        self._func = pyslat.factory(fntype, parameters)
-
-    def id(self):
-        return self._id
-
-    def function(self):
-        return self._func
-
-    def ValueAt(self, x):
-        return self._func.ValueAt(x)
-    
-    def __str__(self):
-        return("Deterministic Function '{}', of type '{}', from parameters {}.".format(self._id, self._type, self._parameters))
-
-class probfn:
-    def __init__(self, id, type, mu_func, sigma_func):
-        self._id = id
-        self._type = type
-        self._mu_func = mu_func
-        self._sigma_func = sigma_func
-        self._func = pyslat.MakeLogNormalProbabilisticFn({mu_func[0]: mu_func[1].function(),
-                                                          sigma_func[0]: sigma_func[1].function()})
-            
-    def id(self):
-        return self._id
-
-    def function(self):
-        return self._func
-    
-    def Mean(self, x):
-        return self._func.Mean(x)
-
-    def MeanLn(self, x):
-        return self._func.MeanLn(x)
-
-    def Median(self, x):
-        return self._func.Median(x)
-
-    def SD_ln(self, x):
-        return self._func.SD_ln(x)
-
-    def SD(self, x):
-        return self._func.SD(x)
-
-    def X_at_exceedence(self, x, y):
-        return self._func.X_at_exceedence(x, y)
-
-    def __str__(self):
-        return(("Probabilistic function '{}' of type {}, using the deterministic function {} for {}, and " +
-               "the deterministic function {} for {}.").format(
-                   self._id, self._type,
-                   self._mu_func[1].id(), self._mu_func[0],
-                   self._sigma_func[1].id(), self._sigma_func[0]))
-
-class collapse:
-    def __init__(self, id, mu, sd):
-        self._id = id
-        self._mu = mu
-        self._sd = sd
-        self._func = pyslat.MakeCollapse(mu, sd)
-        self._collapse = None
-        print(self)
-
-    def func(self):
-        return self._func
-
-    def __str__(self):
-        return("Collapse function '{}', mu={}, sd={}.".format(self._id, self._mu, self._sd))
-        
-class im:
-    def __init__(self, id, detfn):
-        self._id = id
-        self._detfn = detfn
-        self._func = pyslat.MakeIM(detfn.function())
-
-    def id(self):
-        return self._id
-
-    def function(self):
-        return self._func
-
-    def getlambda(self, x):
-        return self._func.getlambda(x)
-
-    def pCollapse(self, x):
-        return self._func.pCollapse(x)
-
-    def SetCollapse(self, collapse):
-        self._collapse = collapse
-        self._func.SetCollapse(collapse.func())
-
-    def CollapseRate(self):
-        return self._func.CollapseRate()
-
-    def __str__(self):
-        if self._collapse:
-            return("Intensity measure '{}', based on the deterministic function '{}', with {}".format(self._id, self._detfn.id(), self._collapse))
-        else:
-            return("Intensity measure '{}', based on the deterministic function '{}'.".format(self._id, self._detfn.id()))
-
-class edp:
-    def __init__(self, id, im, fn):
-        self._id = id
-        self._im = im
-        self._fn = fn
-        self._func = pyslat.MakeEDP(im.function(), fn.function())
-            
-    def id(self):
-        return self._id
-
-    def function(self):
-        return self._func
-    
-    def Mean(self, x):
-        return self._func.Mean(x)
-
-    def MeanLn(self, x):
-        return self._func.MeanLn(x)
-
-    def Median(self, x):
-        return self._func.Median(x)
-
-    def SD_ln(self, x):
-        return self._func.SD_ln(x)
-
-    def SD(self, x):
-        return self._func.SD(x)
-
-    def getlambda(self, x):
-        return self._func.getlambda(x)
-
-    def X_at_exceedence(self, x, y):
-        return self._fn.X_at_exceedence(x, y)
-
-    def __str__(self):
-        return(("Engineering Demand Parameter '{}' using the intensity measure '{}', and " +
-                "the probabilistic function {}.").format(self._id, self._im.id(), self._fn.id()))
-
-class fragfn:
-    def __init__(self, id):
-        self._id = id
-        self.func = None
-        
-    def id(self):
-        return(self._id)
-
-    def function(self):
-        return self._func
-
-    def pExceeded(self, x):
-        return self._func.pExceeded(x)
-
-class fragfn_db(fragfn):
-    def __init__(self, id, db_params):
-        super().__init__(id)
-        self._db_params = db_params
-
-    def __str__(self):
-        return("Fragility Function '{}', from database: {}.".format(self._id, self._db_params))
-
-class fragfn_user(fragfn):
-    def __init__(self, id, options, scalars):
-        super().__init__(id)
-        self._options = options
-        self._scalars = scalars
-        params = []
-        for s in scalars:
-            params.append({options['mu']: s[0], options['sd']: s[1]})
-        self._func = pyslat.MakeFragilityFn(params)
-
-    def __str__(self):
-        return("User-defined Fragility Function '{}', built from {} using options '{}'.".format(
-            self._id,
-            self._scalars,
-            self._options))
-
-    def size(self):
-        return len(self._scalars)
-
-class lossfn:
-    def __init__(self, id, options, data):
-        self._id = id
-        self._options = options
-        self._data = data
-
-        params = []
-        for d in data:
-            params.append({options['mu']: d[0], options['sd']: d[1]})
-        self._func = pyslat.MakeLossFn(params)
-
-    def id(self):
-        return(self._id)
-
-    def function(self):
-        return self._func
-
-    def __str__(self):
-        return("Loss Function '{}', from {} as {}.".format(self._id, self._data, self._options))
-
-class compgroup:
-    def __init__(self, id, edp, frag, loss, count):
-        self._id = id
-        self._edp = edp
-        self._frag = frag
-        self._loss = loss
-        self._count = count
-        self._func = pyslat.MakeCompGroup(edp.function(),
-                                          frag.function(),
-                                          loss.function(),
-                                          count)
-        
-    def fragfn(self):
-        return self._frag
-
-    def size(self):
-        return self._frag.size()
-        
-    def function(self):
-        return self._func
-
-    def E_Loss_EDP(self, x):
-        return self._func.E_Loss_EDP(x)
-
-    def SD_ln_Loss_EDP(self, x):
-        return self._func.SD_ln_loss_EDP(x)
-
-    def E_Loss_IM(self, x):
-        return self._func.E_Loss_IM(x)
-
-    def SD_ln_Loss_IM(self, x):
-        return self._func.SD_ln_loss_IM(x)
-
-    def E_loss(self, t, l):
-        return self._func.E_loss(t, l)
-
-    def E_annual_loss(self):
-        return self._func.E_annual_loss()
-
-    def lambda_loss(self, loss):
-        return self._func.lambda_loss(loss)
-
-    def id(self):
-        return(self._id)
-        
-    def __str__(self):
-        return("Component Group '{}' using {}, {}, and {} ({} component(s))".format(
-            self._id, 
-            self._edp.id(),
-            self._frag.id(),
-            self._loss.id(),
-            self._count))
-
-class structure:
-    def __init__(self):
-        super().__init__()
-        self._structure = pyslat.MakeStructure()
-
-    def __str__(self):
-        return "Structure"
-
-    def AddCompGroup(self, group):
-        self._structure.AddCompGroup(group.function())
-
-    def setRebuildCost(self, cost):
-        self._structure.setRebuildCost(cost)
-
-    def getRebuildCost(self):
-        return lognormaldist(self._structure.getRebuildCost())
-
-    def Loss(self, im, consider_collapse):
-        return lognormaldist(self._structure.Loss(im, consider_collapse))
-                     
-class recorder:
-    def __init__(self, type, function, options, columns, at):
-        super().__init__()
-
-        self._type = type
-        self._function = function
-        self._options = options
-        self._at = at
-
-        if not type == 'dsrate' and not type == 'collrate' \
-           and at==None:
-            raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
-
-        if (type =='dsedp' or type == 'dsim') and columns == None:
-            columns = []
-            for i in range(function.size()):
-                columns.append("DS{}".format(i + 1))
-        elif (type == 'probfn' or type == 'edpim') and columns == None:
-            columns = ['mean_ln_x', 'sd_ln_x']
-        elif (type == 'structloss' or type == 'lossedp' or type =='lossim') \
-             and columns == None:
-            columns = ['mean_x', 'sd_ln_x']
-        self._columns = columns
-
-    def __str__(self):
-        return "Recorder: {} {} {} {} {}".format(self._type, self._function, self._options, self._columns, self._at)
-
-    def generate_output(self):
-        #print(self)
-        if self._type == 'dsrate':
-            # TODO: How does this recorder work?
-            print("DSRATE recorder not implemented")
-        elif self._type == 'collrate':
-            print("Rate of Collapse for IM {} is {}".format(self._function.id(), self._function.CollapseRate()))
-        else:
-            labels = {'detfn': ['x', 'y'],
-                      'probfn': ['x', None],
-                      'imrate': ['IM', 'lambda'],
-                      'edpim': ['IM', None],
-                      'edprate': ['EDP', 'lambda'],
-                      'dsedp': ['EDP', None],
-                      'dsim': ['IM', None],
-                      'lossds': ['DS', None],
-                      'lossedp': ['EDP', None],
-                      'lossim': ['IM', None],
-                      'structloss': ['IM', None],
-                      'annloss': ['t', ["E[ALt]"]],
-                      'lossrate': ['t', 'Rate'],
-                      'collapse': ['IM', 'p(Collapse)']}
-        
-            x_label = labels[self._type][0]
-            y_label = labels[self._type][1]
-
-            if y_label:
-                if not isinstance(y_label, list):
-                    y_label = [y_label];
-            else:
-                y_label = self._columns
-                      
-            line = "{:>15}".format(x_label)
-            for y in y_label:
-                    line = "{}{:>15}".format(line, y)
-            print(line)
-
-            for x in self._at:
-                line = "{:>15.6}".format(x)
-                if self._type == 'dsedp':
-                    yvals = self._function.fragfn().pExceeded(x)
-                    for y in yvals:
-                        line = "{}{:>15.6}".format(line, y)
-                elif self._type == 'annloss':
-                    annual_loss = self._function.E_loss(int(x), self._options['lambda'])
-                    line = "{}{:>15.6}".format(line, annual_loss)
-                elif self._type == 'lossrate':
-                    loss_rate = self._function.lambda_loss(x)
-                    line = "{}{:>15.6}".format(line, loss_rate)
-                elif self._type == 'collapse':
-                    p = self._function.pCollapse(x)
-                    line = "{}{:>15.6}".format(line, p)
-                elif not self._columns == None:
-                    line = "{:>15.6}".format(x)
-                    for y in self._columns:
-                        if isinstance(y, numbers.Number):
-                            if isinstance(self._function, probfn):
-                                yval = self._function.function().X_at_exceedence(x, y)
-                            elif isinstance(self._function, edp):
-                                yval = self._function.X_at_exceedence(x, y)
-                            else:
-                                yval = "----"
-                        elif y == 'mean_x':
-                            if self._type == 'lossedp':
-                                yval = self._function.E_Loss_EDP(x)
-                            elif self._type == 'lossim':
-                                yval = self._function.E_Loss_IM(x)
-                            elif self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).mean()
-                            else:
-                                yval = self._function.Mean(x)
-                        elif y == 'mean_ln_x':
-                            if self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).mean_ln()
-                            else:
-                                yval = self._function.MeanLn(x)
-                        elif y == 'median_x':
-                            if self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).median()
-                            else:
-                                yval = self._function.Median(x)
-                        elif y == 'sd_ln_x':
-                            if self._type == 'lossedp':
-                                yval = self._function.SD_ln_Loss_EDP(x)
-                            elif self._type == 'lossim':
-                                yval = self._function.SD_ln_Loss_IM(x)
-                            elif self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).sd_ln()
-                            else:
-                                yval = self._function.SD_ln(x)
-                        elif y == 'sd_x':
-                            if self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).sd(x)
-                            else:
-                                yval = self._function.SD(x)
-                        else:
-                            yval = "+++++++++"
-                        line = "{}{:>15.6}".format(line, yval)
-                else:
-                    if isinstance(self._function, detfn):
-                        yval = self._function.ValueAt(x)
-                    elif (isinstance(self._function, im) or
-                          isinstance(self._function, edp) or
-                          isinstance(self._function, pyslat.IM) or
-                          isinstance(self._function, pyslat.EDP)):
-                          yval = self._function.getlambda(x)
-                    elif isinstance(self._function, pyslat.CompGroup):
-                          yval = self._function.E_Loss_EDP(x)
-                    else:
-                        yval = "*****"
-                    line = "{}{:>15.6}".format(line, yval)
-                print(line)
-                
-            
-    def run(self):
-        #print("RUN {}".format(self))
-        destination = self._options.get('filename')
-        if destination != None:
-            if self._options.get('append'):
-                f = open(destination, "a")
-            else:
-                f = open(destination, "w")
-            with redirect_stdout(f):
-                self.generate_output()
-
-        else:
-            self.generate_output()
-    
-        
 
 class SlatInterpreter(slatParserListener):
     def __init__(self):
@@ -507,17 +23,7 @@ class SlatInterpreter(slatParserListener):
         self._stack = []
         self._stack_stack = []
         self._variables = dict()
-        self._detfns = dict()
-        self._probfns = dict()
-        self._ims = dict()
-        self._edps = dict()
-        self._fragfns = dict()
-        self._lossfns = dict()
-        self._compgroups = dict()
-        self._structures = dict()
-        self._recorders = []
         self._title = []
-
     def _push_stack(self):
         self._stack_stack.append(self._stack)
         self._stack = []
@@ -530,7 +36,7 @@ class SlatInterpreter(slatParserListener):
     # Enter a parse tree produced by slatParser#command.
     def enterCommand(self, ctx:slatParser.CommandContext):
         self._stack = []
-        print(ctx.getText())
+        #print(ctx.getText())
     
     # Exit a parse tree produced by slatParser#command.
     def exitCommand(self, ctx:slatParser.CommandContext):
@@ -562,7 +68,7 @@ class SlatInterpreter(slatParserListener):
         value = self._stack.pop()
 
         id = ctx.ID().getText()
-        self._detfns[id] = detfn(id, type, value)
+        pyslat.detfn(id, type, value)
 
     def enterLoglog_args(self, ctx:slatParser.Loglog_argsContext):
         self._push_stack()
@@ -667,13 +173,13 @@ class SlatInterpreter(slatParserListener):
         mu = options['mu']
         sd = options['sd']
 
-        self._probfns[id] = probfn(id, 'lognormal', [mu, self._detfns.get(mufn)], [sd, self._detfns.get(sigmafn)])
+        pyslat.probfn(id, 'lognormal', [mu, pyslat.detfn.lookup(mufn)], [sd, pyslat.detfn.lookup(sigmafn)])
 
     # Exit a parse tree produced by slatParser#im_command.
     def exitIm_command(self, ctx:slatParser.Im_commandContext):
         im_id = ctx.ID(0).getText()
         fn_id = ctx.ID(1).getText()
-        self._ims[im_id] = im(im_id, self._detfns.get(fn_id))
+        pyslat.im(im_id, pyslat.detfn.lookup(fn_id))
 
     def exitCollapse_command(self, ctx:slatParser.Collapse_commandContext):
         id = ctx.ID().getText()
@@ -688,14 +194,14 @@ class SlatInterpreter(slatParserListener):
         if not options['sd'] == pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:
             raise ValueError("Sd option for collapse not yet supported")
 
-        self._ims[id].SetCollapse(collapse("anonymous", mu, sd))
+        pyslat.im.lookup(id).SetCollapse(pyslat.collapse(None, mu, sd))
 
     # Exit a parse tree produced by slatParser#edp_command.
     def exitEdp_command(self, ctx:slatParser.Edp_commandContext):
         edp_id = ctx.ID(0).getText()
         im_id = ctx.ID(1).getText()
         fn_id = ctx.ID(2).getText()
-        self._edps[edp_id] = edp(edp_id, self._ims.get(im_id), self._probfns.get(fn_id))
+        pyslat.edp(edp_id, pyslat.im.lookup(im_id), pyslat.probfn.lookup(fn_id))
 
     # Exit a parse tree produced by slatParser#fragfn_command.
     def exitFragfn_command(self, ctx:slatParser.Fragfn_commandContext):
@@ -703,13 +209,13 @@ class SlatInterpreter(slatParserListener):
         db_params = ctx.fragfn_db_params()
         if db_params:
             db_params = self._stack.pop()
-            self._fragfns[id] = fragfn_db(id, db_params)
+            pyslat.fragfn_db(id, db_params)
         else:
             params = ctx.fragfn_user_defined_params()
             options = self._stack.pop()
             scalars = self._stack.pop()
 
-            self._fragfns[id] = fragfn_user(id, options, scalars)
+            pyslat.fragfn_user(id, options, scalars)
 
     # Exit a parse tree produced by slatParser#fragfn_db_params.
     def exitFragfn_db_params(self, ctx:slatParser.Fragfn_db_paramsContext):
@@ -759,7 +265,7 @@ class SlatInterpreter(slatParserListener):
         if ctx.simple_loss_command():
             options = self._stack.pop()
             data = self._stack.pop()
-            self._lossfns[id] = lossfn(id, options, data)
+            pyslat.lossfn(id, options, data)
         else:
             raise ValueError("Unhanlded type of lossfn")
 
@@ -779,22 +285,21 @@ class SlatInterpreter(slatParserListener):
         frag_id =  ctx.ID(2).getText()
         loss_id =  ctx.ID(3).getText()
         count = int(ctx.INTEGER().getText())
-        self._compgroups[compgroup_id] = compgroup(compgroup_id,
-                                                   self._edps.get(edp_id),
-                                                   self._fragfns.get(frag_id),
-                                                   self._lossfns.get(loss_id),
-                                                   count)
+        pyslat.compgroup(compgroup_id,
+                         pyslat.edp.lookup(edp_id),
+                         pyslat.fragfn.lookup(frag_id),
+                         pyslat.lossfn.lookup(loss_id),
+                         count)
 
     def exitStructure_command(self, ctx:slatParser.Structure_commandContext):
         id = ctx.ID().getText();
-        s = structure()
+        s = pyslat.structure(id)
         groups = []
         for g in ctx.id_list().ID():
             groups.append(g.getText())
-            s.AddCompGroup(self._compgroups[g.getText()])
+            s.AddCompGroup(pyslat.compgroup.lookup(g.getText()))
         print("Create structure {} from {}.".format(id, groups));
-        self._structures[id] = s
-
+        
     def exitRebuildcost_command(self, ctx:slatParser.Rebuildcost_commandContext):
         id = ctx.ID().getText()
         options = self._stack.pop()
@@ -802,15 +307,15 @@ class SlatInterpreter(slatParserListener):
         mu = params[0]
         sd = params[1]
         
-        print("Rebuild cost for {}: {}, {}.".format(id, mu, sd))
-        self._structures[id].setRebuildCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
-        print(self._structures[id].getRebuildCost())
-        print(self._structures[id].Loss(0.01, 0))
-        print(self._structures[id].Loss(0.01, 1))
-        print(self._structures[id].Loss(0.1106, 0))
-        print(self._structures[id].Loss(0.1106, 1))
-        print(self._structures[id].Loss(1.003, 0))
-        print(self._structures[id].Loss(1.003, 1))
+        #print("Rebuild cost for {}: {}, {}.".format(id, mu, sd))
+        pyslat.structure.lookup(id).setRebuildCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
+        #print(pyslat.structure.lookup(id).getRebuildCost())
+        #print(pyslat.structure.lookup(id).Loss(0.01, 0))
+        #print(pyslat.structure.lookup(id).Loss(0.01, 1))
+        #print(pyslat.structure.lookup(id).Loss(0.1106, 0))
+        #print(pyslat.structure.lookup(id).Loss(0.1106, 1))
+        #print(pyslat.structure.lookup(id).Loss(1.003, 0))
+        #print(pyslat.structure.lookup(id).Loss(1.003, 1))
 
     
     # Exit a parse tree produced by slatParser#print_command.
@@ -827,19 +332,19 @@ class SlatInterpreter(slatParserListener):
             
             fntype = ctx.print_function()
             if fntype.DETFN():
-                object = self._detfns.get(id)
+                object = pyslat.detfn.lookup(id)
             elif fntype.PROBFN():
-                object = self._probfns.get(id)
+                object = pyslat.probfn.lookup(id)
             elif fntype.IM():
-                object = self._ims.get(id)
+                object = pyslat.im.lookup(id)
             elif fntype.EDP():
-                object = self._edps.get(id)
+                object = pyslat.edp.lookup(id)
             elif fntype.FRAGFN():
-                object = self._fragfns.get(id)
+                object = pyslat.fragfn.lookup(id)
             elif fntype.LOSSFN():
-                object = self._lossfns.get(id)
+                object = pyslat.lossfn.lookup(id)
             elif fntype.COMPGROUP():
-                object = self._compgroups.get(id)
+                object = pyslat.compgroup.lookup(id)
             else:
                 object = 'unknown'
         elif ctx.print_title():
@@ -908,6 +413,8 @@ class SlatInterpreter(slatParserListener):
 
     # Exit a parse tree produced by slatParser#recorder_command.
     def exitRecorder_command(self, ctx:slatParser.Recorder_commandContext):
+        recorder_id = ctx.recorder_id().getText()
+
         if ctx.print_options():
             options = self._stack.pop()
         else:
@@ -922,11 +429,8 @@ class SlatInterpreter(slatParserListener):
             options['lambda'] = self._stack.pop()
             
         if ctx.recorder_at():
-            print("AT: " )
             at = self._stack.pop()
-            print(at)
         else:
-            print("NO AT")
             at = None
 
         type = ctx.recorder_type()
@@ -944,6 +448,8 @@ class SlatInterpreter(slatParserListener):
             type = 'collrate'
         elif ctx.STRUCTLOSS():
             type = 'structloss'
+        elif ctx.DEAGG():
+            type = 'deagg'
         else:
             raise ValueError("Unhandled recorder type: {}")
 
@@ -957,24 +463,24 @@ class SlatInterpreter(slatParserListener):
         id = ctx.ID().getText()
 
         if type == "dsrate" or type == 'dsedp' or type == 'dsim':
-            function = self._compgroups.get(id)
+            function = pyslat.compgroup.lookup(id)
         elif type == 'detfn':
-            function = self._detfns.get(id)
+            function = pyslat.detfn.lookup(id)
         elif type == 'probfn':
-            function = self._probfns.get(id)
+            function = pyslat.probfn.lookup(id)
         elif type == 'imrate' or type == 'collapse' or type == 'collrate':
-            function = self._ims.get(id)
+            function = pyslat.im.lookup(id)
         elif type == 'edpim' or type == 'edprate':
-            function = self._edps.get(id)
+            function = pyslat.edp.lookup(id)
         elif type == 'lossds' or type == 'lossedp' or type == 'lossim' \
              or type == 'annloss' or type == 'lossrate':
-            function = self._compgroups.get(id)
-        elif type == 'structloss':
-            function = self._structures.get(id)
+            function = pyslat.compgroup.lookup(id)
+        elif type == 'structloss' or type == 'deagg':
+            function = pyslat.structure.lookup(id)
         else:
             raise ValueError("Unhandled recorder type")
 
-        self._recorders.append(recorder(type, function, options, cols, at))
+        pyslat.recorder(recorder_id, type, function, options, cols, at)
 
     # Exit a parse tree produced by slatParser#recorder_at.
     def exitRecorder_at(self, ctx:slatParser.Recorder_atContext):
@@ -986,7 +492,7 @@ class SlatInterpreter(slatParserListener):
                 start = float(floats[0].getText())
                 incr = float(floats[1].getText())
                 end = float(floats[2].getText())
-                self._stack.append(frange(start, end, incr))
+                self._stack.append(pyslat.frange(start, end, incr))
 
     def exitCounted_at(self, ctx:slatParser.Counted_atContext):
         floats = ctx.FLOAT_VAL()
@@ -995,13 +501,9 @@ class SlatInterpreter(slatParserListener):
         count = int(ctx.INTEGER().getText())
 
         if ctx.LINFLAG():
-            self._stack.append(list(frange(start, end, (end - start) / (count - 1))))
-            print(self._stack)
+            self._stack.append(pyslat.linrange(start, end, count))
         elif ctx.LOGFLAG():
-            self._stack.append(
-                list(map(math.exp, 
-                         math.log(start) + np.arange(0, count, 1)
-                         * math.log(end/start)/(count - 1))))
+            self._stack.append(pyslat.logrange(start, end, count))
         else:
             raise ValueError("Must specify --log or --linear")
         
@@ -1034,15 +536,15 @@ class SlatInterpreter(slatParserListener):
     # Exit a parse tree produced by slatParser#python_script.
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
         expression =  ctx.python_expression().getText()
-        value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np, "list":list, "map": map, "logrange": logrange, "linrange": linrange})
-        print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
+        value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np, "list":list, "map": map, "pyslat": pyslat})
+        #print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
         self._stack.append(value)
-        print(self._stack)
+        #print(self._stack)
 
     # Exit a parse tree produced by slatParser#analyze_command.
     def exitAnalyze_command(self, ctx:slatParser.Analyze_commandContext):
         print("Perform analysis:")
-        for rec in self._recorders:
+        for rec in pyslat.recorder.all():
             print(rec)
             rec.run()
 
@@ -1051,43 +553,17 @@ class SlatInterpreter(slatParserListener):
         id = ctx.ID().getText()
         value = self._stack.pop()
         self._variables[id] = value
-        print(("    Set the variable '{}' to {}.").format(id, value ))
+        #print(("    Set the variable '{}' to {}.").format(id, value ))
 
     def exitImportprobfn_command(self, ctx:slatParser.Importprobfn_commandContext):
-        data = np.loadtxt((ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"'), skiprows=2)
-        # Add a point at 0, 0 to support interpolation down to zero
-        x = [0]
-        mu = [0]
-        sigma = [0]
-        C = [0]
-        for d in data:
-            x.append(d[0])
-            values = []
-            collapse = 0
-            for y in d[1:]:
-                if y==0:
-                    collapse = collapse + 1
-                else:
-                    values.append(y)
-            mu.append(np.mean(values))
-            sigma.append(np.std(values, ddof=1))
-            C.append(collapse / (len(d) - 1))
-        # Add points beyond the data provided to support interpolation beyond
-        # the given data, up to a point:
-        #N = len(x)
-        #x.append(x[N - 1] * 1.5)
-        #mu.append(mu[N - 2] + (mu[N-1] - mu[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
-        #sigma.append(sigma[N - 2] + (sigma[N-1] - sigma[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
-        mu_func = detfn("anonymous", 'linear', [x.copy(), mu.copy()])
-        sigma_func = detfn("anonymous", 'linear', [x.copy(), sigma.copy()])
-        print("IMPORT")
-        print(x)
-        print(mu)
-        print(sigma)
         id = ctx.ID().getText()
-        self._probfns[id] = probfn(id, 'lognormal', 
-                                   [pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X, mu_func],
-                                   [pyslat.LOGNORMAL_PARAM_TYPE.SD_X,  sigma_func])
+        filename = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"')
+        pyslat.ImportProbFn(id, filename)
+
+    def exitImportimfn_command(self, ctx:slatParser.Importprobfn_commandContext):
+        id = ctx.ID().getText()
+        filename = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"')
+        pyslat.ImportIMFn(id, filename)
 
 def main(argv):
     for file in argv[1:]:

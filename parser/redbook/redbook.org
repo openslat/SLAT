@@ -1,4 +1,4 @@
-#+Title:     SLAT: Redbook Example
+ #+Title:     SLAT: Redbook Example
 #+AUTHOR:    Michael Gauland
 #+EMAIL:     michael.gauland@canterbury.ac.nz
 #+DATE:      {{{time(%Y-%m-%d %H:%M)}}}
@@ -64,7 +64,7 @@
         "1_Processing/", sep="")
     results.dir = paste(paleo.dir, "results/", sep="")
 
-  #+BEGIN_SRC R  :results output :exports both
+                                            ,#+BEGIN_SRC R  :results output :exports both
     library(xtable)
 
     num.edps <- 21
@@ -73,7 +73,7 @@
 
     ##Set up variables to make it easier to get to the files:
     paleo.dir = paste("~/SLATv1.15_Public/",
-        "example1a_collapse/", sep="")
+        "1_Processing/", sep="")
     results.dir = paste(paleo.dir, "results/", sep="")
 
     ## Read in the IM data:
@@ -101,129 +101,154 @@
             header=TRUE, sep="")
         names(neo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
 
-        if (max(abs((paleo.edp.im[[i]]$IM - neo.edp.im[[i]]$IM)/
-                        paleo.edp.im[[i]]$IM)) > 1) {
-            print(sprintf("IM mismatch in EDP-IM #%d", i))
+        if (length(paleo.edp.im[[i]]$IM) != length(neo.edp.im[[i]]$IM) ||
+            (max(abs((paleo.edp.im[[i]]$IM - neo.edp.im[[i]]$IM)/
+                         paleo.edp.im[[i]]$IM)) > 1))
+            {
+                print(sprintf("IM mismatch in EDP-IM #%d", i))
+                break
+            }
         }
-    }
 
-    ## Read the EDP-Rate data
-    paleo.edp.rate = list()
-    neo.edp.rate = list()
+        ## Read the EDP-Rate data
+        paleo.edp.rate = list()
+        neo.edp.rate = list()
 
-    for (i in seq(num.edps)) {
-        ## Read data from old SLAT:
-        paleo.edp.rate[[i]] <- read.csv(
-            sprintf("%sedp-%d-rate.txt", results.dir, i),
+        for (i in seq(num.edps)) {
+            ## Read data from old SLAT:
+            paleo.edp.rate[[i]] <- read.csv(
+                sprintf("%sedp-%d-rate.txt", results.dir, i),
+                skip=3, header=FALSE, sep="")
+            names(paleo.edp.rate[[i]]) = c("EDP", "lambda")
+
+            neo.edp.rate[[i]] <- read.csv(
+                sprintf("results/edp_%d_rate.txt", i),
+                header=TRUE, sep="")
+            names(neo.edp.rate[[i]]) = c("EDP", "lambda")
+
+            if (length(paleo.edp.rate[[i]]$EDP) !=  length(neo.edp.rate[[i]]$EDP) ||
+                (max(abs((paleo.edp.rate[[i]]$EDP - neo.edp.rate[[i]]$EDP)/
+                             paleo.edp.rate[[i]]$EDP)) > 1)) 
+            {
+                print(sprintf("EDP mismatch in EDP-RATE #%d", i))
+                break
+            }
+        }
+
+        ## Read the colapse-im data:
+        paleo.collapse.im <- read.csv(
+            paste(results.dir, "collapse-im", sep=""),
             skip=3, header=FALSE, sep="")
-        names(paleo.edp.rate[[i]]) = c("EDP", "lambda")
+        names(paleo.collapse.im) = c("IM", "pCollapse")
 
-        neo.edp.rate[[i]] <- read.csv(
-            sprintf("results/edp_%d_rate.txt", i),
-            header=TRUE, sep="")
-        names(neo.edp.rate[[i]]) = c("EDP", "lambda")
+        neo.collapse.im <- read.csv("results/collapse.txt", 
+                                    header=TRUE, sep="")
+        names(neo.collapse.im) = c("IM", "pCollapse")
 
-        if (max(abs((paleo.edp.rate[[i]]$EDP - neo.edp.rate[[i]]$EDP)/
-                        paleo.edp.rate[[i]]$EDP)) > 1) {
-            print(sprintf("EDP mismatch in EDP-RATE #%d", i))
-        }
-    }
-
-    ## Read the colapse-im data:
-    paleo.collapse.im <- read.csv(
-        paste(results.dir, "collapse-im", sep=""),
-        skip=3, header=FALSE, sep="")
-    names(paleo.collapse.im) = c("IM", "pCollapse")
-
-    neo.collapse.im <- read.csv("results/collapse.txt", 
-                                header=TRUE, sep="")
-    names(neo.collapse.im) = c("IM", "pCollapse")
-
-        if (max(abs((paleo.collapse.im$IM - neo.collapse.im$IM)/
-                        paleo.collapse.im$IM)) > 1) {
+        if (length(paleo.collapse.im$IM) != length(neo.collapse.im$IM) ||
+            (max(abs((paleo.collapse.im$IM - neo.collapse.im$IM)/
+                         paleo.collapse.im$IM)) > 1))
+        {
             print("IM mismatch in COLLAPSE-RATE")
+            break
         }
 
-    ## Read the Component Group loss data
-    paleo.loss.im <- list()
-    paleo.loss.edp <- list()
-    neo.loss.im <- list()
-    neo.loss.edp <- list()
+        ## Read the Component Group loss data
+        paleo.loss.im <- list()
+        paleo.loss.edp <- list()
+        neo.loss.im <- list()
+        neo.loss.edp <- list()
 
-    for (i in seq(num.cgs)) {
-        paleo.loss.im[[i]] <- read.csv(
-            sprintf("%spg-%s-im", results.dir, i),
+        for (i in seq(num.cgs)) {
+            paleo.loss.im[[i]] <- read.csv(
+                sprintf("%spg-%s-im", results.dir, i),
+                skip=3, header=FALSE, sep="")
+            names(paleo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
+
+            neo.loss.im[[i]] <- read.csv(
+                sprintf("results/loss_%d_im.txt", i),
+                header=TRUE, sep="")
+            names(neo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
+
+            if (length(paleo.loss.im[[i]]$IM) != length(neo.loss.im[[i]]$IM) ||
+                (max(abs((paleo.loss.im[[i]]$IM - neo.loss.im[[i]]$IM)/
+                             paleo.loss.im[[i]]$IM)) > 1))
+            {
+                print(sprintf("IM mismatch in LOSS-RATE #%d", i))
+                break
+            }
+
+            paleo.loss.edp[[i]] <- read.csv(
+                sprintf("%spg-%s-edp", results.dir, i),
+                skip=3, header=FALSE, sep="")
+            names(paleo.loss.edp[[i]])=c("EDP","mean.x","sd.lnx")
+
+            neo.loss.edp[[i]] <- read.csv(
+                sprintf("results/loss_%d_edp.txt", i),
+                header=TRUE, sep="")
+            names(neo.loss.edp[[i]]) = c("EDP","mean.x","sd.lnx")
+
+            if (length(paleo.loss.edp[[i]]$EDP) != length(neo.loss.edp[[i]]$EDP) ||
+                (max(abs((paleo.loss.edp[[i]]$EDP - neo.loss.edp[[i]]$EDP)/
+                             paleo.loss.edp[[i]]$EDP)) > 1))
+            {
+                print(sprintf("EDP mismatch in LOSS-EDP #%d", i))
+                break
+            }
+        }
+
+        ##Read the Total Loss data:
+        paleo.structloss.c <- read.csv(
+            paste(results.dir, "tlossc", sep=""),
             skip=3, header=FALSE, sep="")
-        names(paleo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
+        names(paleo.structloss.c) = c("IM", "mean.x", "sd.lnx")
 
-        neo.loss.im[[i]] <- read.csv(
-            sprintf("results/loss_%d_im.txt", i),
-            header=TRUE, sep="")
-        names(neo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
-
-        if (max(abs((paleo.loss.im[[i]]$IM - neo.loss.im[[i]]$IM)/
-                        paleo.loss.im[[i]]$IM)) > 1) {
-            print(sprintf("IM mismatch in LOSS-RATE #%d", i))
-        }
-   
-        paleo.loss.edp[[i]] <- read.csv(
-            sprintf("%spg-%s-edp", results.dir, i),
+        paleo.structloss.nc <- read.csv(
+            paste(results.dir, "tlossnc", sep=""),
             skip=3, header=FALSE, sep="")
-        names(paleo.loss.edp[[i]])=c("EDP","mean.x","sd.lnx")
+        names(paleo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
 
-        neo.loss.edp[[i]] <- read.csv(
-            sprintf("results/loss_%d_edp.txt", i),
-            header=TRUE, sep="")
-        names(neo.loss.edp[[i]]) = c("EDP","mean.x","sd.lnx")
-
-        if (max(abs((paleo.loss.edp[[i]]$EDP - neo.loss.edp[[i]]$EDP)/
-                        paleo.loss.edp[[i]]$EDP)) > 1) {
-            print(sprintf("EDP mismatch in LOSS-EDP #%d", i))
+        if (length(paleo.structloss.nc$IM) != length(neo.structloss.nc$IM) ||
+            (max(abs((paleo.structloss.nc$IM - neo.structloss.nc$IM)/
+                         paleo.structloss.nc$IM)) > 1))
+        {
+            print("IM mismatch in STRUCTLOSS-NC #%d")
+            break
         }
-    }
-
-    ##Read the Total Loss data:
-    paleo.structloss.c <- read.csv(
-        paste(results.dir, "tlossc", sep=""),
-        skip=3, header=FALSE, sep="")
-    names(paleo.structloss.c) = c("IM", "mean.x", "sd.lnx")
-
-    paleo.structloss.nc <- read.csv(
-        paste(results.dir, "tlossnc", sep=""),
-        skip=3, header=FALSE, sep="")
-    names(paleo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
-
-    if (max(abs((paleo.structloss.nc$IM - neo.structloss.nc$IM)/
-                    paleo.structloss.nc$IM)) > 1) {
-        print("IM mismatch in STRUCTLOSS-NC #%d")
-    }
 
 
-    neo.structloss.c <- read.csv("results/loss_c_total", 
-                                 header=TRUE, sep="")
-    names(neo.structloss.c) = c("IM", "mean.x", "sd.lnx")
+        neo.structloss.c <- read.csv("results/loss_c_total", 
+                                     header=TRUE, sep="")
+        names(neo.structloss.c) = c("IM", "mean.x", "sd.lnx")
 
-    neo.structloss.nc <- read.csv("results/loss_nc_total", 
-    			      header=TRUE, sep="")
-    names(neo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
+        neo.structloss.nc <- read.csv("results/loss_nc_total", 
+                                      header=TRUE, sep="")
+        names(neo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
 
 
-    if (max(abs((paleo.structloss.c$IM - neo.structloss.c$IM)/
-                    paleo.structloss.c$IM)) > 1) {
-        print("IM mismatch in STRUCTLOSS-C")
-    }
+        if (length(paleo.structloss.c$IM) != length(neo.structloss.c$IM) ||
+            (max(abs((paleo.structloss.c$IM - neo.structloss.c$IM)/
+                         paleo.structloss.c$IM)) > 1))
+        {
+            print("IM mismatch in STRUCTLOSS-C")
+            break
+        }
 
-    ## Function for comparing data sets, for convenience:
-    compare <- function(a, b)  {
-        result <-data.frame(Value = c(max(abs(a-b)),
-                                mean(abs(a-b)),
-                                100 * max(abs(a-b)/a)))
-        rownames(result) <- c("max(abs(difference))",
-                              "mean(abs(difference))",
-                              "percent(abs(difference))")
-        return(result)
-    }
+        ## Function for comparing data sets, for convenience:
+        compare <- function(a, b)  {
+            result <-data.frame(Value = c(max(abs(a-b)),
+                                    mean(abs(a-b)),
+                                    100 * max(abs(a-b)/a)))
+            rownames(result) <- c("max(abs(difference))",
+    			      "mean(abs(difference))",
+    			      "percent(abs(difference))")
+            return(result)
+        }
   #+END_SRC
+
+  #+RESULTS:
+  : [1] "EDP mismatch in LOSS-EDP #51"
+
 
 
 \clearpage
@@ -261,7 +286,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:im-rate
   #+RESULTS: im-rate
-  [[file:/tmp/babel-1757XZc/figure-1757ges.pdf]]
+  [[file:/tmp/babel-17848lX/figure-1784lgL.pdf]]
 
 \clearpage
 * EDP
@@ -1539,7 +1564,7 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.nc-mean
    #+RESULTS: structloss.nc-mean
-   [[file:/tmp/babel-1757XZc/figure-1757ctC.pdf]]
+   [[file:/tmp/babel-17848lX/figure-1784wOd.pdf]]
 
 
    #+NAME: structloss.nc-sd

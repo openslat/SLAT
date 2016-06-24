@@ -37,6 +37,11 @@ namespace SLAT {
         sigma_lnX = NAN;
     }
 
+    LogNormalDist::LogNormalDist(const LogNormalDist &other) {
+        mu_lnX = other.mu_lnX;
+        sigma_lnX = other.sigma_lnX;
+    }
+
     LogNormalDist LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(double mean_lnX, double sigma_lnX)
     {
         LogNormalDist result;
@@ -131,6 +136,17 @@ namespace SLAT {
         new_var_X -= new_mean_X * new_mean_X;
         new_var_X = abs(new_var_X);
         return LogNormalDist_from_mean_X_and_sigma_X(new_mean_X, sqrt(new_var_X));
+    }
+
+    LogNormalDist LogNormalDist::WeighDistribution(double weight)
+    {
+        double new_mean_X = weight * get_mean_X();
+        double new_sigma_X = sqrt(abs(weight *
+                                      (get_mean_X() * get_mean_X() +
+                                       get_sigma_X() * get_sigma_X())
+                                      - new_mean_X * new_mean_X));
+
+        return LogNormalDist_from_mean_X_and_sigma_X(new_mean_X, new_sigma_X);
     }
 
     LogNormalDist LogNormalDist::AddDistributions(
