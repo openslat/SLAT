@@ -1,4 +1,22 @@
 import pyslatcore
+import math
+import numpy as np
+
+def frange(start, stop, step):
+    i = start
+    while i <= stop + step/2:
+        yield i
+        i += step
+
+def logrange(start, end, count):
+    return(list(map(math.exp, 
+             math.log(start) + np.arange(0, count, 1)
+             * math.log(end/start)/(count - 1))))
+
+def linrange(start, end, count):
+    return(list(frange(start, end, (end - start)/(count - 1))))
+
+
 
 class FUNCTION_TYPE:
     NLH = pyslatcore.FUNCTION_TYPE.NLH

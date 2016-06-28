@@ -15,21 +15,6 @@ import math
 import numpy as np
 from contextlib import redirect_stdout
 
-def frange(start, stop, step):
-    i = start
-    while i <= stop + step/2:
-        yield i
-        i += step
-
-def logrange(start, end, count):
-    return(list(map(math.exp, 
-             math.log(start) + np.arange(0, count, 1)
-             * math.log(end/start)/(count - 1))))
-
-def linrange(start, end, count):
-    return(list(frange(start, end, (end - start)/(count - 1))))
-
-
 def preprocess_string(s):        
     return s.strip('\'"').replace('\\\"', '\"').replace('\\\'', '\'').replace('\\\\', '\\')
 
@@ -986,7 +971,7 @@ class SlatInterpreter(slatParserListener):
                 start = float(floats[0].getText())
                 incr = float(floats[1].getText())
                 end = float(floats[2].getText())
-                self._stack.append(frange(start, end, incr))
+                self._stack.append(pyslat.frange(start, end, incr))
 
     def exitCounted_at(self, ctx:slatParser.Counted_atContext):
         floats = ctx.FLOAT_VAL()
@@ -995,9 +980,9 @@ class SlatInterpreter(slatParserListener):
         count = int(ctx.INTEGER().getText())
 
         if ctx.LINFLAG():
-            self._stack.append(linrange(start, end, count))
+            self._stack.append(pyslat.linrange(start, end, count))
         elif ctx.LOGFLAG():
-            self._stack.append(logrange(start, end, count))
+            self._stack.append(pyslat.logrange(start, end, count))
         else:
             raise ValueError("Must specify --log or --linear")
         
@@ -1030,7 +1015,7 @@ class SlatInterpreter(slatParserListener):
     # Exit a parse tree produced by slatParser#python_script.
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
         expression =  ctx.python_expression().getText()
-        value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np, "list":list, "map": map, "logrange": logrange, "linrange": linrange})
+        value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np, "list":list, "map": map, "pyslat": pyslat})
         print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
         self._stack.append(value)
         print(self._stack)

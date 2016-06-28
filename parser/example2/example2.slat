@@ -322,27 +322,27 @@ integration maq 1E-6 1024;
 integration maq 1E-1 1024;
 
 # Set up recorders:
-set logvalues $(logrange(0.01, 2.5, 199));
-set edpoddvalues $(logrange(0.05, 5.0, 199));
-set edpevenvalues $(logrange(0.001, 0.1, 199));
-set linvalues $(linrange(0.01, 2.5, 199));
-set lossimvalues $(linrange(0.01, 2.5, 199));
-set lossedpvalues1 $(linrange(0.001, 0.10, 149));
-set lossedpvalues2 $(linrange(0.001, 0.10, 199));
-set lossedpvalues3 $(linrange(0.05, 5.0, 199));
-set lossedpvalues4 $(linrange(0.001, 0.15, 149));
-set lossedpvalues5 $(linrange(0.001, 0.10, 149));
+set logvalues $(pyslat.logrange(0.01, 2.5, 199));
+set edpoddvalues $(pyslat.logrange(0.05, 5.0, 199));
+set edpevenvalues $(pyslat.logrange(0.001, 0.1, 199));
+set linvalues $(pyslat.linrange(0.01, 2.5, 199));
+set lossimvalues $(pyslat.linrange(0.01, 2.5, 199));
+set lossedpvalues1 $(pyslat.linrange(0.001, 0.10, 149));
+set lossedpvalues2 $(pyslat.linrange(0.001, 0.10, 199));
+set lossedpvalues3 $(pyslat.linrange(0.05, 5.0, 199));
+set lossedpvalues4 $(pyslat.linrange(0.001, 0.15, 149));
+set lossedpvalues5 $(pyslat.linrange(0.001, 0.10, 149));
 
 recorder imrate IM_1 $logvalues results/im_rate --new;
 
-recorder collapse IM_1 $(linrange(0.01, 2.5, 199)) results/collapse.txt --new;
+recorder collapse IM_1 $(pyslat.linrange(0.01, 2.5, 199)) results/collapse.txt --new;
 recorder collrate IM_1 results/collrate.txt --new;
 
 recorder edpim EDP_1 $linvalues --cols mean_x, sd_ln_x results/im_edp_1.txt --new;
-recorder edprate EDP_1 $(logrange(0.001, 0.15, 149)) results/edp_1_rate.txt --new;
+recorder edprate EDP_1 $(pyslat.logrange(0.001, 0.15, 149)) results/edp_1_rate.txt --new;
 
 recorder edpim EDP_2 $linvalues --cols mean_x, sd_ln_x results/im_edp_2.txt --new;
-recorder edprate EDP_2 $(logrange(0.001, 0.10, 149)) results/edp_2_rate.txt --new;
+recorder edprate EDP_2 $(pyslat.logrange(0.001, 0.10, 149)) results/edp_2_rate.txt --new;
 
 recorder edpim EDP_3 $linvalues --cols mean_x, sd_ln_x results/im_edp_3.txt --new;
 recorder edprate EDP_3 $edpoddvalues results/edp_3_rate.txt --new;

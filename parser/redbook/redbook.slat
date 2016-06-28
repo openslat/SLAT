@@ -345,13 +345,13 @@ rebuildcost BUILDING 14E6, 0.35 --mu mean_x --sd sd_ln_x;
 integration maq 1E-1 1024;
 
 # Set up recorders:
-set edpoddvalues $(logrange(0.05, 5.0, 199));
-set edpevenvalues $(logrange(0.001, 0.1, 199));
+set edpoddvalues $(pyslat.logrange(0.05, 5.0, 199));
+set edpevenvalues $(pyslat.logrange(0.001, 0.1, 199));
 set linvalues $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198);
-set linvalues $(linrange(0.01, 2.5, 199));
-set lossimvalues $(linrange(0.01, 2.5, 199));
-set lossedpvalues149 $(linrange(0.001, 0.10, 149));
-set lossedpvalues $(linrange(0.001, 0.10, 199));
+set linvalues $(pyslat.linrange(0.01, 2.5, 199));
+set lossimvalues $(pyslat.linrange(0.01, 2.5, 199));
+set lossedpvalues149 $(pyslat.linrange(0.001, 0.10, 149));
+set lossedpvalues $(pyslat.linrange(0.001, 0.10, 199));
 
 recorder imrate IM_1 0.01:2.5 --log 199  results/im_rate --new;
 
