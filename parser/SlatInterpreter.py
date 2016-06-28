@@ -9,171 +9,12 @@ from slatParser import slatParser
 from slatParserListener import slatParserListener
 import glob
 from distutils import text_file
-import numbers
 import pyslat
 import math
 import numpy as np
-from contextlib import redirect_stdout
 
 def preprocess_string(s):        
     return s.strip('\'"').replace('\\\"', '\"').replace('\\\'', '\'').replace('\\\\', '\\')
-
-class recorder:
-    def __init__(self, type, function, options, columns, at):
-        super().__init__()
-
-        self._type = type
-        self._function = function
-        self._options = options
-        self._at = at
-
-        if not type == 'dsrate' and not type == 'collrate' \
-           and at==None:
-            raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
-
-        if (type =='dsedp' or type == 'dsim') and columns == None:
-            columns = []
-            for i in range(function.size()):
-                columns.append("DS{}".format(i + 1))
-        elif (type == 'probfn' or type == 'edpim') and columns == None:
-            columns = ['mean_ln_x', 'sd_ln_x']
-        elif (type == 'structloss' or type == 'lossedp' or type =='lossim') \
-             and columns == None:
-            columns = ['mean_x', 'sd_ln_x']
-        self._columns = columns
-
-    def __str__(self):
-        return "Recorder: {} {} {} {} {}".format(self._type, self._function, self._options, self._columns, self._at)
-
-    def generate_output(self):
-        #print(self)
-        if self._type == 'dsrate':
-            # TODO: How does this recorder work?
-            print("DSRATE recorder not implemented")
-        elif self._type == 'collrate':
-            print("Rate of Collapse for IM {} is {}".format(self._function.id(), self._function.CollapseRate()))
-        else:
-            labels = {'detfn': ['x', 'y'],
-                      'probfn': ['x', None],
-                      'imrate': ['IM', 'lambda'],
-                      'edpim': ['IM', None],
-                      'edprate': ['EDP', 'lambda'],
-                      'dsedp': ['EDP', None],
-                      'dsim': ['IM', None],
-                      'lossds': ['DS', None],
-                      'lossedp': ['EDP', None],
-                      'lossim': ['IM', None],
-                      'structloss': ['IM', None],
-                      'annloss': ['t', ["E[ALt]"]],
-                      'lossrate': ['t', 'Rate'],
-                      'collapse': ['IM', 'p(Collapse)']}
-        
-            x_label = labels[self._type][0]
-            y_label = labels[self._type][1]
-
-            if y_label:
-                if not isinstance(y_label, list):
-                    y_label = [y_label];
-            else:
-                y_label = self._columns
-                      
-            line = "{:>15}".format(x_label)
-            for y in y_label:
-                    line = "{}{:>15}".format(line, y)
-            print(line)
-
-            for x in self._at:
-                line = "{:>15.6}".format(x)
-                if self._type == 'dsedp':
-                    yvals = self._function.fragfn().pExceeded(x)
-                    for y in yvals:
-                        line = "{}{:>15.6}".format(line, y)
-                elif self._type == 'annloss':
-                    annual_loss = self._function.E_loss(int(x), self._options['lambda'])
-                    line = "{}{:>15.6}".format(line, annual_loss)
-                elif self._type == 'lossrate':
-                    loss_rate = self._function.lambda_loss(x)
-                    line = "{}{:>15.6}".format(line, loss_rate)
-                elif self._type == 'collapse':
-                    p = self._function.pCollapse(x)
-                    line = "{}{:>15.6}".format(line, p)
-                elif not self._columns == None:
-                    line = "{:>15.6}".format(x)
-                    for y in self._columns:
-                        if isinstance(y, numbers.Number):
-                            if isinstance(self._function, pyslat.probfn):
-                                yval = self._function.function().X_at_exceedence(x, y)
-                            elif isinstance(self._function, pyslat.edp):
-                                yval = self._function.X_at_exceedence(x, y)
-                            else:
-                                yval = "----"
-                        elif y == 'mean_x':
-                            if self._type == 'lossedp':
-                                yval = self._function.E_Loss_EDP(x)
-                            elif self._type == 'lossim':
-                                yval = self._function.E_Loss_IM(x)
-                            elif self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).mean()
-                            else:
-                                yval = self._function.Mean(x)
-                        elif y == 'mean_ln_x':
-                            if self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).mean_ln()
-                            else:
-                                yval = self._function.MeanLn(x)
-                        elif y == 'median_x':
-                            if self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).median()
-                            else:
-                                yval = self._function.Median(x)
-                        elif y == 'sd_ln_x':
-                            if self._type == 'lossedp':
-                                yval = self._function.SD_ln_Loss_EDP(x)
-                            elif self._type == 'lossim':
-                                yval = self._function.SD_ln_Loss_IM(x)
-                            elif self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).sd_ln()
-                            else:
-                                yval = self._function.SD_ln(x)
-                        elif y == 'sd_x':
-                            if self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).sd(x)
-                            else:
-                                yval = self._function.SD(x)
-                        else:
-                            yval = "+++++++++"
-                        line = "{}{:>15.6}".format(line, yval)
-                else:
-                    if isinstance(self._function, pyslat.detfn):
-                        yval = self._function.ValueAt(x)
-                    elif (isinstance(self._function, pyslat.im) or
-                          isinstance(self._function, pyslat.edp) or
-                          isinstance(self._function, pyslat.IM) or
-                          isinstance(self._function, pyslat.EDP)):
-                          yval = self._function.getlambda(x)
-                    elif isinstance(self._function, pyslat.compgroup):
-                          yval = self._function.E_Loss_EDP(x)
-                    else:
-                        yval = "*****"
-                    line = "{}{:>15.6}".format(line, yval)
-                print(line)
-                
-            
-    def run(self):
-        #print("RUN {}".format(self))
-        destination = self._options.get('filename')
-        if destination != None:
-            if self._options.get('append'):
-                f = open(destination, "a")
-            else:
-                f = open(destination, "w")
-            with redirect_stdout(f):
-                self.generate_output()
-
-        else:
-            self.generate_output()
-    
-        
 
 class SlatInterpreter(slatParserListener):
     def __init__(self):
@@ -648,7 +489,7 @@ class SlatInterpreter(slatParserListener):
         else:
             raise ValueError("Unhandled recorder type")
 
-        self._recorders.append(recorder(type, function, options, cols, at))
+        self._recorders.append(pyslat.recorder(type, function, options, cols, at))
 
     # Exit a parse tree produced by slatParser#recorder_at.
     def exitRecorder_at(self, ctx:slatParser.Recorder_atContext):
