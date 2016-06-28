@@ -995,13 +995,9 @@ class SlatInterpreter(slatParserListener):
         count = int(ctx.INTEGER().getText())
 
         if ctx.LINFLAG():
-            self._stack.append(list(frange(start, end, (end - start) / (count - 1))))
-            print(self._stack)
+            self._stack.append(linrange(start, end, count))
         elif ctx.LOGFLAG():
-            self._stack.append(
-                list(map(math.exp, 
-                         math.log(start) + np.arange(0, count, 1)
-                         * math.log(end/start)/(count - 1))))
+            self._stack.append(logrange(start, end, count))
         else:
             raise ValueError("Must specify --log or --linear")
         

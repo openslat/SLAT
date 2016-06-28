@@ -319,6 +319,7 @@ rebuildcost BUILDING 14E6, 0.35 --mu mean_x --sd sd_ln_x;
 
 # Set up integration parameters:
 integration maq 1E-6 1024;
+integration maq 1E-1 1024;
 
 # Set up recorders:
 set logvalues $(logrange(0.01, 2.5, 199));
@@ -334,16 +335,14 @@ set lossedpvalues5 $(linrange(0.001, 0.10, 149));
 
 recorder imrate IM_1 $logvalues results/im_rate --new;
 
-recorder collapse IM_1 $(0.01 + numpy.arange(0, 199, 1) * (2.5 - 0.01)/198) results/collapse.txt --new;
+recorder collapse IM_1 $(linrange(0.01, 2.5, 199)) results/collapse.txt --new;
 recorder collrate IM_1 results/collrate.txt --new;
 
 recorder edpim EDP_1 $linvalues --cols mean_x, sd_ln_x results/im_edp_1.txt --new;
-recorder edprate EDP_1 $(list(map(math.exp, math.log(0.001) + numpy.arange(0, 149, 1) * math.log(0.15/0.001)/148)))
-    results/edp_1_rate.txt --new;
+recorder edprate EDP_1 $(logrange(0.001, 0.15, 149)) results/edp_1_rate.txt --new;
 
 recorder edpim EDP_2 $linvalues --cols mean_x, sd_ln_x results/im_edp_2.txt --new;
-recorder edprate EDP_2 $(list(map(math.exp, math.log(0.001) + numpy.arange(0, 149, 1) * math.log(0.1/0.001)/148)))
-         results/edp_2_rate.txt --new;
+recorder edprate EDP_2 $(logrange(0.001, 0.10, 149)) results/edp_2_rate.txt --new;
 
 recorder edpim EDP_3 $linvalues --cols mean_x, sd_ln_x results/im_edp_3.txt --new;
 recorder edprate EDP_3 $edpoddvalues results/edp_3_rate.txt --new;
