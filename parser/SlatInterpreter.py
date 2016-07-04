@@ -567,8 +567,13 @@ class SlatInterpreter(slatParserListener):
     def exitImportprobfn_command(self, ctx:slatParser.Importprobfn_commandContext):
         id = ctx.ID().getText()
         filename = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"')
-        self._probfns[id] = pyslat.ImportProbFn(filename)
-        
+        self._probfns[id] = pyslat.ImportProbFn(id, filename)
+
+    def exitImportimfn_command(self, ctx:slatParser.Importprobfn_commandContext):
+        id = ctx.ID().getText()
+        filename = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"')
+        self._ims[id] = pyslat.ImportIMFn(id, filename)
+
 def main(argv):
     for file in argv[1:]:
         print("File:", file)

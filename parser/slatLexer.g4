@@ -94,6 +94,7 @@ COLS_FLAG: '--cols';
 ANALYZE: 'analyze';
 SET: 'set';
 IMPORTPROBFN: 'importprobfn';
+IMPORTIMFN: 'importimfn';
 PLUS: '+';
 MINUS: '-';
 STAR: '*';

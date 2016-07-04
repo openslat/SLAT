@@ -8,7 +8,8 @@ command : (title_command | detfn_command | probfn_command | im_command | edp_com
 	| fragfn_command | lossfn_command | compgroup_command | print_command 
 	| integration_command | recorder_command | analyze_command | set_command 
 	| importprobfn_command | collapse_command | structure_command
-	| rebuildcost_command) SEMICOLON ;
+	| rebuildcost_command) SEMICOLON 
+	| importimfn_command;
 
 title_command : TITLE STRING;
 
@@ -121,3 +122,5 @@ analyze_command : ANALYZE;
 set_command : SET ID (python_script | var_ref | parameters);
 
 importprobfn_command : IMPORTPROBFN ID file_spec;
+
+importimfn_command : IMPORTIMFN ID file_spec;

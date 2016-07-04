@@ -73,7 +73,7 @@
 
     ##Set up variables to make it easier to get to the files:
     paleo.dir = paste("~/SLATv1.15_Public/",
-        "example1a_collapse/", sep="")
+        "1_Processing/", sep="")
     results.dir = paste(paleo.dir, "results/", sep="")
 
     ## Read in the IM data:
@@ -247,6 +247,7 @@
   #+END_SRC
 
   #+RESULTS:
+  : [1] "EDP mismatch in LOSS-EDP #51"
 
 
 
@@ -285,7 +286,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:im-rate
   #+RESULTS: im-rate
-  [[file:/tmp/babel-1757XZc/figure-1757ges.pdf]]
+  [[file:/tmp/babel-17848lX/figure-1784lgL.pdf]]
 
 \clearpage
 * EDP

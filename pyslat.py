@@ -183,6 +183,7 @@ class im:
         self._id = id
         self._detfn = detfn
         self._func = MakeIM(detfn.function())
+        self._collapse = None
 
     def id(self):
         return self._id
@@ -539,7 +540,7 @@ class recorder:
     
         
 
-def ImportProbFn(filename):
+def ImportProbFn(id, filename):
     data = np.loadtxt(filename, skiprows=2)
     # Add a point at 0, 0 to support interpolation down to zero
     x = [0]
@@ -564,13 +565,22 @@ def ImportProbFn(filename):
         #x.append(x[N - 1] * 1.5)
         #mu.append(mu[N - 2] + (mu[N-1] - mu[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
         #sigma.append(sigma[N - 2] + (sigma[N-1] - sigma[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
-    print("ImportProbFn")
-    print(filename)
-    print(len(x))
-    print(len(mu))
-    print(len(sigma))
     mu_func = detfn("anonymous", 'linear', [x.copy(), mu.copy()])
     sigma_func = detfn("anonymous", 'linear', [x.copy(), sigma.copy()])
     return(probfn(id, 'lognormal', 
                   [LOGNORMAL_PARAM_TYPE.MEAN_X, mu_func],
                   [LOGNORMAL_PARAM_TYPE.SD_X,  sigma_func]))
+
+def ImportIMFn(id, filename):
+    data = np.loadtxt(filename, skiprows=2)
+    x = []
+    y = []
+    for d in data:
+        x.append(d[0])
+        y.append(d[1])
+    print("> ImportIMFn")
+    print(id)
+    print(x)
+    print(y)
+    im_func = detfn("anonymous", 'loglog', [x.copy(), y.copy()])
+    return(im(id, im_func))
