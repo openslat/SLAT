@@ -12,6 +12,7 @@ from distutils import text_file
 import pyslat
 import math
 import numpy as np
+from contextlib import redirect_stdout
 
 def preprocess_string(s):        
     return s.strip('\'"').replace('\\\"', '\"').replace('\\\'', '\'').replace('\\\\', '\\')
@@ -22,17 +23,7 @@ class SlatInterpreter(slatParserListener):
         self._stack = []
         self._stack_stack = []
         self._variables = dict()
-        self._detfns = dict()
-        self._probfns = dict()
-        self._ims = dict()
-        self._edps = dict()
-        self._fragfns = dict()
-        self._lossfns = dict()
-        self._compgroups = dict()
-        self._structures = dict()
-        self._recorders = []
         self._title = []
-
     def _push_stack(self):
         self._stack_stack.append(self._stack)
         self._stack = []
@@ -77,7 +68,7 @@ class SlatInterpreter(slatParserListener):
         value = self._stack.pop()
 
         id = ctx.ID().getText()
-        self._detfns[id] = pyslat.detfn(id, type, value)
+        pyslat.detfn(id, type, value)
 
     def enterLoglog_args(self, ctx:slatParser.Loglog_argsContext):
         self._push_stack()
@@ -182,13 +173,13 @@ class SlatInterpreter(slatParserListener):
         mu = options['mu']
         sd = options['sd']
 
-        self._probfns[id] = pyslat.probfn(id, 'lognormal', [mu, self._detfns.get(mufn)], [sd, self._detfns.get(sigmafn)])
+        pyslat.probfn(id, 'lognormal', [mu, pyslat.detfn.lookup(mufn)], [sd, pyslat.detfn.lookup(sigmafn)])
 
     # Exit a parse tree produced by slatParser#im_command.
     def exitIm_command(self, ctx:slatParser.Im_commandContext):
         im_id = ctx.ID(0).getText()
         fn_id = ctx.ID(1).getText()
-        self._ims[im_id] = pyslat.im(im_id, self._detfns.get(fn_id))
+        pyslat.im(im_id, pyslat.detfn.lookup(fn_id))
 
     def exitCollapse_command(self, ctx:slatParser.Collapse_commandContext):
         id = ctx.ID().getText()
@@ -203,14 +194,14 @@ class SlatInterpreter(slatParserListener):
         if not options['sd'] == pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:
             raise ValueError("Sd option for collapse not yet supported")
 
-        self._ims[id].SetCollapse(pyslat.collapse("anonymous", mu, sd))
+        pyslat.im.lookup(id).SetCollapse(pyslat.collapse("anonymous", mu, sd))
 
     # Exit a parse tree produced by slatParser#edp_command.
     def exitEdp_command(self, ctx:slatParser.Edp_commandContext):
         edp_id = ctx.ID(0).getText()
         im_id = ctx.ID(1).getText()
         fn_id = ctx.ID(2).getText()
-        self._edps[edp_id] = pyslat.edp(edp_id, self._ims.get(im_id), self._probfns.get(fn_id))
+        pyslat.edp(edp_id, pyslat.im.lookup(im_id), pyslat.probfn.lookup(fn_id))
 
     # Exit a parse tree produced by slatParser#fragfn_command.
     def exitFragfn_command(self, ctx:slatParser.Fragfn_commandContext):
@@ -218,13 +209,13 @@ class SlatInterpreter(slatParserListener):
         db_params = ctx.fragfn_db_params()
         if db_params:
             db_params = self._stack.pop()
-            self._fragfns[id] = pyslat.fragfn_db(id, db_params)
+            pyslat.fragfn_db(id, db_params)
         else:
             params = ctx.fragfn_user_defined_params()
             options = self._stack.pop()
             scalars = self._stack.pop()
 
-            self._fragfns[id] = pyslat.fragfn_user(id, options, scalars)
+            pyslat.fragfn_user(id, options, scalars)
 
     # Exit a parse tree produced by slatParser#fragfn_db_params.
     def exitFragfn_db_params(self, ctx:slatParser.Fragfn_db_paramsContext):
@@ -274,7 +265,7 @@ class SlatInterpreter(slatParserListener):
         if ctx.simple_loss_command():
             options = self._stack.pop()
             data = self._stack.pop()
-            self._lossfns[id] = pyslat.lossfn(id, options, data)
+            pyslat.lossfn(id, options, data)
         else:
             raise ValueError("Unhanlded type of lossfn")
 
@@ -294,22 +285,21 @@ class SlatInterpreter(slatParserListener):
         frag_id =  ctx.ID(2).getText()
         loss_id =  ctx.ID(3).getText()
         count = int(ctx.INTEGER().getText())
-        self._compgroups[compgroup_id] = pyslat.compgroup(compgroup_id,
-                                                   self._edps.get(edp_id),
-                                                   self._fragfns.get(frag_id),
-                                                   self._lossfns.get(loss_id),
-                                                   count)
+        pyslat.compgroup(compgroup_id,
+                         pyslat.edp.lookup(edp_id),
+                         pyslat.fragfn.lookup(frag_id),
+                         pyslat.lossfn.lookup(loss_id),
+                         count)
 
     def exitStructure_command(self, ctx:slatParser.Structure_commandContext):
         id = ctx.ID().getText();
-        s = pyslat.structure()
+        s = pyslat.structure(id)
         groups = []
         for g in ctx.id_list().ID():
             groups.append(g.getText())
-            s.AddCompGroup(self._compgroups[g.getText()])
+            s.AddCompGroup(pyslat.compgroup.lookup(g.getText()))
         print("Create structure {} from {}.".format(id, groups));
-        self._structures[id] = s
-
+        
     def exitRebuildcost_command(self, ctx:slatParser.Rebuildcost_commandContext):
         id = ctx.ID().getText()
         options = self._stack.pop()
@@ -318,14 +308,14 @@ class SlatInterpreter(slatParserListener):
         sd = params[1]
         
         print("Rebuild cost for {}: {}, {}.".format(id, mu, sd))
-        self._structures[id].setRebuildCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
-        print(self._structures[id].getRebuildCost())
-        print(self._structures[id].Loss(0.01, 0))
-        print(self._structures[id].Loss(0.01, 1))
-        print(self._structures[id].Loss(0.1106, 0))
-        print(self._structures[id].Loss(0.1106, 1))
-        print(self._structures[id].Loss(1.003, 0))
-        print(self._structures[id].Loss(1.003, 1))
+        pyslat.structure.lookup(id).setRebuildCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
+        print(pyslat.structure.lookup(id).getRebuildCost())
+        print(pyslat.structure.lookup(id).Loss(0.01, 0))
+        print(pyslat.structure.lookup(id).Loss(0.01, 1))
+        print(pyslat.structure.lookup(id).Loss(0.1106, 0))
+        print(pyslat.structure.lookup(id).Loss(0.1106, 1))
+        print(pyslat.structure.lookup(id).Loss(1.003, 0))
+        print(pyslat.structure.lookup(id).Loss(1.003, 1))
 
     
     # Exit a parse tree produced by slatParser#print_command.
@@ -342,19 +332,19 @@ class SlatInterpreter(slatParserListener):
             
             fntype = ctx.print_function()
             if fntype.DETFN():
-                object = self._detfns.get(id)
+                object = pyslat.detfn.lookup(id)
             elif fntype.PROBFN():
-                object = self._probfns.get(id)
+                object = pyslat.probfn.lookup(id)
             elif fntype.IM():
-                object = self._ims.get(id)
+                object = pyslat.im.lookup(id)
             elif fntype.EDP():
-                object = self._edps.get(id)
+                object = pyslat.edp.lookup(id)
             elif fntype.FRAGFN():
-                object = self._fragfns.get(id)
+                object = pyslat.fragfn.lookup(id)
             elif fntype.LOSSFN():
-                object = self._lossfns.get(id)
+                object = pyslat.lossfn.lookup(id)
             elif fntype.COMPGROUP():
-                object = self._compgroups.get(id)
+                object = pyslat.compgroup.lookup(id)
             else:
                 object = 'unknown'
         elif ctx.print_title():
@@ -472,24 +462,24 @@ class SlatInterpreter(slatParserListener):
         id = ctx.ID().getText()
 
         if type == "dsrate" or type == 'dsedp' or type == 'dsim':
-            function = self._compgroups.get(id)
+            function = pyslat.compgroup.lookup(id)
         elif type == 'detfn':
-            function = self._detfns.get(id)
+            function = pyslat.detfn.lookup(id)
         elif type == 'probfn':
-            function = self._probfns.get(id)
+            function = pyslat.probfn.lookup(id)
         elif type == 'imrate' or type == 'collapse' or type == 'collrate':
-            function = self._ims.get(id)
+            function = pyslat.im.lookup(id)
         elif type == 'edpim' or type == 'edprate':
-            function = self._edps.get(id)
+            function = pyslat.edp.lookup(id)
         elif type == 'lossds' or type == 'lossedp' or type == 'lossim' \
              or type == 'annloss' or type == 'lossrate':
-            function = self._compgroups.get(id)
+            function = pyslat.compgroup.lookup(id)
         elif type == 'structloss':
-            function = self._structures.get(id)
+            function = pyslat.structure.lookup(id)
         else:
             raise ValueError("Unhandled recorder type")
 
-        self._recorders.append(pyslat.recorder(type, function, options, cols, at))
+        pyslat.recorder(id, type, function, options, cols, at)
 
     # Exit a parse tree produced by slatParser#recorder_at.
     def exitRecorder_at(self, ctx:slatParser.Recorder_atContext):
@@ -553,7 +543,7 @@ class SlatInterpreter(slatParserListener):
     # Exit a parse tree produced by slatParser#analyze_command.
     def exitAnalyze_command(self, ctx:slatParser.Analyze_commandContext):
         print("Perform analysis:")
-        for rec in self._recorders:
+        for rec in pyslat.recorder.all():
             print(rec)
             rec.run()
 
@@ -567,12 +557,12 @@ class SlatInterpreter(slatParserListener):
     def exitImportprobfn_command(self, ctx:slatParser.Importprobfn_commandContext):
         id = ctx.ID().getText()
         filename = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"')
-        self._probfns[id] = pyslat.ImportProbFn(id, filename)
+        pyslat.ImportProbFn(id, filename)
 
     def exitImportimfn_command(self, ctx:slatParser.Importprobfn_commandContext):
         id = ctx.ID().getText()
         filename = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"')
-        self._ims[id] = pyslat.ImportIMFn(id, filename)
+        pyslat.ImportIMFn(id, filename)
 
 def main(argv):
     for file in argv[1:]:

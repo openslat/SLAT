@@ -4,6 +4,8 @@ import numpy as np
 from contextlib import redirect_stdout
 import numbers
 
+
+
 def frange(start, stop, step):
     i = start
     while i <= stop + step/2:
@@ -91,7 +93,10 @@ class lognormaldist:
             self.mean(), self.sd_ln()))
 
 
+
 class detfn:
+    defs = dict()
+    
     def __init__(self, id, type, parameters):
         if type == 'power law':
             fntype = FUNCTION_TYPE.PLC
@@ -108,6 +113,10 @@ class detfn:
         self._type = type
         self._parameters = parameters.copy()
         self._func = factory(fntype, parameters)
+        detfn.defs[id] = self
+
+    def lookup(id):
+        return detfn.defs.get(id)
 
     def id(self):
         return self._id
@@ -124,6 +133,11 @@ class detfn:
 
 
 class probfn:
+    defs = dict()
+
+    def lookup(id):
+        return probfn.defs.get(id)
+    
     def __init__(self, id, type, mu_func, sigma_func):
         self._id = id
         self._type = type
@@ -131,6 +145,7 @@ class probfn:
         self._sigma_func = sigma_func
         self._func = MakeLogNormalProbabilisticFn({mu_func[0]: mu_func[1].function(),
                                                    sigma_func[0]: sigma_func[1].function()})
+        probfn.defs[id] = self
             
     def id(self):
         return self._id
@@ -179,11 +194,17 @@ class collapse:
         return("Collapse function '{}', mu={}, sd={}.".format(self._id, self._mu, self._sd))
         
 class im:
+    defs = dict()
+    
     def __init__(self, id, detfn):
         self._id = id
         self._detfn = detfn
         self._func = MakeIM(detfn.function())
         self._collapse = None
+        im.defs[id] = self
+
+    def lookup(id):
+        return im.defs.get(id)
 
     def id(self):
         return self._id
@@ -211,11 +232,16 @@ class im:
             return("Intensity measure '{}', based on the deterministic function '{}'.".format(self._id, self._detfn.id()))
 
 class edp:
+    defs = dict()
     def __init__(self, id, im, fn):
         self._id = id
         self._im = im
         self._fn = fn
         self._func = MakeEDP(im.function(), fn.function())
+        edp.defs[id] = self
+
+    def lookup(id):
+        return edp.defs.get(id)
             
     def id(self):
         return self._id
@@ -249,9 +275,15 @@ class edp:
                 "the probabilistic function {}.").format(self._id, self._im.id(), self._fn.id()))
 
 class fragfn:
+    defs = dict()
+    
     def __init__(self, id):
         self._id = id
         self.func = None
+        fragfn.defs[id] = self
+
+    def lookup(id):
+        return fragfn.defs.get(id)
         
     def id(self):
         return(self._id)
@@ -290,6 +322,8 @@ class fragfn_user(fragfn):
         return len(self._scalars)
 
 class lossfn:
+    defs = dict()
+    
     def __init__(self, id, options, data):
         self._id = id
         self._options = options
@@ -299,6 +333,10 @@ class lossfn:
         for d in data:
             params.append({options['mu']: d[0], options['sd']: d[1]})
         self._func = MakeLossFn(params)
+        lossfn.defs[id] = self
+
+    def lookup(id):
+        return lossfn.defs.get(id)
 
     def id(self):
         return(self._id)
@@ -310,6 +348,8 @@ class lossfn:
         return("Loss Function '{}', from {} as {}.".format(self._id, self._data, self._options))
 
 class compgroup:
+    defs = dict()
+    
     def __init__(self, id, edp, frag, loss, count):
         self._id = id
         self._edp = edp
@@ -320,7 +360,11 @@ class compgroup:
                                    frag.function(),
                                    loss.function(),
                                    count)
-        
+        compgroup.defs[id] = self
+
+    def lookup(id):
+        return compgroup.defs.get(id)
+    
     def fragfn(self):
         return self._frag
 
@@ -363,9 +407,15 @@ class compgroup:
             self._count))
 
 class structure:
-    def __init__(self):
+    defs = dict()
+    
+    def __init__(self, id):
         super().__init__()
         self._structure = MakeStructure()
+        structure.defs[id] = self
+
+    def lookup(id):
+        return structure.defs.get(id)
 
     def __str__(self):
         return "Structure"
@@ -384,7 +434,9 @@ class structure:
                      
     
 class recorder:
-    def __init__(self, type, function, options, columns, at):
+    defs = dict()
+    
+    def __init__(self, id, type, function, options, columns, at):
         super().__init__()
 
         self._type = type
@@ -406,6 +458,10 @@ class recorder:
              and columns == None:
             columns = ['mean_x', 'sd_ln_x']
         self._columns = columns
+        recorder.defs[id] = self
+
+    def all():
+        return recorder.defs.values()
 
     def __str__(self):
         return "Recorder: {} {} {} {} {}".format(self._type, self._function, self._options, self._columns, self._at)
