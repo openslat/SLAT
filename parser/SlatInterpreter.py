@@ -565,41 +565,10 @@ class SlatInterpreter(slatParserListener):
         print(("    Set the variable '{}' to {}.").format(id, value ))
 
     def exitImportprobfn_command(self, ctx:slatParser.Importprobfn_commandContext):
-        data = np.loadtxt((ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"'), skiprows=2)
-        # Add a point at 0, 0 to support interpolation down to zero
-        x = [0]
-        mu = [0]
-        sigma = [0]
-        C = [0]
-        for d in data:
-            x.append(d[0])
-            values = []
-            collapse = 0
-            for y in d[1:]:
-                if y==0:
-                    collapse = collapse + 1
-                else:
-                    values.append(y)
-            mu.append(np.mean(values))
-            sigma.append(np.std(values, ddof=1))
-            C.append(collapse / (len(d) - 1))
-        # Add points beyond the data provided to support interpolation beyond
-        # the given data, up to a point:
-        #N = len(x)
-        #x.append(x[N - 1] * 1.5)
-        #mu.append(mu[N - 2] + (mu[N-1] - mu[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
-        #sigma.append(sigma[N - 2] + (sigma[N-1] - sigma[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
-        mu_func = pyslat.detfn("anonymous", 'linear', [x.copy(), mu.copy()])
-        sigma_func = pyslat.detfn("anonymous", 'linear', [x.copy(), sigma.copy()])
-        print("IMPORT")
-        print(x)
-        print(mu)
-        print(sigma)
         id = ctx.ID().getText()
-        self._probfns[id] = pyslat.probfn(id, 'lognormal', 
-                                   [pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X, mu_func],
-                                   [pyslat.LOGNORMAL_PARAM_TYPE.SD_X,  sigma_func])
-
+        filename = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"')
+        self._probfns[id] = pyslat.ImportProbFn(filename)
+        
 def main(argv):
     for file in argv[1:]:
         print("File:", file)
