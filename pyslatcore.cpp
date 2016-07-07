@@ -587,12 +587,12 @@ namespace SLAT {
             
             python::list result;
             {
-                std::shared_ptr<LogNormalDist> temp(&values.first);
+                std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(values.first);
                 result.append(LogNormalDistWrapper(temp));
             }
 
             {
-                std::shared_ptr<LogNormalDist> temp(&values.second);
+                std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(values.second);
                 result.append(LogNormalDistWrapper(temp));
             }
             return result;
