@@ -431,7 +431,9 @@ class structure:
 
     def Loss(self, im, consider_collapse):
         return lognormaldist(self._structure.Loss(im, consider_collapse))
-                     
+
+    def DeaggregatedLoss(self, im):
+        return self._structure.DeaggregatedLoss(im)
     
 class recorder:
     defs = dict()
@@ -487,7 +489,8 @@ class recorder:
                       'structloss': ['IM', None],
                       'annloss': ['t', ["E[ALt]"]],
                       'lossrate': ['t', 'Rate'],
-                      'collapse': ['IM', 'p(Collapse)']}
+                      'collapse': ['IM', 'p(Collapse)'],
+                      'deagg': ['IM', ['mean_nc', 'sd_nc', 'mean_c', 'sd_c']]}
         
             x_label = labels[self._type][0]
             y_label = labels[self._type][1]
@@ -518,6 +521,14 @@ class recorder:
                 elif self._type == 'collapse':
                     p = self._function.pCollapse(x)
                     line = "{}{:>15.6}".format(line, p)
+                elif self._type == 'deagg':
+                    values = self._function.DeaggregatedLoss(x)
+                    nc = values[0]
+                    c = values[1]
+                    line = "{}{:>15.6}{:>15.6}{:>15.6}{:>15.6}".format(
+                        x, 
+                        nc.get_mean_X(), nc.get_sigma_lnX(), 
+                        c.get_mean_X(), c.get_sigma_lnX())
                 elif not self._columns == None:
                     line = "{:>15.6}".format(x)
                     for y in self._columns:

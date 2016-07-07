@@ -95,7 +95,7 @@ integration_method : MAQ;
 
 recorder_command : RECORDER ((recorder_type ID recorder_at recorder_cols?) 
                   | ((DSRATE | COLLRATE) ID)
-                  | ((LOSSRATE | COLLAPSE) ID recorder_at)
+                  | ((LOSSRATE | COLLAPSE | DEAGG) ID recorder_at)
 		  | (ANNLOSS ID recorder_at LAMBDA_FLAG lambda_value)
 		  | (STRUCTLOSS ID collapse_type? recorder_at recorder_cols?))
 		  print_options?;
