@@ -194,7 +194,7 @@ class SlatInterpreter(slatParserListener):
         if not options['sd'] == pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:
             raise ValueError("Sd option for collapse not yet supported")
 
-        pyslat.im.lookup(id).SetCollapse(pyslat.collapse("anonymous", mu, sd))
+        pyslat.im.lookup(id).SetCollapse(pyslat.collapse(None, mu, sd))
 
     # Exit a parse tree produced by slatParser#edp_command.
     def exitEdp_command(self, ctx:slatParser.Edp_commandContext):

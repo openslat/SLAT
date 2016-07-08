@@ -98,6 +98,7 @@ class detfn:
     defs = dict()
     
     def __init__(self, id, type, parameters):
+        print("PARAMETERS: {}".format(parameters))
         if type == 'power law':
             fntype = FUNCTION_TYPE.PLC
         elif type == 'hyperbolic':
@@ -112,8 +113,10 @@ class detfn:
         self._id = id
         self._type = type
         self._parameters = parameters.copy()
+        print("PARAMETERS: {}".format(self._parameters))
         self._func = factory(fntype, parameters)
-        detfn.defs[id] = self
+        if id != None:
+            detfn.defs[id] = self
 
     def lookup(id):
         return detfn.defs.get(id)
@@ -145,7 +148,8 @@ class probfn:
         self._sigma_func = sigma_func
         self._func = MakeLogNormalProbabilisticFn({mu_func[0]: mu_func[1].function(),
                                                    sigma_func[0]: sigma_func[1].function()})
-        probfn.defs[id] = self
+        if id != None:
+            probfn.defs[id] = self
             
     def id(self):
         return self._id
@@ -179,6 +183,8 @@ class probfn:
                    self._sigma_func[1].id(), self._sigma_func[0]))
 
 class collapse:
+    defs = dict()
+
     def __init__(self, id, mu, sd):
         self._id = id
         self._mu = mu
@@ -189,6 +195,9 @@ class collapse:
 
     def func(self):
         return self._func
+
+    def lookup(id):
+        return collapse.defs.get(id)
 
     def __str__(self):
         return("Collapse function '{}', mu={}, sd={}.".format(self._id, self._mu, self._sd))
@@ -201,7 +210,8 @@ class im:
         self._detfn = detfn
         self._func = MakeIM(detfn.function())
         self._collapse = None
-        im.defs[id] = self
+        if id != None:
+            im.defs[id] = self
 
     def lookup(id):
         return im.defs.get(id)
@@ -227,7 +237,7 @@ class im:
 
     def __str__(self):
         if self._collapse:
-            return("Intensity measure '{}', based on the deterministic function '{}', with {}".format(self._id, self._detfn.id(), self._collapse))
+            return("Intensity measure '{}', based on the deterministic function '{}', with {}".format(self._id, self._detfn, self._collapse))
         else:
             return("Intensity measure '{}', based on the deterministic function '{}'.".format(self._id, self._detfn.id()))
 
@@ -238,7 +248,8 @@ class edp:
         self._im = im
         self._fn = fn
         self._func = MakeEDP(im.function(), fn.function())
-        edp.defs[id] = self
+        if id != None:
+            edp.defs[id] = self
 
     def lookup(id):
         return edp.defs.get(id)
@@ -280,7 +291,8 @@ class fragfn:
     def __init__(self, id):
         self._id = id
         self.func = None
-        fragfn.defs[id] = self
+        if id != None:
+            fragfn.defs[id] = self
 
     def lookup(id):
         return fragfn.defs.get(id)
@@ -333,7 +345,8 @@ class lossfn:
         for d in data:
             params.append({options['mu']: d[0], options['sd']: d[1]})
         self._func = MakeLossFn(params)
-        lossfn.defs[id] = self
+        if id != None:
+            lossfn.defs[id] = self
 
     def lookup(id):
         return lossfn.defs.get(id)
@@ -360,7 +373,8 @@ class compgroup:
                                    frag.function(),
                                    loss.function(),
                                    count)
-        compgroup.defs[id] = self
+        if id != None:
+            compgroup.defs[id] = self
 
     def lookup(id):
         return compgroup.defs.get(id)
@@ -412,7 +426,8 @@ class structure:
     def __init__(self, id):
         super().__init__()
         self._structure = MakeStructure()
-        structure.defs[id] = self
+        if id != None:
+            structure.defs[id] = self
 
     def lookup(id):
         return structure.defs.get(id)
@@ -460,7 +475,11 @@ class recorder:
              and columns == None:
             columns = ['mean_x', 'sd_ln_x']
         self._columns = columns
-        recorder.defs[id] = self
+        if id != None:
+            recorder.defs[id] = self
+
+    def lookup(id):
+        return recorder.defs.get(id)
 
     def all():
         return recorder.defs.values()
@@ -632,8 +651,8 @@ def ImportProbFn(id, filename):
         #x.append(x[N - 1] * 1.5)
         #mu.append(mu[N - 2] + (mu[N-1] - mu[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
         #sigma.append(sigma[N - 2] + (sigma[N-1] - sigma[N-2]) * (x[N] - x[N-1]) / (x[N-1] - x[N-2]))
-    mu_func = detfn("anonymous", 'linear', [x.copy(), mu.copy()])
-    sigma_func = detfn("anonymous", 'linear', [x.copy(), sigma.copy()])
+    mu_func = detfn(None, 'linear', [x.copy(), mu.copy()])
+    sigma_func = detfn(None, 'linear', [x.copy(), sigma.copy()])
     return(probfn(id, 'lognormal', 
                   [LOGNORMAL_PARAM_TYPE.MEAN_X, mu_func],
                   [LOGNORMAL_PARAM_TYPE.SD_X,  sigma_func]))
@@ -645,9 +664,5 @@ def ImportIMFn(id, filename):
     for d in data:
         x.append(d[0])
         y.append(d[1])
-    print("> ImportIMFn")
-    print(id)
-    print(x)
-    print(y)
-    im_func = detfn("anonymous", 'loglog', [x.copy(), y.copy()])
+    im_func = detfn(None, 'loglog', [x.copy(), y.copy()])
     return(im(id, im_func))
