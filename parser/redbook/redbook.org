@@ -1564,7 +1564,7 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.nc-mean
    #+RESULTS: structloss.nc-mean
-   [[file:/tmp/babel-1757XZc/figure-1757ctC.pdf]]
+   [[file:/tmp/babel-17848lX/figure-1784wOd.pdf]]
 
 
    #+NAME: structloss.nc-sd

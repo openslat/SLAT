@@ -1099,6 +1099,7 @@ recorder lossrate COMPGROUP_1 1E-4:4.8E-3:1.2 results/loss_rate.txt --new;
 recorder structloss BUILDING --collapse $linvalues results/loss_c_total --new;
 recorder structloss BUILDING --nocollapse $linvalues results/loss_nc_total --new;
 
+recorder deagg BUILDING 0.01:2.5 --linear 199 results/deagg --new;
 analyze;
 
 
