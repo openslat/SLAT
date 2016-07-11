@@ -9,11 +9,6 @@ IM1.SetCollapse(pyslat.collapse(None, 0.9, 0.470))
 def ResultsFile(name):
     return "py-results/{}".format(name)
 
-def CheckResults(name):
-    if not filecmp.cmp(ResultsFile(name), "results/{}".format(name)):
-        print("MISMATCH: {}".format(name))
-        exit()
-
 logvalues = pyslat.logrange(0.01, 2.5, 199)
 edpoddvalues = pyslat.logrange(0.05, 5.0, 199)
 edpevenvalues = pyslat.logrange(0.001, 0.1, 199)
@@ -259,33 +254,28 @@ for comp in COMPONENT_DATA:
     pyslat.recorder("LOSSEDP_{}_REC".format(id), 'lossedp', cg,
                     {'filename': ResultsFile("loss_{}_edp.txt".format(id))},
                     None, 
-                    at_values).run()
-    CheckResults("loss_{}_edp.txt".format(id))
+                    at_values)
 
     pyslat.recorder("LOSSIM_{}_REC".format(id), 'lossim', cg,
                     {'filename': ResultsFile("loss_{}_im.txt".format(id))},
                     None, 
-                    lossimvalues).run()
-    CheckResults("loss_{}_im.txt".format(id))
+                    lossimvalues)
 
     pyslat.recorder("DSEDP_{}_REC".format(id), 'dsedp', cg,
                     {'filename': ResultsFile("ds_edp_{}.txt".format(id))},
                     None, 
-                    pyslat.frange(0.0, 0.200, 0.01)).run()
-    CheckResults("ds_edp_{}.txt".format(id))
+                    pyslat.frange(0.0, 0.200, 0.01))
 
     pyslat.recorder("LOSSRATE_{}_REC".format(id), 'lossrate', cg,
                     {'filename': ResultsFile("loss_rate_{}.txt".format(id))},
                     None, 
-                    pyslat.frange(1E-4, 1.2, 4.8E-3)).run()
-    CheckResults("loss_rate_{}.txt".format(id))
+                    pyslat.frange(1E-4, 1.2, 4.8E-3))
 
     pyslat.recorder("ANNLOSS_{}_REC".format(id), "annloss", cg,
                     {'filename': ResultsFile("annual_loss_{}.txt".format(id)),
                      "lambda": 0.06},
                     None, 
-                    pyslat.frange(1.0, 100.0, 1.0)).run()
-    CheckResults("annual_loss_{}.txt".format(id))
+                    pyslat.frange(1.0, 100.0, 1.0))
                 
     building.AddCompGroup(cg)
 
