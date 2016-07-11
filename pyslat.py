@@ -459,6 +459,9 @@ class recorder:
         self._function = function
         self._options = options
         self._at = at
+        if at != None:
+            self._at = list(at)
+
 
         if not type == 'dsrate' and not type == 'collrate' \
            and at==None:

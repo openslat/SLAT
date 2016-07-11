@@ -259,7 +259,19 @@ for comp in COMPONENT_DATA:
                     None, 
                     at_values).run()
     CheckResults("loss_{}_edp.txt".format(id))
-    
+
+    pyslat.recorder("LOSSIM_{}_REC".format(id), 'lossim', cg,
+                    {'filename': ResultsFile("loss_{}_im.txt".format(id))},
+                    None, 
+                    lossimvalues).run()
+    CheckResults("loss_{}_im.txt".format(id))
+
+    pyslat.recorder("DSEDP_{}_REC".format(id), 'dsedp', cg,
+                    {'filename': ResultsFile("ds_edp_{}.txt".format(id))},
+                    None, 
+                    pyslat.frange(0.0, 0.200, 0.01)).run()
+    CheckResults("ds_edp_{}.txt".format(id))
+
     building.AddCompGroup(cg)
 
 
