@@ -236,10 +236,12 @@ for comp in COMPONENT_DATA:
     loss = comp[3]
     count = comp[4]
 
-    cg = pyslat.compgroup(id, pyslat.edp.lookup(edp),
-                            pyslat.fragfn.lookup(frag),
-                            pyslat.lossfn.lookup(loss),
-                            count)
+    cg = pyslat.compgroup(
+        "COMPGROUP_{}".format(id),
+        pyslat.edp.lookup(edp),
+        pyslat.fragfn.lookup(frag),
+        pyslat.lossfn.lookup(loss),
+        count)
     print(id, edp, frag, loss, count)
     if id in [1, 2, 86, 96]:
         at_values = lossedpvalues1
@@ -278,6 +280,13 @@ for comp in COMPONENT_DATA:
                     pyslat.frange(1E-4, 1.2, 4.8E-3)).run()
     CheckResults("loss_rate_{}.txt".format(id))
 
+    pyslat.recorder("ANNLOSS_{}_REC".format(id), "annloss", cg,
+                    {'filename': ResultsFile("annual_loss_{}.txt".format(id)),
+                     "lambda": 0.06},
+                    None, 
+                    pyslat.frange(1.0, 100.0, 1.0)).run()
+    CheckResults("annual_loss_{}.txt".format(id))
+                
     building.AddCompGroup(cg)
 
 
@@ -301,6 +310,7 @@ pyslat.recorder("deagg",
                 {'filename': "py-results/deagg", 'append': False},
                 None, 
                 pyslat.linrange(0.01, 2.5, 199))
+
 
 pyslat.IntegrationSettings(1.0E-6, 1024)
 for r in pyslat.recorder.all():
