@@ -1,15 +1,17 @@
 #! /usr/bin/env python3
 import pyslat
+import filecmp
 
 IM1 = pyslat.ImportIMFn("IM_1", "imfunc.txt")
-pyslat.recorder('pre-imrate-rec', 'imrate', IM1,
-                {'filename': "py-results/im_rate_0"},
-                None, [0.01, 0.02, 0.04, 0.06, 0.08, 0.10, 0.20, 0.30, 0.40, 0.50, 0.60, 0.70, 0.80, 0.90, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2.0])
 IM1.SetCollapse(pyslat.collapse(None, 0.9, 0.470))
 
 def ResultsFile(name):
     return "py-results/{}".format(name)
 
+def CheckResults(name):
+    if not filecmp.cmp(ResultsFile(name), "results/{}".format(name)):
+        print("MISMATCH: {}".format(name))
+        exit()
 
 logvalues = pyslat.logrange(0.01, 2.5, 199)
 edpoddvalues = pyslat.logrange(0.05, 5.0, 199)
@@ -24,20 +26,19 @@ lossedpvalues5 = pyslat.linrange(0.001, 0.10, 149)
 
 pyslat.recorder('imrate-rec', 'imrate', IM1,
                 {'filename': ResultsFile("im_rate")},
-                None, logvalues)
+                None, logvalues).run()
+CheckResults("im_rate")
+
 pyslat.recorder('collapse-rec', 'collapse', IM1,
                 {'filename': ResultsFile("collapse.txt")},
-                None, pyslat.linrange(0.01, 2.5, 199))
+                None, pyslat.linrange(0.01, 2.5, 199)).run()
+CheckResults('collapse.txt')
 pyslat.recorder('collrate-rec', 'collrate', IM1,
                 {'filename': ResultsFile("collrate.txt")},
-                None, None);
+                None, None).run()
+CheckResults('collrate.txt')
 
-
-
-for i in pyslat.frange(0.0, 1.5, 0.1):
-    print(i, pyslat.im.lookup("IM_1").pCollapse(i))
-
-N_EDPS=0
+N_EDPS=21
 DATA_DIR = "/home/mag109/SLATv1.15_Public/example2_10storeybuilding"
 
 for i in range(1, N_EDPS + 1):
@@ -49,7 +50,8 @@ for i in range(1, N_EDPS + 1):
     pyslat.recorder('edpim-{}'.format(i), 'edpim', edp,
                     {'filename': ResultsFile("im_edp_{}.txt".format(i))},
                     ['mean_x', 'sd_ln_x'],
-                    linvalues)
+                    linvalues).run()
+    CheckResults("im_edp_{}.txt".format(i))
 
     
     if i==1:
@@ -64,8 +66,9 @@ for i in range(1, N_EDPS + 1):
     pyslat.recorder('edprate-{}'.format(i), 'edprate', edp,
                     {'filename': ResultsFile("edp_{}_rate.txt".format(i))},
                      None,
-                    at)
-    
+                    at).run()
+    CheckResults("edp_{}_rate.txt".format(i))
+
 
 # Fragility, loss, component group:
 FRAG_DATA = [[2, [[0.005, 0.40], [0.010, 0.45], [0.030, 0.50], [0.060, 0.60]],
@@ -227,46 +230,49 @@ COMPONENT_DATA = [[1, "EDP_2", "FRAG_2", "LOSS_2", 20],
                   [4, "EDP_17", "FRAG_214", "LOSS_214", 10],
                   [5, "EDP_19", "FRAG_214", "LOSS_214", 10]]
 
-pyslat.structure("building")
-if False:
-    for comp in COMPONENT_DATA:
-        id = comp[0]
-        edp = comp[1]
-        frag = comp[2]
-        loss = comp[3]
-        count = comp[4]
-        
-        pyslat.compgroup(id, pyslat.edp.lookup(edp),
-                         pyslat.fragfn.lookup(frag),
-                         pyslat.lossfn.lookup(loss),
-                         count)
-        pyslat.structure.lookup("building").AddCompGroup(pyslat.compgroup.lookup(id))
-
-
-
-if False:
-    pyslat.recorder("lossnc", 
-                    "structloss", 
-                    pyslat.structure.lookup("building"),
-                    {'collapse': False, 'filename': "py-results/loss_nc_total", 'append': False},
-                    None, 
-                    pyslat.linrange(0.01, 2.5, 199))
+building = pyslat.structure("building")
+building.setRebuildCost(pyslat.MakeLogNormalDist({pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:14E6,
+                                                  pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.35}))
+for comp in COMPONENT_DATA:
+    id = comp[0]
+    edp = comp[1]
+    frag = comp[2]
+    loss = comp[3]
+    count = comp[4]
     
-    pyslat.recorder("lossc", 
-                    "structloss", 
-                    pyslat.structure.lookup("building"),
-                    {'collapse': True, 'filename': "py-results/loss_c_total", 'append': False},
-                    None, 
-                    pyslat.linrange(0.01, 2.5, 199))
-    
-    pyslat.recorder("deagg", 
-                    "deagg", 
-                    pyslat.structure.lookup("building"),
-                    {'filename': "py-results/deagg", 'append': False},
-                    None, 
-                    pyslat.linrange(0.01, 2.5, 199))
+    pyslat.compgroup(id, pyslat.edp.lookup(edp),
+                     pyslat.fragfn.lookup(frag),
+                     pyslat.lossfn.lookup(loss),
+                     count)
+    building.AddCompGroup(pyslat.compgroup.lookup(id))
 
-#pyslat.recorder.lookup("deagg").run()
+
+pyslat.recorder("lossnc", 
+                "structloss", 
+                pyslat.structure.lookup("building"),
+                {'collapse': False, 'filename': "py-results/loss_nc_total", 'append': False},
+                None, 
+                pyslat.linrange(0.01, 2.5, 199)).run()
+CheckResults("loss_nc_total")
+
+pyslat.recorder("lossc", 
+                "structloss", 
+                pyslat.structure.lookup("building"),
+                {'collapse': True, 'filename': "py-results/loss_c_total", 'append': False},
+                None, 
+                pyslat.linrange(0.01, 2.5, 199)).run()
+CheckResults("loss_c_total")
+
+pyslat.recorder("deagg", 
+                "deagg", 
+                pyslat.structure.lookup("building"),
+                {'filename': "py-results/deagg", 'append': False},
+                None, 
+                pyslat.linrange(0.01, 2.5, 199)).run()
+CheckResults("deagg")
+
+exit()
+
 for r in pyslat.recorder.all():
     #print(r)
     r.run()

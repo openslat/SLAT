@@ -36,7 +36,7 @@ class SlatInterpreter(slatParserListener):
     # Enter a parse tree produced by slatParser#command.
     def enterCommand(self, ctx:slatParser.CommandContext):
         self._stack = []
-        print(ctx.getText())
+        #print(ctx.getText())
     
     # Exit a parse tree produced by slatParser#command.
     def exitCommand(self, ctx:slatParser.CommandContext):
@@ -307,15 +307,15 @@ class SlatInterpreter(slatParserListener):
         mu = params[0]
         sd = params[1]
         
-        print("Rebuild cost for {}: {}, {}.".format(id, mu, sd))
+        #print("Rebuild cost for {}: {}, {}.".format(id, mu, sd))
         pyslat.structure.lookup(id).setRebuildCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
-        print(pyslat.structure.lookup(id).getRebuildCost())
-        print(pyslat.structure.lookup(id).Loss(0.01, 0))
-        print(pyslat.structure.lookup(id).Loss(0.01, 1))
-        print(pyslat.structure.lookup(id).Loss(0.1106, 0))
-        print(pyslat.structure.lookup(id).Loss(0.1106, 1))
-        print(pyslat.structure.lookup(id).Loss(1.003, 0))
-        print(pyslat.structure.lookup(id).Loss(1.003, 1))
+        #print(pyslat.structure.lookup(id).getRebuildCost())
+        #print(pyslat.structure.lookup(id).Loss(0.01, 0))
+        #print(pyslat.structure.lookup(id).Loss(0.01, 1))
+        #print(pyslat.structure.lookup(id).Loss(0.1106, 0))
+        #print(pyslat.structure.lookup(id).Loss(0.1106, 1))
+        #print(pyslat.structure.lookup(id).Loss(1.003, 0))
+        #print(pyslat.structure.lookup(id).Loss(1.003, 1))
 
     
     # Exit a parse tree produced by slatParser#print_command.
@@ -413,6 +413,8 @@ class SlatInterpreter(slatParserListener):
 
     # Exit a parse tree produced by slatParser#recorder_command.
     def exitRecorder_command(self, ctx:slatParser.Recorder_commandContext):
+        recorder_id = ctx.recorder_id().getText()
+
         if ctx.print_options():
             options = self._stack.pop()
         else:
@@ -427,11 +429,8 @@ class SlatInterpreter(slatParserListener):
             options['lambda'] = self._stack.pop()
             
         if ctx.recorder_at():
-            print("AT: " )
             at = self._stack.pop()
-            print(at)
         else:
-            print("NO AT")
             at = None
 
         type = ctx.recorder_type()
@@ -481,7 +480,7 @@ class SlatInterpreter(slatParserListener):
         else:
             raise ValueError("Unhandled recorder type")
 
-        pyslat.recorder(id, type, function, options, cols, at)
+        pyslat.recorder(recorder_id, type, function, options, cols, at)
 
     # Exit a parse tree produced by slatParser#recorder_at.
     def exitRecorder_at(self, ctx:slatParser.Recorder_atContext):
@@ -538,9 +537,9 @@ class SlatInterpreter(slatParserListener):
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
         expression =  ctx.python_expression().getText()
         value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np, "list":list, "map": map, "pyslat": pyslat})
-        print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
+        #print("Evaluatate the Python expression '{}' --> {})".format(expression, value))
         self._stack.append(value)
-        print(self._stack)
+        #print(self._stack)
 
     # Exit a parse tree produced by slatParser#analyze_command.
     def exitAnalyze_command(self, ctx:slatParser.Analyze_commandContext):
@@ -554,7 +553,7 @@ class SlatInterpreter(slatParserListener):
         id = ctx.ID().getText()
         value = self._stack.pop()
         self._variables[id] = value
-        print(("    Set the variable '{}' to {}.").format(id, value ))
+        #print(("    Set the variable '{}' to {}.").format(id, value ))
 
     def exitImportprobfn_command(self, ctx:slatParser.Importprobfn_commandContext):
         id = ctx.ID().getText()

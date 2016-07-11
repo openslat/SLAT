@@ -98,7 +98,7 @@ class detfn:
     defs = dict()
     
     def __init__(self, id, type, parameters):
-        print("PARAMETERS: {}".format(parameters))
+        #print("PARAMETERS: {}".format(parameters))
         if type == 'power law':
             fntype = FUNCTION_TYPE.PLC
         elif type == 'hyperbolic':
@@ -113,7 +113,7 @@ class detfn:
         self._id = id
         self._type = type
         self._parameters = parameters.copy()
-        print("PARAMETERS: {}".format(self._parameters))
+        #print("PARAMETERS: {}".format(self._parameters))
         self._func = factory(fntype, parameters)
         if id != None:
             detfn.defs[id] = self
@@ -191,7 +191,6 @@ class collapse:
         self._sd = sd
         self._func = MakeCollapse(mu, sd)
         self._collapse = None
-        print(self)
 
     def func(self):
         return self._func
@@ -485,7 +484,16 @@ class recorder:
         return recorder.defs.values()
 
     def __str__(self):
-        return "Recorder: {} {} {} {} {}".format(self._type, self._function, self._options, self._columns, self._at)
+        if self._at != None:
+            values = list(self._at)
+            if len(values) > 4:
+                atprint = "[{}, {}, ... {}]".format(values[0], values[1], values[-1])
+            else:
+                atprint = values
+        else:
+            atprint = "(no values)"
+
+        return "Recorder: {} {} {} {} {}".format(self._type, self._function, self._options, self._columns, atprint)
 
     def generate_output(self):
         #print(self)
