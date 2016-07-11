@@ -1097,8 +1097,6 @@ recorder LOSSRATE_115_REC lossrate COMPGROUP_115 1E-4:4.8E-3:1.2 results/loss_ra
 
 recorder ANNLOSS_REC annloss COMPGROUP_1 1.0:1.0:100.0 --lambda 0.06 results/annual_loss.txt --new;
 
-recorder LOSSRATE_1_REC lossrate COMPGROUP_1 1E-4:4.8E-3:1.2 results/loss_rate.txt --new;
-
 recorder STRUCTLOSS_C_REC structloss BUILDING --collapse $linvalues results/loss_c_total --new;
 recorder STRUCTLOSS_NC_REC structloss BUILDING --nocollapse $linvalues results/loss_nc_total --new;
 

@@ -272,6 +272,12 @@ for comp in COMPONENT_DATA:
                     pyslat.frange(0.0, 0.200, 0.01)).run()
     CheckResults("ds_edp_{}.txt".format(id))
 
+    pyslat.recorder("LOSSRATE_{}_REC".format(id), 'lossrate', cg,
+                    {'filename': ResultsFile("loss_rate_{}.txt".format(id))},
+                    None, 
+                    pyslat.frange(1E-4, 1.2, 4.8E-3)).run()
+    CheckResults("loss_rate_{}.txt".format(id))
+
     building.AddCompGroup(cg)
 
 
