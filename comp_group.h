@@ -38,6 +38,7 @@ namespace SLAT {
         Caching::CachedValue<double> E_annual_loss;
         Caching::CachedFunction<double, double> lambda_loss;
         Caching::CachedFunction<LogNormalDist, double> loss_EDP_dist;
+        std::shared_ptr<FragilityFn> FragFn(void);
         double E_loss(int years, double discount_rate);
         double mean_ln_loss_EDP(double edp);
         LogNormalDist LossDist_IM(double im);

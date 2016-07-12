@@ -1,15 +1,15 @@
 ifeq ($(shell uname), Linux)
-all: main unit_tests pyslatcore.so doc total_loss_debug interp
+all: main unit_tests pyslatcore.so doc total_loss_debug interp example2
 
 clean:
-	rm -f *.a *.o *.so main unit_tests total_loss_debug
+	rm -f *.a *.o *.so main unit_tests total_loss_debug example2
 
 ANTLR=java -jar /usr/local/lib/antlr-4.5.2-complete.jar -Dlanguage=Python3
 else
-all: main unit_tests pyslatcore.pyd doc interp
+all: main unit_tests pyslatcore.pyd doc interp example2
 
 clean:
-	rm -f *.a *.o *.dll main unit_tests
+	rm -f *.a *.o *.dll main unit_tests example2
 ANTLR=java -jar ../../antlr-4.5.3-complete.jar -Dlanguage=Python3
 endif
 
@@ -99,9 +99,24 @@ main: main.o libslat.so
 	$(CC) -fPIC main.o -L. -lslat -o main ${LDFLAGS}
 total_loss_debug: total_loss_debug.o libslat.so
 	$(CC) -fPIC total_loss_debug.o -L. -lslat -o total_loss_debug ${LDFLAGS}
+example2: example2.o libslat.so
+	$(CC) -fPIC example2.o -L. -lslat -o example2 ${LDFLAGS}
 else
 main: main.o libslat.dll
 	$(CC) main.o -L. -o main \
+	-lslat \
+	-L/usr/local/lib \
+	 $(CFLAGS) \
+	-lgsl \
+	-lboost_system-mt \
+	-lboost_log-mt \
+	-lboost_filesystem-mt \
+	-lboost_log_setup-mt \
+	-lpthread -lm \
+	-lboost_thread-mt \
+        -lboost_unit_test_framework-mt
+example2: example2.o libslat.dll
+	$(CC) example2.o -L. -o example2 \
 	-lslat \
 	-L/usr/local/lib \
 	 $(CFLAGS) \
@@ -174,3 +189,5 @@ parser/slatParser.py: parser/slatParser.g4
 
 parser/slatLexer.py: parser/slatLexer.g4
 	cd parser && $(ANTLR) slatLexer.g4
+
+example2.o: example2.cpp functions.h relationships.h maq.h replaceable.h fragility.h lognormaldist.h loss_functions.h

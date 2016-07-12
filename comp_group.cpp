@@ -196,4 +196,10 @@ namespace SLAT {
             return 0; //NAN;
         }
     }
+
+    std::shared_ptr<FragilityFn> CompGroup::FragFn(void)
+    {
+        return frag_fn;
+    }
+
 }
