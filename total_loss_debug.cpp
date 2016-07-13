@@ -141,7 +141,7 @@ int main(int argc, char **argv)
     std::shared_ptr<CompGroup> cgroup1 = std::make_shared<CompGroup>(edp1, fragFn, lossFn, 1);
     std::shared_ptr<CompGroup> cgroup2 = std::make_shared<CompGroup>(edp2, fragFn, lossFn, 1);
 
-    Structure structure;
+    Structure structure("structure");
     structure.AddCompGroup(cgroup1);
     structure.AddCompGroup(cgroup2);
     structure.setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));

@@ -19,7 +19,7 @@
 namespace SLAT {
     class Structure : public Replaceable<Structure> {
     public:
-        Structure();
+        Structure(std::string name);
         ~Structure() {};
 
         void AddCompGroup(std::shared_ptr<CompGroup> cg);
@@ -32,6 +32,7 @@ namespace SLAT {
 
     private:
         LogNormalDist calc_AnnualLoss(void);
+        std::string name;
         LogNormalDist LossNC(double im);
         std::vector<std::shared_ptr<CompGroup>> components;
         std::shared_ptr<IM> im;

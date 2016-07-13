@@ -14,6 +14,13 @@
 
 namespace SLAT {
     namespace Caching {
+        omp_lock_t lock;
+
+        void Init_Caching(void)
+        {
+            omp_init_lock(&lock);
+        }
+
         /**
          * Maintaina map of all cached functions, so we can clear all caches
          * with a single function call (e.g., when changing the integration
@@ -25,23 +32,29 @@ namespace SLAT {
          * Add a cached function to the list.
          */
         void Add_Cache(void *cache, std::function<void (void)> clear_func) {
+            omp_set_lock(&lock);
             caches[cache] = clear_func;
+            omp_unset_lock(&lock);
         }
 
         /**
          * Remove a cached function from the list.
          */
         void Remove_Cache(void *cache) {
+            omp_set_lock(&lock);
             caches.erase(cache);
+            omp_unset_lock(&lock);
         }
 
         /**
          * Clear all (registered) function caches.
          */
         void Clear_Caches(void) {
+            omp_set_lock(&lock);
             for (auto it=caches.begin(); it != caches.end(); it++) {
                 it->second();
             }
+            omp_unset_lock(&lock);
         }
     };
 }

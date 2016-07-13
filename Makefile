@@ -13,7 +13,7 @@ clean:
 ANTLR=java -jar ../../antlr-4.5.3-complete.jar -Dlanguage=Python3
 endif
 
-CFLAGS=-g -O3 -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
+CFLAGS=-g -O3 -fopenmp -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
 
 ifeq ($(shell uname), Linux)
 	# Linux Build
@@ -50,6 +50,7 @@ else
 		-L/c/windows \
 		-lpthread -lm
 endif
+LDFLAGS += -lpthread -fopenmp
 
 # Uncomment the next line to add the current directory to the search path. This is *NOT*
 # generally recommended, but saves on from specifying 'LD_LIBRARY_PATH=.':
@@ -74,7 +75,7 @@ maq.o: maq.cpp maq.h
 fragility.o: fragility.cpp fragility.h 
 lognormaldist.o: lognormaldist.cpp lognormaldist.h 
 loss_functions.o: loss_functions.cpp loss_functions.h 
-comp_group.o: comp_group.cpp comp_group.h
+comp_group.o: comp_group.cpp comp_group.h caching.h
 structure.o: structure.cpp structure.h
 
 ifeq ($(shell uname), Linux)
@@ -191,3 +192,6 @@ parser/slatLexer.py: parser/slatLexer.g4
 	cd parser && $(ANTLR) slatLexer.g4
 
 example2.o: example2.cpp functions.h relationships.h maq.h replaceable.h fragility.h lognormaldist.h loss_functions.h
+cachetest.o: cachetest.cpp caching.h
+cachetest: cachetest.o caching.o
+	$(CC) -fPIC cachetest.o caching.o -o cachetest ${LDFLAGS}

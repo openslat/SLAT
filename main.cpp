@@ -231,7 +231,7 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "LOSS-RATE table written." << endl;
 
 
-        Structure structure;
+        Structure structure("structure");
         structure.AddCompGroup(component_group);
         structure.setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
         {

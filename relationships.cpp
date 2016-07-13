@@ -16,6 +16,8 @@
 
 #include "relationships.h"
 #include "maq.h"
+#include <string>
+#include <iostream>
 
 namespace SLAT {
     Integration::IntegrationSettings EDP::class_settings(
@@ -60,8 +62,9 @@ namespace SLAT {
         return (*f)(x);
     }
 
-    IM::IM( std::shared_ptr<DeterministicFn> func) 
+    IM::IM( std::shared_ptr<DeterministicFn> func, std::string name) 
     {
+        this->name = name;
         f = func;
         callback_id = f->add_callbacks(
             [this] (void) {
@@ -179,11 +182,13 @@ namespace SLAT {
     }
 
     EDP::EDP(std::shared_ptr<IM> base_rate,
-             std::shared_ptr<ProbabilisticFn> dependent_rate) :
+             std::shared_ptr<ProbabilisticFn> dependent_rate, 
+             std::string name) :
         local_settings(&class_settings),
         callback_id(0),
-        lambda([this] (double x) { return this->calc_lambda(x); }) 
+        lambda([this] (double x) { return this->calc_lambda(x); }, name + "::lambda") 
     {
+        this->name = name;
         this->base_rate = base_rate;
         this->dependent_rate = dependent_rate;
 
