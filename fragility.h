@@ -14,6 +14,7 @@
 
 #include "lognormaldist.h"
 #include <vector>
+#include <omp.h>
 
 namespace SLAT {
     class FragilityFn {
@@ -26,6 +27,7 @@ namespace SLAT {
         std::vector<double> pExceeded(double edp);
         std::vector<double> pHighest(double edp);
     private:
+        omp_lock_t lock;
         std::vector<LogNormalDist> damage_states;
     };
 }

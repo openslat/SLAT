@@ -71,6 +71,9 @@ int main(int argc, char **argv)
     BOOST_LOG(logger) << "Starting main().";
 
     cout << "Running Example 2" << endl;
+
+    // Initialise Caching System:
+    Caching::Init_Caching();
     
     // Set up Integration parameters:
     Integration::IntegrationSettings::Set_Tolerance(1E-6);
@@ -308,26 +311,29 @@ int main(int argc, char **argv)
             {214, {{0.25, 0.6}, {0.50, 0.6}, {1.00, 0.6}, {2.00, 0.6}},
              {{ 200.0, 0.63}, { 1200.0, 0.63}, { 3600.0, 0.63}, {10000.0, 0.63}}}};
 
-        for (vector<struct DATA>::const_iterator i=data.begin(); i != data.end(); i++) {
+//#pragma omp parallel for
+        for (size_t i=0; i < data.size(); i++) {
             {
-                vector<LogNormalDist> dists(i->frag.size());
+                vector<LogNormalDist> dists(data[i].frag.size());
                 
-                for (size_t j=0; j < i->frag.size(); j++) {
+#pragma omp parallel for
+                for (size_t j=0; j < data[i].frag.size(); j++) {
                     dists[j] = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(
-                        i->frag[j].first, i->frag[j].second);
+                        data[i].frag[j].first, data[i].frag[j].second);
                 }
 
-                fragility_functions[i->id] = make_shared<FragilityFn>(dists);
+                fragility_functions[data[i].id] = make_shared<FragilityFn>(dists);
             }
             {
-                vector<LogNormalDist> dists(i->frag.size());
+                vector<LogNormalDist> dists(data[i].frag.size());
                 
-                for (size_t j=0; j < i->loss.size(); j++) {
+#pragma omp parallel for
+                for (size_t j=0; j < data[i].loss.size(); j++) {
                     dists[j] = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(
-                        i->loss[j].first, i->loss[j].second);
+                        data[i].loss[j].first, data[i].loss[j].second);
                 }
 
-                loss_functions[i->id] = make_shared<LossFn>(dists);
+                loss_functions[data[i].id] = make_shared<LossFn>(dists);
             }
         }
     }
@@ -376,11 +382,12 @@ int main(int argc, char **argv)
                 {112, 13, 214, 10}, {113, 15, 214, 10}, {114, 17, 214, 10},
                 {115, 19, 214, 10}};
 
-        for (vector<struct DATA>::const_iterator i=data.begin(); i != data.end(); i++) {
-            compgroups[i->id] = make_shared<CompGroup>(edp_rels[i->edp],
-                                                       fragility_functions[i->frag],
-                                                       loss_functions[i->frag],
-                                                       i->count);
+#pragma omp parallel for
+        for (size_t i=0; i < data.size(); i++) {
+            compgroups[data[i].id] = make_shared<CompGroup>(edp_rels[data[i].edp],
+                                                            fragility_functions[data[i].frag],
+                                                            loss_functions[data[i].frag],
+                                                            data[i].count);
         }
             
         for (map<int, shared_ptr<CompGroup>>::const_iterator i = compgroups.cbegin();
@@ -415,14 +422,21 @@ int main(int argc, char **argv)
                     edp_vals = linrange(0.001, 0.10, 199);
                 }
         
-                for (vector<double>::const_iterator edp = edp_vals.begin();
-                     edp != edp_vals.end();
-                     edp++)
                 {
-                    outfile << setw(15) << *edp
-                            << setw(15) << cg->E_loss_EDP(*edp)
-                            << setw(15) << cg->SD_ln_loss_EDP(*edp)
-                            << endl;
+                    vector<double> e(edp_vals.size()), sd(edp_vals.size());
+#pragma omp parallel for
+                    for (size_t i=0; i < edp_vals.size(); i++) {
+                        double edp = edp_vals[i];
+                        e[i] = cg->E_loss_EDP(edp);
+                        sd[i] = cg->SD_ln_loss_EDP(edp);
+                    }
+                    
+                    for (size_t i=0; i < edp_vals.size(); i++) {
+                        outfile << setw(15) << edp_vals[i]
+                                << setw(15) << e[i]
+                                << setw(15) << sd[i]
+                                << endl;
+                    }
                 }
             }
 
@@ -436,14 +450,18 @@ int main(int argc, char **argv)
                         << setw(15) << "sd_ln_x" << endl;
         
                 vector<double> im_vals = linrange(0.01, 2.5, 199);
+                vector<double> e(im_vals.size()), sd(im_vals.size());
                 
-                for (vector<double>::const_iterator im = im_vals.begin();
-                     im != im_vals.end();
-                     im++)
-                {
-                    outfile << setw(15) << *im
-                            << setw(15) << cg->E_loss_IM(*im)
-                            << setw(15) << cg->SD_ln_loss_IM(*im)
+#pragma omp parallel for
+                for (size_t i=0; i < im_vals.size(); i++) {
+                    e[i] = cg->E_loss_IM(im_vals[i]);
+                    sd[i] = cg->SD_ln_loss_IM(im_vals[i]);
+                }
+                
+                for (size_t i=0; i < im_vals.size(); i++) {
+                    outfile << setw(15) << im_vals[i]
+                            << setw(15) << e[i]
+                            << setw(15) << sd[i]
                             << endl;
                 }
             }
@@ -465,18 +483,20 @@ int main(int argc, char **argv)
                 outfile << endl;
                 
                 vector<double> edp_vals = frange(0.0, 0.200, 0.01);
+                vector<vector<double>> results(edp_vals.size());
                 
-                for (vector<double>::const_iterator edp = edp_vals.begin();
-                     edp != edp_vals.end();
-                     edp++)
-                {
-                    vector<double> values = fragility->pExceeded(*edp);
-                    outfile << setw(15) << *edp;
-                    for (vector<double>::const_iterator i = values.cbegin();
-                         i != values.cend();
-                         i++) 
+#pragma omp parallel for
+                for (size_t i=0; i < edp_vals.size(); i++) {
+                    results[i] = fragility->pExceeded(edp_vals[i]);
+                }
+
+                for (size_t i=0; i < edp_vals.size(); i++) {
+                    outfile << setw(15) << edp_vals[i];
+                    for (vector<double>::const_iterator j = results[i].cbegin();
+                         j != results[i].cend();
+                         j++) 
                     {
-                        outfile << setw(15) << *i;
+                        outfile << setw(15) << *j;
                     }
                     outfile << endl;
                 }

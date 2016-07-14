@@ -21,6 +21,7 @@
 
 namespace SLAT {
     namespace Caching {
+        void Init_Caching(void);
         void Add_Cache(void *cache, std::function<void (void)> clear_func);
         void Remove_Cache(void *cache);
         void Clear_Caches(void);
@@ -65,7 +66,7 @@ namespace SLAT {
                         T result = func(v); 
                         omp_set_lock(&lock);
                         if (cache.count(v) != 0) {
-                            std::cout << "DUPLICATE" << std::endl;
+                            std::cout << "DUPLICATE (f): " << name << std::endl;
                         }
                         cache[v] = result;
                     } else {
@@ -126,6 +127,9 @@ namespace SLAT {
                     omp_unset_lock(&lock);
                     T result = func();
                     omp_set_lock(&lock);
+                    if (cache_valid) {
+                        std::cout << "DUPLICATE (v): " << name << std::endl;
+                    }
                     cached_value = result;
                     cache_valid = true;
                 } else {

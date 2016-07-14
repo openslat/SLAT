@@ -18,7 +18,10 @@ using namespace std;
 namespace SLAT {
     FragilityFn::FragilityFn(std::vector<LogNormalDist> onsets)
     {
+        omp_init_lock(&lock);
+        omp_set_lock(&lock);
         if (onsets.size() == 0) {
+            omp_unset_lock(&lock);
             throw std::invalid_argument("onsets");
         } else {
             damage_states.resize(onsets.size());
@@ -33,6 +36,7 @@ namespace SLAT {
                 }
             }   
         }
+        omp_unset_lock(&lock);
     };
 
     FragilityFn::~FragilityFn()
@@ -41,7 +45,10 @@ namespace SLAT {
 
     std::size_t FragilityFn::n_states(void)
     {
-        return damage_states.size();
+        omp_set_lock(&lock);
+        std::size_t result = damage_states.size();
+        omp_unset_lock(&lock);
+        return result;
     };
 
     std::vector<double> FragilityFn::pExceeded(double edp)
