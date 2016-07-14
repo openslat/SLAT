@@ -105,27 +105,39 @@ int main(int argc, char **argv)
     }
     // Write the IM-RATE relationship:
     {
+        vector<double> im_vals = logrange(0.01, 2.5, 199);
+
+        // Calculate the data:
+        vector<double> results(im_vals.size());
+        
+#pragma omp parallel for
+        for (size_t i=0; i < im_vals.size(); i++) 
+        {
+            results[i] = im_rel->lambda(im_vals[i]);
+        }
+
         ofstream ofile("parser/example2/c-results/im_rate");
         ofile << setw(15) << "IM" << setw(15) << "lambda" << endl;
-        vector<double> im_vals = logrange(0.01, 2.5, 199);
-        for (vector<double>::const_iterator im= im_vals.begin();
-             im != im_vals.end();
-             im++)
+        for (size_t i=0; i < im_vals.size(); i++) 
         {
-            ofile << setw(15) << *im << setw(15) << im_rel->lambda(*im) << endl;
+            ofile << setw(15) << im_vals[i] << setw(15) << results[i] << endl;
         }
     }
 
     // Write the Collapse data:
     {
+        vector<double> im_vals = linrange(0.01, 2.5, 199);
+        vector<double> results(im_vals.size());
+#pragma omp parallel for
+        for (size_t i=0; i < im_vals.size(); i++) {
+            results[i] = im_rel->pCollapse(im_vals[i]);
+        }
+        
         ofstream ofile("parser/example2/c-results/collapse.txt");
         ofile << setw(15) << "IM" << setw(15) << "p(Collapse)" << endl;
-        vector<double> im_vals = linrange(0.01, 2.5, 199);
-        for (vector<double>::const_iterator im= im_vals.begin();
-             im != im_vals.end();
-             im++)
+        for (size_t i=0; i < im_vals.size(); i++) 
         {
-            ofile << setw(15) << *im << setw(15) << im_rel->pCollapse(*im) << endl;
+            ofile << setw(15) << im_vals[i] << setw(15) << results[i] << endl;
         }
     }
 
@@ -170,7 +182,7 @@ int main(int argc, char **argv)
                 if (!infile.eof()) {
                     if (infile.fail()) {
                         cerr << "Error reading " << path.str() << endl;
-                        return -1;
+                        //return -1;
                     } else {
                         stringstream s(line);
                         double im;
@@ -197,12 +209,12 @@ int main(int argc, char **argv)
             {
                 
                 edp_rels[n] = make_shared<EDP>(
-                im_rel, 
-                make_shared<LogNormalFn>(
-                    make_shared<LinearInterpolatedFn>(im_val.data(), mean_edp.data(), im_val.size()),
-                    LogNormalFn::MEAN_X,
-                    make_shared<LinearInterpolatedFn>(im_val.data(), sd_edp.data(), im_val.size()),
-                    LogNormalFn::SIGMA_X));
+                    im_rel, 
+                    make_shared<LogNormalFn>(
+                        make_shared<LinearInterpolatedFn>(im_val.data(), mean_edp.data(), im_val.size()),
+                        LogNormalFn::MEAN_X,
+                        make_shared<LinearInterpolatedFn>(im_val.data(), sd_edp.data(), im_val.size()),
+                        LogNormalFn::SIGMA_X));
             }
         }
     }
@@ -210,22 +222,26 @@ int main(int argc, char **argv)
     // Dump EDP-IM relationship:
     for (int i=0; i < N_EDPS; i++) {
         int n = i + 1;
-
         {
+            vector<double> im_vals = linrange(0.01, 2.5, 199);
+            vector<double> mean(im_vals.size()), sd(im_vals.size());
+            
+#pragma omp parallel for
+            for (size_t i=0; i < im_vals.size(); i++) {
+                mean[i] = edp_rels[n]->Mean(im_vals[i]);
+                sd[i] = edp_rels[n]->SD_ln(im_vals[i]);
+            }
+            
             stringstream path;
             path << "parser/example2/c-results/im_edp_" << n << ".txt";
-
+            
             ofstream outfile(path.str());
             outfile << setw(15) << "IM" << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
-        
-            vector<double> im_vals = linrange(0.01, 2.5, 199);
-
-            for (vector<double>::const_iterator im = im_vals.begin();
-                 im != im_vals.end();
-                 im++)
-            {
-                outfile << setw(15) << *im << setw(15) << edp_rels[n]->Mean(*im)
-                        << setw(15) << edp_rels[n]->SD_ln(*im) << endl;
+            
+            for (size_t i=0; i < im_vals.size(); i++) {
+                outfile << setw(15) << im_vals[i]
+                        << setw(15) << mean[i]
+                        << setw(15) << sd[i] << endl;
             }
         }
 
@@ -237,7 +253,6 @@ int main(int argc, char **argv)
             outfile << setw(15) << "EDP" << setw(15) << "lambda" << endl;
         
             vector<double> edp_vals;
-
             if (n == 1) {
                 edp_vals = logrange(0.001, 0.15, 149);
             } else if (n == 2) {
@@ -247,15 +262,17 @@ int main(int argc, char **argv)
             } else {
                 edp_vals = logrange(0.001, 0.1, 199);
             }
+            vector<double> results(edp_vals.size());
+#pragma omp parallel for
+            for (size_t i=0; i < edp_vals.size(); i++) {
+                results[i] = edp_rels[n]->lambda(edp_vals[i]);
+            }
         
-            for (vector<double>::const_iterator edp = edp_vals.begin();
-                 edp != edp_vals.end();
-                 edp++)
-            {
-                outfile << setw(15) << *edp << setw(15) << edp_rels[n]->lambda(*edp) << endl;
+            for (size_t i=0; i < edp_vals.size(); i++) {
+                outfile << setw(15) << edp_vals[i] 
+                        << setw(15) << results[i] << endl;
             }
         }
-        
     }
     
     // Fragility and Loss functions

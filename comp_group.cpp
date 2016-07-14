@@ -23,21 +23,21 @@ namespace SLAT {
                          int count)
         :E_loss_IM([this] (double im) {
                 return this->E_loss_IM_calc(im);
-            }, true),
+            }, std::string("CompGroup::E_loss_IM")),
          SD_ln_loss_IM([this] (double im) {
                  return this->SD_ln_loss_IM_calc(im);
-             }, true),
+             }, std::string("CompGroup::SD_ln_loss_IM")),
          E_annual_loss([this] (void) {
 
                  return this->E_annual_loss_calc();
-             }),
+             }, std::string("CompGroup::E_annual_loss")),
          lambda_loss([this] (double loss) {
                  return this->lambda_loss_calc(loss);
-             }, true),
+             }, std::string("CompGroup::lambda_loss")),
          loss_EDP_dist([this] (double edp) {
                  return LogNormalDist::AddWeightedDistributions(this->loss_fn->LossFns(), 
                                                                 this->frag_fn->pHighest(edp)); 
-             }, true),
+             }, std::string("CompGroup::loss_EDP_dist")),
          edp(edp),
          frag_fn(frag_fn),
          loss_fn(loss_fn),

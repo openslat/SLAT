@@ -404,7 +404,7 @@ namespace SLAT {
     {
         LogNormalFn::M_TYPE m_type = LogNormalFn::M_TYPE::MEAN_INVALID;
         LogNormalFn::S_TYPE s_type = LogNormalFn::S_TYPE::SIGMA_INVALID;
-        double mu_param, sigma_param;
+        double mu_param=NAN, sigma_param=NAN;
         {
             python::stl_input_iterator<int> iter(parameters.keys());
             while (iter != python::stl_input_iterator<int>()) {

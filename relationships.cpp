@@ -16,6 +16,8 @@
 
 #include "relationships.h"
 #include "maq.h"
+#include <string>
+#include <iostream>
 
 namespace SLAT {
     Integration::IntegrationSettings EDP::class_settings(
@@ -182,7 +184,7 @@ namespace SLAT {
              std::shared_ptr<ProbabilisticFn> dependent_rate) :
         local_settings(&class_settings),
         callback_id(0),
-        lambda([this] (double x) { return this->calc_lambda(x); }) 
+        lambda([this] (double x) { return this->calc_lambda(x); }, "EDP::lambda") 
     {
         this->base_rate = base_rate;
         this->dependent_rate = dependent_rate;
