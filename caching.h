@@ -59,13 +59,21 @@ namespace SLAT {
                 omp_set_lock(&lock);
                 total_calls++;
                 if (cache_active) {
-                    if (cache.count(v) == 0) {
-                        cache[v] = func(v); 
+                    bool cached = cache.count(v) != 0;
+                    if (!cached) {
+                        omp_unset_lock(&lock);
+                        T result = func(v); 
+                        omp_set_lock(&lock);
+                        if (cache.count(v) != 0) {
+                            std::cout << "DUPLICATE" << std::endl;
+                        }
+                        cache[v] = result;
                     } else {
                         hits++;
                     }
+                    T result = cache[v];
                     omp_unset_lock(&lock);
-                    return cache[v];
+                    return result;
                 } else {
                     omp_unset_lock(&lock);
                     return func(v);
@@ -82,6 +90,7 @@ namespace SLAT {
 
         template <class T> class CachedValue {
         private:
+            omp_lock_t lock;
             std::function<T (void)> func;
             T cached_value;
             bool cache_valid;
@@ -92,8 +101,10 @@ namespace SLAT {
                 name = "Anonymous";
                 total_calls = 0;
                 hits = 0;
+                omp_init_lock(&lock);
             };
             CachedValue(std::function<T (void)> base_func, std::string name = "Anonymous") { 
+                omp_init_lock(&lock);
                 this->name = name;
                 cache_valid = false;
                 total_calls = 0;
@@ -109,14 +120,20 @@ namespace SLAT {
                           << std::endl;
             };
             T operator()(void) { 
+                omp_set_lock(&lock);
                 total_calls++;
                 if (!cache_valid) {
-                    cached_value = func();
+                    omp_unset_lock(&lock);
+                    T result = func();
+                    omp_set_lock(&lock);
+                    cached_value = result;
                     cache_valid = true;
                 } else {
                     hits++;
                 }
-                return cached_value;
+                T result = cached_value;
+                omp_unset_lock(&lock);
+                return result;
             }
             void ClearCache(void) {
                 cache_valid = false;
