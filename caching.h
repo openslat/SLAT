@@ -115,6 +115,8 @@ namespace SLAT {
 
         template <class T> class CachedValue {
         private:
+            bool in_process;
+            omp_lock_t waiting_lock;
             omp_lock_t lock;
             std::function<T (void)> func;
             T cached_value;
@@ -127,9 +129,15 @@ namespace SLAT {
                 total_calls = 0;
                 hits = 0;
                 omp_init_lock(&lock);
+                omp_init_lock(&waiting_lock);
+                omp_set_lock(&waiting_lock);
+                in_process = false;
             };
             CachedValue(std::function<T (void)> base_func, std::string name = "Anonymous") { 
                 omp_init_lock(&lock);
+                omp_init_lock(&waiting_lock);
+                omp_set_lock(&waiting_lock);
+                in_process = false;
                 this->name = name;
                 cache_valid = false;
                 total_calls = 0;
@@ -148,14 +156,24 @@ namespace SLAT {
                 omp_set_lock(&lock);
                 total_calls++;
                 if (!cache_valid) {
-                    omp_unset_lock(&lock);
-                    T result = func();
-                    omp_set_lock(&lock);
-                    if (cache_valid) {
-                        std::cout << "DUPLICATE (v): " << name << std::endl;
-                    }
-                    cached_value = result;
-                    cache_valid = true;
+                    if (in_process) {
+                        omp_unset_lock(&lock);
+                        omp_set_lock(&waiting_lock);
+                        omp_unset_lock(&waiting_lock); // Release for anyone else who's waiting
+                        omp_set_lock(&lock);
+                    } else {
+                        in_process = true;
+                        omp_unset_lock(&lock);
+                        T result = func();
+                        omp_set_lock(&lock);
+                        if (cache_valid) {
+                            std::cout << "DUPLICATE (v): " << name << std::endl;
+                        }
+                        cached_value = result;
+                        cache_valid = true;
+                        in_process = false;
+                        omp_unset_lock(&waiting_lock);
+                    }                        
                 } else {
                     hits++;
                 }

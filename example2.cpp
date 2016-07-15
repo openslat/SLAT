@@ -388,6 +388,7 @@ int main(int argc, char **argv)
                                                             fragility_functions[data[i].frag],
                                                             loss_functions[data[i].frag],
                                                             data[i].count);
+            (void)compgroups[data[i].id]->E_annual_loss();
         }
             
         for (map<int, shared_ptr<CompGroup>>::const_iterator i = compgroups.cbegin();
@@ -511,12 +512,15 @@ int main(int argc, char **argv)
                 outfile << setw(15) << "t" << setw(15) << "Rate" << endl;
                 
                 vector<double> t_vals = frange(1E-4, 1.2, 4.8E-3);
-                
-                for (vector<double>::const_iterator t = t_vals.begin();
-                     t != t_vals.end();
-                     t++)
-                {
-                    outfile << setw(15) << *t << setw(15) << cg->lambda_loss(*t) << std::endl;
+                vector<double> losses(t_vals.size());
+#pragma omp parallel for
+                for (size_t i=0; i < t_vals.size(); i++) {
+                    losses[i] = cg->lambda_loss(t_vals[i]);
+                }
+
+                for (size_t i=0; i < t_vals.size(); i++) {
+                    outfile << setw(15) << t_vals[i]
+                            << setw(15) << losses[i] << std::endl;
                 }
             }
 
@@ -529,12 +533,15 @@ int main(int argc, char **argv)
                 outfile << setw(15) << "t" << setw(15) << "E[ALt]" << endl;
                 
                 vector<double> t_vals = frange(1.0, 100.0, 1.0);
-                
-                for (vector<double>::const_iterator t = t_vals.begin();
-                     t != t_vals.end();
-                     t++)
-                {
-                    outfile << setw(15) << *t << setw(15) << cg->E_loss(*t, 0.06) << std::endl;
+                vector<double> losses(t_vals.size());
+#pragma omp parallel for
+                for (size_t i=0; i < t_vals.size(); i++) {
+                    losses[i] = cg->E_loss(t_vals[i], 0.06);
+                }
+
+                for (size_t i=0; i < t_vals.size(); i++) {
+                    outfile << setw(15) << t_vals[i]
+                            << setw(15) << losses[i] << std::endl;
                 }
             }
         }
