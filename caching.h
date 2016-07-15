@@ -28,7 +28,6 @@ namespace SLAT {
             
         template <class T, class V> class CachedFunction {
         public:
-            omp_lock_t lock;
             std::function<T (V)> func;
             std::unordered_map<V, T> cache;
             bool cache_active;
@@ -62,13 +61,35 @@ namespace SLAT {
                 if (cache_active) {
                     bool cached = cache.count(v) != 0;
                     if (!cached) {
-                        omp_unset_lock(&lock);
-                        T result = func(v); 
-                        omp_set_lock(&lock);
-                        if (cache.count(v) != 0) {
-                            std::cout << "DUPLICATE (f): " << name << std::endl;
+                        bool happening = in_process.count(v) != 0;
+                        if (happening) {
+                            in_process[v].count++;
+                            omp_unset_lock(&lock);
+                            omp_set_lock(&in_process[v].lock);
+                            omp_set_lock(&lock);
+                            in_process[v].count--;
+                            if (in_process[v].count > 0) {
+                                omp_unset_lock(&in_process[v].lock);
+                            } else {
+                                in_process.erase(v);
+                            }
+                        } else {
+                            omp_init_lock(&in_process[v].lock);
+                            omp_set_lock(&in_process[v].lock);
+                            in_process[v].count = 0;
+                            omp_unset_lock(&lock);
+                            T result = func(v); 
+                            omp_set_lock(&lock);
+                            if (cache.count(v) != 0) {
+                                std::cout << "DUPLICATE (f): " << name << std::endl;
+                            }
+                            cache[v] = result;
+                            if (in_process[v].count == 0) {
+                                in_process.erase(v);
+                            } else {
+                                omp_unset_lock(&in_process[v].lock);
+                            }
                         }
-                        cache[v] = result;
                     } else {
                         hits++;
                     }
@@ -84,6 +105,9 @@ namespace SLAT {
                 cache.clear(); 
             };
         private:
+            struct WAITING {omp_lock_t lock; int count; };
+            std::unordered_map<V, struct WAITING> in_process;
+            omp_lock_t lock;
             std::string name;
             int hits;
             int total_calls;
