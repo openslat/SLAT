@@ -446,6 +446,9 @@ class structure:
     def Loss(self, im, consider_collapse):
         return lognormaldist(self._structure.Loss(im, consider_collapse))
 
+    def AnnualLoss(self):
+        return lognormaldist(self._structure.AnnualLoss())
+
     def DeaggregatedLoss(self, im):
         return self._structure.DeaggregatedLoss(im)
     
@@ -462,8 +465,8 @@ class recorder:
         if at != None:
             self._at = list(at)
 
-
         if not type == 'dsrate' and not type == 'collrate' \
+           and (type != 'structloss' or not 'annual' in self._options) \
            and at==None:
             raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
 
@@ -479,6 +482,8 @@ class recorder:
         self._columns = columns
         if id != None:
             recorder.defs[id] = self
+            
+        print(self)
 
     def lookup(id):
         return recorder.defs.get(id)
@@ -505,6 +510,25 @@ class recorder:
             print("DSRATE recorder not implemented")
         elif self._type == 'collrate':
             print("Rate of Collapse for IM {} is {}".format(self._function.id(), self._function.CollapseRate()))
+        elif self._type == 'structloss' and 'annual' in self._options:
+            line1 = ""
+            line2 = ""
+            annual_loss = self._function.AnnualLoss()
+            for y_label in self._columns:
+                line1 = "{}{:>15}".format(line1, y_label)
+                if y_label=='mean_x':
+                    value = annual_loss.mean()
+                elif y_label=='mean_ln_x':
+                    value = annual_loss.mean_ln()
+                elif y_label=='median_x':
+                    value = annual_loss.median()
+                elif y_label=='sd_ln_x':
+                    value = annual_loss.sd_ln()
+                elif y_label=='sd_x':
+                    value = annual_loss.sd()
+                line2 = "{}{:>15.6}".format(line2, value)
+            print(line1)
+            print(line2)
         else:
             labels = {'detfn': ['x', 'y'],
                       'probfn': ['x', None],
@@ -575,17 +599,26 @@ class recorder:
                             elif self._type == 'lossim':
                                 yval = self._function.E_Loss_IM(x)
                             elif self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).mean()
+                                if x == 'ANNUAL':
+                                    yval = self._function.AnnualLoss().mean()
+                                else:
+                                    yval = self._function.Loss(x, self._options['collapse']).mean()
                             else:
                                 yval = self._function.Mean(x)
                         elif y == 'mean_ln_x':
                             if self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).mean_ln()
+                                if x == 'ANNUAL':
+                                    yval = self._function.AnnualLoss().mean_ln()
+                                else:
+                                    yval = self._function.Loss(x, self._options['collapse']).mean_ln()
                             else:
                                 yval = self._function.MeanLn(x)
                         elif y == 'median_x':
                             if self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).median()
+                                if x == 'ANNUAL':
+                                    yval = self._function.AnnualLoss().median()
+                                else:
+                                    yval = self._function.Loss(x, self._options['collapse']).median()
                             else:
                                 yval = self._function.Median(x)
                         elif y == 'sd_ln_x':
@@ -594,12 +627,18 @@ class recorder:
                             elif self._type == 'lossim':
                                 yval = self._function.SD_ln_Loss_IM(x)
                             elif self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).sd_ln()
+                                if x == 'ANNUAL':
+                                    yval = self._function.AnnualLoss().sd_ln()
+                                else:
+                                    yval = self._function.Loss(x, self._options['collapse']).sd_ln()
                             else:
                                 yval = self._function.SD_ln(x)
                         elif y == 'sd_x':
                             if self._type == 'structloss':
-                                yval = self._function.Loss(x, self._options['collapse']).sd(x)
+                                if x == 'ANNUAL':
+                                    yval = self._function.AnnualLoss().sd()
+                                else:
+                                    yval = self._function.Loss(x, self._options['collapse']).sd()
                             else:
                                 yval = self._function.SD(x)
                         else:

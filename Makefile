@@ -13,7 +13,7 @@ clean:
 ANTLR=java -jar ../../antlr-4.5.3-complete.jar -Dlanguage=Python3
 endif
 
-CFLAGS=-g -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
+CFLAGS=-g -O3 -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
 
 ifeq ($(shell uname), Linux)
 	# Linux Build

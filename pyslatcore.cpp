@@ -404,7 +404,7 @@ namespace SLAT {
     {
         LogNormalFn::M_TYPE m_type = LogNormalFn::M_TYPE::MEAN_INVALID;
         LogNormalFn::S_TYPE s_type = LogNormalFn::S_TYPE::SIGMA_INVALID;
-        double mu_param, sigma_param;
+        double mu_param=NAN, sigma_param=NAN;
         {
             python::stl_input_iterator<int> iter(parameters.keys());
             while (iter != python::stl_input_iterator<int>()) {
@@ -603,6 +603,9 @@ namespace SLAT {
         LogNormalDistWrapper getRebuildCost(void) {
             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->getRebuildCost())));
         };
+        LogNormalDistWrapper AnnualLoss(void) {
+            return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->AnnualLoss())));
+        };
     private:
         std::shared_ptr<Structure> wrapper;
     };
@@ -745,6 +748,7 @@ namespace SLAT {
             .def("DeaggregatedLoss", &StructureWrapper::DeaggregatedLoss)
             .def("setRebuildCost", &StructureWrapper::setRebuildCost)
             .def("getRebuildCost", &StructureWrapper::getRebuildCost)
+            .def("AnnualLoss", &StructureWrapper::AnnualLoss)
             ;
 
         

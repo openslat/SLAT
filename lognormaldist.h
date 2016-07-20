@@ -12,6 +12,7 @@
 #ifndef _LOGNORMAL_H_
 #define _LOGNORMAL_H_
 
+#include <iostream>
 #include <vector>
 
 namespace SLAT {
@@ -43,6 +44,8 @@ namespace SLAT {
             const std::vector<double> weights);
         static LogNormalDist AddDistributions(
             const std::vector<LogNormalDist> distributions);
+
+        friend std::ostream &operator<<(std::ostream &, const LogNormalDist &);
     private:
         double mu_lnX;
         double sigma_lnX;

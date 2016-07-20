@@ -17,21 +17,21 @@
 #include "maq.h"
 
 namespace SLAT {
-    class Structure {
+    class Structure : public Replaceable<Structure> {
     public:
-        Structure() {};
+        Structure();
         ~Structure() {};
 
         void AddCompGroup(std::shared_ptr<CompGroup> cg);
 
-        Integration::IntegrationSettings local_settings;
-        static Integration::IntegrationSettings class_settings;
-
         LogNormalDist Loss(double im, bool consider_collapse);
+        Caching::CachedValue<LogNormalDist> AnnualLoss;
         std::pair<LogNormalDist, LogNormalDist> DeaggregatedLoss(double im);
         void setRebuildCost(LogNormalDist dist) { rebuild_cost = dist; };
         LogNormalDist getRebuildCost(void) { return rebuild_cost; };
+
     private:
+        LogNormalDist calc_AnnualLoss(void);
         LogNormalDist LossNC(double im);
         std::vector<std::shared_ptr<CompGroup>> components;
         std::shared_ptr<IM> im;
