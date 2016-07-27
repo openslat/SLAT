@@ -20,8 +20,9 @@
 #include "maq.h"
 
 namespace SLAT {
-    Structure::Structure(void) : AnnualLoss([this] (void) { return this->calc_AnnualLoss(); })
+    Structure::Structure(std::string name) : AnnualLoss([this] (void) { return this->calc_AnnualLoss(); })
     {
+        this->name = name;
     };
     
     void  Structure::AddCompGroup(std::shared_ptr<CompGroup> cg)
