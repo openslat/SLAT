@@ -62,7 +62,7 @@ std::shared_ptr<CompGroup> CreateCG(double a, double count)
 
 BOOST_AUTO_TEST_CASE(structure_empty)
 {
-    Structure s;
+    Structure s("empty");
 
     s.Loss(0.9, false).get_mean_X();
     s.Loss(0.9, true).get_mean_X();
@@ -71,7 +71,7 @@ BOOST_AUTO_TEST_CASE(structure_empty)
 
 BOOST_AUTO_TEST_CASE(structure_just_rb_cost)
 {
-    Structure s;
+    Structure s("just rb");
 
     s.setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(100, 0.1));
     s.Loss(0.9, false).get_mean_X();
@@ -80,7 +80,7 @@ BOOST_AUTO_TEST_CASE(structure_just_rb_cost)
 
 BOOST_AUTO_TEST_CASE(structure_one_cg)
 {
-    Structure s;
+    Structure s("one cg");
     
     std::shared_ptr<IM> im = CreateIM();
 

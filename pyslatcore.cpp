@@ -609,7 +609,7 @@ namespace SLAT {
 
     StructureWrapper *MakeStructure() 
     {
-        return new StructureWrapper(std::make_shared<Structure>());
+        return new StructureWrapper(std::make_shared<Structure>("anonymous structure"));
     }
 
     void IntegrationSettings(double tolerance, unsigned int max_evals)

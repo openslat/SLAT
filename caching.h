@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <string>
 #include <omp.h>
+#include <signal.h>
 
 namespace SLAT {
     namespace Caching {
@@ -49,14 +50,15 @@ namespace SLAT {
                         this->ClearCache(); });
             };
             ~CachedFunction() {
-                std::cout << std::setw(50) << name
-                          << std::setw(10) << hits
-                          << std::setw(10) << total_calls 
-                          << std::endl;
+                /* std::cout << std::setw(50) << name */
+                /*           << std::setw(10) << hits */
+                /*           << std::setw(10) << total_calls  */
+                /*           << std::endl; */
                 Remove_Cache(this);
             }
             T operator()(V v) { 
                 omp_set_lock(&lock);
+#pragma omp flush 
                 total_calls++;
                 if (cache_active) {
                     bool cached = cache.count(v) != 0;
@@ -64,9 +66,12 @@ namespace SLAT {
                         bool happening = in_process.count(v) != 0;
                         if (happening) {
                             in_process[v].count++;
+#pragma omp flush 
+                            omp_lock_t *calc_lock = &in_process[v].lock;
                             omp_unset_lock(&lock);
-                            omp_set_lock(&in_process[v].lock);
+                            omp_set_lock(calc_lock);
                             omp_set_lock(&lock);
+#pragma omp flush 
                             in_process[v].count--;
                             if (in_process[v].count > 0) {
                                 omp_unset_lock(&in_process[v].lock);
@@ -77,11 +82,15 @@ namespace SLAT {
                             omp_init_lock(&in_process[v].lock);
                             omp_set_lock(&in_process[v].lock);
                             in_process[v].count = 0;
+#pragma omp flush 
                             omp_unset_lock(&lock);
                             T result = func(v); 
                             omp_set_lock(&lock);
+#pragma omp flush 
                             if (cache.count(v) != 0) {
-                                std::cout << "DUPLICATE (f): " << name << std::endl;
+                                std::cout << "DUPLICATE (f): " << name << " at " << v << std::endl;
+                                std::cout << in_process[v].count << std::endl;
+                                raise(SIGINT);
                             }
                             cache[v] = result;
                             if (in_process[v].count == 0) {
@@ -94,6 +103,7 @@ namespace SLAT {
                         hits++;
                     }
                     T result = cache[v];
+#pragma omp flush 
                     omp_unset_lock(&lock);
                     return result;
                 } else {
@@ -147,31 +157,37 @@ namespace SLAT {
                         this->ClearCache(); });
             };
             ~CachedValue() {
-                std::cout << std::setw(50) << name
-                          << std::setw(10) << hits
-                          << std::setw(10) << total_calls 
-                          << std::endl;
+                /* std::cout << std::setw(50) << name */
+                /*           << std::setw(10) << hits */
+                /*           << std::setw(10) << total_calls  */
+                /*           << std::endl; */
             };
             T operator()(void) { 
                 omp_set_lock(&lock);
+#pragma omp flush 
                 total_calls++;
                 if (!cache_valid) {
                     if (in_process) {
+#pragma omp flush 
                         omp_unset_lock(&lock);
                         omp_set_lock(&waiting_lock);
                         omp_unset_lock(&waiting_lock); // Release for anyone else who's waiting
                         omp_set_lock(&lock);
+#pragma omp flush 
                     } else {
                         in_process = true;
+#pragma omp flush 
                         omp_unset_lock(&lock);
                         T result = func();
                         omp_set_lock(&lock);
                         if (cache_valid) {
                             std::cout << "DUPLICATE (v): " << name << std::endl;
+                            raise(SIGINT);
                         }
                         cached_value = result;
                         cache_valid = true;
                         in_process = false;
+#pragma omp flush 
                         omp_unset_lock(&waiting_lock);
                     }                        
                 } else {

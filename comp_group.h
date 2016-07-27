@@ -21,10 +21,11 @@
 namespace SLAT {
     class CompGroup {
     public:
-        CompGroup() {};
         CompGroup(std::shared_ptr<EDP> edp,
                   std::shared_ptr<FragilityFn> frag_fn,
-                  std::shared_ptr<LossFn> loss_fn, int count);
+                  std::shared_ptr<LossFn> loss_fn, 
+                  int count,
+                  std::string name = "<unnamed>");
         double E_loss_EDP(double edp);
         double SD_ln_loss_EDP(double edp);
         double SD_loss_EDP(double edp);
@@ -44,6 +45,7 @@ namespace SLAT {
         LogNormalDist LossDist_IM(double im);
         std::shared_ptr<IM> getIM(void) { return edp->Base_Rate(); };
     private:
+        std::string name;
         std::shared_ptr<EDP> edp;
         std::shared_ptr<FragilityFn> frag_fn;
         std::shared_ptr<LossFn> loss_fn;

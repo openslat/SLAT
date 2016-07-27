@@ -192,3 +192,6 @@ parser/slatLexer.py: parser/slatLexer.g4
 	cd parser && $(ANTLR) slatLexer.g4
 
 example2.o: example2.cpp functions.h relationships.h maq.h replaceable.h fragility.h lognormaldist.h loss_functions.h
+cachetest.o: cachetest.cpp caching.h
+cachetest: cachetest.o caching.o
+	$(CC) -fPIC cachetest.o caching.o -o cachetest ${LDFLAGS}

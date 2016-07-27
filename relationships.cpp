@@ -62,8 +62,9 @@ namespace SLAT {
         return (*f)(x);
     }
 
-    IM::IM( std::shared_ptr<DeterministicFn> func) 
+    IM::IM( std::shared_ptr<DeterministicFn> func, std::string name) 
     {
+        this->name = name;
         f = func;
         callback_id = f->add_callbacks(
             [this] (void) {
@@ -181,11 +182,13 @@ namespace SLAT {
     }
 
     EDP::EDP(std::shared_ptr<IM> base_rate,
-             std::shared_ptr<ProbabilisticFn> dependent_rate) :
+             std::shared_ptr<ProbabilisticFn> dependent_rate, 
+             std::string name) :
         local_settings(&class_settings),
         callback_id(0),
-        lambda([this] (double x) { return this->calc_lambda(x); }, "EDP::lambda") 
+        lambda([this] (double x) { return this->calc_lambda(x); }, name + "::lambda") 
     {
+        this->name = name;
         this->base_rate = base_rate;
         this->dependent_rate = dependent_rate;
 
