@@ -487,7 +487,7 @@ int main(int argc, char **argv)
                 }
                 program_status = __LINE__;
 
-                if (false) {
+                {
                     // Record LOSS-IM relationship
                     stringstream path;
                     path << "parser/example2/c-results/loss_" << n << "_im.txt";
