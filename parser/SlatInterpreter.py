@@ -457,6 +457,9 @@ class SlatInterpreter(slatParserListener):
             if ctx.collapse_type() and \
                ctx.collapse_type().COLLAPSE_FLAG():
                 options['collapse'] = True
+            elif ctx.ANNUAL_FLAG():
+                options['collapse'] = False
+                options['annual'] = True
             else:
                 options['collapse'] = False
                 

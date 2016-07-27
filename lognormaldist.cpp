@@ -29,7 +29,11 @@ namespace SLAT {
 
     static inline double sigma_lnX_from_mean_X_and_sigma_X(double mean_X, double sigma_X)
     {
-        return sqrt(log(1.0 + (sigma_X * sigma_X) / (mean_X * mean_X)));
+        if (mean_X == 0) {
+            return 0.0;
+        } else {
+            return sqrt(log(1.0 + (sigma_X * sigma_X) / (mean_X * mean_X)));
+        }
     }
 
     LogNormalDist::LogNormalDist(void) {
@@ -174,4 +178,10 @@ namespace SLAT {
         return LogNormalDist_from_mean_X_and_sigma_X(new_mean_X, sqrt(new_var_X));
     }
 
+    std::ostream &operator<<(std::ostream &s, const LogNormalDist &dist)
+    {
+        return s << "(lognormal mean=" << dist.get_mean_X()
+                 << ", sd_ln=" << dist.get_sigma_lnX()
+                 << ")";
+    }
 }

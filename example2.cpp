@@ -118,7 +118,7 @@ int main(int argc, char **argv)
         
     // Write the IM-RATE relationship:
     {
-        vector<double> im_vals = logrange(0.01, 2.5, 199);
+        vector<double> im_vals = logrange(0.01, 3.0, 199);
 
         // Calculate the data:
         double results[im_vals.size()];
@@ -130,6 +130,7 @@ int main(int argc, char **argv)
 
         ofstream ofile("parser/example2/c-results/im_rate");
         ofile << setw(15) << "IM" << setw(15) << "lambda" << endl;
+
         for (size_t i=0; i < im_vals.size(); i++) 
         {
             ofile << setw(15) << im_vals[i] << setw(15) << results[i] << endl;
@@ -138,7 +139,7 @@ int main(int argc, char **argv)
 
     // Write the Collapse data:
     {
-        vector<double> im_vals = linrange(0.01, 2.5, 199);
+        vector<double> im_vals = linrange(0.01, 3.0, 199);
         double results[im_vals.size()];
 #pragma omp parallel for
         for (size_t i=0; i < im_vals.size(); i++) {
@@ -147,6 +148,7 @@ int main(int argc, char **argv)
         
         ofstream ofile("parser/example2/c-results/collapse.txt");
         ofile << setw(15) << "IM" << setw(15) << "p(Collapse)" << endl;
+
         for (size_t i=0; i < im_vals.size(); i++) 
         {
             ofile << setw(15) << im_vals[i] << setw(15) << results[i] << endl;
@@ -235,7 +237,7 @@ int main(int argc, char **argv)
     for (int i=0; i < N_EDPS; i++) {
         int n = i + 1;
         {
-            vector<double> im_vals = linrange(0.01, 2.5, 199);
+            vector<double> im_vals = linrange(0.01, 3.0, 199);
             double mean[im_vals.size()], sd[im_vals.size()];
             
 #pragma omp parallel for
@@ -266,9 +268,9 @@ int main(int argc, char **argv)
         
             vector<double> edp_vals;
             if (n == 1) {
-                edp_vals = logrange(0.001, 0.15, 149);
+                edp_vals = logrange(0.032, 0.0325, 199);
             } else if (n == 2) {
-                edp_vals = logrange(0.001, 0.10, 149);
+                edp_vals = logrange(0.001, 0.10, 199);
             } else if ((n % 2) == 1) {
                 edp_vals = logrange(0.05, 5.0, 199);
             } else {
@@ -426,11 +428,11 @@ int main(int argc, char **argv)
                 vector<double> edp_vals;
 
                 if (n == 1 || n == 2 || n == 86 || n == 96) {
-                    edp_vals = linrange(0.001, 0.10, 149);
+                    edp_vals = linrange(0.001, 0.10, 199);
                 } else if (n == 21 || n == 31 || n == 41) {
-                    edp_vals = linrange(0.001, 0.10, 149);
+                    edp_vals = linrange(0.001, 0.10, 199);
                 } else if (n == 71 || n == 85 || n == 106) {
-                    edp_vals = linrange(0.001, 0.15, 149);
+                    edp_vals = linrange(0.032, 0.0325, 199);
                 } else if (n == 86 || n == 87) {
                     edp_vals = linrange(0.001, 0.10, 199);
                 } else if ((n >= 51 && n < 87) || (n >= 107)) {
@@ -471,7 +473,7 @@ int main(int argc, char **argv)
                 outfile << setw(15) << "IM" << setw(15) << "mean_x" 
                         << setw(15) << "sd_ln_x" << endl;
         
-                vector<double> im_vals = linrange(0.01, 2.5, 199);
+                vector<double> im_vals = linrange(0.01, 3.0, 199);
                 double e[im_vals.size()], sd[im_vals.size()];
                 
                 //cout << "BEFORE LOSS-IM " << omp_get_wtime() << endl;
@@ -595,7 +597,7 @@ int main(int argc, char **argv)
         outfile << setw(15) << "IM" << setw(15) << "mean_x"
                 << setw(15) << "sd_ln_x" << endl;
                 
-        vector<double> im_vals = linrange(0.01, 2.5, 199);
+        vector<double> im_vals = linrange(0.01, 3.0, 199);
                 
         for (vector<double>::const_iterator im = im_vals.begin();
              im != im_vals.end();
@@ -614,7 +616,7 @@ int main(int argc, char **argv)
         outfile << setw(15) << "IM" << setw(15) << "mean_x"
                 << setw(15) << "sd_ln_x" << endl;
         
-        vector<double> im_vals = linrange(0.01, 2.5, 199);
+        vector<double> im_vals = linrange(0.01, 3.0, 199);
                 
         for (vector<double>::const_iterator im = im_vals.begin();
              im != im_vals.end();
@@ -636,7 +638,7 @@ int main(int argc, char **argv)
                 << setw(15) << "mean_c"
                 << setw(15) << "sd_c" << endl;
         
-        vector<double> im_vals = linrange(0.01, 2.5, 199);
+        vector<double> im_vals = linrange(0.01, 3.0, 199);
                 
         for (vector<double>::const_iterator im = im_vals.begin();
              im != im_vals.end();
@@ -652,6 +654,17 @@ int main(int argc, char **argv)
                     << endl;
         }
     }
+
+    {
+        // Record the expected loss for the structure:
+        ofstream outfile("parser/example2/c-results/ann_loss");
+        outfile << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
+        LogNormalDist annloss = building->AnnualLoss();
+        outfile << setw(15) << annloss.get_mean_X()
+                << setw(15) << annloss.get_sigma_lnX()
+                << endl;
+    }
+
     cout << "Done" << endl;
     return 0;
 }

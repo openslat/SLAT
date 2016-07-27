@@ -44,7 +44,7 @@
 #+STARTUP: overview
 #+STARTUP: align
 #+STARTUP: noinlineimages
-#+PROPERTY: header-args:R  :session *R-2*
+#+PROPERTY: header-args:R  :session *R-2-loss*
 #+PROPERTY: header-args    :exports both
 
 \clearpage
@@ -53,7 +53,7 @@
   The code in this section reads in the input data, as well as the results
   produces by the old ("paleo") and new ("neo") versions of SLAT.
 
-  #+BEGIN_SRC R  :results output :exports both
+  #+BEGIN_SRC R  :results output 
     library(xtable)
 
     num.edps <- 21
@@ -62,12 +62,12 @@
 
     ##Set up variables to make it easier to get to the files:
     paleo.dir = paste("~/SLATv1.15_Public/",
-        "example1a_collapse/", sep="")
+        "example2_10storeybuilding/", sep="")
     results.dir = paste(paleo.dir, "results/", sep="")
 
     ## Read in the IM data:
     paleo.im <- read.csv(
-        paste(results.dir, "im-rate.txt", sep=""),
+        paste(results.dir, "im_rate", sep=""),
         skip=3, header=FALSE, sep="")
     names(paleo.im) = c("IM", "lambda")
 
@@ -81,7 +81,7 @@
     for (i in seq(num.edps)) {
         ## Read data from old SLAT:
         paleo.edp.im[[i]] <- read.csv(
-            sprintf("%sedp-im-%d", results.dir, i),
+            sprintf("%sim_edp_%d.txt", results.dir, i),
             skip=3, header=FALSE, sep="")
         names(paleo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
 
@@ -90,9 +90,11 @@
             header=TRUE, sep="")
         names(neo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
 
-        if (length(paleo.edp.im[[i]]$IM) != length(neo.edp.im[[i]]$IM) ||
-            (max(abs((paleo.edp.im[[i]]$IM - neo.edp.im[[i]]$IM)/
-                         paleo.edp.im[[i]]$IM)) > 1))
+        if (length(paleo.edp.im[[i]]$IM) !=
+            length(neo.edp.im[[i]]$IM) ||
+            (max(abs((paleo.edp.im[[i]]$IM -
+              	    neo.edp.im[[i]]$IM)/
+                              paleo.edp.im[[i]]$IM)) > 1))
             {
                 print(sprintf("IM mismatch in EDP-IM #%d", i))
                 break
@@ -106,7 +108,7 @@
     for (i in seq(num.edps)) {
         ## Read data from old SLAT:
         paleo.edp.rate[[i]] <- read.csv(
-            sprintf("%sedp-%d-rate.txt", results.dir, i),
+            sprintf("%sedp_%d_rate.txt", results.dir, i),
             skip=3, header=FALSE, sep="")
         names(paleo.edp.rate[[i]]) = c("EDP", "lambda")
 
@@ -115,18 +117,21 @@
             header=TRUE, sep="")
         names(neo.edp.rate[[i]]) = c("EDP", "lambda")
 
-        if (length(paleo.edp.rate[[i]]$EDP) !=  length(neo.edp.rate[[i]]$EDP) ||
-            (max(abs((paleo.edp.rate[[i]]$EDP - neo.edp.rate[[i]]$EDP)/
-                         paleo.edp.rate[[i]]$EDP)) > 1)) 
+        if (length(paleo.edp.rate[[i]]$EDP) !=  
+            length(neo.edp.rate[[i]]$EDP) ||
+            (max(abs((paleo.edp.rate[[i]]$EDP -
+              	    neo.edp.rate[[i]]$EDP)/
+                              paleo.edp.rate[[i]]$EDP)) > 1)) 
             {
-                print(sprintf("EDP mismatch in EDP-RATE #%d", i))
+                print(sprintf("EDP mismatch in EDP-RATE #%d",
+                              i))
                 break
             }
     }
 
     ## Read the colapse-im data:
     paleo.collapse.im <- read.csv(
-        paste(results.dir, "collapse-im", sep=""),
+        paste(results.dir, "collapse.txt", sep=""),
         skip=3, header=FALSE, sep="")
     names(paleo.collapse.im) = c("IM", "pCollapse")
 
@@ -134,9 +139,11 @@
                                 header=TRUE, sep="")
     names(neo.collapse.im) = c("IM", "pCollapse")
 
-    if (length(paleo.collapse.im$IM) != length(neo.collapse.im$IM) ||
-        (max(abs((paleo.collapse.im$IM - neo.collapse.im$IM)/
-                     paleo.collapse.im$IM)) > 1))
+    if (length(paleo.collapse.im$IM) !=
+        length(neo.collapse.im$IM) ||
+        (max(abs((paleo.collapse.im$IM -
+                      neo.collapse.im$IM)/
+            	      paleo.collapse.im$IM)) > 1))
         {
             print("IM mismatch in COLLAPSE-RATE")
             break
@@ -150,7 +157,7 @@
 
     for (i in seq(num.cgs)) {
         paleo.loss.im[[i]] <- read.csv(
-            sprintf("%spg-%s-im", results.dir, i),
+            sprintf("%sloss_%d_im.txt", results.dir, i),
             skip=3, header=FALSE, sep="")
         names(paleo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
@@ -159,16 +166,19 @@
             header=TRUE, sep="")
         names(neo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
-        if (length(paleo.loss.im[[i]]$IM) != length(neo.loss.im[[i]]$IM) ||
-            (max(abs((paleo.loss.im[[i]]$IM - neo.loss.im[[i]]$IM)/
-                         paleo.loss.im[[i]]$IM)) > 1))
+        if (length(paleo.loss.im[[i]]$IM) != 
+            length(neo.loss.im[[i]]$IM) ||
+            (max(abs((paleo.loss.im[[i]]$IM - 
+          		neo.loss.im[[i]]$IM)/
+                              paleo.loss.im[[i]]$IM)) > 1))
             {
-                print(sprintf("IM mismatch in LOSS-RATE #%d", i))
+                print(sprintf("IM mismatch in LOSS-RATE #%d",
+                              i))
                 break
             }
 
         paleo.loss.edp[[i]] <- read.csv(
-            sprintf("%spg-%s-edp", results.dir, i),
+            sprintf("%sloss_%d_edp.txt", results.dir, i),
             skip=3, header=FALSE, sep="")
         names(paleo.loss.edp[[i]])=c("EDP","mean.x","sd.lnx")
 
@@ -177,29 +187,34 @@
             header=TRUE, sep="")
         names(neo.loss.edp[[i]]) = c("EDP","mean.x","sd.lnx")
 
-        if (length(paleo.loss.edp[[i]]$EDP) != length(neo.loss.edp[[i]]$EDP) ||
-            (max(abs((paleo.loss.edp[[i]]$EDP - neo.loss.edp[[i]]$EDP)/
-                         paleo.loss.edp[[i]]$EDP)) > 1))
+        if (length(paleo.loss.edp[[i]]$EDP) != 
+            length(neo.loss.edp[[i]]$EDP) ||
+            (max(abs((paleo.loss.edp[[i]]$EDP - 
+          		neo.loss.edp[[i]]$EDP)/
+                              paleo.loss.edp[[i]]$EDP)) > 1))
             {
-                print(sprintf("EDP mismatch in LOSS-EDP #%d", i))
+                print(sprintf("EDP mismatch in LOSS-EDP #%d",
+                              i))
                 break
             }
     }
 
     ##Read the Total Loss data:
     paleo.structloss.c <- read.csv(
-        paste(results.dir, "tlossc", sep=""),
+        paste(results.dir, "loss_c_total", sep=""),
         skip=3, header=FALSE, sep="")
     names(paleo.structloss.c) = c("IM", "mean.x", "sd.lnx")
 
     paleo.structloss.nc <- read.csv(
-        paste(results.dir, "tlossnc", sep=""),
+        paste(results.dir, "loss_nc_total", sep=""),
         skip=3, header=FALSE, sep="")
     names(paleo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
 
-    if (length(paleo.structloss.nc$IM) != length(neo.structloss.nc$IM) ||
-        (max(abs((paleo.structloss.nc$IM - neo.structloss.nc$IM)/
-                     paleo.structloss.nc$IM)) > 1))
+    if (length(paleo.structloss.nc$IM) !=
+        length(neo.structloss.nc$IM) ||
+        (max(abs((paleo.structloss.nc$IM - 
+                      neo.structloss.nc$IM)/
+    		      paleo.structloss.nc$IM)) > 1))
         {
             print("IM mismatch in STRUCTLOSS-NC #%d")
             break
@@ -211,11 +226,12 @@
     names(neo.structloss.c) = c("IM", "mean.x", "sd.lnx")
 
     neo.structloss.nc <- read.csv("results/loss_nc_total", 
-    			      header=TRUE, sep="")
+                  		header=TRUE, sep="")
     names(neo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
 
 
-    if (length(paleo.structloss.c$IM) != length(neo.structloss.c$IM) ||
+    if (length(paleo.structloss.c$IM) != 
+        length(neo.structloss.c$IM) ||
         (max(abs((paleo.structloss.c$IM - neo.structloss.c$IM)/
                      paleo.structloss.c$IM)) > 1))
         {
@@ -224,7 +240,8 @@
         }
 
     neo.deagg <- read.csv("results/deagg", header=TRUE, sep="")
-    names(neo.deagg) <- c("IM", "mean.nc", "sd.nc", "mean.c", "sd.nc")
+    names(neo.deagg) <- c("IM", "mean.nc", "sd.nc", 
+  			"mean.c", "sd.nc")
 
     ## Function for comparing data sets, for convenience:
     compare <- function(a, b)  {
@@ -232,8 +249,8 @@
                                 mean(abs(a-b)),
                                 100 * max(abs(a-b)/a)))
         rownames(result) <- c("max(abs(difference))",
-        			  "mean(abs(difference))",
-        			  "percent(abs(difference))")
+                      	    "mean(abs(difference))",
+                      	    "percent(abs(difference))")
         return(result)
     }
   #+END_SRC
@@ -244,7 +261,7 @@
 \clearpage
 * IM
   Compare the IM rate of exceedence as calculated by both versions:
-  #+BEGIN_SRC R :results output latex :exports both
+  #+BEGIN_SRC R :results output latex 
     xtable(compare(paleo.im$lambda, neo.im$lambda)
          , caption="Comparison of IM Rate calculations.",
   	 digits=c(5))
@@ -255,7 +272,7 @@
   Plot it (Figure [[fig:im-rate]]):
   <<code:im-rate-plot>>
   #+NAME: im-rate
-  #+HEADER: :results graphics :exports both
+  #+HEADER: :results graphics 
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R
      palette(c("red", "blue"))
@@ -287,7 +304,7 @@
     absolute difference between the two programs, the mean absolute difference,
     and the maximum percentage difference for both the mean and standard
     deviation calculations:
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       edp.columns <- data.frame(
           Index=seq(1, num.edps, 1),
           Label=c("Ground Floor Accel",
@@ -343,7 +360,7 @@
     Plot the mean (Figure [[fig:accel-im-mean]]) and standard deviation (Figure [[fig:accel-im-sd-lnx]]):
     <<code:accel-im-mean>>
     #+NAME: accel-im-mean
-    #+HEADER: :results graphics :exports both
+    #+HEADER: :results graphics 
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
     #+BEGIN_SRC R
       palette(rainbow(nrow(acceleration.cols)))
@@ -379,7 +396,7 @@
     [[file:/tmp/babel-1757XZc/figure-1757ama.pdf]]
 
     #+NAME: accel-im-sd-lnx
-    #+HEADER: :results graphics :exports both
+    #+HEADER: :results graphics 
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
     #+BEGIN_SRC R
       palette(rainbow(nrow(acceleration.cols)))
@@ -417,7 +434,7 @@
 \clearpage
 *** Rate Relationship
     Compare the EDP-RATE calculations, for acceleration-type EDPS:
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       edp.comparion <- as.data.frame(
           matrix(nrow=length(acceleration.cols$Index), ncol=4),
           stringsasfactors=FALSE)
@@ -436,17 +453,17 @@
           edp.comparion[i,]$pct <- temp[3,]
       }
       print(xtable(edp.comparion,
-                   caption="Comparion of EDP-RATE calculations, for 
-    			acceleration-type EDPs",
+                   caption="Comparion of EDP-RATE calculations, 
+                        for acceleration-type EDPs",
                    digits=5),
-    	include.rownames=FALSE)
+        include.rownames=FALSE)
      #+END_SRC
 
      #+RESULTS:
 
      Plot the calculated curves (Figure [[fig:accel-im-lambda]]):
     #+NAME: accel-im-lambda
-    #+HEADER: :results graphics :exports both
+    #+HEADER: :results graphics 
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
     #+BEGIN_SRC R
       palette(rainbow(nrow(acceleration.cols)))
@@ -488,7 +505,7 @@
     absolute difference between the two programs, the mean absolute difference,
     and the maximum percentage difference for both the mean and standard
     deviation calculations:
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       edp.comparion <- as.data.frame(
           matrix(nrow=length(drift.cols$Index), ncol=7),
           stringsasfactors=FALSE)
@@ -692,7 +709,7 @@
 
   The overall rate of collapse:
   #+BEGIN_SRC R  :results value 
-    paleo.rate <- scan(paste(results.dir, "collapse-rate", 
+    paleo.rate <- scan(paste(results.dir, "collrate.txt", 
                              sep=""), skip=3)
     neo.rate <- as.numeric(scan("results/collrate.txt", 
                                 what="string")[8])
@@ -709,7 +726,7 @@
 
 \clearpage
 * Component Groups
-  #+BEGIN_SRC R :results output latex :exports both
+  #+BEGIN_SRC R :results output latex 
     ## This data comes from the old Example 2 input file, desc
     ## ribing the component groups:
     cgs.descrip <- data.frame(
@@ -757,30 +774,32 @@
 #+END_SRC
 
 ** Loss-EDP Relation
-   #+BEGIN_SRC R :results output latex :exports both
-    ## This data comes from the old Example 2 input file, desc
-    ## ribing the component groups:
-    cg.edp.summary <- as.data.frame(matrix(nrow=num.cgs, ncol=6))
-    names(cg.edp.summary) <- c("mean.max", "mean.avg", "mean.pct",
-    		       "sd.max", "sd.avg", "sd.pct")
+   #+BEGIN_SRC R :results output latex 
+     ## This data comes from the old Example 2 input file, desc
+     ## ribing the component groups:
+     cg.edp.summary <- as.data.frame(matrix(nrow=num.cgs,
+   					 ncol=6))
+     names(cg.edp.summary) <- c("mean.max", "mean.avg",
+                                "mean.pct", "sd.max", 
+                                "sd.avg", "sd.pct")
 
-    for (i in 1:num.cgs) {
-        temp <- compare(paleo.loss.edp[[i]]$mean.x, 
-                        neo.loss.edp[[i]]$mean.x)
-        cg.edp.summary[i,]$mean.max <- temp[1,]
-        cg.edp.summary[i,]$mean.avg <- temp[2,]
-        cg.edp.summary[i,]$mean.pct <- temp[3,]
+     for (i in 1:num.cgs) {
+         temp <- compare(paleo.loss.edp[[i]]$mean.x, 
+                         neo.loss.edp[[i]]$mean.x)
+         cg.edp.summary[i,]$mean.max <- temp[1,]
+         cg.edp.summary[i,]$mean.avg <- temp[2,]
+         cg.edp.summary[i,]$mean.pct <- temp[3,]
 
-        temp <- compare(paleo.loss.edp[[i]]$sd.lnx,
-                        neo.loss.edp[[i]]$sd.lnx)
-        cg.edp.summary[i,]$sd.max <- temp[1,]
-        cg.edp.summary[i,]$sd.avg <- temp[2,]
-        cg.edp.summary[i,]$sd.pct <- temp[3,]
-    }
+         temp <- compare(paleo.loss.edp[[i]]$sd.lnx,
+                         neo.loss.edp[[i]]$sd.lnx)
+         cg.edp.summary[i,]$sd.max <- temp[1,]
+         cg.edp.summary[i,]$sd.avg <- temp[2,]
+         cg.edp.summary[i,]$sd.pct <- temp[3,]
+     }
    #+END_SRC
 
     
-   #+BEGIN_SRC R :results output :exports both
+   #+BEGIN_SRC R :results output 
     ## Function to print summary table of  group-EDP relations
     print.cg.edp.summary <- function(CG) {
         print(
@@ -793,7 +812,7 @@
     }
    #+END_SRC
 
-   #+BEGIN_SRC R :results output :exports both
+   #+BEGIN_SRC R :results output 
     ## Function to plot component group-EDP relations
     plot_cg_edp <- function(CG) {
         par(mfrow=c(2,1))
@@ -824,7 +843,6 @@
             lines(neo.loss.edp[[index]]$mean.x ~ 
   		neo.loss.edp[[index]]$EDP, lwd=1)
         }
-        ##legend(x="topright", legend=components, fill=palette())
 
         x.range <- c()
         y.range <- c()
@@ -861,7 +879,7 @@
 
    \clearpage
 *** Component Type #2
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 2
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -881,7 +899,7 @@
 
     \clearpage
 *** Component Type #3
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 3
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -901,7 +919,7 @@
 
     \clearpage
 *** Component Type #105
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 105
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -921,7 +939,7 @@
 
     \clearpage
 *** Component Type #106
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 106
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -941,7 +959,7 @@
 
     \clearpage
 *** Component Type #107
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 107
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -961,7 +979,7 @@
 
     \clearpage
 *** Component Type #108
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 108
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -981,7 +999,7 @@
 
     \clearpage
 *** Component Type #203
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 203
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -1001,7 +1019,7 @@
 
     \clearpage
 *** Component Type #204
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 204
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -1021,7 +1039,7 @@
 
     \clearpage
 *** Component Type #205
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 205
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -1041,7 +1059,7 @@
 
     \clearpage
 *** Component Type #208
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 208
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -1061,7 +1079,7 @@
 
     \clearpage
 *** Component Type #209
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 209
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -1081,7 +1099,7 @@
 
     \clearpage
 *** Component Type #211
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 211
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -1101,7 +1119,7 @@
 
     \clearpage
 *** Component Type #214
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 214
       print.cg.edp.summary(CG)
     #+END_SRC
@@ -1121,10 +1139,12 @@
 
     \clearpage
 ** Loss-IM Relation
-  #+BEGIN_SRC R :results output latex :exports both
-    cg.im.summary <- as.data.frame(matrix(nrow=num.cgs, ncol=6))
-    names(cg.im.summary) <- c("mean.max", "mean.avg", "mean.pct",
-    		       "sd.max", "sd.avg", "sd.pct")
+  #+BEGIN_SRC R :results output latex 
+    cg.im.summary <- as.data.frame(matrix(nrow=num.cgs, 
+  					ncol=6))
+    names(cg.im.summary) <- c("mean.max", "mean.avg", 
+                              "mean.pct", "sd.max", 
+                              "sd.avg", "sd.pct")
 
     for (i in 1:num.cgs) {
         temp <- compare(paleo.loss.im[[i]]$mean.x, 
@@ -1142,7 +1162,7 @@
 #+END_SRC
 
     
-  #+BEGIN_SRC R :results output :exports both
+  #+BEGIN_SRC R :results output 
     ## Function to print summary table of  group-IM relations
     print.cg.im.summary <- function(CG) {
         print(
@@ -1155,7 +1175,7 @@
     }
     #+END_SRC
 
-  #+BEGIN_SRC R :results output :exports both
+  #+BEGIN_SRC R :results output 
     ## Function to plot component group-IM relations
     plot_cg_im <- function(CG) {
         par(mfrow=c(2,1))
@@ -1186,7 +1206,6 @@
             lines(neo.loss.im[[index]]$mean.x ~ 
   		neo.loss.im[[index]]$IM, lwd=1)
         }
-        ##legend(x="topright", legend=components, fill=palette())
 
         x.range <- c()
         y.range <- c()
@@ -1221,7 +1240,7 @@
 
 \clearpage
 *** Component Type #2
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 2
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1241,7 +1260,7 @@
 
 \clearpage
 *** Component Type #3
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 3
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1261,7 +1280,7 @@
 
 \clearpage
 *** Component Type #105
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 105
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1281,7 +1300,7 @@
 
 \clearpage
 *** Component Type #106
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 106
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1301,7 +1320,7 @@
 
 \clearpage
 *** Component Type #107
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 107
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1321,7 +1340,7 @@
 
 \clearpage
 *** Component Type #108
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 108
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1341,7 +1360,7 @@
 
 \clearpage
 *** Component Type #203
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 203
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1361,7 +1380,7 @@
 
 \clearpage
 *** Component Type #204
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 204
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1381,7 +1400,7 @@
 
 \clearpage
 *** Component Type #205
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 205
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1401,7 +1420,7 @@
 
 \clearpage
 *** Component Type #208
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 208
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1421,7 +1440,7 @@
 
 \clearpage
 *** Component Type #209
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 209
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1441,7 +1460,7 @@
 
 \clearpage
 *** Component Type #211
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 211
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1461,7 +1480,7 @@
 
 \clearpage
 *** Component Type #214
-    #+BEGIN_SRC R :results output latex :exports both
+    #+BEGIN_SRC R :results output latex 
       CG = 214
       print.cg.im.summary(CG)
     #+END_SRC
@@ -1630,12 +1649,13 @@
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R  
      palette(c("red", "blue"))
-     plot(paleo.structloss.c$sd.lnx ~ paleo.structloss.c$IM, log="", 
-          xlab="EDP", ylab="sd(ln(Loss))", main="Total Loss, Collapse",
-	  ylim=c(0, max(paleo.structloss.c$sd.lnx)),
+     plot(paleo.structloss.c$sd.lnx ~ paleo.structloss.c$IM, 
+          log="", xlab="EDP", ylab="sd(ln(Loss))", 
+          main="Total Loss, Collapse",
+          ylim=c(0, max(paleo.structloss.c$sd.lnx)),
           type="p", col=1, lwd=5)
      lines(neo.structloss.c$sd.lnx ~ neo.structloss.c$IM, 
-  	 col=2, lwd=3)
+         col=2, lwd=3)
 
      legend(x="topright",
           legend=c("Paleo", "Neo"),
@@ -1686,11 +1706,44 @@
    #+RESULTS: deagg.loss-mean
    [[file:/tmp/babel-17848lX/figure-1784TWh.pdf]]
   
+* Annual Loss
+  The annual loss for the entire structure
+  #+BEGIN_SRC R  :results value 
+    paleo.ann.loss <- scan(paste(results.dir, "ann_loss", 
+                             sep=""), skip=3)
+    neo.ann.loss <- as.numeric(scan("results/ann_loss",
+                                    skip=1))
+
+    paste(
+        sprintf("%20s|%15s|%15s|%15s", 
+                "", "Paleo", "Neo", "Error(%)"),
+        sprintf("%20s|%15.3e|%15.3e|%15.3f|", "E(loss)", 
+                paleo.ann.loss[1],
+                neo.ann.loss[1], 
+                (100*abs(neo.ann.loss[1] - 
+                             paleo.ann.loss[1]) / 
+                                 paleo.ann.loss[1])),
+        sprintf("%20s|%15.3e|%15.3e|%15.3f|", 
+                "SD(ln(loss))", 
+                paleo.ann.loss[2],
+                neo.ann.loss[2], 
+                (100*abs(neo.ann.loss[2] - 
+                             paleo.ann.loss[2]) /
+                                 paleo.ann.loss[2])),
+        sep="\n")
+  #+END_SRC
+  
+  #+RESULTS:
+  |              |     Paleo |       Neo | Error(%) |
+  | E(loss)      | 1.175e+04 | 1.168e+04 |    0.584 |
+  | SD(ln(loss)) | 2.491e+00 | 2.493e+00 |    0.084 |
+
+  
 * Scratch 							   :noexport:
    :PROPERTIES:
    :header-args: :eval no-export
    :END:
-#+PROPERTY: header-args    :exports both
+#+PROPERTY: header-args    
 
    Code to check sample points are the same
    EDP-IM relationships:

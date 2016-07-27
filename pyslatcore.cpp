@@ -603,6 +603,9 @@ namespace SLAT {
         LogNormalDistWrapper getRebuildCost(void) {
             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->getRebuildCost())));
         };
+        LogNormalDistWrapper AnnualLoss(void) {
+            return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->AnnualLoss())));
+        };
     private:
         std::shared_ptr<Structure> wrapper;
     };
@@ -745,6 +748,7 @@ namespace SLAT {
             .def("DeaggregatedLoss", &StructureWrapper::DeaggregatedLoss)
             .def("setRebuildCost", &StructureWrapper::setRebuildCost)
             .def("getRebuildCost", &StructureWrapper::getRebuildCost)
+            .def("AnnualLoss", &StructureWrapper::AnnualLoss)
             ;
 
         

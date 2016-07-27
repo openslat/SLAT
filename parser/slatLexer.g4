@@ -61,6 +61,7 @@ MAQ: 'maq';
 
 COLLAPSE_FLAG: '--collapse';
 NOCOLLAPSE_FLAG: '--nocollapse';
+ANNUAL_FLAG: '--annual';
 
 STRING : SINGLE_QUOTED_STRING | DOUBLE_QUOTED_STRING ;
 

@@ -9,24 +9,24 @@ IM1.SetCollapse(pyslat.collapse(None, 0.9, 0.470))
 def ResultsFile(name):
     return "py-results/{}".format(name)
 
-logvalues = pyslat.logrange(0.01, 2.5, 199)
+imvalues = pyslat.logrange(0.01, 3.0, 199)
 edpoddvalues = pyslat.logrange(0.05, 5.0, 199)
 edpevenvalues = pyslat.logrange(0.001, 0.1, 199)
-linvalues = pyslat.linrange(0.01, 2.5, 199)
-lossimvalues = pyslat.linrange(0.01, 2.5, 199)
-lossedpvalues1 = pyslat.linrange(0.001, 0.10, 149)
+linvalues = pyslat.linrange(0.01, 3.0, 199)
+lossimvalues = pyslat.linrange(0.01, 3.0, 199)
+lossedpvalues1 = pyslat.linrange(0.001, 0.10, 199)
 lossedpvalues2 = pyslat.linrange(0.001, 0.10, 199)
 lossedpvalues3 = pyslat.linrange(0.05, 5.0, 199)
-lossedpvalues4 = pyslat.linrange(0.001, 0.15, 149)
-lossedpvalues5 = pyslat.linrange(0.001, 0.10, 149)
+lossedpvalues4 = pyslat.linrange(0.032, 0.0325, 199)
+lossedpvalues5 = pyslat.linrange(0.001, 0.10, 199)
 
 pyslat.recorder('imrate-rec', 'imrate', IM1,
                 {'filename': ResultsFile("im_rate")},
-                None, logvalues)
+                None, imvalues)
 
 pyslat.recorder('collapse-rec', 'collapse', IM1,
                 {'filename': ResultsFile("collapse.txt")},
-                None, pyslat.linrange(0.01, 2.5, 199))
+                None, pyslat.linrange(0.01, 3.0, 199))
 
 pyslat.recorder('collrate-rec', 'collrate', IM1,
                 {'filename': ResultsFile("collrate.txt")},
@@ -47,9 +47,9 @@ for i in range(1, N_EDPS + 1):
                     linvalues)
     
     if i==1:
-        at = pyslat.logrange(0.001, 0.15, 149)
+        at = pyslat.logrange(0.032, 0.0325, 199)
     elif i==2:
-        at = pyslat.logrange(0.001, 0.10, 149)
+        at = pyslat.logrange(0.001, 0.10, 199)
     elif (i % 2) == 1:
         at = edpoddvalues
     else:
@@ -285,22 +285,28 @@ pyslat.recorder("lossnc",
                 pyslat.structure.lookup("building"),
                 {'collapse': False, 'filename': "py-results/loss_nc_total", 'append': False},
                 None, 
-                pyslat.linrange(0.01, 2.5, 199))
+                linvalues)
 
 pyslat.recorder("lossc", 
                 "structloss", 
                 pyslat.structure.lookup("building"),
                 {'collapse': True, 'filename': "py-results/loss_c_total", 'append': False},
                 None, 
-                pyslat.linrange(0.01, 2.5, 199))
+                linvalues)
 
 pyslat.recorder("deagg", 
                 "deagg", 
                 pyslat.structure.lookup("building"),
                 {'filename': "py-results/deagg", 'append': False},
                 None, 
-                pyslat.linrange(0.01, 2.5, 199))
+                linvalues)
 
+pyslat.recorder("annloss", 
+                "structloss", 
+                pyslat.structure.lookup("building"),
+                {'filename': "py-results/ann_loss", 'append': False, 'annual': True},
+                None, 
+                None)
 
 pyslat.IntegrationSettings(1.0E-6, 1024)
 for r in pyslat.recorder.all():
