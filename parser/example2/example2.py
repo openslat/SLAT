@@ -33,7 +33,7 @@ pyslat.recorder('collrate-rec', 'collrate', IM1,
                 None, None)
 
 N_EDPS=21
-DATA_DIR = "/home/mag109/SLATv1.15_Public/example2_10storeybuilding"
+DATA_DIR = "."
 
 for i in range(1, N_EDPS + 1):
     pyslat.ImportProbFn("EDP_FUNC_{}".format(i),

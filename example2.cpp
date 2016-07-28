@@ -170,7 +170,7 @@ int main(int argc, char **argv)
             int n = i + 1;
             
             stringstream path;
-            path << "/home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP" << n << ".txt";
+            path << "parser/example2/RB_EDP" << n << ".txt";
 
             ifstream infile(path.str());
             char s[512];
