@@ -12,27 +12,27 @@ title '------------';
 #	[1.9, 2.00E-07],  [2.0, 1.00E-07];
 
 # Define the EDP-IM functions:
-importprobfn EDPIM_FUNC_1  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP1.txt;
-importprobfn EDPIM_FUNC_2  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP2.txt;
-importprobfn EDPIM_FUNC_3  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP3.txt;
-importprobfn EDPIM_FUNC_4  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP4.txt;
-importprobfn EDPIM_FUNC_5  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP5.txt;
-importprobfn EDPIM_FUNC_6  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP6.txt;
-importprobfn EDPIM_FUNC_7  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP7.txt;
-importprobfn EDPIM_FUNC_8  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP8.txt;
-importprobfn EDPIM_FUNC_9  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP9.txt;
-importprobfn EDPIM_FUNC_10  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP10.txt;
-importprobfn EDPIM_FUNC_11  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP11.txt;
-importprobfn EDPIM_FUNC_12  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP12.txt;
-importprobfn EDPIM_FUNC_13  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP13.txt;
-importprobfn EDPIM_FUNC_14  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP14.txt;
-importprobfn EDPIM_FUNC_15  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP15.txt;
-importprobfn EDPIM_FUNC_16  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP16.txt;
-importprobfn EDPIM_FUNC_17  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP17.txt;
-importprobfn EDPIM_FUNC_18  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP18.txt;
-importprobfn EDPIM_FUNC_19  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP19.txt;
-importprobfn EDPIM_FUNC_20  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP20.txt;
-importprobfn EDPIM_FUNC_21  /home/mag109/SLATv1.15_Public/example2_10storeybuilding/RB_EDP21.txt;
+importprobfn EDPIM_FUNC_1  RB_EDP1.txt;
+importprobfn EDPIM_FUNC_2  RB_EDP2.txt;
+importprobfn EDPIM_FUNC_3  RB_EDP3.txt;
+importprobfn EDPIM_FUNC_4  RB_EDP4.txt;
+importprobfn EDPIM_FUNC_5  RB_EDP5.txt;
+importprobfn EDPIM_FUNC_6  RB_EDP6.txt;
+importprobfn EDPIM_FUNC_7  RB_EDP7.txt;
+importprobfn EDPIM_FUNC_8  RB_EDP8.txt;
+importprobfn EDPIM_FUNC_9  RB_EDP9.txt;
+importprobfn EDPIM_FUNC_10  RB_EDP10.txt;
+importprobfn EDPIM_FUNC_11  RB_EDP11.txt;
+importprobfn EDPIM_FUNC_12  RB_EDP12.txt;
+importprobfn EDPIM_FUNC_13  RB_EDP13.txt;
+importprobfn EDPIM_FUNC_14  RB_EDP14.txt;
+importprobfn EDPIM_FUNC_15  RB_EDP15.txt;
+importprobfn EDPIM_FUNC_16  RB_EDP16.txt;
+importprobfn EDPIM_FUNC_17  RB_EDP17.txt;
+importprobfn EDPIM_FUNC_18  RB_EDP18.txt;
+importprobfn EDPIM_FUNC_19  RB_EDP19.txt;
+importprobfn EDPIM_FUNC_20  RB_EDP20.txt;
+importprobfn EDPIM_FUNC_21  RB_EDP21.txt;
 
 # Define relationships:
 #im IM_1 IM_FUNC;
