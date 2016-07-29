@@ -72,8 +72,18 @@ namespace SLAT {
     }
 
     LogNormalDist CompGroup::LossDist_IM(double im) {
-        double E = E_loss_IM_calc(im);
-        double sd_ln = SD_ln_loss_IM_calc(im);
+        double E = NAN, sd_ln = NAN;
+#pragma omp parallel sections
+        {
+#pragma omp section
+            {
+                E = E_loss_IM(im);
+            }
+#pragma omp section
+            {
+                sd_ln = SD_ln_loss_IM(im);
+            }
+        }
 
         return LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(E, sd_ln);
     }

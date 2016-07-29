@@ -19,9 +19,7 @@
 namespace SLAT {
     class Structure : public Replaceable<Structure> {
     public:
-        Structure(std::string name) {
-            this->name = name;
-        };
+        Structure(std::string name);
         ~Structure() {};
 
         void AddCompGroup(std::shared_ptr<CompGroup> cg);
