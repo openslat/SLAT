@@ -33,6 +33,7 @@ namespace SLAT {
     private:
         std::string name;
         LogNormalDist calc_AnnualLoss(void);
+        std::string name;
         LogNormalDist LossNC(double im);
         std::vector<std::shared_ptr<CompGroup>> components;
         std::shared_ptr<IM> im;
