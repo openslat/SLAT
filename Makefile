@@ -2,7 +2,7 @@ ifeq ($(shell uname), Linux)
 all: main unit_tests pyslatcore.so doc total_loss_debug interp example2
 
 clean:
-	rm -f *.a *.o *.so main unit_tests total_loss_debug example2
+	rm -f *.pyd *.a *.o *.so main unit_tests total_loss_debug example2
 
 ANTLR=java -jar /usr/local/lib/antlr-4.5.2-complete.jar -Dlanguage=Python3
 else
