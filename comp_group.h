@@ -25,7 +25,15 @@ namespace SLAT {
                   std::shared_ptr<FragilityFn> frag_fn,
                   std::shared_ptr<LossFn> loss_fn, 
                   int count,
-                  std::string name = "<unnamed>");
+                  std::string name);
+        CompGroup(std::shared_ptr<EDP> edp,
+                  std::shared_ptr<FragilityFn> frag_fn,
+                  std::shared_ptr<LossFn> loss_fn, 
+                  int count)
+            : CompGroup(edp, frag_fn, loss_fn, count, "Anonymous CompGroup")
+        {
+        }
+
         double E_loss_EDP(double edp);
         double SD_ln_loss_EDP(double edp);
         double SD_loss_EDP(double edp);

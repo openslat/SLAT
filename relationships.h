@@ -71,7 +71,9 @@ namespace SLAT {
          */
         Integration::IntegrationSettings &Get_Integration_Settings(void);
 
-        IM(std::shared_ptr<DeterministicFn> func, std::string name="unnamed IM");
+        IM(std::shared_ptr<DeterministicFn> func, std::string name);
+        IM(std::shared_ptr<DeterministicFn> func) : IM(func, "Anonymous IM") {};
+
         ~IM() {
             f->remove_callbacks(callback_id);
         }; /**< Destructor; uninstall callbacks */
@@ -186,7 +188,10 @@ namespace SLAT {
          */
         EDP(std::shared_ptr<IM> base_rate,
             std::shared_ptr<ProbabilisticFn> dependent_rate,
-            std::string name="unnamed EDP");
+            std::string name);
+        EDP(std::shared_ptr<IM> base_rate,
+            std::shared_ptr<ProbabilisticFn> dependent_rate)
+            : EDP(base_rate, dependent_rate, "Anonymous EDP") {};
 
         virtual ~EDP() {
             base_rate->remove_callbacks(base_rate_callback_id);
