@@ -4,7 +4,9 @@ import filecmp
 
 
 IM1 = pyslat.ImportIMFn("IM_1", "imfunc.txt")
-IM1.SetCollapse(pyslat.collapse(None, 0.9, 0.470))
+IM1.SetCollapse(pyslat.MakeLogNormalDist(
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 0.9,
+     pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X: 0.470}))
 
 def ResultsFile(name):
     return "py-results/{}".format(name)

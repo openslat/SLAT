@@ -44,9 +44,6 @@ def MakeLogNormalProbabilisticFn(parameters):
 def MakeIM(f):
     return pyslatcore.MakeIM(f)
 
-def MakeCollapse(mu, sd):
-    return pyslatcore.MakeCollapse(mu, sd)
-
 def MakeEDP(base_rate, dependent_rate):
     return pyslatcore.MakeEDP(base_rate, dependent_rate)
 
@@ -182,24 +179,6 @@ class probfn:
                    self._mu_func[1].id(), self._mu_func[0],
                    self._sigma_func[1].id(), self._sigma_func[0]))
 
-class collapse:
-    defs = dict()
-
-    def __init__(self, id, mu, sd):
-        self._id = id
-        self._mu = mu
-        self._sd = sd
-        self._func = MakeCollapse(mu, sd)
-        self._collapse = None
-
-    def func(self):
-        return self._func
-
-    def lookup(id):
-        return collapse.defs.get(id)
-
-    def __str__(self):
-        return("Collapse function '{}', mu={}, sd={}.".format(self._id, self._mu, self._sd))
         
 class im:
     defs = dict()
@@ -229,7 +208,7 @@ class im:
 
     def SetCollapse(self, collapse):
         self._collapse = collapse
-        self._func.SetCollapse(collapse.func())
+        self._func.SetCollapse(collapse)
 
     def CollapseRate(self):
         return self._func.CollapseRate()

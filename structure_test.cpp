@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(structure_one_cg)
     s.AddCompGroup(CreateCG(0.1, 1));
     s.AddCompGroup(CreateCG(0.05, 5));
     s.AddCompGroup(CreateCG(0.03, 10));
-    CreateIM()->SetCollapse(std::make_shared<Collapse>(0.9, 0.470));
+    CreateIM()->SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.470));
 
     struct {double im; double mean_x; double sd_ln_x; } c_data[] = {
         {0.01, 1.08695e-12, 4.9203}, {0.0225758, 6.18839e-08, 3.64904},

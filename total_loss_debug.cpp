@@ -51,7 +51,7 @@ int main(int argc, char **argv)
 
     
     shared_ptr<IM> im_rate_rel(new IM(im_rate_function));
-    im_rate_rel->SetCollapse(std::make_shared<Collapse>(0.9, 0.470));
+    im_rate_rel->SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.470));
         
     shared_ptr<DeterministicFn> mu_edp1(
         new LinearInterpolatedFn(

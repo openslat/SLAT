@@ -113,7 +113,7 @@ int main(int argc, char **argv)
             }
         }
         im_rel = make_shared<IM>(make_shared<LogLogInterpolatedFn>(im.data(), lambda.data(), im.size()));
-        im_rel->SetCollapse(make_shared<Collapse>(0.9, 0.47));
+        im_rel->SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.47));
     }
         
     // Write the IM-RATE relationship:

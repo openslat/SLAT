@@ -36,6 +36,27 @@ namespace SLAT {
     class FragilityFnWrapper;
     class LossFnWrapper;
     
+    class LogNormalDistWrapper {
+    public:
+        LogNormalDistWrapper(std::shared_ptr<LogNormalDist> dist) { this->dist = dist; };
+        double p_at_least(double x) const { return dist->p_at_least(x); }
+        double p_at_most(double x) const { return dist->p_at_most(x); }
+
+        double x_at_p(double p) const { return dist->x_at_p(p); };
+
+        double get_mu_lnX(void) const { return dist->get_mu_lnX(); }
+        double get_median_X(void) const { return dist->get_median_X(); };
+        double get_mean_X(void) const { return dist->get_mean_X(); }
+        double get_sigma_lnX(void) const {return dist->get_sigma_lnX(); }
+        double get_sigma_X(void) const {return dist->get_sigma_X(); }
+    private:
+        std::shared_ptr<LogNormalDist> dist;
+        friend FragilityFnWrapper *MakeFragilityFn(python::list);
+        friend LossFnWrapper *MakeLossFn(python::list);        
+        friend class StructureWrapper;
+        friend class IMWrapper;
+    };
+
     class DeterministicFnWrapper {
     public:
         DeterministicFnWrapper() : function(NULL) {};
@@ -262,26 +283,6 @@ namespace SLAT {
         }
     };
 
-    class CollapseWrapper {
-    public:
-        CollapseWrapper() : collapse(NULL) {};
-        CollapseWrapper(std::shared_ptr<Collapse> c) {
-            collapse = c;
-        }
-        double pCollapse(double im)
-        {
-            return collapse->pCollapse(im);
-        }
-        std::shared_ptr<Collapse> collapse;
-    };
-
-    CollapseWrapper *MakeCollapse(double mu, double sd)
-    {
-        return new CollapseWrapper(std::make_shared<Collapse>(mu, sd));
-
-    }
-
-    
     class IMWrapper {
     public:
         IMWrapper() : relationship(NULL) {};
@@ -297,9 +298,9 @@ namespace SLAT {
         {
             return l;
         }
-        void SetCollapse(CollapseWrapper c)
+        void SetCollapse(LogNormalDistWrapper c)
         {
-           relationship->SetCollapse(c.collapse);
+           relationship->SetCollapse(c.dist);
         }
         double pCollapse(double im)
         {
@@ -380,26 +381,6 @@ namespace SLAT {
     class FragilityFnWrapper;
     class LossFnWrapper;
     
-    class LogNormalDistWrapper {
-    public:
-        LogNormalDistWrapper(std::shared_ptr<LogNormalDist> dist) { this->dist = dist; };
-        double p_at_least(double x) const { return dist->p_at_least(x); }
-        double p_at_most(double x) const { return dist->p_at_most(x); }
-
-        double x_at_p(double p) const { return dist->x_at_p(p); };
-
-        double get_mu_lnX(void) const { return dist->get_mu_lnX(); }
-        double get_median_X(void) const { return dist->get_median_X(); };
-        double get_mean_X(void) const { return dist->get_mean_X(); }
-        double get_sigma_lnX(void) const {return dist->get_sigma_lnX(); }
-        double get_sigma_X(void) const {return dist->get_sigma_X(); }
-    private:
-        std::shared_ptr<LogNormalDist> dist;
-        friend FragilityFnWrapper *MakeFragilityFn(python::list);
-        friend LossFnWrapper *MakeLossFn(python::list);        
-        friend class StructureWrapper;
-    };
-
     LogNormalDistWrapper *MakeLogNormalDist(python::dict parameters)
     {
         LogNormalFn::M_TYPE m_type = LogNormalFn::M_TYPE::MEAN_INVALID;
@@ -657,14 +638,6 @@ namespace SLAT {
                     MakeEDP,
                     python::return_value_policy<python::manage_new_object>());
 
-        python::class_<CollapseWrapper>("Collapse", python::no_init)
-            .def("pCollapse", &CollapseWrapper::pCollapse);
-            ;
-
-        python::def("MakeCollapse", 
-                    MakeCollapse,
-                    python::return_value_policy<python::manage_new_object>());
-        
         python::class_<IMWrapper>("IM", python::no_init)
             .def("getlambda", &IMWrapper::lambda)
             .def("SetCollapse", &IMWrapper::SetCollapse)

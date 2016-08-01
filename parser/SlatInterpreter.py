@@ -188,13 +188,8 @@ class SlatInterpreter(slatParserListener):
         mu = params[0]
         sd = params[1]
 
-        if not options['mu'] == pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:
-            raise ValueError("Mu option for collapse not yet supported")
-
-        if not options['sd'] == pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:
-            raise ValueError("Sd option for collapse not yet supported")
-
-        pyslat.im.lookup(id).SetCollapse(pyslat.collapse(None, mu, sd))
+        dist = pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd})
+        pyslat.im.lookup(id).SetCollapse(dist)
 
     # Exit a parse tree produced by slatParser#edp_command.
     def exitEdp_command(self, ctx:slatParser.Edp_commandContext):

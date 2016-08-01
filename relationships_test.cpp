@@ -190,7 +190,7 @@ BOOST_AUTO_TEST_CASE( collapse )
     }
     BOOST_CHECK_EQUAL( 0.0, im_rate_rel.CollapseRate());
 
-    im_rate_rel.SetCollapse(std::make_shared<Collapse>(0.9, 0.470));
+    im_rate_rel.SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.470));
     for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
         BOOST_CHECK_CLOSE( test_data[i].lambda,
                            im_rate_rel.lambda(test_data[i].im),

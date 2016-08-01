@@ -23,28 +23,6 @@
 namespace SLAT {
 
 /**
- * @brief Collapse
- * 
- * An 'Collapse' object reports on the probability of collapse for a given IM
- * value.
- */
-    class Collapse 
-    {
-    private:
-        LogNormalDist dist;
-    public:
-        Collapse(double mean_x, double sd_ln_x) {
-            dist = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mean_x, sd_ln_x);
-        }
-
-        double pCollapse(double im) {
-            return dist.p_at_most(im);
-        }
-
-        ~Collapse() {}; /**< Destructor; do nothing */
-    };
-
-/**
  * @brief IM
  * 
  * An 'IM' object represents an intensity measurement function. It is
@@ -59,7 +37,7 @@ namespace SLAT {
         
         int callback_id;
         std::shared_ptr<DeterministicFn> f;
-        std::shared_ptr<Collapse> collapse = NULL;
+        std::shared_ptr<LogNormalDist> collapse = NULL;
     public:
         /**
          * Returns class integration settings:
@@ -96,15 +74,22 @@ namespace SLAT {
          */
         virtual double DerivativeAt(double x) ;
 
-        void SetCollapse(std::shared_ptr<Collapse> new_collapse)
+        void SetCollapse(std::shared_ptr<LogNormalDist> new_collapse)
         {
             collapse = new_collapse;
             notify_change();
         }
 
+
+        void SetCollapse(LogNormalDist new_collapse)
+        {
+            collapse = std::make_shared<LogNormalDist>(new_collapse);
+            notify_change();
+        }
+
         double pCollapse(double im) {
             if (collapse) {
-                return collapse->pCollapse(im);
+                return collapse->p_at_most(im);
             } else {
                 return 0;
             }
