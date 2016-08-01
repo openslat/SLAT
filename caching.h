@@ -19,6 +19,7 @@
 #include <string>
 #include <omp.h>
 #include <signal.h>
+#include <cmath>
 
 namespace SLAT {
     namespace Caching {
@@ -60,7 +61,7 @@ namespace SLAT {
                 omp_set_lock(&lock);
 #pragma omp flush 
                 total_calls++;
-                if (cache_active) {
+                if (cache_active && !std::isnan(v)) {
                     bool cached = cache.count(v) != 0;
                     if (!cached) {
                         bool happening = in_process.count(v) != 0;
