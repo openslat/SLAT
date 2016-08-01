@@ -369,9 +369,9 @@ namespace SLAT {
         IMWrapper base_rate,
         ProbabilisticFnWrapper dependent_rate)
     {
-        std::shared_ptr<EDP> relationship(
-            new EDP(base_rate.relationship,
-                                         dependent_rate.function));
+        std::shared_ptr<EDP> relationship =
+	  std::make_shared<EDP>(base_rate.relationship,
+				dependent_rate.function);
         EDPWrapper *result = new EDPWrapper(relationship);
         return result;
     }
@@ -625,6 +625,8 @@ namespace SLAT {
 // extension module. This is where we build the module contents.
     BOOST_PYTHON_MODULE(pyslatcore)
     {
+      SLAT::Caching::Init_Caching();
+      
         python::def("IntegrationSettings", IntegrationSettings);
         
         python::def("factory", factory, python::return_value_policy<python::manage_new_object>());
