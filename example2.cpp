@@ -113,7 +113,10 @@ int main(int argc, char **argv)
             }
         }
         im_rel = make_shared<IM>(make_shared<LogLogInterpolatedFn>(im.data(), lambda.data(), im.size()));
-        im_rel->SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.47));
+//        im_rel->SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.47));
+        im_rel->SetDemolition(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.47));
+        im_rel->SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.2, 0.47));
+//        im_rel->SetDemolition(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.5, 0.47));
     }
         
     // Write the IM-RATE relationship:
@@ -140,28 +143,40 @@ int main(int argc, char **argv)
     // Write the Collapse data:
     {
         vector<double> im_vals = linrange(0.01, 3.0, 199);
-        double results[im_vals.size()];
+        double collapse[im_vals.size()], demolition[im_vals.size()];
 #pragma omp parallel for
         for (size_t i=0; i < im_vals.size(); i++) {
-            results[i] = im_rel->pCollapse(im_vals[i]);
+            collapse[i] = im_rel->pCollapse(im_vals[i]);
+            demolition[i] = im_rel->pDemolition(im_vals[i]);
         }
         
         ofstream ofile("parser/example2/c-results/collapse.txt");
-        ofile << setw(15) << "IM" << setw(15) << "p(Collapse)" << endl;
+        ofile << setw(15) << "IM" << setw(15) << "p(Demolition)"
+              << setw(15) << "p(Collapse)" << endl;
 
         for (size_t i=0; i < im_vals.size(); i++) 
         {
-            ofile << setw(15) << im_vals[i] << setw(15) << results[i] << endl;
+            ofile << setw(15) << im_vals[i] << setw(15) << demolition[i]
+                  << setw(15) << collapse[i] << endl;
         }
     }
 
     // Write the rate of collapse:
-    {
+    if (false) {
         ofstream ofile("parser/example2/c-results/collrate.txt");
+        ofile << setw(15) << "Rate of Demolition for IM IM_1 is "
+              << setprecision(16) << im_rel->DemolitionRate() << endl;
         ofile << setw(15) << "Rate of Collapse for IM IM_1 is "
               << setprecision(16) << im_rel->CollapseRate() << endl;
+    } else {
+        ofstream ofile("parser/example2/c-results/collrate.txt");
+        ofile << setw(15) << "IM" << setw(30) << "rate(Demolition)"
+              << setw(30) << "rate(Collapse)" << endl;
+        ofile << setw(15) << "IM_1"
+              << setw(30) << setprecision(16) << im_rel->DemolitionRate()
+              << setw(30) << setprecision(16) << im_rel->CollapseRate()
+              << endl;
     }
-
     // Read in EDP functions
     const int N_EDPS = 21;
     map<int, shared_ptr<EDP>> edp_rels;
@@ -590,6 +605,7 @@ int main(int argc, char **argv)
         }
     }
     building->setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
+    building->setDemolitionCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
                 
     {
         // Record the Loss calculations for the structure as a whole, without collapse:

@@ -73,11 +73,12 @@ namespace SLAT {
     std::pair<LogNormalDist, LogNormalDist> Structure::DeaggregatedLoss(double im)
     {
         LogNormalDist loss_nc = LossNC(im);
-        LogNormalDist locc_c = rebuild_cost;
+        LogNormalDist loss_c = rebuild_cost;
+        LogNormalDist loss_demo = demolition_cost;
         double p = this->im->pCollapse(im);
 
         return std::make_pair(loss_nc.WeighDistribution(1.0 - p),
-                              locc_c.WeighDistribution(p));
+                              loss_c.WeighDistribution(p));
     }
 
     LogNormalDist Structure::calc_AnnualLoss(void)

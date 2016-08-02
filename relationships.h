@@ -38,6 +38,7 @@ namespace SLAT {
         int callback_id;
         std::shared_ptr<DeterministicFn> f;
         std::shared_ptr<LogNormalDist> collapse = NULL;
+        std::shared_ptr<LogNormalDist> demolition = NULL;
     public:
         /**
          * Returns class integration settings:
@@ -80,7 +81,6 @@ namespace SLAT {
             notify_change();
         }
 
-
         void SetCollapse(LogNormalDist new_collapse)
         {
             collapse = std::make_shared<LogNormalDist>(new_collapse);
@@ -95,12 +95,41 @@ namespace SLAT {
             }
         }
 
-        double CollapseRate(void);
+        double pRepair(double im) {
+            return 1.0 - (pDemolition(im) + pCollapse(im));
+        }
 
+        Caching::CachedValue<double> CollapseRate;
+
+        void SetDemolition(std::shared_ptr<LogNormalDist> new_demolition)
+        {
+            demolition = new_demolition;
+            notify_change();
+        }
+
+        void SetDemolition(LogNormalDist new_demolition)
+        {
+            demolition = std::make_shared<LogNormalDist>(new_demolition);
+            notify_change();
+        }
+
+        double pDemolition(double im) {
+            if (demolition) {
+                // @TODO Make sure this is at least zero!
+                return demolition->p_at_most(im) - pCollapse(im);
+            } else {
+                return 0;
+            }
+        }
+
+        Caching::CachedValue<double> DemolitionRate;
+        
         virtual std::string ToString(void) const;
             
         friend std::ostream& operator<<(std::ostream& out, const IM& o);
     private:
+        double CollapseRate_calc(void);
+        double DemolitionRate_calc(void);
         std::string name;
     };
 

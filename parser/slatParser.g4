@@ -7,8 +7,8 @@ script : (WS | command)*;
 command : (title_command | detfn_command | probfn_command | im_command | edp_command
 	| fragfn_command | lossfn_command | compgroup_command | print_command 
 	| integration_command | recorder_command | analyze_command | set_command 
-	| importprobfn_command | collapse_command | structure_command
-	| importimfn_command | rebuildcost_command) SEMICOLON;
+	| importprobfn_command | collapse_command | demolition_command |structure_command
+	| importimfn_command | rebuildcost_command | demolitioncost_command) SEMICOLON;
 
 title_command : TITLE STRING;
 
@@ -42,6 +42,7 @@ im_command : IM ID ID;
 edp_command : EDP ID ID ID;
 
 collapse_command: COLLAPSE ID lognormal_dist;
+demolition_command: DEMOLITION ID lognormal_dist;
 
 fragfn_command : FRAGFN ID 
 	       (fragfn_db_params | fragfn_user_defined_params);
@@ -80,6 +81,7 @@ structure_command : STRUCTURE ID id_list;
 id_list: ID (COMMA ID)*;
 
 rebuildcost_command : REBUILDCOST ID lognormal_dist;
+demolitioncost_command : DEMOLITIONCOST ID lognormal_dist;
 
 print_command : (print_message | print_function | print_title) print_options?;
 

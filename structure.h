@@ -29,6 +29,8 @@ namespace SLAT {
         std::pair<LogNormalDist, LogNormalDist> DeaggregatedLoss(double im);
         void setRebuildCost(LogNormalDist dist) { rebuild_cost = dist; };
         LogNormalDist getRebuildCost(void) { return rebuild_cost; };
+        void setDemolitionCost(LogNormalDist dist) { demolition_cost = dist; };
+        LogNormalDist getDemolitionCost(void) { return demolition_cost; };
 
     private:
         std::string name;
@@ -37,6 +39,7 @@ namespace SLAT {
         std::vector<std::shared_ptr<CompGroup>> components;
         std::shared_ptr<IM> im;
         LogNormalDist rebuild_cost;
+        LogNormalDist demolition_cost;
     };
 }
 #endif

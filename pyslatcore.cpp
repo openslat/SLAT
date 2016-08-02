@@ -310,6 +310,22 @@ namespace SLAT {
         {
             return relationship->CollapseRate();
         }
+        void SetDemolition(LogNormalDistWrapper d)
+        {
+           relationship->SetDemolition(d.dist);
+        }
+        double pDemolition(double im)
+        {
+            return relationship->pDemolition(im);
+        }
+        double DemolitionRate(void)
+        {
+            return relationship->DemolitionRate();
+        }
+        double pRepair(double im)
+        {
+            return relationship->pRepair(im);
+        }
     public:
         std::shared_ptr<IM> relationship;
         
@@ -584,6 +600,12 @@ namespace SLAT {
         LogNormalDistWrapper getRebuildCost(void) {
             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->getRebuildCost())));
         };
+        void setDemolitionCost(LogNormalDistWrapper cost) {
+            wrapper->setDemolitionCost(*cost.dist);
+        };
+        LogNormalDistWrapper getDemolitionCost(void) {
+            return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->getDemolitionCost())));
+        };
         LogNormalDistWrapper AnnualLoss(void) {
             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->AnnualLoss())));
         };
@@ -643,6 +665,10 @@ namespace SLAT {
             .def("SetCollapse", &IMWrapper::SetCollapse)
             .def("CollapseRate", &IMWrapper::CollapseRate)
             .def("pCollapse", &IMWrapper::pCollapse)
+            .def("SetDemolition", &IMWrapper::SetDemolition)
+            .def("DemolitionRate", &IMWrapper::DemolitionRate)
+            .def("pDemolition", &IMWrapper::pDemolition)
+            .def("pRepair", &IMWrapper::pRepair)
             ;
 
         python::class_<EDPWrapper>("EDP", python::no_init)
@@ -723,6 +749,8 @@ namespace SLAT {
             .def("DeaggregatedLoss", &StructureWrapper::DeaggregatedLoss)
             .def("setRebuildCost", &StructureWrapper::setRebuildCost)
             .def("getRebuildCost", &StructureWrapper::getRebuildCost)
+            .def("setDemolitionCost", &StructureWrapper::setDemolitionCost)
+            .def("getDemolitionCost", &StructureWrapper::getDemolitionCost)
             .def("AnnualLoss", &StructureWrapper::AnnualLoss)
             ;
 

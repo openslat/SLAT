@@ -191,6 +191,16 @@ class SlatInterpreter(slatParserListener):
         dist = pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd})
         pyslat.im.lookup(id).SetCollapse(dist)
 
+    def exitDemolition_command(self, ctx:slatParser.Demolition_commandContext):
+        id = ctx.ID().getText()
+        options = self._stack.pop()
+        params = self._stack.pop()
+        mu = params[0]
+        sd = params[1]
+
+        dist = pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd})
+        pyslat.im.lookup(id).SetDemolition(dist)
+
     # Exit a parse tree produced by slatParser#edp_command.
     def exitEdp_command(self, ctx:slatParser.Edp_commandContext):
         edp_id = ctx.ID(0).getText()
@@ -301,17 +311,16 @@ class SlatInterpreter(slatParserListener):
         params = self._stack.pop()
         mu = params[0]
         sd = params[1]
-        
-        #print("Rebuild cost for {}: {}, {}.".format(id, mu, sd))
         pyslat.structure.lookup(id).setRebuildCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
-        #print(pyslat.structure.lookup(id).getRebuildCost())
-        #print(pyslat.structure.lookup(id).Loss(0.01, 0))
-        #print(pyslat.structure.lookup(id).Loss(0.01, 1))
-        #print(pyslat.structure.lookup(id).Loss(0.1106, 0))
-        #print(pyslat.structure.lookup(id).Loss(0.1106, 1))
-        #print(pyslat.structure.lookup(id).Loss(1.003, 0))
-        #print(pyslat.structure.lookup(id).Loss(1.003, 1))
 
+    def exitDemolitioncost_command(self, ctx:slatParser.Demolitioncost_commandContext):
+        id = ctx.ID().getText()
+        options = self._stack.pop()
+        params = self._stack.pop()
+        mu = params[0]
+        sd = params[1]
+        pyslat.structure.lookup(id).setDemolitionCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
+        
     
     # Exit a parse tree produced by slatParser#print_command.
     def exitPrint_command(self, ctx:slatParser.Print_commandContext):

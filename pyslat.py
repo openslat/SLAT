@@ -188,6 +188,7 @@ class im:
         self._detfn = detfn
         self._func = MakeIM(detfn.function())
         self._collapse = None
+        self._demolition = None
         if id != None:
             im.defs[id] = self
 
@@ -203,6 +204,9 @@ class im:
     def getlambda(self, x):
         return self._func.getlambda(x)
 
+    def pRepair(self, x):
+        return self._func.pRepair(x)
+    
     def pCollapse(self, x):
         return self._func.pCollapse(x)
 
@@ -212,6 +216,16 @@ class im:
 
     def CollapseRate(self):
         return self._func.CollapseRate()
+
+    def pDemolition(self, x):
+        return self._func.pDemolition(x)
+
+    def SetDemolition(self, demolition):
+        self._demolition = demolition
+        self._func.SetDemolition(demolition)
+
+    def DemolitionRate(self):
+        return self._func.DemolitionRate()
 
     def __str__(self):
         if self._collapse:
@@ -422,6 +436,12 @@ class structure:
     def getRebuildCost(self):
         return lognormaldist(self._structure.getRebuildCost())
 
+    def setDemolitionCost(self, cost):
+        self._structure.setDemolitionCost(cost)
+
+    def getDemolitionCost(self):
+        return lognormaldist(self._structure.getDemolitionCost())
+
     def Loss(self, im, consider_collapse):
         return lognormaldist(self._structure.Loss(im, consider_collapse))
 
@@ -488,7 +508,9 @@ class recorder:
             # TODO: How does this recorder work?
             print("DSRATE recorder not implemented")
         elif self._type == 'collrate':
-            print("Rate of Collapse for IM {} is {}".format(self._function.id(), self._function.CollapseRate()))
+            print("{:>15}{:>30}{:>30}".format("IM", "rate(Demolition)", "rate(Collapse)"))
+            print("{:>15}{:>30}{:>30}".format(self._function.id(), self._function.DemolitionRate(),
+                                              self._function.CollapseRate()))
         elif self._type == 'structloss' and 'annual' in self._options:
             line1 = ""
             line2 = ""
@@ -522,7 +544,7 @@ class recorder:
                       'structloss': ['IM', None],
                       'annloss': ['t', ["E[ALt]"]],
                       'lossrate': ['t', 'Rate'],
-                      'collapse': ['IM', 'p(Collapse)'],
+                      'collapse': ['IM', ['p(Demolition)', 'p(Collapse)']],
                       'deagg': ['IM', ['mean_nc', 'sd_nc', 'mean_c', 'sd_c']]}
         
             x_label = labels[self._type][0]
@@ -552,6 +574,8 @@ class recorder:
                     loss_rate = self._function.lambda_loss(x)
                     line = "{}{:>15.6}".format(line, loss_rate)
                 elif self._type == 'collapse':
+                    p = self._function.pDemolition(x)
+                    line = "{}{:>15.6}".format(line, p)
                     p = self._function.pCollapse(x)
                     line = "{}{:>15.6}".format(line, p)
                 elif self._type == 'deagg':

@@ -5,6 +5,9 @@ import filecmp
 
 IM1 = pyslat.ImportIMFn("IM_1", "imfunc.txt")
 IM1.SetCollapse(pyslat.MakeLogNormalDist(
+    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 1.2,
+     pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X: 0.470}))
+IM1.SetDemolition(pyslat.MakeLogNormalDist(
     {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 0.9,
      pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X: 0.470}))
 
@@ -226,6 +229,10 @@ COMPONENT_DATA = [[1, "EDP_2", "FRAG_2", "LOSS_2", 20],
 building = pyslat.structure("building")
 building.setRebuildCost(pyslat.MakeLogNormalDist({pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:14E6,
                                                   pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.35}))
+building.setRebuildCost(pyslat.MakeLogNormalDist({pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:14E6,
+                                                  pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.35}))
+building.setDemolitionCost(pyslat.MakeLogNormalDist({pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 14E6,
+                                                     pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X: 0.35}))
 for comp in COMPONENT_DATA:
     id = comp[0]
     edp = comp[1]

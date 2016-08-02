@@ -62,7 +62,13 @@ namespace SLAT {
         return (*f)(x);
     }
 
-    IM::IM( std::shared_ptr<DeterministicFn> func, std::string name) 
+    IM::IM( std::shared_ptr<DeterministicFn> func, std::string name) :
+        CollapseRate([this] (void) {
+                return this->CollapseRate_calc();
+            }, name + std::string("::CollapseRate")),
+        DemolitionRate([this] (void) {
+                return this->DemolitionRate_calc();
+            }, name + std::string("::DemolitionRate"))
     {
         this->name = name;
         f = func;
@@ -127,7 +133,7 @@ namespace SLAT {
         return result;
     }
 
-    double IM::CollapseRate(void)
+    double IM::CollapseRate_calc(void)
     {
         if (collapse) {
             Integration::MAQ_RESULT result;
@@ -135,6 +141,28 @@ namespace SLAT {
                 [this] (double im) -> double {
                     double d = this->DerivativeAt(im);
                     double p = this->pCollapse(im);
+                    double result = fabs(d) * p;
+                    return result;
+                }, local_settings); 
+            if (result.successful) {
+                return result.integral;
+            } else {
+                // Log error
+                return NAN;
+            };
+        } else {
+            return 0;
+        }
+    }
+
+    double IM::DemolitionRate_calc(void)
+    {
+        if (demolition) {
+            Integration::MAQ_RESULT result;
+            result =  Integration::MAQ(
+                [this] (double im) -> double {
+                    double d = this->DerivativeAt(im);
+                    double p = this->pDemolition(im);
                     double result = fabs(d) * p;
                     return result;
                 }, local_settings); 
@@ -226,8 +254,8 @@ namespace SLAT {
                 } else {
                     double d = this->base_rate->DerivativeAt(x2);
                     double p = this->dependent_rate->P_exceedence(x2, min_y);
-                    result = (p * (1 - base_rate->pCollapse(x2)) + 
-                              base_rate->pCollapse(x2)) * std::abs(d);
+                    result = (p * base_rate->pRepair(x2) + 
+                              (1.0 - base_rate->pRepair(x2))) * std::abs(d);
                 }
                 return result;
             }, local_settings); 

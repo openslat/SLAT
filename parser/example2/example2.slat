@@ -39,7 +39,9 @@ importprobfn EDPIM_FUNC_21  RB_EDP21.txt;
 
 importimfn IM_1 imfunc.txt;
 
-collapse IM_1 0.9, 0.470 --mu mean_x --sd sd_ln_x;
+collapse IM_1 1.2, 0.470 --mu mean_x --sd sd_ln_x;
+demolition IM_1 0.9, 0.470 --mu mean_x --sd sd_ln_x;
+
 edp EDP_1 IM_1 EDPIM_FUNC_1;
 edp EDP_2 IM_1 EDPIM_FUNC_2;
 edp EDP_3 IM_1 EDPIM_FUNC_3;
@@ -319,6 +321,7 @@ structure BUILDING COMPGROUP_1, COMPGROUP_2, COMPGROUP_3, COMPGROUP_4, COMPGROUP
 	   COMPGROUP_111, COMPGROUP_112, COMPGROUP_113, COMPGROUP_114, COMPGROUP_115;
 
 rebuildcost BUILDING 14E6, 0.35 --mu mean_x --sd sd_ln_x;
+demolitioncost BUILDING 14E6, 0.35  --mu mean_x --sd sd_ln_x;
 
 # Set up integration parameters:
 integration maq 1E-6 1024;
