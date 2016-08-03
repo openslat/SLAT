@@ -458,14 +458,15 @@ class SlatInterpreter(slatParserListener):
             raise ValueError("Unhandled recorder type: {}")
 
         if type == 'structloss':
-            if ctx.collapse_type() and \
-               ctx.collapse_type().COLLAPSE_FLAG():
-                options['collapse'] = True
+            if ctx.structloss_type():
+                if ctx.structloss_type().BY_FATE_FLAG():
+                    options['structloss-type'] = 'by-fate'
+                elif ctx.structloss_type().BY_EDP_FLAG():
+                    options['structloss-type'] = 'by-edp'
+                if ctx.structloss_type().BY_FRAG_FLAG():
+                    options['structloss-type'] = 'by-frag'
             elif ctx.ANNUAL_FLAG():
-                options['collapse'] = False
-                options['annual'] = True
-            else:
-                options['collapse'] = False
+                options['structloss-type'] = 'annual'
                 
         id = ctx.ID().getText()
 

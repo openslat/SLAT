@@ -81,6 +81,15 @@ namespace SLAT {
                               loss_c.WeighDistribution(p));
     }
 
+    Structure::LOSSES Structure::LossesByFate(double im)
+    {
+        LOSSES result;
+        result.repair = LossNC(im).WeighDistribution(this->im->pRepair(im));
+        result.demolition = demolition_cost.WeighDistribution(this->im->pDemolition(im));
+        result.collapse = rebuild_cost.WeighDistribution(this->im->pCollapse(im));
+        return result;
+    }
+
     LogNormalDist Structure::calc_AnnualLoss(void)
     {
         double mu=NAN, beta=NAN;

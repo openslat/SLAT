@@ -658,12 +658,12 @@ int main(int argc, char **argv)
 
     {
         // Record the deaggregated loss for the structure:
-        ofstream outfile("parser/example2/c-results/deagg");
+        ofstream outfile("parser/example2/c-results/loss_by_fate");
         outfile << setw(15) << "IM" 
-                << setw(15) << "mean_nc"
-                << setw(15) << "sd_nc"
-                << setw(15) << "mean_c"
-                << setw(15) << "sd_c" << endl;
+                << setw(15) << "repair.mean"
+                << setw(15) << "demo.mean"
+                << setw(15) << "coll.mean"
+                << endl;
         
         vector<double> im_vals = linrange(0.01, 3.0, 199);
                 
@@ -671,13 +671,12 @@ int main(int argc, char **argv)
              im != im_vals.end();
              im++)
         {
-            pair<LogNormalDist, LogNormalDist> dists = building->DeaggregatedLoss(*im);
+            Structure::LOSSES losses = building->LossesByFate(*im);
 
             outfile << setw(15) << *im 
-                    << setw(15) << dists.first.get_mean_X()
-                    << setw(15) << dists.first.get_sigma_lnX()
-                    << setw(15) << dists.second.get_mean_X()
-                    << setw(15) << dists.second.get_sigma_lnX()
+                    << setw(15) << losses.repair.get_mean_X()
+                    << setw(15) << losses.demolition.get_mean_X()
+                    << setw(15) << losses.collapse.get_mean_X()
                     << endl;
         }
     }

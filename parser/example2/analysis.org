@@ -1535,6 +1535,32 @@
 
 \clearpage
 *** Loss-IM Relation
+* Loss by Fate
+   #+NAME: structloss.by.fate
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+     loss.by.fate <- read.csv("c-results/loss_by_fate", header=TRUE, sep="")
+     #loss.by.fate["demo.mean"] = loss.by.fate["demo.mean"] + loss.by.fate["coll.mean"]
+     #loss.by.fate["repair.mean"] = loss.by.fate["repair.mean"] + loss.by.fate["demo.mean"]
+
+     palette(rainbow(length(fate.names)))
+     plot(NULL, xlim=range(loss.by.fate$IM),
+          ylim=range(loss.by.fate$coll.mean),
+   	xlab="IM", ylab="Mean Loss",
+   	main="Mean Loss vs. IM")
+     for (i in 1:length(fate.names)) {
+         lines(loss.by.fate[,(i+1)] ~ loss.by.fate[,"IM"], col=i)
+     }
+     legend(x="topleft", ncol=2, legend=c(fate.names), fill=palette())
+   #+END_SRC
+
+   #+CAPTION: Mean Loss by FATE
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.by.fate
+   #+RESULTS: structloss.by.fate
+   [[file:/tmp/babel-1768wy-/figure-1768RdZ.pdf]]
+   
 * Loss by EDP
    #+NAME: structloss.by.edp
    #+HEADER: :results graphics

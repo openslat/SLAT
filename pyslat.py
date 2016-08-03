@@ -445,6 +445,12 @@ class structure:
     def Loss(self, im, consider_collapse):
         return lognormaldist(self._structure.Loss(im, consider_collapse))
 
+    def LossesByFate(self, im):
+        result = self._structure.LossesByFate(im)
+        return [lognormaldist(result[0]),
+                lognormaldist(result[1]),
+                lognormaldist(result[2])]
+
     def AnnualLoss(self):
         return lognormaldist(self._structure.AnnualLoss())
 
@@ -647,7 +653,7 @@ class StructLossRecorder(recorder):
 
 
     def generate_output(self):
-        if 'annual' in self._options and self._options['annual']:
+        if self._options['structloss-type'] == 'annual':
             line1 = ""
             line2 = ""
             annual_loss = self._function.AnnualLoss()
@@ -666,36 +672,48 @@ class StructLossRecorder(recorder):
                 line2 = "{}{:>15.6}".format(line2, value)
             print(line1)
             print(line2)
-        else:
+        elif self._options['structloss-type'] == 'by-edp':
+            print("NOT IMPLEMENTED")
+        elif self._options['structloss-type'] == 'by-frag':
+            print("NOT IMPLEMENTED")
+        elif self._options['structloss-type'] == 'by-fate':
             x_label = 'IM'
             y_label = self._columns
+            fates = ['repair', 'demo', 'coll']
 
             line = "{:>15}".format(x_label)
-            for y in y_label:
-                    line = "{}{:>15}".format(line, y)
+            for f in fates:
+                for y in y_label:
+                    line = "{}{:>15}".format(line, "{}.{}".format(f, y))
             print(line)
 
             for x in self._at:
                 line = "{:>15.6}".format(x)
-                if x == 'ANNUAL':
-                    dist = self._function.AnnualLoss()
-                else:
-                    dist = self._function.Loss(x, self._options['collapse'])
-                for y in self._columns:
-                    if y == 'mean_x':
-                        yval = dist.mean()
-                    elif y== 'mean_ln':
-                        yval = dist.mean_ln()
-                    elif y== 'median':
-                        yval = dist.median()
-                    elif y == 'sd_ln_x':
-                        yval = dist.sd_ln()
-                    elif y == 'sd_x':
-                        yval = dist.sd()
+                for f in fates:
+                    if f == 'repair':
+                        dist = self._function.LossesByFate(x)[0]
+                    elif f == 'demo':
+                        dist = self._function.LossesByFate(x)[1]
+                    elif f == 'coll':
+                        dist = self._function.LossesByFate(x)[2]
                     else:
-                        yval = None
+                        dist = None
+
+                    for y in self._columns:
+                        if y == 'mean_x':
+                            yval = dist.mean()
+                        elif y== 'mean_ln':
+                            yval = dist.mean_ln()
+                        elif y== 'median':
+                            yval = dist.median()
+                        elif y == 'sd_ln_x':
+                            yval = dist.sd_ln()
+                        elif y == 'sd_x':
+                            yval = dist.sd()
+                        else:
+                            yval = None
                         
-                    line = "{}{:>15.6}".format(line, yval)
+                        line = "{}{:>15.6}".format(line, yval)
                 print(line)
                         
 def MakeRecorder(id, type, function, options, columns, at):

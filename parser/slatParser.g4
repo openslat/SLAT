@@ -98,7 +98,7 @@ recorder_command : RECORDER recorder_id ((recorder_type ID recorder_at recorder_
                   | ((DSRATE | COLLRATE) ID)
                   | ((LOSSRATE | COLLAPSE | DEAGG) ID recorder_at)
 		  | (ANNLOSS ID recorder_at LAMBDA_FLAG lambda_value)
-		  | (STRUCTLOSS ID ((collapse_type? recorder_at) | ANNUAL_FLAG) recorder_cols?))
+		  | (STRUCTLOSS ID ((structloss_type recorder_at) | ANNUAL_FLAG) recorder_cols?))
 		  print_options?;
 lambda_value: numerical_scalar;
 recorder_id : ID;
@@ -110,7 +110,7 @@ recorder_at : float_array | (FLOAT_VAL COLON FLOAT_VAL COLON FLOAT_VAL)
 counted_at: FLOAT_VAL COLON FLOAT_VAL (LINFLAG | LOGFLAG) INTEGER;
 
 float_array : FLOAT_VAL (COMMA FLOAT_VAL)*;
-collapse_type : COLLAPSE_FLAG | NOCOLLAPSE_FLAG;
+structloss_type : BY_FATE_FLAG | BY_EDP_FLAG | BY_FRAG_FLAG;
 
 col_spec : placement_type | spread_type | scalar;
 recorder_cols : COLS_FLAG col_spec (COMMA col_spec)*;

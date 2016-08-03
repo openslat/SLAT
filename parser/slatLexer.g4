@@ -61,8 +61,9 @@ SD_X: 'sd_x';
 
 MAQ: 'maq';
 
-COLLAPSE_FLAG: '--collapse';
-NOCOLLAPSE_FLAG: '--nocollapse';
+BY_FATE_FLAG: '--by-fate';
+BY_EDP_FLAG: '--by-edp';
+BY_FRAG_FLAG: '--by-frag';
 ANNUAL_FLAG: '--annual';
 
 STRING : SINGLE_QUOTED_STRING | DOUBLE_QUOTED_STRING ;

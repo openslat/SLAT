@@ -594,6 +594,25 @@ namespace SLAT {
             }
             return result;
         }
+
+        python::list LossesByFate(double im) {
+            Structure::LOSSES losses = wrapper->LossesByFate(im);
+            python::list result;
+            {
+                std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(losses.repair);
+                result.append(LogNormalDistWrapper(temp));
+            }
+            {
+                std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(losses.demolition);
+                result.append(LogNormalDistWrapper(temp));
+            }
+            {
+                std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(losses.collapse);
+                result.append(LogNormalDistWrapper(temp));
+            }
+            return result;
+        }
+
         void setRebuildCost(LogNormalDistWrapper cost) {
             wrapper->setRebuildCost(*cost.dist);
         };
@@ -752,6 +771,7 @@ namespace SLAT {
             .def("setDemolitionCost", &StructureWrapper::setDemolitionCost)
             .def("getDemolitionCost", &StructureWrapper::getDemolitionCost)
             .def("AnnualLoss", &StructureWrapper::AnnualLoss)
+            .def("LossesByFate", &StructureWrapper::LossesByFate)
             ;
 
         
