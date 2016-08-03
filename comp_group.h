@@ -52,6 +52,9 @@ namespace SLAT {
         double mean_ln_loss_EDP(double edp);
         LogNormalDist LossDist_IM(double im);
         std::shared_ptr<IM> getIM(void) { return edp->Base_Rate(); };
+        std::shared_ptr<EDP> get_EDP(void) { return edp; };
+        std::shared_ptr<FragilityFn> get_Fragility(void) { return frag_fn; };
+        std::string get_Name(void) { return name; };
     private:
         std::string name;
         std::shared_ptr<EDP> edp;

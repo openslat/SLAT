@@ -237,13 +237,17 @@ int main(int argc, char **argv)
             }
             {
                 
+                stringstream name;
+                name << "EDP." << n;
+
                 edp_rels[n] = make_shared<EDP>(
                     im_rel, 
                     make_shared<LogNormalFn>(
                         make_shared<LinearInterpolatedFn>(im_val.data(), mean_edp.data(), im_val.size()),
                         LogNormalFn::MEAN_X,
                         make_shared<LinearInterpolatedFn>(im_val.data(), sd_edp.data(), im_val.size()),
-                        LogNormalFn::SIGMA_X));
+                        LogNormalFn::SIGMA_X),
+                    name.str());
             }
         }
     }
@@ -681,6 +685,96 @@ int main(int argc, char **argv)
                 << endl;
     }
 
+
+    // Deaggregate by EDP
+    cout << "> Deaggregate by EDP" << omp_get_wtime() << endl;
+    {
+        std::vector<std::vector<size_t>> losses_by_edp(edp_rels.size() + 1);
+        std::vector<std::shared_ptr<CompGroup>> components = building->Components();
+        
+        for (size_t i=0; i < components.size(); i++) {
+            shared_ptr<EDP> edp = components[i]->get_EDP();
+            size_t edp_id=0;
+            while (edp_id < edp_rels.size() && edp_rels[edp_id] != edp) {
+                edp_id++;
+            }
+            losses_by_edp[edp_id].push_back(i);
+        }
+        
+        cerr << "-------------" << endl;
+        
+        for (size_t i=1; i < losses_by_edp.size(); i++) {
+            cout << setw(5) << i << ":";
+            for (size_t j=0; j < losses_by_edp[i].size(); j++) 
+            {
+                cout << setw(5) << losses_by_edp[i][j];
+            }
+            cout << endl;
+        }
+        cerr << "-------------" << endl;
+
+        {
+            ofstream outfile("parser/example2/c-results/loss_by_edp");
+            outfile << setw(15) << "IM";
+            for (int i=1; i <= N_EDPS; i++) {
+                outfile << setw(15) << edp_rels[i]->get_Name();
+            }
+            outfile << endl;
+        
+            vector<double> im_vals = linrange(0.01, 3.0, 199);
+            for (vector<double>::const_iterator im = im_vals.begin();
+                 im != im_vals.end();
+                 im++)
+            {
+                outfile << setw(15) << *im;
+                outfile.flush();
+                LogNormalDist dist = building->Loss(*im, true);
+                for (int edp=1; edp <= N_EDPS; edp++) {
+                    cerr << "EDP: " << edp << "; " << losses_by_edp[edp].size() << endl;
+                    vector<LogNormalDist> dists(losses_by_edp[edp].size());
+
+                    for (size_t i=0; i < losses_by_edp[edp].size(); i++) {
+                        cerr << "i: " << i << endl;
+                        cerr << components[losses_by_edp[edp][i]] << endl;
+                        cerr << components[losses_by_edp[edp][i]]->get_Name()  << endl;
+                        
+                        dists[i] = components[losses_by_edp[edp][i]]->LossDist_IM(*im);
+                        cerr << "..." << endl;
+                    }
+                    cerr << "..." << endl;
+                    outfile << setw(15) << LogNormalDist::AddDistributions(dists).get_mean_X();
+                }
+                outfile << endl;
+            }
+        }
+    }
+    cout << "< Deaggregate by EDP" << omp_get_wtime() << endl;
+
+    if (false) {
+        std::vector<std::shared_ptr<CompGroup>> components = building->Components();
+        for (size_t i=0; i < components.size(); i++) {
+            shared_ptr<EDP> edp = components[i]->get_EDP();
+            size_t edp_id=0;
+            while (edp_id < edp_rels.size() && edp_rels[edp_id] != edp) {
+                edp_id++;
+            };
+
+            shared_ptr<FragilityFn> frag = components[i]->get_Fragility();
+            size_t frag_id=0;
+            while (frag_id < fragility_functions.size() && fragility_functions[frag_id] != frag) {
+                frag_id++;
+            };
+            
+            cout << setw(10) << i 
+                 << setw(15) << components[i]->get_Name()
+                 << setw(15) << edp
+                 << " [" << edp_id << "]"
+                 << setw(15) << frag << " [" << frag_id << "]"
+                 << endl;
+        }
+    }
+
+    cerr << "Done" << endl;
     cout << "Done" << endl;
     return 0;
 }

@@ -1535,6 +1535,31 @@
 
 \clearpage
 *** Loss-IM Relation
+* Loss by EDP
+   #+NAME: structloss.by.edp
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+     loss.by.edp <- read.csv("c-results/loss_by_edp", header=TRUE, sep="")
+     edp.names = names(loss.by.edp)
+     edp.names = edp.names[2:length(edp.names)]
+     for (i in 2:length(edp.names)) {
+         loss.by.edp[edp.names[i]] = loss.by.edp[edp.names[i]] + loss.by.edp[edp.names[i-1]]
+     }
+     palette(rainbow(length(edp.names)))
+     plot(neo.structloss.nc$mean.x ~ neo.structloss.nc$IM)
+     for (i in 1:length(edp.names)) {
+         lines(loss.by.edp[,(i+1)] ~ loss.by.edp[,"IM"], col=i)
+     }
+     legend(x="topleft", ncol=2, legend=c(edp.names), fill=palette())
+   #+END_SRC
+
+   #+CAPTION: Mean Loss by EDP
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.by.edp
+   #+RESULTS: structloss.by.edp
+   [[file:/tmp/babel-1768wy-/figure-17689vR.pdf]]
+   
 * Total Loss
 
 ** Non-Collapse

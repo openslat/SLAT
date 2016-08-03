@@ -31,6 +31,10 @@ namespace SLAT {
         LogNormalDist getRebuildCost(void) { return rebuild_cost; };
         void setDemolitionCost(LogNormalDist dist) { demolition_cost = dist; };
         LogNormalDist getDemolitionCost(void) { return demolition_cost; };
+        const std::vector<std::shared_ptr<CompGroup>> Components(void)
+        {
+            return components;
+        };
 
     private:
         std::string name;

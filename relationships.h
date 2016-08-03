@@ -234,6 +234,8 @@ namespace SLAT {
         double SD(double base_value) const;
         
         std::shared_ptr<IM> Base_Rate(void) { return base_rate; };
+        
+        std::string get_Name(void) { return name; }
     protected:
         std::string name;
         std::shared_ptr<IM> base_rate; /**< Base rate relationship */
