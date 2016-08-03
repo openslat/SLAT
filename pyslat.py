@@ -465,7 +465,7 @@ class recorder:
             self._at = list(at)
 
         if not type == 'dsrate' and not type == 'collrate' \
-           and (type != 'structloss' or not 'annual' in self._options) \
+           and not type == 'structloss' \
            and at==None:
             raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
 
@@ -475,7 +475,7 @@ class recorder:
                 columns.append("DS{}".format(i + 1))
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_ln_x', 'sd_ln_x']
-        elif (type == 'structloss' or type == 'lossedp' or type =='lossim') \
+        elif (type == 'lossedp' or type =='lossim') \
              and columns == None:
             columns = ['mean_x', 'sd_ln_x']
         self._columns = columns
@@ -507,29 +507,6 @@ class recorder:
         if self._type == 'dsrate':
             # TODO: How does this recorder work?
             print("DSRATE recorder not implemented")
-        elif self._type == 'collrate':
-            print("{:>15}{:>30}{:>30}".format("IM", "rate(Demolition)", "rate(Collapse)"))
-            print("{:>15}{:>30}{:>30}".format(self._function.id(), self._function.DemolitionRate(),
-                                              self._function.CollapseRate()))
-        elif self._type == 'structloss' and 'annual' in self._options:
-            line1 = ""
-            line2 = ""
-            annual_loss = self._function.AnnualLoss()
-            for y_label in self._columns:
-                line1 = "{}{:>15}".format(line1, y_label)
-                if y_label=='mean_x':
-                    value = annual_loss.mean()
-                elif y_label=='mean_ln_x':
-                    value = annual_loss.mean_ln()
-                elif y_label=='median_x':
-                    value = annual_loss.median()
-                elif y_label=='sd_ln_x':
-                    value = annual_loss.sd_ln()
-                elif y_label=='sd_x':
-                    value = annual_loss.sd()
-                line2 = "{}{:>15.6}".format(line2, value)
-            print(line1)
-            print(line2)
         else:
             labels = {'detfn': ['x', 'y'],
                       'probfn': ['x', None],
@@ -541,7 +518,6 @@ class recorder:
                       'lossds': ['DS', None],
                       'lossedp': ['EDP', None],
                       'lossim': ['IM', None],
-                      'structloss': ['IM', None],
                       'annloss': ['t', ["E[ALt]"]],
                       'lossrate': ['t', 'Rate'],
                       'collapse': ['IM', ['p(Demolition)', 'p(Collapse)']],
@@ -601,49 +577,21 @@ class recorder:
                                 yval = self._function.E_Loss_EDP(x)
                             elif self._type == 'lossim':
                                 yval = self._function.E_Loss_IM(x)
-                            elif self._type == 'structloss':
-                                if x == 'ANNUAL':
-                                    yval = self._function.AnnualLoss().mean()
-                                else:
-                                    yval = self._function.Loss(x, self._options['collapse']).mean()
                             else:
                                 yval = self._function.Mean(x)
                         elif y == 'mean_ln_x':
-                            if self._type == 'structloss':
-                                if x == 'ANNUAL':
-                                    yval = self._function.AnnualLoss().mean_ln()
-                                else:
-                                    yval = self._function.Loss(x, self._options['collapse']).mean_ln()
-                            else:
-                                yval = self._function.MeanLn(x)
+                            yval = self._function.MeanLn(x)
                         elif y == 'median_x':
-                            if self._type == 'structloss':
-                                if x == 'ANNUAL':
-                                    yval = self._function.AnnualLoss().median()
-                                else:
-                                    yval = self._function.Loss(x, self._options['collapse']).median()
-                            else:
-                                yval = self._function.Median(x)
+                            yval = self._function.Median(x)
                         elif y == 'sd_ln_x':
                             if self._type == 'lossedp':
                                 yval = self._function.SD_ln_Loss_EDP(x)
                             elif self._type == 'lossim':
                                 yval = self._function.SD_ln_Loss_IM(x)
-                            elif self._type == 'structloss':
-                                if x == 'ANNUAL':
-                                    yval = self._function.AnnualLoss().sd_ln()
-                                else:
-                                    yval = self._function.Loss(x, self._options['collapse']).sd_ln()
                             else:
                                 yval = self._function.SD_ln(x)
                         elif y == 'sd_x':
-                            if self._type == 'structloss':
-                                if x == 'ANNUAL':
-                                    yval = self._function.AnnualLoss().sd()
-                                else:
-                                    yval = self._function.Loss(x, self._options['collapse']).sd()
-                            else:
-                                yval = self._function.SD(x)
+                            yval = self._function.SD(x)
                         else:
                             yval = "+++++++++"
                         line = "{}{:>15.6}".format(line, yval)
@@ -676,8 +624,88 @@ class recorder:
 
         else:
             self.generate_output()
+
+class CollRateRecorder(recorder):
+    def __init__(self, id, type, function, options, columns, at):
+        super().__init__(id, type, function, options, columns, at)
+
+    def generate_output(self):
+        print("{:>15}{:>30}{:>30}".format("IM", "rate(Demolition)", "rate(Collapse)"))
+        print("{:>15}{:>30}{:>30}".format(self._function.id(), self._function.DemolitionRate(),
+                                          self._function.CollapseRate()))
+
+class StructLossRecorder(recorder):
+    def __init__(self, id, type, function, options, columns, at):
+        if  (not 'annual' in options or not options['annual'])\
+             and at==None:
+            raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
+
+        if columns == None:
+            columns = ['mean_x']
+            
+        super().__init__(id, type, function, options, columns, at)
+
+
+    def generate_output(self):
+        if 'annual' in self._options and self._options['annual']:
+            line1 = ""
+            line2 = ""
+            annual_loss = self._function.AnnualLoss()
+            for y_label in self._columns:
+                line1 = "{}{:>15}".format(line1, y_label)
+                if y_label=='mean_x':
+                    value = annual_loss.mean()
+                elif y_label=='mean_ln_x':
+                    value = annual_loss.mean_ln()
+                elif y_label=='median_x':
+                    value = annual_loss.median()
+                elif y_label=='sd_ln_x':
+                    value = annual_loss.sd_ln()
+                elif y_label=='sd_x':
+                    value = annual_loss.sd()
+                line2 = "{}{:>15.6}".format(line2, value)
+            print(line1)
+            print(line2)
+        else:
+            x_label = 'IM'
+            y_label = self._columns
+
+            line = "{:>15}".format(x_label)
+            for y in y_label:
+                    line = "{}{:>15}".format(line, y)
+            print(line)
+
+            for x in self._at:
+                line = "{:>15.6}".format(x)
+                if x == 'ANNUAL':
+                    dist = self._function.AnnualLoss()
+                else:
+                    dist = self._function.Loss(x, self._options['collapse'])
+                for y in self._columns:
+                    if y == 'mean_x':
+                        yval = dist.mean()
+                    elif y== 'mean_ln':
+                        yval = dist.mean_ln()
+                    elif y== 'median':
+                        yval = dist.median()
+                    elif y == 'sd_ln_x':
+                        yval = dist.sd_ln()
+                    elif y == 'sd_x':
+                        yval = dist.sd()
+                    else:
+                        yval = None
+                        
+                    line = "{}{:>15.6}".format(line, yval)
+                print(line)
+                        
+def MakeRecorder(id, type, function, options, columns, at):
+    if (type == 'collrate'):
+        return CollRateRecorder(id, type, function, options, columns, at)
+    elif (type == 'structloss'):
+        return StructLossRecorder(id, type, function, options, columns, at)
+    else:
+        return recorder(id, type, function, options, columns, at)
     
-        
 
 def ImportProbFn(id, filename):
     data = np.loadtxt(filename, skiprows=2)

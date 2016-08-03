@@ -487,7 +487,7 @@ class SlatInterpreter(slatParserListener):
         else:
             raise ValueError("Unhandled recorder type")
 
-        pyslat.recorder(recorder_id, type, function, options, cols, at)
+        pyslat.MakeRecorder(recorder_id, type, function, options, cols, at)
 
     # Exit a parse tree produced by slatParser#recorder_at.
     def exitRecorder_at(self, ctx:slatParser.Recorder_atContext):
