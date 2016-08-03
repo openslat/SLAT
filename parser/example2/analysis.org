@@ -1560,6 +1560,31 @@
    #+RESULTS: structloss.by.edp
    [[file:/tmp/babel-1768wy-/figure-17689vR.pdf]]
    
+* Loss by Component Type
+   #+NAME: structloss.by.comp
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+     loss.by.comp <- read.csv("c-results/loss_by_frag", header=TRUE, sep="")
+     comp.names = names(loss.by.comp)
+     comp.names = comp.names[2:length(comp.names)]
+     for (i in 2:length(comp.names)) {
+         loss.by.comp[comp.names[i]] = loss.by.comp[comp.names[i]] + loss.by.comp[comp.names[i-1]]
+     }
+     palette(rainbow(length(comp.names)))
+     plot(neo.structloss.nc$mean.x ~ neo.structloss.nc$IM)
+     for (i in 1:length(comp.names)) {
+         lines(loss.by.comp[,(i+1)] ~ loss.by.comp[,"IM"], col=i)
+     }
+     legend(x="topleft", ncol=2, legend=c(comp.names), fill=palette())
+   #+END_SRC
+
+   #+CAPTION: Mean Loss by COMP
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.by.comp
+   #+RESULTS: structloss.by.comp
+   [[file:/tmp/babel-1768wy-/figure-1768xYq.pdf]]
+   
 * Total Loss
 
 ** Non-Collapse
