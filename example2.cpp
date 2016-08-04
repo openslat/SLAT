@@ -619,44 +619,6 @@ int main(int argc, char **argv)
     building->setDemolitionCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
                 
     {
-        // Record the Loss calculations for the structure as a whole, without collapse:
-        ofstream outfile("parser/example2/c-results/loss_nc_total");
-        outfile << setw(15) << "IM" << setw(15) << "mean_x"
-                << setw(15) << "sd_ln_x" << endl;
-                
-        vector<double> im_vals = linrange(0.01, 3.0, 199);
-                
-        for (vector<double>::const_iterator im = im_vals.begin();
-             im != im_vals.end();
-             im++)
-        {
-            LogNormalDist dist = building->Loss(*im, false);
-            outfile << setw(15) << *im << setw(15) << dist.get_mean_X()
-                    << setw(15) << dist.get_sigma_lnX()
-                    << endl;
-        }
-    }
-
-    {
-        // Record the Loss calculations for the structure as a whole, including collapse:
-        ofstream outfile("parser/example2/c-results/loss_c_total");
-        outfile << setw(15) << "IM" << setw(15) << "mean_x"
-                << setw(15) << "sd_ln_x" << endl;
-        
-        vector<double> im_vals = linrange(0.01, 3.0, 199);
-                
-        for (vector<double>::const_iterator im = im_vals.begin();
-             im != im_vals.end();
-             im++)
-        {
-            LogNormalDist dist = building->Loss(*im, true);
-            outfile << setw(15) << *im << setw(15) << dist.get_mean_X()
-                    << setw(15) << dist.get_sigma_lnX()
-                    << endl;
-        }
-    }
-
-    {
         // Record the deaggregated loss for the structure:
         ofstream outfile("parser/example2/c-results/loss_by_fate");
         outfile << setw(15) << "IM" 
