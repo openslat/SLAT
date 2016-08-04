@@ -656,8 +656,8 @@ class CollRateRecorder(recorder):
 
 class StructLossRecorder(recorder):
     def __init__(self, id, type, function, options, columns, at):
-        if  (not 'annual' in options or not options['annual'])\
-             and at==None:
+        if  (not options['structloss-type'] == 'annual') \
+            and at==None:
             raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
 
         if columns == None:
