@@ -18,6 +18,7 @@
 #include <math.h>
 #include <memory>
 #include <string>
+#include <set>
 #include "functions.h"
 #include "relationships.h"
 #include "lognormaldist.h"
@@ -49,13 +50,28 @@ namespace SLAT {
         double get_mean_X(void) const { return dist->get_mean_X(); }
         double get_sigma_lnX(void) const {return dist->get_sigma_lnX(); }
         double get_sigma_X(void) const {return dist->get_sigma_X(); }
+
     private:
         std::shared_ptr<LogNormalDist> dist;
         friend FragilityFnWrapper *MakeFragilityFn(python::list);
         friend LossFnWrapper *MakeLossFn(python::list);        
         friend class StructureWrapper;
         friend class IMWrapper;
+        friend LogNormalDistWrapper AddDistributions(python::list);
     };
+
+    LogNormalDistWrapper AddDistributions(python::list py_dists) 
+    {
+        std::vector<LogNormalDist> dists;
+        
+        while (len(py_dists) > 0) {
+            python::object obj = py_dists.pop();
+            LogNormalDistWrapper d = python::extract<LogNormalDistWrapper>(obj);
+            dists.push_back(*(d.dist));
+        }
+        return LogNormalDistWrapper(std::make_shared<LogNormalDist>(LogNormalDist::AddDistributions(dists)));
+    };
+    
 
     class DeterministicFnWrapper {
     public:
@@ -370,6 +386,14 @@ namespace SLAT {
         {
             return relationship->SD(x);
         }
+        std::string get_Name(void)
+        {
+            return relationship->get_Name();
+        }
+        bool AreSame(const EDPWrapper &other)
+        {
+            return this->relationship == other.relationship;
+        }
     public:
         std::shared_ptr<EDP> relationship;
         friend CompGroupWrapper *MakeCompGroup(EDPWrapper edp, FragilityFnWrapper frag_fn,
@@ -384,11 +408,13 @@ namespace SLAT {
 
     EDPWrapper *MakeEDP(
         IMWrapper base_rate,
-        ProbabilisticFnWrapper dependent_rate)
+        ProbabilisticFnWrapper dependent_rate, 
+        std::string name)
     {
         std::shared_ptr<EDP> relationship =
 	  std::make_shared<EDP>(base_rate.relationship,
-				dependent_rate.function);
+                            dependent_rate.function,
+                            name);
         EDPWrapper *result = new EDPWrapper(relationship);
         return result;
     }
@@ -555,6 +581,10 @@ namespace SLAT {
         double E_annual_loss(void) { return wrapper->E_annual_loss(); };
         double E_loss(int years, double discount_rate) { return wrapper->E_loss(years, discount_rate); };
         double lambda_loss(double loss) { return wrapper->lambda_loss(loss); };
+        bool AreSame(const CompGroupWrapper &other)
+        {
+            return this->wrapper == other.wrapper;
+        }
     private:
         std::shared_ptr<CompGroup> wrapper;
         
@@ -628,6 +658,31 @@ namespace SLAT {
         LogNormalDistWrapper AnnualLoss(void) {
             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->AnnualLoss())));
         };
+        python::list ComponentsByEDP(void) {
+ python::list result;
+            const std::vector<std::shared_ptr<CompGroup>> components = wrapper->Components();
+            std::map<std::shared_ptr<EDP>, std::vector<std::shared_ptr<CompGroup>>> edp_cg_mapping;
+            std::set<std::shared_ptr<EDP>> keys;
+
+            for (size_t i=0; i < components.size(); i++) {
+                edp_cg_mapping[components[i]->get_EDP()].push_back(components[i]);
+                keys.insert(components[i]->get_EDP());
+            }
+            
+            for (std::set<std::shared_ptr<EDP>>::iterator key = keys.begin();
+                 key != keys.end();
+                 key++)
+            {
+                python::list mapping;
+                mapping.append(EDPWrapper(*key));
+
+                for (size_t j=0; j < edp_cg_mapping[*key].size(); j++) {
+                    mapping.append(CompGroupWrapper(edp_cg_mapping[*key][j]));
+                }
+                result.append(mapping);
+            }
+            return result;
+        };
     private:
         std::shared_ptr<Structure> wrapper;
     };
@@ -698,6 +753,8 @@ namespace SLAT {
             .def("Median", &EDPWrapper::Median)
             .def("SD_ln", &EDPWrapper::SD_ln)
             .def("SD", &EDPWrapper::SD)
+            .def("get_Name", &EDPWrapper::get_Name)
+            .def("AreSame", &EDPWrapper::AreSame)
             ;
 
         python::enum_<FUNCTION_TYPE>("FUNCTION_TYPE")
@@ -730,6 +787,10 @@ namespace SLAT {
             .def("get_sigma_X", &LogNormalDistWrapper::get_sigma_X)
             ;
 
+        python::def("AddDistributions", 
+                    AddDistributions);
+
+        
         python::class_<FragilityFnWrapper>("FragilityFn", python::no_init)
             .def("pExceeded", &FragilityFnWrapper::pExceeded)
             .def("pHighest", &FragilityFnWrapper::pHighest)
@@ -756,6 +817,7 @@ namespace SLAT {
             .def("E_annual_loss", &CompGroupWrapper::E_annual_loss)
             .def("E_loss", &CompGroupWrapper::E_loss)
             .def("lambda_loss", &CompGroupWrapper::lambda_loss)
+            .def("AreSame", &CompGroupWrapper::AreSame)
             ;
 
         python::def("MakeCompGroup", 
@@ -772,6 +834,7 @@ namespace SLAT {
             .def("getDemolitionCost", &StructureWrapper::getDemolitionCost)
             .def("AnnualLoss", &StructureWrapper::AnnualLoss)
             .def("LossesByFate", &StructureWrapper::LossesByFate)
+            .def("ComponentsByEDP", &StructureWrapper::ComponentsByEDP)
             ;
 
         

@@ -44,8 +44,8 @@ def MakeLogNormalProbabilisticFn(parameters):
 def MakeIM(f):
     return pyslatcore.MakeIM(f)
 
-def MakeEDP(base_rate, dependent_rate):
-    return pyslatcore.MakeEDP(base_rate, dependent_rate)
+def MakeEDP(base_rate, dependent_rate, name):
+    return pyslatcore.MakeEDP(base_rate, dependent_rate, name)
 
 def MakeFragilityFn(parameters):
     return pyslatcore.MakeFragilityFn(parameters)
@@ -88,7 +88,6 @@ class lognormaldist:
     def __str__(self):
         return("Log Normal Distribution: mean: {}, sd_ln_x: {}.".format(
             self.mean(), self.sd_ln()))
-
 
 
 class detfn:
@@ -239,12 +238,18 @@ class edp:
         self._id = id
         self._im = im
         self._fn = fn
-        self._func = MakeEDP(im.function(), fn.function())
+        self._func = MakeEDP(im.function(), fn.function(), id)
         if id != None:
             edp.defs[id] = self
 
     def lookup(id):
-        return edp.defs.get(id)
+        if not isinstance(id, pyslatcore.EDP):
+            return edp.defs.get(id)
+        else:
+            for e in edp.defs.values():
+                if (e.function().AreSame(id)):
+                    return e
+            return None
             
     def id(self):
         return self._id
@@ -369,7 +374,13 @@ class compgroup:
             compgroup.defs[id] = self
 
     def lookup(id):
-        return compgroup.defs.get(id)
+        if not isinstance(id, pyslatcore.CompGroup):
+            return compgroup.defs.get(id)
+        else:
+            for c in compgroup.defs.values():
+                if (c.function().AreSame(id)):
+                    return c
+            return None
     
     def fragfn(self):
         return self._frag
@@ -456,6 +467,9 @@ class structure:
 
     def DeaggregatedLoss(self, im):
         return self._structure.DeaggregatedLoss(im)
+
+    def ComponentsByEDP(self):
+        return self._structure.ComponentsByEDP()
     
 class recorder:
     defs = dict()
@@ -673,7 +687,56 @@ class StructLossRecorder(recorder):
             print(line1)
             print(line2)
         elif self._options['structloss-type'] == 'by-edp':
-            print("NOT IMPLEMENTED")
+            mapping = self._function.ComponentsByEDP();
+            groups = dict()
+            for m in mapping:
+                components = []
+                for cg in m[1:]:
+                    components.append(compgroup.lookup(cg))
+                groups[edp.lookup(m[0]).id()] = components
+
+            x_label = 'IM'
+            y_label = self._columns
+            categories = list(groups.keys())
+            categories.sort()
+            
+            # Print column headers:
+            line = "{:>15}".format(x_label)
+            for c in categories:
+                for y in y_label:
+                    line = "{}{:>15}".format(line, "{}.{}".format(c, y))
+            print(line)
+
+            for x in self._at:
+                line = "{:>15.6}".format(x)
+                for c in categories:
+                    dists = []
+                    for cg in groups[c]:
+                        mean = cg.E_Loss_IM(x)
+                        sd_ln = cg.SD_ln_Loss_IM(x)
+
+                        dists.append(pyslatcore.MakeLogNormalDist({LOGNORMAL_PARAM_TYPE.MEAN_X: mean,
+                                                                   LOGNORMAL_PARAM_TYPE.SD_LN_X: sd_ln}))
+                    dist = lognormaldist(pyslatcore.AddDistributions(dists))
+                    
+                    for y in self._columns:
+                        if y == 'mean_x':
+                            yval = dist.mean()
+                        elif y== 'mean_ln':
+                            yval = dist.mean_ln()
+                        elif y== 'median':
+                            yval = dist.median()
+                        elif y == 'sd_ln_x':
+                            yval = dist.sd_ln()
+                        elif y == 'sd_x':
+                            yval = dist.sd()
+                        else:
+                            yval = None
+                        
+                        line = "{}{:>15.6}".format(line, yval)
+                print(line)
+            
+                
         elif self._options['structloss-type'] == 'by-frag':
             print("NOT IMPLEMENTED")
         elif self._options['structloss-type'] == 'by-fate':
