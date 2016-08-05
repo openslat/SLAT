@@ -646,9 +646,10 @@ int main(int argc, char **argv)
     {
         // Record the expected loss for the structure:
         ofstream outfile("parser/example2/c-results/ann_loss");
-        outfile << setw(15) << "mean_x" << endl;
+        outfile << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
         LogNormalDist annloss = building->AnnualLoss();
         outfile << setw(15) << annloss.get_mean_X()
+                << setw(15) << annloss.get_sigma_lnX()
                 << endl;
     }
 

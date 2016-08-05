@@ -300,7 +300,7 @@ pyslat.MakeRecorder("annloss",
                 "structloss", 
                 pyslat.structure.lookup("building"),
                 {'filename': "py-results/ann_loss", 'append': False, 'structloss-type': 'annual'},
-                None, 
+                ['mean_x', 'sd_ln_x'], 
                 None)
 
 pyslat.MakeRecorder("STRUCTLOSS_FATE_REC", 

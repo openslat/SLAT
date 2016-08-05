@@ -200,48 +200,10 @@
     }
 
     ##Read the Total Loss data:
-    paleo.structloss.c <- read.csv(
-        paste(results.dir, "loss_c_total", sep=""),
-        skip=3, header=FALSE, sep="")
-    names(paleo.structloss.c) = c("IM", "mean.x", "sd.lnx")
-
     paleo.structloss.nc <- read.csv(
         paste(results.dir, "loss_nc_total", sep=""),
         skip=3, header=FALSE, sep="")
     names(paleo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
-
-    if (length(paleo.structloss.nc$IM) !=
-        length(neo.structloss.nc$IM) ||
-        (max(abs((paleo.structloss.nc$IM - 
-                      neo.structloss.nc$IM)/
-    		      paleo.structloss.nc$IM)) > 1))
-        {
-            print("IM mismatch in STRUCTLOSS-NC #%d")
-            break
-        }
-
-
-    neo.structloss.c <- read.csv("c-results/loss_c_total", 
-                                 header=TRUE, sep="")
-    names(neo.structloss.c) = c("IM", "mean.x", "sd.lnx")
-
-    neo.structloss.nc <- read.csv("c-results/loss_nc_total", 
-                  		header=TRUE, sep="")
-    names(neo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
-
-
-    if (length(paleo.structloss.c$IM) != 
-        length(neo.structloss.c$IM) ||
-        (max(abs((paleo.structloss.c$IM - neo.structloss.c$IM)/
-                     paleo.structloss.c$IM)) > 1))
-        {
-            print("IM mismatch in STRUCTLOSS-C")
-            break
-        }
-
-    neo.deagg <- read.csv("c-results/deagg", header=TRUE, sep="")
-    names(neo.deagg) <- c("IM", "mean.nc", "sd.nc", 
-  			"mean.c", "sd.nc")
 
     ## Function for comparing data sets, for convenience:
     compare <- function(a, b)  {
@@ -256,38 +218,6 @@
   #+END_SRC
 
   #+RESULTS:
-  #+begin_example
-  Error in file(file, "rt") : cannot open the connection
-  In addition: Warning message:
-  In file(file, "rt") :
-    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/im_rate': No such file or directory
-  Error in file(file, "rt") (from #3) : cannot open the connection
-  In addition: Warning message:
-  In file(file, "rt") :
-    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/im_edp_1.txt': No such file or directory
-  Error in file(file, "rt") (from #3) : cannot open the connection
-  In addition: Warning message:
-  In file(file, "rt") :
-    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/edp_1_rate.txt': No such file or directory
-  Error in file(file, "rt") : cannot open the connection
-  In addition: Warning message:
-  In file(file, "rt") :
-    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/collapse.txt': No such file or directory
-  Error in names(neo.collapse.im) = c("IM", "pDemolition", "pCollapse") : 
-    'names' attribute [3] must be the same length as the vector [2]
-  Error in file(file, "rt") (from #2) : cannot open the connection
-  In addition: Warning message:
-  In file(file, "rt") :
-    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/loss_1_im.txt': No such file or directory
-  Error in file(file, "rt") : cannot open the connection
-  In addition: Warning message:
-  In file(file, "rt") :
-    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/loss_c_total': No such file or directory
-  Error in file(file, "rt") : cannot open the connection
-  In addition: Warning message:
-  In file(file, "rt") :
-    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/loss_nc_total': No such file or directory
-#+end_example
 
 
 \clearpage
@@ -300,6 +230,23 @@
   #+END_SRC
 
   #+RESULTS:
+  #+BEGIN_EXPORT latex
+  % latex table generated in R 3.2.2 by xtable 1.8-2 package
+  % Fri Aug  5 14:17:39 2016
+  \begin{table}[ht]
+  \centering
+  \begin{tabular}{rr}
+    \hline
+   & Value \\ 
+    \hline
+  max(abs(difference)) & 0.00005 \\ 
+    mean(abs(difference)) & 0.00000 \\ 
+    percent(abs(difference)) & 0.03102 \\ 
+     \hline
+  \end{tabular}
+  \caption{Comparison of IM Rate calculations.} 
+  \end{table}
+  #+END_EXPORT
 
   Plot it (Figure [[fig:im-rate]]):
   <<code:im-rate-plot>>
@@ -325,7 +272,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:im-rate
   #+RESULTS: im-rate
-  [[file:/tmp/babel-1757XZc/figure-1757ges.pdf]]
+  [[file:/tmp/babel-1768wy-/figure-17687OT.pdf]]
 
 \clearpage
 * EDP
@@ -388,6 +335,32 @@
     #+END_SRC
 
     #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Fri Aug  5 14:17:51 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{lrrrrrr}
+      \hline
+    Floor & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    Ground Floor Accel & 0.00049 & 0.00008 & 0.03987 & 0.00397 & 0.00018 & 1.20267 \\ 
+      2nd Story Accel & 0.00049 & 0.00009 & 0.04503 & 0.01882 & 0.00133 & 3.99385 \\ 
+      3rd Floor Accel & 0.00049 & 0.00020 & 0.04210 & 0.00826 & 0.00059 & 2.06527 \\ 
+      4th Floor Accel & 0.00050 & 0.00003 & 0.04744 & 0.00891 & 0.00053 & 2.41306 \\ 
+      5th Floor Accel & 0.00005 & 0.00001 & 0.03843 & 0.00893 & 0.00051 & 2.59785 \\ 
+      6th Floor Accel & 0.00005 & 0.00004 & 0.04537 & 0.00817 & 0.00058 & 4.59038 \\ 
+      7th Floor Accel & 0.00005 & 0.00004 & 0.02859 & 0.00531 & 0.00045 & 1.96190 \\ 
+      8th Floor Accel & 0.00005 & 0.00004 & 0.04259 & 0.00327 & 0.00032 & 2.09343 \\ 
+      9th Floor Accel & 0.00005 & 0.00001 & 0.03139 & 0.02046 & 0.00091 & 7.11310 \\ 
+      10th Floor Accel & 0.00005 & 0.00004 & 0.02006 & 0.01604 & 0.00057 & 6.07850 \\ 
+      Roof Accel & 0.00005 & 0.00004 & 0.01875 & 0.00213 & 0.00021 & 0.85317 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of EDP-IM calculations 
+			for acceleration EDPs.} 
+    \end{table}
+    #+END_EXPORT
 
     Plot the mean (Figure [[fig:accel-im-mean]]) and standard deviation (Figure [[fig:accel-im-sd-lnx]]):
     <<code:accel-im-mean>>
@@ -1541,8 +1514,9 @@
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
      loss.by.fate <- read.csv("c-results/loss_by_fate", header=TRUE, sep="")
-     #loss.by.fate["demo.mean"] = loss.by.fate["demo.mean"] + loss.by.fate["coll.mean"]
-     #loss.by.fate["repair.mean"] = loss.by.fate["repair.mean"] + loss.by.fate["demo.mean"]
+     fate.names = names(loss.by.fate)
+     fate.im.name = fate.names[1]
+     fate.names = fate.names[2:length(fate.names)]
 
      palette(rainbow(length(fate.names)))
      plot(NULL, xlim=range(loss.by.fate$IM),
@@ -1550,16 +1524,16 @@
    	xlab="IM", ylab="Mean Loss",
    	main="Mean Loss vs. IM")
      for (i in 1:length(fate.names)) {
-         lines(loss.by.fate[,(i+1)] ~ loss.by.fate[,"IM"], col=i)
+         lines(loss.by.fate[,(i+1)] ~ loss.by.fate[,fate.im.name], col=i)
      }
-     legend(x="topleft", ncol=2, legend=c(fate.names), fill=palette())
+     legend(x="topleft", ncol=1, legend=c(fate.names), fill=palette())
    #+END_SRC
 
    #+CAPTION: Mean Loss by FATE
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.fate
    #+RESULTS: structloss.by.fate
-   [[file:/tmp/babel-1768wy-/figure-1768RdZ.pdf]]
+   [[file:/tmp/babel-1768wy-/figure-17680Yf.pdf]]
    
 * Loss by EDP
    #+NAME: structloss.by.edp
@@ -1568,14 +1542,15 @@
    #+BEGIN_SRC R :session *R-2*
      loss.by.edp <- read.csv("c-results/loss_by_edp", header=TRUE, sep="")
      edp.names = names(loss.by.edp)
+     edp.im.name = edp.names[1]
      edp.names = edp.names[2:length(edp.names)]
      for (i in 2:length(edp.names)) {
          loss.by.edp[edp.names[i]] = loss.by.edp[edp.names[i]] + loss.by.edp[edp.names[i-1]]
      }
      palette(rainbow(length(edp.names)))
-     plot(neo.structloss.nc$mean.x ~ neo.structloss.nc$IM)
+     plot(paleo.structloss.nc$mean.x ~ paleo.structloss.nc$IM)
      for (i in 1:length(edp.names)) {
-         lines(loss.by.edp[,(i+1)] ~ loss.by.edp[,"IM"], col=i)
+         lines(loss.by.edp[,(i+1)] ~ loss.by.edp[,edp.im.name], col=i)
      }
      legend(x="topleft", ncol=2, legend=c(edp.names), fill=palette())
    #+END_SRC
@@ -1584,7 +1559,7 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.edp
    #+RESULTS: structloss.by.edp
-   [[file:/tmp/babel-1768wy-/figure-17689vR.pdf]]
+   [[file:/tmp/babel-1768wy-/figure-176855S.pdf]]
    
 * Loss by Component Type
    #+NAME: structloss.by.comp
@@ -1593,14 +1568,15 @@
    #+BEGIN_SRC R :session *R-2*
      loss.by.comp <- read.csv("c-results/loss_by_frag", header=TRUE, sep="")
      comp.names = names(loss.by.comp)
+     comp.im.name = comp.names[1]
      comp.names = comp.names[2:length(comp.names)]
      for (i in 2:length(comp.names)) {
          loss.by.comp[comp.names[i]] = loss.by.comp[comp.names[i]] + loss.by.comp[comp.names[i-1]]
      }
      palette(rainbow(length(comp.names)))
-     plot(neo.structloss.nc$mean.x ~ neo.structloss.nc$IM)
+     plot(paleo.structloss.nc$mean.x ~ paleo.structloss.nc$IM)
      for (i in 1:length(comp.names)) {
-         lines(loss.by.comp[,(i+1)] ~ loss.by.comp[,"IM"], col=i)
+         lines(loss.by.comp[,(i+1)] ~ loss.by.comp[,comp.im.name], col=i)
      }
      legend(x="topleft", ncol=2, legend=c(comp.names), fill=palette())
    #+END_SRC
@@ -1609,214 +1585,8 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.comp
    #+RESULTS: structloss.by.comp
-   [[file:/tmp/babel-1768wy-/figure-1768xYq.pdf]]
+   [[file:/tmp/babel-1768wy-/figure-1768GLN.pdf]]
    
-* Total Loss
-
-** Non-Collapse
-   Compare the means and standard deviations:
-   #+BEGIN_SRC R :results output latex 
-     xtable(compare(paleo.structloss.nc$mean.x,
-      	      neo.structloss.nc$mean.x),
-         caption="Comparison of Mean(Loss) without Collapse",
-   	 digits=c(5))
-   #+END_SRC
-
-   #+RESULTS:
-   #+BEGIN_EXPORT latex
-   % latex table generated in R 3.2.2 by xtable 1.8-2 package
-   % Thu Jun 16 15:08:03 2016
-   \begin{table}[ht]
-   \centering
-   \begin{tabular}{rr}
-     \hline
-    & Value \\ 
-     \hline
-   max(abs(difference)) &   -Inf \\ 
-     mean(abs(difference)) &  \\ 
-     percent(abs(difference)) &   -Inf \\ 
-      \hline
-   \end{tabular}
-   \caption{Comparison of Mean(Loss) without Collapse} 
-   \end{table}
-   Warning messages:
-   1: In max(abs(a - b)) : no non-missing arguments to max; returning -Inf
-   2: In max(abs(a - b)/a) : no non-missing arguments to max; returning -Inf
-   #+END_EXPORT
-
-
-   #+BEGIN_SRC R :results output latex
-     xtable(compare(paleo.structloss.nc$sd.lnx,
-   		 neo.structloss.nc$sd.lnx),
-   	 caption="Comparison of sd(ln(Loss)) without Collapse",
-   	 digits=c(5))
-   #+END_SRC
-
-   #+RESULTS:
-
-   Plot the mean (Figure [[fig:structloss.nc-mean]]) and standard deviation (Figure
-   [[fig:structloss.nc-sd]]):
-   #+NAME: structloss.nc-mean
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R
-     palette(c("red", "blue"))
-     plot(paleo.structloss.nc$mean.x ~
-          paleo.structloss.nc$IM, log="",
-	  xlim=c(0, 1.5), ylim=c(0, 10E6),
-          xlab="IM", ylab="Mean(Loss)", 
-          main="Total Loss, No Collapse",
-          type="p", col=1, lwd=5)
-
-     lines(neo.structloss.nc$mean.x ~ neo.structloss.nc$IM, 
-         col=2, lwd=3)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Mean Total Loss 
-   #+CAPTION: (*not* considering collapse)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:structloss.nc-mean
-   #+RESULTS: structloss.nc-mean
-   [[file:/tmp/babel-1757XZc/figure-1757ctC.pdf]]
-
-
-   #+NAME: structloss.nc-sd
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue"))
-     plot(paleo.structloss.nc$sd.lnx ~ paleo.structloss.nc$IM,
-          log="", xlab="IM", ylab="sd(ln(Loss))", 
-          main="Total Loss, No Collapse",
-          type="p", col=1, lwd=5)
-     lines(neo.structloss.nc$sd.lnx ~ neo.structloss.nc$IM, 
-         col=2, lwd=3)
-  
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Standard deviation of total loss
-   #+CAPTION: (*not* considering collapse)
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:structloss.nc-sd
-   #+RESULTS: structloss.nc-sd
-   [[file:/tmp/babel-1757XZc/figure-1757QWb.pdf]]
-
-
-** Collapse
-   Compare the means and standard deviations:
-   #+BEGIN_SRC R :results output latex 
-     xtable(compare(paleo.structloss.c$mean.x,
-      	      neo.structloss.c$mean.x),
-         caption="Comparison of Mean(Loss) with Collapse",
-   	 digits=c(5))
-   #+END_SRC
-
-
-   #+BEGIN_SRC R :results output latex
-     xtable(compare(paleo.structloss.c$sd.lnx,
-   		 neo.structloss.c$sd.lnx),
-   	 caption="Comparison of sd(ln(Loss)) with Collapse",
-   	 digits=c(5))
-   #+END_SRC
-   Compare the means and standard deviations:
-
-   Plot the mean (Figure [[fig:structloss.c-mean]]) and standard deviation (Figure
-   [[fig:structloss.c-sd]]):
-   #+NAME: structloss.c-mean
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R
-     palette(c("red", "blue"))
-     plot(paleo.structloss.c$mean.x ~ paleo.structloss.c$IM, 
-          log="", xlab="IM", ylab="Mean(Loss)",
-	  xlim=c(0, 1.5), ylim=c(0, 20E6),
-          main="Total Loss, Collapse",
-          type="p", col=1, lwd=5)
-
-     lines(neo.structloss.c$mean.x ~ neo.structloss.c$IM, 
-         col=2, lwd=3)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Mean of total loss, considering collapse.
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:structloss.c-mean
-   #+RESULTS: structloss.c-mean
-   [[file:/tmp/babel-1757XZc/figure-1757E_z.pdf]]
-
-
-   #+NAME: structloss.c-sd
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R  
-     palette(c("red", "blue"))
-     plot(paleo.structloss.c$sd.lnx ~ paleo.structloss.c$IM, 
-          log="", xlab="EDP", ylab="sd(ln(Loss))", 
-          main="Total Loss, Collapse",
-          ylim=c(0, max(paleo.structloss.c$sd.lnx)),
-          type="p", col=1, lwd=5)
-     lines(neo.structloss.c$sd.lnx ~ neo.structloss.c$IM, 
-         col=2, lwd=3)
-
-     legend(x="topright",
-          legend=c("Paleo", "Neo"),
-          fill=palette())
-   #+END_SRC
-
-   #+CAPTION: Standard deviation of loss, considering collapse
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:structloss.c-sd
-   #+RESULTS: structloss.c-sd
-   [[file:/tmp/babel-1757XZc/figure-1757dnV.pdf]]
-
-
-* Deaggregated Loss
-   Plot the mean deaggregated loss (Figure [[fig:deagg.loss-mean]]):
-   #+NAME: deagg.loss-mean
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R
-     palette(c("red", "blue"))
-     plot(neo.deagg$mean.nc ~ neo.deagg$IM,
-          log="", xlab="IM", ylab="Mean(Loss) ($M)",
-          xlim=c(0, 1.5),
-          ylim=c(0, max(neo.deagg$mean.c, neo.deagg$mean.nc)),
-          main="Total Loss, Collapse",
-          type="l", col=1, lwd=5, yaxt="n")
-
-     lines(neo.deagg$mean.nc + neo.deagg$mean.c ~ neo.deagg$IM, 
-         col=2, lwd=3)
-
-     axis(2, c(0:14)*1E6, c(0:14))
-
-     legend(x="topleft",
-          legend=c("No Collapse", "Collapse"),
-          fill=palette())
-
-     polygon(c(neo.deagg$IM, rev(neo.deagg$IM)), 
-             c(neo.deagg$mean.nc, rep(0, length(neo.deagg$IM))), 
-             col="red")
-     polygon(c(neo.deagg$IM, rev(neo.deagg$IM)), 
-             c(neo.deagg$mean.c + neo.deagg$mean.nc,
-               rev(neo.deagg$mean.nc)), col="blue")
-   #+END_SRC
-
-   #+CAPTION: Mean of total loss, considering collapse.
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:deagg.loss-mean
-   #+RESULTS: deagg.loss-mean
-   [[file:/tmp/babel-17848lX/figure-1784TWh.pdf]]
-  
 * Annual Loss
   The annual loss for the entire structure
   #+BEGIN_SRC R  :results value 

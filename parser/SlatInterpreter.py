@@ -247,7 +247,7 @@ class SlatInterpreter(slatParserListener):
             else:
                 raise ValueError("Unhandled Lognormal option")
         else:
-            mu = pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X
+            mu = None
 
 
         if ctx.sd_option():
@@ -260,7 +260,7 @@ class SlatInterpreter(slatParserListener):
             else:
                 raise ValueError("Unhandled Lognormal option")
         else:
-            sd = pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X
+            sd = None
             
         self._stack.append({"mu": mu, "sd":sd})
 
@@ -467,6 +467,21 @@ class SlatInterpreter(slatParserListener):
                     options['structloss-type'] = 'by-frag'
             elif ctx.ANNUAL_FLAG():
                 options['structloss-type'] = 'annual'
+                cols = []
+                for c in list(self._stack.pop().values()):
+                    if c == pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X:
+                        c = "mean_ln_x"
+                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:
+                        c = "mean_x"
+                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.MEDIAN_X:
+                        c = "median_x"
+                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:
+                        c = "sd_ln_x"
+                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.SD_X:
+                        c = "sd_x"
+                    if c != None:
+                        cols.append(c)
+                    cols.reverse() # Want 'mean' first
                 
         id = ctx.ID().getText()
 

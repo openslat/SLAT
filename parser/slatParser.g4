@@ -98,7 +98,7 @@ recorder_command : RECORDER recorder_id ((recorder_type ID recorder_at recorder_
                   | ((DSRATE | COLLRATE) ID)
                   | ((LOSSRATE | COLLAPSE | DEAGG) ID recorder_at)
 		  | (ANNLOSS ID recorder_at LAMBDA_FLAG lambda_value)
-		  | (STRUCTLOSS ID ((structloss_type recorder_at) | ANNUAL_FLAG) recorder_cols?))
+		  | (STRUCTLOSS ID ((structloss_type recorder_at) | (ANNUAL_FLAG lognormal_options)) recorder_cols?))
 		  print_options?;
 lambda_value: numerical_scalar;
 recorder_id : ID;

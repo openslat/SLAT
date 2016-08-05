@@ -687,7 +687,7 @@ class StructLossRecorder(recorder):
             and at==None:
             raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
 
-        if columns == None:
+        if columns == None or len(columns) == 0:
             columns = ['mean_x']
             
         super().__init__(id, type, function, options, columns, at)
