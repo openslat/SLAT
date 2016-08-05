@@ -25,6 +25,7 @@ PRINT : 'print';
 DETFN : 'detfn';
 PROBFN : 'probfn';
 COLLAPSE : 'collapse';
+DEMOLITION: 'demolition';
 COLLRATE : 'collrate';
 IM : 'im';
 EDP : 'edp';
@@ -33,6 +34,7 @@ LOSSFN: 'lossfn';
 COMPGROUP : 'compgroup';
 STRUCTURE : 'structure';
 REBUILDCOST: 'rebuildcost';
+DEMOLITIONCOST: 'demolitioncost';
 IMRATE : 'imrate';
 EDPIM : 'edpim';
 EDPRATE : 'edprate';
@@ -59,8 +61,9 @@ SD_X: 'sd_x';
 
 MAQ: 'maq';
 
-COLLAPSE_FLAG: '--collapse';
-NOCOLLAPSE_FLAG: '--nocollapse';
+BY_FATE_FLAG: '--by-fate';
+BY_EDP_FLAG: '--by-edp';
+BY_FRAG_FLAG: '--by-frag';
 ANNUAL_FLAG: '--annual';
 
 STRING : SINGLE_QUOTED_STRING | DOUBLE_QUOTED_STRING ;
@@ -126,7 +129,7 @@ DQ_ESCAPED_CHAR : '\\"' | '\\\\';
 
 
 fragment
-Nondigit : [a-zA-Z_];
+Nondigit : [a-zA-Z_.];
 
 fragment
 Digit : [0-9];

@@ -44,7 +44,7 @@
 #+STARTUP: overview
 #+STARTUP: align
 #+STARTUP: noinlineimages
-#+PROPERTY: header-args:R  :session *R-2-loss*
+#+PROPERTY: header-args:R  :session *R-2*
 #+PROPERTY: header-args    :exports both
 
 \clearpage
@@ -71,7 +71,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo.im) = c("IM", "lambda")
 
-    neo.im <- read.csv("results/im_rate", 
+    neo.im <- read.csv("c-results/im_rate", 
                        header=TRUE, sep="")
 
     ## Read the EDP-IM data
@@ -86,7 +86,7 @@
         names(paleo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
 
         neo.edp.im[[i]] <- read.csv(
-            sprintf("results/im_edp_%d.txt", i),
+            sprintf("c-results/im_edp_%d.txt", i),
             header=TRUE, sep="")
         names(neo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
 
@@ -113,7 +113,7 @@
         names(paleo.edp.rate[[i]]) = c("EDP", "lambda")
 
         neo.edp.rate[[i]] <- read.csv(
-            sprintf("results/edp_%d_rate.txt", i),
+            sprintf("c-results/edp_%d_rate.txt", i),
             header=TRUE, sep="")
         names(neo.edp.rate[[i]]) = c("EDP", "lambda")
 
@@ -135,9 +135,9 @@
         skip=3, header=FALSE, sep="")
     names(paleo.collapse.im) = c("IM", "pCollapse")
 
-    neo.collapse.im <- read.csv("results/collapse.txt", 
+    neo.collapse.im <- read.csv("c-results/collapse.txt", 
                                 header=TRUE, sep="")
-    names(neo.collapse.im) = c("IM", "pCollapse")
+    names(neo.collapse.im) = c("IM", "pDemolition", "pCollapse")
 
     if (length(paleo.collapse.im$IM) !=
         length(neo.collapse.im$IM) ||
@@ -162,7 +162,7 @@
         names(paleo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
         neo.loss.im[[i]] <- read.csv(
-            sprintf("results/loss_%d_im.txt", i),
+            sprintf("c-results/loss_%d_im.txt", i),
             header=TRUE, sep="")
         names(neo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
@@ -183,7 +183,7 @@
         names(paleo.loss.edp[[i]])=c("EDP","mean.x","sd.lnx")
 
         neo.loss.edp[[i]] <- read.csv(
-            sprintf("results/loss_%d_edp.txt", i),
+            sprintf("c-results/loss_%d_edp.txt", i),
             header=TRUE, sep="")
         names(neo.loss.edp[[i]]) = c("EDP","mean.x","sd.lnx")
 
@@ -221,11 +221,11 @@
         }
 
 
-    neo.structloss.c <- read.csv("results/loss_c_total", 
+    neo.structloss.c <- read.csv("c-results/loss_c_total", 
                                  header=TRUE, sep="")
     names(neo.structloss.c) = c("IM", "mean.x", "sd.lnx")
 
-    neo.structloss.nc <- read.csv("results/loss_nc_total", 
+    neo.structloss.nc <- read.csv("c-results/loss_nc_total", 
                   		header=TRUE, sep="")
     names(neo.structloss.nc) = c("IM", "mean.x", "sd.lnx")
 
@@ -239,7 +239,7 @@
             break
         }
 
-    neo.deagg <- read.csv("results/deagg", header=TRUE, sep="")
+    neo.deagg <- read.csv("c-results/deagg", header=TRUE, sep="")
     names(neo.deagg) <- c("IM", "mean.nc", "sd.nc", 
   			"mean.c", "sd.nc")
 
@@ -256,6 +256,38 @@
   #+END_SRC
 
   #+RESULTS:
+  #+begin_example
+  Error in file(file, "rt") : cannot open the connection
+  In addition: Warning message:
+  In file(file, "rt") :
+    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/im_rate': No such file or directory
+  Error in file(file, "rt") (from #3) : cannot open the connection
+  In addition: Warning message:
+  In file(file, "rt") :
+    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/im_edp_1.txt': No such file or directory
+  Error in file(file, "rt") (from #3) : cannot open the connection
+  In addition: Warning message:
+  In file(file, "rt") :
+    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/edp_1_rate.txt': No such file or directory
+  Error in file(file, "rt") : cannot open the connection
+  In addition: Warning message:
+  In file(file, "rt") :
+    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/collapse.txt': No such file or directory
+  Error in names(neo.collapse.im) = c("IM", "pDemolition", "pCollapse") : 
+    'names' attribute [3] must be the same length as the vector [2]
+  Error in file(file, "rt") (from #2) : cannot open the connection
+  In addition: Warning message:
+  In file(file, "rt") :
+    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/loss_1_im.txt': No such file or directory
+  Error in file(file, "rt") : cannot open the connection
+  In addition: Warning message:
+  In file(file, "rt") :
+    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/loss_c_total': No such file or directory
+  Error in file(file, "rt") : cannot open the connection
+  In addition: Warning message:
+  In file(file, "rt") :
+    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/loss_nc_total': No such file or directory
+#+end_example
 
 
 \clearpage
@@ -687,7 +719,7 @@
   #+HEADER: :results graphics
   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R 
-    palette(c("red", "blue"))
+    palette(c("red", "blue", "green"))
     plot(paleo.collapse.im$pCollapse ~ paleo.collapse.im$IM, 
          log="", lwd=5,
          xlab="IM", ylab="pCollapse", main="COLLAPSE Rate",
@@ -696,8 +728,11 @@
     lines(neo.collapse.im$pCollapse ~ neo.collapse.im$IM, 
         col=2, lwd=3)
 
+    lines(neo.collapse.im$pDemolition ~ neo.collapse.im$IM, 
+        col=3, lwd=3)
+
     legend(x="right",
-         legend=c("Paleo", "Neo"),
+         legend=c("Paleo", "Neo", "Neo Demo"),
          fill=palette())
   #+END_SRC
 
@@ -711,7 +746,7 @@
   #+BEGIN_SRC R  :results value 
     paleo.rate <- scan(paste(results.dir, "collrate.txt", 
                              sep=""), skip=3)
-    neo.rate <- as.numeric(scan("results/collrate.txt", 
+    neo.rate <- as.numeric(scan("c-results/collrate.txt", 
                                 what="string")[8])
     paste(
         sprintf("Paleo: %5.3e; Neo: %5.3e; error: %3.2f%%", 
@@ -1500,6 +1535,82 @@
 
 \clearpage
 *** Loss-IM Relation
+* Loss by Fate
+   #+NAME: structloss.by.fate
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+     loss.by.fate <- read.csv("c-results/loss_by_fate", header=TRUE, sep="")
+     #loss.by.fate["demo.mean"] = loss.by.fate["demo.mean"] + loss.by.fate["coll.mean"]
+     #loss.by.fate["repair.mean"] = loss.by.fate["repair.mean"] + loss.by.fate["demo.mean"]
+
+     palette(rainbow(length(fate.names)))
+     plot(NULL, xlim=range(loss.by.fate$IM),
+          ylim=range(loss.by.fate$coll.mean),
+   	xlab="IM", ylab="Mean Loss",
+   	main="Mean Loss vs. IM")
+     for (i in 1:length(fate.names)) {
+         lines(loss.by.fate[,(i+1)] ~ loss.by.fate[,"IM"], col=i)
+     }
+     legend(x="topleft", ncol=2, legend=c(fate.names), fill=palette())
+   #+END_SRC
+
+   #+CAPTION: Mean Loss by FATE
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.by.fate
+   #+RESULTS: structloss.by.fate
+   [[file:/tmp/babel-1768wy-/figure-1768RdZ.pdf]]
+   
+* Loss by EDP
+   #+NAME: structloss.by.edp
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+     loss.by.edp <- read.csv("c-results/loss_by_edp", header=TRUE, sep="")
+     edp.names = names(loss.by.edp)
+     edp.names = edp.names[2:length(edp.names)]
+     for (i in 2:length(edp.names)) {
+         loss.by.edp[edp.names[i]] = loss.by.edp[edp.names[i]] + loss.by.edp[edp.names[i-1]]
+     }
+     palette(rainbow(length(edp.names)))
+     plot(neo.structloss.nc$mean.x ~ neo.structloss.nc$IM)
+     for (i in 1:length(edp.names)) {
+         lines(loss.by.edp[,(i+1)] ~ loss.by.edp[,"IM"], col=i)
+     }
+     legend(x="topleft", ncol=2, legend=c(edp.names), fill=palette())
+   #+END_SRC
+
+   #+CAPTION: Mean Loss by EDP
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.by.edp
+   #+RESULTS: structloss.by.edp
+   [[file:/tmp/babel-1768wy-/figure-17689vR.pdf]]
+   
+* Loss by Component Type
+   #+NAME: structloss.by.comp
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+     loss.by.comp <- read.csv("c-results/loss_by_frag", header=TRUE, sep="")
+     comp.names = names(loss.by.comp)
+     comp.names = comp.names[2:length(comp.names)]
+     for (i in 2:length(comp.names)) {
+         loss.by.comp[comp.names[i]] = loss.by.comp[comp.names[i]] + loss.by.comp[comp.names[i-1]]
+     }
+     palette(rainbow(length(comp.names)))
+     plot(neo.structloss.nc$mean.x ~ neo.structloss.nc$IM)
+     for (i in 1:length(comp.names)) {
+         lines(loss.by.comp[,(i+1)] ~ loss.by.comp[,"IM"], col=i)
+     }
+     legend(x="topleft", ncol=2, legend=c(comp.names), fill=palette())
+   #+END_SRC
+
+   #+CAPTION: Mean Loss by COMP
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.by.comp
+   #+RESULTS: structloss.by.comp
+   [[file:/tmp/babel-1768wy-/figure-1768xYq.pdf]]
+   
 * Total Loss
 
 ** Non-Collapse
@@ -1711,7 +1822,7 @@
   #+BEGIN_SRC R  :results value 
     paleo.ann.loss <- scan(paste(results.dir, "ann_loss", 
                              sep=""), skip=3)
-    neo.ann.loss <- as.numeric(scan("results/ann_loss",
+    neo.ann.loss <- as.numeric(scan("c-results/ann_loss",
                                     skip=1))
 
     paste(

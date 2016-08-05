@@ -23,28 +23,6 @@
 namespace SLAT {
 
 /**
- * @brief Collapse
- * 
- * An 'Collapse' object reports on the probability of collapse for a given IM
- * value.
- */
-    class Collapse 
-    {
-    private:
-        LogNormalDist dist;
-    public:
-        Collapse(double mean_x, double sd_ln_x) {
-            dist = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mean_x, sd_ln_x);
-        }
-
-        double pCollapse(double im) {
-            return dist.p_at_most(im);
-        }
-
-        ~Collapse() {}; /**< Destructor; do nothing */
-    };
-
-/**
  * @brief IM
  * 
  * An 'IM' object represents an intensity measurement function. It is
@@ -59,7 +37,8 @@ namespace SLAT {
         
         int callback_id;
         std::shared_ptr<DeterministicFn> f;
-        std::shared_ptr<Collapse> collapse = NULL;
+        std::shared_ptr<LogNormalDist> collapse = NULL;
+        std::shared_ptr<LogNormalDist> demolition = NULL;
     public:
         /**
          * Returns class integration settings:
@@ -96,26 +75,61 @@ namespace SLAT {
          */
         virtual double DerivativeAt(double x) ;
 
-        void SetCollapse(std::shared_ptr<Collapse> new_collapse)
+        void SetCollapse(std::shared_ptr<LogNormalDist> new_collapse)
         {
             collapse = new_collapse;
             notify_change();
         }
 
+        void SetCollapse(LogNormalDist new_collapse)
+        {
+            collapse = std::make_shared<LogNormalDist>(new_collapse);
+            notify_change();
+        }
+
         double pCollapse(double im) {
             if (collapse) {
-                return collapse->pCollapse(im);
+                return collapse->p_at_most(im);
             } else {
                 return 0;
             }
         }
 
-        double CollapseRate(void);
+        double pRepair(double im) {
+            return 1.0 - (pDemolition(im) + pCollapse(im));
+        }
 
+        Caching::CachedValue<double> CollapseRate;
+
+        void SetDemolition(std::shared_ptr<LogNormalDist> new_demolition)
+        {
+            demolition = new_demolition;
+            notify_change();
+        }
+
+        void SetDemolition(LogNormalDist new_demolition)
+        {
+            demolition = std::make_shared<LogNormalDist>(new_demolition);
+            notify_change();
+        }
+
+        double pDemolition(double im) {
+            if (demolition) {
+                // @TODO Make sure this is at least zero!
+                return demolition->p_at_most(im) - pCollapse(im);
+            } else {
+                return 0;
+            }
+        }
+
+        Caching::CachedValue<double> DemolitionRate;
+        
         virtual std::string ToString(void) const;
             
         friend std::ostream& operator<<(std::ostream& out, const IM& o);
     private:
+        double CollapseRate_calc(void);
+        double DemolitionRate_calc(void);
         std::string name;
     };
 
@@ -220,6 +234,8 @@ namespace SLAT {
         double SD(double base_value) const;
         
         std::shared_ptr<IM> Base_Rate(void) { return base_rate; };
+        
+        std::string get_Name(void) { return name; }
     protected:
         std::string name;
         std::shared_ptr<IM> base_rate; /**< Base rate relationship */

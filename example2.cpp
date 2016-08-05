@@ -13,6 +13,7 @@
 #include "structure.h"
 #include "lognormaldist.h"
 #include <chrono>
+#include <set>
 
 using namespace std;
 using namespace SLAT;
@@ -113,7 +114,10 @@ int main(int argc, char **argv)
             }
         }
         im_rel = make_shared<IM>(make_shared<LogLogInterpolatedFn>(im.data(), lambda.data(), im.size()));
-        im_rel->SetCollapse(make_shared<Collapse>(0.9, 0.47));
+//        im_rel->SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.47));
+        im_rel->SetDemolition(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.47));
+        im_rel->SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.2, 0.47));
+//        im_rel->SetDemolition(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.5, 0.47));
     }
         
     // Write the IM-RATE relationship:
@@ -129,7 +133,7 @@ int main(int argc, char **argv)
         }
 
         ofstream ofile("parser/example2/c-results/im_rate");
-        ofile << setw(15) << "IM" << setw(15) << "lambda" << endl;
+        ofile << setw(15) << "IM.1" << setw(15) << "lambda" << endl;
 
         for (size_t i=0; i < im_vals.size(); i++) 
         {
@@ -140,28 +144,40 @@ int main(int argc, char **argv)
     // Write the Collapse data:
     {
         vector<double> im_vals = linrange(0.01, 3.0, 199);
-        double results[im_vals.size()];
+        double collapse[im_vals.size()], demolition[im_vals.size()];
 #pragma omp parallel for
         for (size_t i=0; i < im_vals.size(); i++) {
-            results[i] = im_rel->pCollapse(im_vals[i]);
+            collapse[i] = im_rel->pCollapse(im_vals[i]);
+            demolition[i] = im_rel->pDemolition(im_vals[i]);
         }
         
         ofstream ofile("parser/example2/c-results/collapse.txt");
-        ofile << setw(15) << "IM" << setw(15) << "p(Collapse)" << endl;
+        ofile << setw(15) << "IM.1" << setw(15) << "p(Demolition)"
+              << setw(15) << "p(Collapse)" << endl;
 
         for (size_t i=0; i < im_vals.size(); i++) 
         {
-            ofile << setw(15) << im_vals[i] << setw(15) << results[i] << endl;
+            ofile << setw(15) << im_vals[i] << setw(15) << demolition[i]
+                  << setw(15) << collapse[i] << endl;
         }
     }
 
     // Write the rate of collapse:
-    {
+    if (false) {
         ofstream ofile("parser/example2/c-results/collrate.txt");
+        ofile << setw(15) << "Rate of Demolition for IM IM_1 is "
+              << setprecision(16) << im_rel->DemolitionRate() << endl;
         ofile << setw(15) << "Rate of Collapse for IM IM_1 is "
               << setprecision(16) << im_rel->CollapseRate() << endl;
+    } else {
+        ofstream ofile("parser/example2/c-results/collrate.txt");
+        ofile << setw(15) << "IM" << setw(30) << "rate(Demolition)"
+              << setw(30) << "rate(Collapse)" << endl;
+        ofile << setw(15) << "IM.1"
+              << setw(30) << setprecision(16) << im_rel->DemolitionRate()
+              << setw(30) << setprecision(16) << im_rel->CollapseRate()
+              << endl;
     }
-
     // Read in EDP functions
     const int N_EDPS = 21;
     map<int, shared_ptr<EDP>> edp_rels;
@@ -222,13 +238,17 @@ int main(int argc, char **argv)
             }
             {
                 
+                stringstream name;
+                name << "EDP." << setw(2) << setfill('0') << n << ".mean_x";
+
                 edp_rels[n] = make_shared<EDP>(
                     im_rel, 
                     make_shared<LogNormalFn>(
                         make_shared<LinearInterpolatedFn>(im_val.data(), mean_edp.data(), im_val.size()),
                         LogNormalFn::MEAN_X,
                         make_shared<LinearInterpolatedFn>(im_val.data(), sd_edp.data(), im_val.size()),
-                        LogNormalFn::SIGMA_X));
+                        LogNormalFn::SIGMA_X),
+                    name.str());
             }
         }
     }
@@ -250,7 +270,7 @@ int main(int argc, char **argv)
             path << "parser/example2/c-results/im_edp_" << n << ".txt";
             
             ofstream outfile(path.str());
-            outfile << setw(15) << "IM" << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
+            outfile << setw(15) << "IM.1" << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
             
             for (size_t i=0; i < im_vals.size(); i++) {
                 outfile << setw(15) << im_vals[i]
@@ -291,6 +311,7 @@ int main(int argc, char **argv)
     
     // Fragility and Loss functions
     map<int, shared_ptr<FragilityFn>> fragility_functions;
+    map<shared_ptr<FragilityFn>, int> fragility_keys;
     map<int, shared_ptr<LossFn>> loss_functions;
     {
         struct DATA {double id; vector<pair<double, double>> frag; vector<pair<double, double>> loss;};
@@ -331,8 +352,13 @@ int main(int argc, char **argv)
                     dists[j] = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(
                         data[i].frag[j].first, data[i].frag[j].second);
                 }
+
+                shared_ptr<FragilityFn> f = make_shared<FragilityFn>(dists);
 #pragma omp critical
-                fragility_functions[data[i].id] = make_shared<FragilityFn>(dists);
+                {
+                    fragility_functions[data[i].id] = f;
+                    fragility_keys[f] = data[i].id;
+                }
             }
             {
                 vector<LogNormalDist> dists(data[i].frag.size());
@@ -470,7 +496,7 @@ int main(int argc, char **argv)
                 path << "parser/example2/c-results/loss_" << n << "_im.txt";
             
                 ofstream outfile(path.str());
-                outfile << setw(15) << "IM" << setw(15) << "mean_x" 
+                outfile << setw(15) << "IM.1" << setw(15) << "mean_x" 
                         << setw(15) << "sd_ln_x" << endl;
         
                 vector<double> im_vals = linrange(0.01, 3.0, 199);
@@ -590,53 +616,16 @@ int main(int argc, char **argv)
         }
     }
     building->setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
+    building->setDemolitionCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
                 
-    {
-        // Record the Loss calculations for the structure as a whole, without collapse:
-        ofstream outfile("parser/example2/c-results/loss_nc_total");
-        outfile << setw(15) << "IM" << setw(15) << "mean_x"
-                << setw(15) << "sd_ln_x" << endl;
-                
-        vector<double> im_vals = linrange(0.01, 3.0, 199);
-                
-        for (vector<double>::const_iterator im = im_vals.begin();
-             im != im_vals.end();
-             im++)
-        {
-            LogNormalDist dist = building->Loss(*im, false);
-            outfile << setw(15) << *im << setw(15) << dist.get_mean_X()
-                    << setw(15) << dist.get_sigma_lnX()
-                    << endl;
-        }
-    }
-
-    {
-        // Record the Loss calculations for the structure as a whole, including collapse:
-        ofstream outfile("parser/example2/c-results/loss_c_total");
-        outfile << setw(15) << "IM" << setw(15) << "mean_x"
-                << setw(15) << "sd_ln_x" << endl;
-        
-        vector<double> im_vals = linrange(0.01, 3.0, 199);
-                
-        for (vector<double>::const_iterator im = im_vals.begin();
-             im != im_vals.end();
-             im++)
-        {
-            LogNormalDist dist = building->Loss(*im, true);
-            outfile << setw(15) << *im << setw(15) << dist.get_mean_X()
-                    << setw(15) << dist.get_sigma_lnX()
-                    << endl;
-        }
-    }
-
     {
         // Record the deaggregated loss for the structure:
-        ofstream outfile("parser/example2/c-results/deagg");
-        outfile << setw(15) << "IM" 
-                << setw(15) << "mean_nc"
-                << setw(15) << "sd_nc"
-                << setw(15) << "mean_c"
-                << setw(15) << "sd_c" << endl;
+        ofstream outfile("parser/example2/c-results/loss_by_fate");
+        outfile << setw(15) << "IM.1" 
+                << setw(15) << "repair.mean_x"
+                << setw(15) << "demo.mean_x"
+                << setw(15) << "coll.mean_x"
+                << endl;
         
         vector<double> im_vals = linrange(0.01, 3.0, 199);
                 
@@ -644,13 +633,12 @@ int main(int argc, char **argv)
              im != im_vals.end();
              im++)
         {
-            pair<LogNormalDist, LogNormalDist> dists = building->DeaggregatedLoss(*im);
+            Structure::LOSSES losses = building->LossesByFate(*im);
 
             outfile << setw(15) << *im 
-                    << setw(15) << dists.first.get_mean_X()
-                    << setw(15) << dists.first.get_sigma_lnX()
-                    << setw(15) << dists.second.get_mean_X()
-                    << setw(15) << dists.second.get_sigma_lnX()
+                    << setw(15) << losses.repair.get_mean_X()
+                    << setw(15) << losses.demolition.get_mean_X()
+                    << setw(15) << losses.collapse.get_mean_X()
                     << endl;
         }
     }
@@ -658,13 +646,139 @@ int main(int argc, char **argv)
     {
         // Record the expected loss for the structure:
         ofstream outfile("parser/example2/c-results/ann_loss");
-        outfile << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
+        outfile << setw(15) << "mean_x" << endl;
         LogNormalDist annloss = building->AnnualLoss();
         outfile << setw(15) << annloss.get_mean_X()
-                << setw(15) << annloss.get_sigma_lnX()
                 << endl;
     }
 
+
+    // Deaggregate by EDP
+    cout << "> Deaggregate by EDP" << omp_get_wtime() << endl;
+    {
+        std::vector<std::vector<size_t>> losses_by_edp(edp_rels.size() + 1);
+        std::vector<std::shared_ptr<CompGroup>> components = building->Components();
+        
+        for (size_t i=0; i < components.size(); i++) {
+            shared_ptr<EDP> edp = components[i]->get_EDP();
+            size_t edp_id=0;
+            while (edp_id < edp_rels.size() && edp_rels[edp_id] != edp) {
+                edp_id++;
+            }
+            losses_by_edp[edp_id].push_back(i);
+        }
+        
+        for (size_t i=1; i < losses_by_edp.size(); i++) {
+            cout << setw(5) << i << ":";
+            for (size_t j=0; j < losses_by_edp[i].size(); j++) 
+            {
+                cout << setw(5) << losses_by_edp[i][j];
+            }
+            cout << endl;
+        }
+
+        {
+            ofstream outfile("parser/example2/c-results/loss_by_edp");
+            outfile << setw(15) << "IM.1";
+            for (int i=1; i <= N_EDPS; i++) {
+                outfile << setw(15) << edp_rels[i]->get_Name();
+            }
+            outfile << endl;
+        
+            vector<double> im_vals = linrange(0.01, 3.0, 199);
+            for (vector<double>::const_iterator im = im_vals.begin();
+                 im != im_vals.end();
+                 im++)
+            {
+                outfile << setw(15) << *im;
+                outfile.flush();
+                LogNormalDist dist = building->Loss(*im, true);
+                for (int edp=1; edp <= N_EDPS; edp++) {
+                    vector<LogNormalDist> dists(losses_by_edp[edp].size());
+
+                    for (size_t i=0; i < losses_by_edp[edp].size(); i++) {
+                        dists[i] = components[losses_by_edp[edp][i]]->LossDist_IM(*im);
+                    }
+                    outfile << setw(15) << LogNormalDist::AddDistributions(dists).get_mean_X();
+                }
+                outfile << endl;
+            }
+        }
+    }
+    cout << "< Deaggregate by EDP" << omp_get_wtime() << endl;
+
+    cout << "> Deaggregate by Component type" << omp_get_wtime() << endl;
+    {
+        std::vector<std::shared_ptr<CompGroup>> components = building->Components();
+        std::set<int> fragilities;
+        std::map<int, std::vector<size_t>> losses_by_fragility;
+        
+        for (size_t i=0; i < components.size(); i++) {
+            shared_ptr<FragilityFn> frag = components[i]->get_Fragility();
+            size_t frag_id = fragility_keys[frag];
+            fragilities.insert(frag_id);
+            losses_by_fragility[frag_id].push_back(i);
+        }
+        cerr << "sorted by fragility" << endl;
+
+        cerr << "Fragilities: ";
+        for (set<int>::iterator i=fragilities.begin();
+             i != fragilities.end();
+             i++)
+        {
+            cerr << setw(4) << *i;
+        }
+        cerr << endl;
+        
+        cerr << "Component Groups by fragility:" << endl;
+        for (set<int>::iterator i=fragilities.begin();
+             i != fragilities.end();
+             i++)
+        {
+            cerr << setw(4) << *i << ": ";
+            for (size_t j=0; j < losses_by_fragility[*i].size(); j++) {
+                cerr << setw(4) << losses_by_fragility[*i][j];
+            }
+            cerr << endl;
+        }
+
+        {
+            ofstream outfile("parser/example2/c-results/loss_by_frag");
+            outfile << setw(15) << "IM.1";
+            for (set<int>::iterator i=fragilities.begin();
+                 i != fragilities.end();
+                 i++)
+            {
+                stringstream column;
+                column << "FRAG." << setw(3) << setfill('0') << *i << ".mean_x";
+                outfile << setw(20) << column.str();
+            }
+            outfile << endl;
+        
+            vector<double> im_vals = linrange(0.01, 3.0, 199);
+            for (vector<double>::const_iterator im = im_vals.begin();
+                 im != im_vals.end();
+                 im++)
+            {
+                outfile << setw(15) << *im;
+                for (set<int>::iterator f=fragilities.begin();
+                     f != fragilities.end();
+                     f++)
+                {
+                    vector<LogNormalDist> dists(losses_by_fragility[*f].size());
+
+                    for (size_t i=0; i < losses_by_fragility[*f].size(); i++) {
+                        dists[i] = components[losses_by_fragility[*f][i]]->LossDist_IM(*im);
+                    }
+                    outfile << setw(20) << LogNormalDist::AddDistributions(dists).get_mean_X();
+                }
+                outfile << endl;
+            }
+        }
+
+    }
+    cout << "< Deaggregate by Component type" << omp_get_wtime() << endl;
+    
     cout << "Done" << endl;
     return 0;
 }

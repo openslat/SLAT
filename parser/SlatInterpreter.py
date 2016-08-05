@@ -188,13 +188,18 @@ class SlatInterpreter(slatParserListener):
         mu = params[0]
         sd = params[1]
 
-        if not options['mu'] == pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:
-            raise ValueError("Mu option for collapse not yet supported")
+        dist = pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd})
+        pyslat.im.lookup(id).SetCollapse(dist)
 
-        if not options['sd'] == pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:
-            raise ValueError("Sd option for collapse not yet supported")
+    def exitDemolition_command(self, ctx:slatParser.Demolition_commandContext):
+        id = ctx.ID().getText()
+        options = self._stack.pop()
+        params = self._stack.pop()
+        mu = params[0]
+        sd = params[1]
 
-        pyslat.im.lookup(id).SetCollapse(pyslat.collapse(None, mu, sd))
+        dist = pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd})
+        pyslat.im.lookup(id).SetDemolition(dist)
 
     # Exit a parse tree produced by slatParser#edp_command.
     def exitEdp_command(self, ctx:slatParser.Edp_commandContext):
@@ -306,17 +311,16 @@ class SlatInterpreter(slatParserListener):
         params = self._stack.pop()
         mu = params[0]
         sd = params[1]
-        
-        #print("Rebuild cost for {}: {}, {}.".format(id, mu, sd))
         pyslat.structure.lookup(id).setRebuildCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
-        #print(pyslat.structure.lookup(id).getRebuildCost())
-        #print(pyslat.structure.lookup(id).Loss(0.01, 0))
-        #print(pyslat.structure.lookup(id).Loss(0.01, 1))
-        #print(pyslat.structure.lookup(id).Loss(0.1106, 0))
-        #print(pyslat.structure.lookup(id).Loss(0.1106, 1))
-        #print(pyslat.structure.lookup(id).Loss(1.003, 0))
-        #print(pyslat.structure.lookup(id).Loss(1.003, 1))
 
+    def exitDemolitioncost_command(self, ctx:slatParser.Demolitioncost_commandContext):
+        id = ctx.ID().getText()
+        options = self._stack.pop()
+        params = self._stack.pop()
+        mu = params[0]
+        sd = params[1]
+        pyslat.structure.lookup(id).setDemolitionCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
+        
     
     # Exit a parse tree produced by slatParser#print_command.
     def exitPrint_command(self, ctx:slatParser.Print_commandContext):
@@ -454,14 +458,15 @@ class SlatInterpreter(slatParserListener):
             raise ValueError("Unhandled recorder type: {}")
 
         if type == 'structloss':
-            if ctx.collapse_type() and \
-               ctx.collapse_type().COLLAPSE_FLAG():
-                options['collapse'] = True
+            if ctx.structloss_type():
+                if ctx.structloss_type().BY_FATE_FLAG():
+                    options['structloss-type'] = 'by-fate'
+                elif ctx.structloss_type().BY_EDP_FLAG():
+                    options['structloss-type'] = 'by-edp'
+                if ctx.structloss_type().BY_FRAG_FLAG():
+                    options['structloss-type'] = 'by-frag'
             elif ctx.ANNUAL_FLAG():
-                options['collapse'] = False
-                options['annual'] = True
-            else:
-                options['collapse'] = False
+                options['structloss-type'] = 'annual'
                 
         id = ctx.ID().getText()
 
@@ -483,7 +488,7 @@ class SlatInterpreter(slatParserListener):
         else:
             raise ValueError("Unhandled recorder type")
 
-        pyslat.recorder(recorder_id, type, function, options, cols, at)
+        pyslat.MakeRecorder(recorder_id, type, function, options, cols, at)
 
     # Exit a parse tree produced by slatParser#recorder_at.
     def exitRecorder_at(self, ctx:slatParser.Recorder_atContext):

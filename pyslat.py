@@ -3,6 +3,7 @@ import math
 import numpy as np
 from contextlib import redirect_stdout
 import numbers
+import sys
 
 
 
@@ -44,11 +45,8 @@ def MakeLogNormalProbabilisticFn(parameters):
 def MakeIM(f):
     return pyslatcore.MakeIM(f)
 
-def MakeCollapse(mu, sd):
-    return pyslatcore.MakeCollapse(mu, sd)
-
-def MakeEDP(base_rate, dependent_rate):
-    return pyslatcore.MakeEDP(base_rate, dependent_rate)
+def MakeEDP(base_rate, dependent_rate, name):
+    return pyslatcore.MakeEDP(base_rate, dependent_rate, name)
 
 def MakeFragilityFn(parameters):
     return pyslatcore.MakeFragilityFn(parameters)
@@ -91,7 +89,6 @@ class lognormaldist:
     def __str__(self):
         return("Log Normal Distribution: mean: {}, sd_ln_x: {}.".format(
             self.mean(), self.sd_ln()))
-
 
 
 class detfn:
@@ -182,24 +179,6 @@ class probfn:
                    self._mu_func[1].id(), self._mu_func[0],
                    self._sigma_func[1].id(), self._sigma_func[0]))
 
-class collapse:
-    defs = dict()
-
-    def __init__(self, id, mu, sd):
-        self._id = id
-        self._mu = mu
-        self._sd = sd
-        self._func = MakeCollapse(mu, sd)
-        self._collapse = None
-
-    def func(self):
-        return self._func
-
-    def lookup(id):
-        return collapse.defs.get(id)
-
-    def __str__(self):
-        return("Collapse function '{}', mu={}, sd={}.".format(self._id, self._mu, self._sd))
         
 class im:
     defs = dict()
@@ -209,6 +188,7 @@ class im:
         self._detfn = detfn
         self._func = MakeIM(detfn.function())
         self._collapse = None
+        self._demolition = None
         if id != None:
             im.defs[id] = self
 
@@ -224,15 +204,28 @@ class im:
     def getlambda(self, x):
         return self._func.getlambda(x)
 
+    def pRepair(self, x):
+        return self._func.pRepair(x)
+    
     def pCollapse(self, x):
         return self._func.pCollapse(x)
 
     def SetCollapse(self, collapse):
         self._collapse = collapse
-        self._func.SetCollapse(collapse.func())
+        self._func.SetCollapse(collapse)
 
     def CollapseRate(self):
         return self._func.CollapseRate()
+
+    def pDemolition(self, x):
+        return self._func.pDemolition(x)
+
+    def SetDemolition(self, demolition):
+        self._demolition = demolition
+        self._func.SetDemolition(demolition)
+
+    def DemolitionRate(self):
+        return self._func.DemolitionRate()
 
     def __str__(self):
         if self._collapse:
@@ -246,15 +239,24 @@ class edp:
         self._id = id
         self._im = im
         self._fn = fn
-        self._func = MakeEDP(im.function(), fn.function())
+        self._func = MakeEDP(im.function(), fn.function(), id)
         if id != None:
             edp.defs[id] = self
 
     def lookup(id):
-        return edp.defs.get(id)
+        if not isinstance(id, pyslatcore.EDP):
+            return edp.defs.get(id)
+        else:
+            for e in edp.defs.values():
+                if (e.function().AreSame(id)):
+                    return e
+            return None
             
     def id(self):
         return self._id
+
+    def get_IM(self):
+        return self._im
 
     def function(self):
         return self._func
@@ -294,7 +296,13 @@ class fragfn:
             fragfn.defs[id] = self
 
     def lookup(id):
-        return fragfn.defs.get(id)
+        if not isinstance(id, pyslatcore.FragilityFn):
+            return fragfn.defs.get(id)
+        else:
+            for f in fragfn.defs.values():
+                if (f.function().AreSame(id)):
+                    return f
+            return None
         
     def id(self):
         return(self._id)
@@ -376,8 +384,17 @@ class compgroup:
             compgroup.defs[id] = self
 
     def lookup(id):
-        return compgroup.defs.get(id)
+        if not isinstance(id, pyslatcore.CompGroup):
+            return compgroup.defs.get(id)
+        else:
+            for c in compgroup.defs.values():
+                if (c.function().AreSame(id)):
+                    return c
+            return None
     
+    def get_IM(self):
+        return self._edp.get_IM()
+
     def fragfn(self):
         return self._frag
 
@@ -425,6 +442,7 @@ class structure:
     def __init__(self, id):
         super().__init__()
         self._structure = MakeStructure()
+        self._im = None
         if id != None:
             structure.defs[id] = self
 
@@ -434,8 +452,13 @@ class structure:
     def __str__(self):
         return "Structure"
 
+    def get_IM(self):
+        return self._im
+
     def AddCompGroup(self, group):
         self._structure.AddCompGroup(group.function())
+        if self._im == None:
+            self._im = group.get_IM()
 
     def setRebuildCost(self, cost):
         self._structure.setRebuildCost(cost)
@@ -443,14 +466,32 @@ class structure:
     def getRebuildCost(self):
         return lognormaldist(self._structure.getRebuildCost())
 
+    def setDemolitionCost(self, cost):
+        self._structure.setDemolitionCost(cost)
+
+    def getDemolitionCost(self):
+        return lognormaldist(self._structure.getDemolitionCost())
+
     def Loss(self, im, consider_collapse):
         return lognormaldist(self._structure.Loss(im, consider_collapse))
+
+    def LossesByFate(self, im):
+        result = self._structure.LossesByFate(im)
+        return [lognormaldist(result[0]),
+                lognormaldist(result[1]),
+                lognormaldist(result[2])]
 
     def AnnualLoss(self):
         return lognormaldist(self._structure.AnnualLoss())
 
     def DeaggregatedLoss(self, im):
         return self._structure.DeaggregatedLoss(im)
+
+    def ComponentsByEDP(self):
+        return self._structure.ComponentsByEDP()
+
+    def ComponentsByFragility(self):
+        return self._structure.ComponentsByFragility()
     
 class recorder:
     defs = dict()
@@ -466,7 +507,7 @@ class recorder:
             self._at = list(at)
 
         if not type == 'dsrate' and not type == 'collrate' \
-           and (type != 'structloss' or not 'annual' in self._options) \
+           and not type == 'structloss' \
            and at==None:
             raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
 
@@ -476,7 +517,7 @@ class recorder:
                 columns.append("DS{}".format(i + 1))
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_ln_x', 'sd_ln_x']
-        elif (type == 'structloss' or type == 'lossedp' or type =='lossim') \
+        elif (type == 'lossedp' or type =='lossim') \
              and columns == None:
             columns = ['mean_x', 'sd_ln_x']
         self._columns = columns
@@ -508,27 +549,6 @@ class recorder:
         if self._type == 'dsrate':
             # TODO: How does this recorder work?
             print("DSRATE recorder not implemented")
-        elif self._type == 'collrate':
-            print("Rate of Collapse for IM {} is {}".format(self._function.id(), self._function.CollapseRate()))
-        elif self._type == 'structloss' and 'annual' in self._options:
-            line1 = ""
-            line2 = ""
-            annual_loss = self._function.AnnualLoss()
-            for y_label in self._columns:
-                line1 = "{}{:>15}".format(line1, y_label)
-                if y_label=='mean_x':
-                    value = annual_loss.mean()
-                elif y_label=='mean_ln_x':
-                    value = annual_loss.mean_ln()
-                elif y_label=='median_x':
-                    value = annual_loss.median()
-                elif y_label=='sd_ln_x':
-                    value = annual_loss.sd_ln()
-                elif y_label=='sd_x':
-                    value = annual_loss.sd()
-                line2 = "{}{:>15.6}".format(line2, value)
-            print(line1)
-            print(line2)
         else:
             labels = {'detfn': ['x', 'y'],
                       'probfn': ['x', None],
@@ -540,13 +560,17 @@ class recorder:
                       'lossds': ['DS', None],
                       'lossedp': ['EDP', None],
                       'lossim': ['IM', None],
-                      'structloss': ['IM', None],
                       'annloss': ['t', ["E[ALt]"]],
                       'lossrate': ['t', 'Rate'],
-                      'collapse': ['IM', 'p(Collapse)'],
+                      'collapse': ['IM', ['p(Demolition)', 'p(Collapse)']],
                       'deagg': ['IM', ['mean_nc', 'sd_nc', 'mean_c', 'sd_c']]}
         
             x_label = labels[self._type][0]
+            if x_label == 'IM':
+                if isinstance(self._function, im):
+                    x_label = self._function.id()
+                else:
+                    x_label = self._function.get_IM().id()
             y_label = labels[self._type][1]
 
             if y_label:
@@ -573,6 +597,8 @@ class recorder:
                     loss_rate = self._function.lambda_loss(x)
                     line = "{}{:>15.6}".format(line, loss_rate)
                 elif self._type == 'collapse':
+                    p = self._function.pDemolition(x)
+                    line = "{}{:>15.6}".format(line, p)
                     p = self._function.pCollapse(x)
                     line = "{}{:>15.6}".format(line, p)
                 elif self._type == 'deagg':
@@ -598,49 +624,21 @@ class recorder:
                                 yval = self._function.E_Loss_EDP(x)
                             elif self._type == 'lossim':
                                 yval = self._function.E_Loss_IM(x)
-                            elif self._type == 'structloss':
-                                if x == 'ANNUAL':
-                                    yval = self._function.AnnualLoss().mean()
-                                else:
-                                    yval = self._function.Loss(x, self._options['collapse']).mean()
                             else:
                                 yval = self._function.Mean(x)
                         elif y == 'mean_ln_x':
-                            if self._type == 'structloss':
-                                if x == 'ANNUAL':
-                                    yval = self._function.AnnualLoss().mean_ln()
-                                else:
-                                    yval = self._function.Loss(x, self._options['collapse']).mean_ln()
-                            else:
-                                yval = self._function.MeanLn(x)
+                            yval = self._function.MeanLn(x)
                         elif y == 'median_x':
-                            if self._type == 'structloss':
-                                if x == 'ANNUAL':
-                                    yval = self._function.AnnualLoss().median()
-                                else:
-                                    yval = self._function.Loss(x, self._options['collapse']).median()
-                            else:
-                                yval = self._function.Median(x)
+                            yval = self._function.Median(x)
                         elif y == 'sd_ln_x':
                             if self._type == 'lossedp':
                                 yval = self._function.SD_ln_Loss_EDP(x)
                             elif self._type == 'lossim':
                                 yval = self._function.SD_ln_Loss_IM(x)
-                            elif self._type == 'structloss':
-                                if x == 'ANNUAL':
-                                    yval = self._function.AnnualLoss().sd_ln()
-                                else:
-                                    yval = self._function.Loss(x, self._options['collapse']).sd_ln()
                             else:
                                 yval = self._function.SD_ln(x)
                         elif y == 'sd_x':
-                            if self._type == 'structloss':
-                                if x == 'ANNUAL':
-                                    yval = self._function.AnnualLoss().sd()
-                                else:
-                                    yval = self._function.Loss(x, self._options['collapse']).sd()
-                            else:
-                                yval = self._function.SD(x)
+                            yval = self._function.SD(x)
                         else:
                             yval = "+++++++++"
                         line = "{}{:>15.6}".format(line, yval)
@@ -673,8 +671,198 @@ class recorder:
 
         else:
             self.generate_output()
+
+class CollRateRecorder(recorder):
+    def __init__(self, id, type, function, options, columns, at):
+        super().__init__(id, type, function, options, columns, at)
+
+    def generate_output(self):
+        print("{:>15}{:>30}{:>30}".format("IM", "rate(Demolition)", "rate(Collapse)"))
+        print("{:>15}{:>30}{:>30}".format(self._function.id(), self._function.DemolitionRate(),
+                                          self._function.CollapseRate()))
+
+class StructLossRecorder(recorder):
+    def __init__(self, id, type, function, options, columns, at):
+        if  (not options['structloss-type'] == 'annual') \
+            and at==None:
+            raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
+
+        if columns == None:
+            columns = ['mean_x']
+            
+        super().__init__(id, type, function, options, columns, at)
+
+
+    def generate_output(self):
+        if self._options['structloss-type'] == 'annual':
+            line1 = ""
+            line2 = ""
+            annual_loss = self._function.AnnualLoss()
+            for y_label in self._columns:
+                line1 = "{}{:>15}".format(line1, y_label)
+                if y_label=='mean_x':
+                    value = annual_loss.mean()
+                elif y_label=='mean_ln_x':
+                    value = annual_loss.mean_ln()
+                elif y_label=='median_x':
+                    value = annual_loss.median()
+                elif y_label=='sd_ln_x':
+                    value = annual_loss.sd_ln()
+                elif y_label=='sd_x':
+                    value = annual_loss.sd()
+                line2 = "{}{:>15.6}".format(line2, value)
+            print(line1)
+            print(line2)
+        elif self._options['structloss-type'] == 'by-edp':
+            mapping = self._function.ComponentsByEDP();
+            groups = dict()
+            for m in mapping:
+                components = []
+                for cg in m[1:]:
+                    components.append(compgroup.lookup(cg))
+                groups[edp.lookup(m[0]).id()] = components
+
+            x_label = self._function.get_IM().id()
+            y_label = self._columns
+            categories = list(groups.keys())
+            categories.sort()
+            
+            # Print column headers:
+            line = "{:>15}".format(x_label)
+            for c in categories:
+                for y in y_label:
+                    line = "{}{:>15}".format(line, "{}.{}".format(c, y))
+            print(line)
+
+            for x in self._at:
+                line = "{:>15.6}".format(x)
+                for c in categories:
+                    dists = []
+                    for cg in groups[c]:
+                        mean = cg.E_Loss_IM(x)
+                        sd_ln = cg.SD_ln_Loss_IM(x)
+
+                        dists.append(pyslatcore.MakeLogNormalDist({LOGNORMAL_PARAM_TYPE.MEAN_X: mean,
+                                                                   LOGNORMAL_PARAM_TYPE.SD_LN_X: sd_ln}))
+                    dist = lognormaldist(pyslatcore.AddDistributions(dists))
+                    
+                    for y in self._columns:
+                        if y == 'mean_x':
+                            yval = dist.mean()
+                        elif y== 'mean_ln':
+                            yval = dist.mean_ln()
+                        elif y== 'median':
+                            yval = dist.median()
+                        elif y == 'sd_ln_x':
+                            yval = dist.sd_ln()
+                        elif y == 'sd_x':
+                            yval = dist.sd()
+                        else:
+                            yval = None
+                        
+                        line = "{}{:>15.6}".format(line, yval)
+                print(line)
+            
+                
+        elif self._options['structloss-type'] == 'by-frag':
+            mapping = self._function.ComponentsByFragility();
+            groups = dict()
+            for m in mapping:
+                components = []
+                for cg in m[1:]:
+                    components.append(compgroup.lookup(cg))
+                groups[fragfn.lookup(m[0]).id()] = components
+
+            x_label = self._function.get_IM().id()
+            y_label = self._columns
+            categories = list(groups.keys())
+            categories.sort()
+            
+            # Print column headers:
+            line = "{:>15}".format(x_label)
+            for c in categories:
+                for y in y_label:
+                    line = "{}{:>20}".format(line, "{}.{}".format(c, y))
+            print(line)
+
+            for x in self._at:
+                line = "{:>15.6}".format(x)
+                for c in categories:
+                    dists = []
+                    for cg in groups[c]:
+                        mean = cg.E_Loss_IM(x)
+                        sd_ln = cg.SD_ln_Loss_IM(x)
+
+                        dists.append(pyslatcore.MakeLogNormalDist({LOGNORMAL_PARAM_TYPE.MEAN_X: mean,
+                                                                   LOGNORMAL_PARAM_TYPE.SD_LN_X: sd_ln}))
+                    dist = lognormaldist(pyslatcore.AddDistributions(dists))
+                    
+                    for y in self._columns:
+                        if y == 'mean_x':
+                            yval = dist.mean()
+                        elif y== 'mean_ln':
+                            yval = dist.mean_ln()
+                        elif y== 'median':
+                            yval = dist.median()
+                        elif y == 'sd_ln_x':
+                            yval = dist.sd_ln()
+                        elif y == 'sd_x':
+                            yval = dist.sd()
+                        else:
+                            yval = None
+                        
+                        line = "{}{:>20.6}".format(line, yval)
+                print(line)
+                
+
+        elif self._options['structloss-type'] == 'by-fate':
+            x_label = self._function.get_IM().id()
+            y_label = self._columns
+            fates = ['repair', 'demo', 'coll']
+
+            line = "{:>15}".format(x_label)
+            for f in fates:
+                for y in y_label:
+                    line = "{}{:>15}".format(line, "{}.{}".format(f, y))
+            print(line)
+
+            for x in self._at:
+                line = "{:>15.6}".format(x)
+                for f in fates:
+                    if f == 'repair':
+                        dist = self._function.LossesByFate(x)[0]
+                    elif f == 'demo':
+                        dist = self._function.LossesByFate(x)[1]
+                    elif f == 'coll':
+                        dist = self._function.LossesByFate(x)[2]
+                    else:
+                        dist = None
+
+                    for y in self._columns:
+                        if y == 'mean_x':
+                            yval = dist.mean()
+                        elif y== 'mean_ln':
+                            yval = dist.mean_ln()
+                        elif y== 'median':
+                            yval = dist.median()
+                        elif y == 'sd_ln_x':
+                            yval = dist.sd_ln()
+                        elif y == 'sd_x':
+                            yval = dist.sd()
+                        else:
+                            yval = None
+                        
+                        line = "{}{:>15.6}".format(line, yval)
+                print(line)
+                        
+def MakeRecorder(id, type, function, options, columns, at):
+    if (type == 'collrate'):
+        return CollRateRecorder(id, type, function, options, columns, at)
+    elif (type == 'structloss'):
+        return StructLossRecorder(id, type, function, options, columns, at)
+    else:
+        return recorder(id, type, function, options, columns, at)
     
-        
 
 def ImportProbFn(id, filename):
     data = np.loadtxt(filename, skiprows=2)

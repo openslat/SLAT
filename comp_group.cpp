@@ -135,8 +135,8 @@ namespace SLAT {
                     std::function<double (double)> local_lambda = [this, im] (double x) {
                         if (false) {
                             double pExceedence = this->edp->P_exceedence(im, x);
-                            double pCollapse = this->edp->Base_Rate()->pCollapse(im);
-                            return pExceedence * (1 - pCollapse) + pCollapse;
+                            double pRepair = this->edp->Base_Rate()->pRepair(im);
+                            return pExceedence * pRepair + (1.0 - pRepair);
                         } else {
                             double result = this->edp->P_exceedence(im, x);
                             return result;
