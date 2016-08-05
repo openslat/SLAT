@@ -37,7 +37,6 @@ namespace SLAT {
         {
             return components;
         };
-
     private:
         std::string name;
         LogNormalDist calc_AnnualLoss(void);

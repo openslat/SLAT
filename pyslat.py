@@ -3,6 +3,7 @@ import math
 import numpy as np
 from contextlib import redirect_stdout
 import numbers
+import sys
 
 
 
@@ -254,6 +255,9 @@ class edp:
     def id(self):
         return self._id
 
+    def get_IM(self):
+        return self._im
+
     def function(self):
         return self._func
     
@@ -292,7 +296,13 @@ class fragfn:
             fragfn.defs[id] = self
 
     def lookup(id):
-        return fragfn.defs.get(id)
+        if not isinstance(id, pyslatcore.FragilityFn):
+            return fragfn.defs.get(id)
+        else:
+            for f in fragfn.defs.values():
+                if (f.function().AreSame(id)):
+                    return f
+            return None
         
     def id(self):
         return(self._id)
@@ -382,6 +392,9 @@ class compgroup:
                     return c
             return None
     
+    def get_IM(self):
+        return self._edp.get_IM()
+
     def fragfn(self):
         return self._frag
 
@@ -429,6 +442,7 @@ class structure:
     def __init__(self, id):
         super().__init__()
         self._structure = MakeStructure()
+        self._im = None
         if id != None:
             structure.defs[id] = self
 
@@ -438,8 +452,13 @@ class structure:
     def __str__(self):
         return "Structure"
 
+    def get_IM(self):
+        return self._im
+
     def AddCompGroup(self, group):
         self._structure.AddCompGroup(group.function())
+        if self._im == None:
+            self._im = group.get_IM()
 
     def setRebuildCost(self, cost):
         self._structure.setRebuildCost(cost)
@@ -470,6 +489,9 @@ class structure:
 
     def ComponentsByEDP(self):
         return self._structure.ComponentsByEDP()
+
+    def ComponentsByFragility(self):
+        return self._structure.ComponentsByFragility()
     
 class recorder:
     defs = dict()
@@ -544,6 +566,11 @@ class recorder:
                       'deagg': ['IM', ['mean_nc', 'sd_nc', 'mean_c', 'sd_c']]}
         
             x_label = labels[self._type][0]
+            if x_label == 'IM':
+                if isinstance(self._function, im):
+                    x_label = self._function.id()
+                else:
+                    x_label = self._function.get_IM().id()
             y_label = labels[self._type][1]
 
             if y_label:
@@ -695,7 +722,7 @@ class StructLossRecorder(recorder):
                     components.append(compgroup.lookup(cg))
                 groups[edp.lookup(m[0]).id()] = components
 
-            x_label = 'IM'
+            x_label = self._function.get_IM().id()
             y_label = self._columns
             categories = list(groups.keys())
             categories.sort()
@@ -738,9 +765,58 @@ class StructLossRecorder(recorder):
             
                 
         elif self._options['structloss-type'] == 'by-frag':
-            print("NOT IMPLEMENTED")
+            mapping = self._function.ComponentsByFragility();
+            groups = dict()
+            for m in mapping:
+                components = []
+                for cg in m[1:]:
+                    components.append(compgroup.lookup(cg))
+                groups[fragfn.lookup(m[0]).id()] = components
+
+            x_label = self._function.get_IM().id()
+            y_label = self._columns
+            categories = list(groups.keys())
+            categories.sort()
+            
+            # Print column headers:
+            line = "{:>15}".format(x_label)
+            for c in categories:
+                for y in y_label:
+                    line = "{}{:>20}".format(line, "{}.{}".format(c, y))
+            print(line)
+
+            for x in self._at:
+                line = "{:>15.6}".format(x)
+                for c in categories:
+                    dists = []
+                    for cg in groups[c]:
+                        mean = cg.E_Loss_IM(x)
+                        sd_ln = cg.SD_ln_Loss_IM(x)
+
+                        dists.append(pyslatcore.MakeLogNormalDist({LOGNORMAL_PARAM_TYPE.MEAN_X: mean,
+                                                                   LOGNORMAL_PARAM_TYPE.SD_LN_X: sd_ln}))
+                    dist = lognormaldist(pyslatcore.AddDistributions(dists))
+                    
+                    for y in self._columns:
+                        if y == 'mean_x':
+                            yval = dist.mean()
+                        elif y== 'mean_ln':
+                            yval = dist.mean_ln()
+                        elif y== 'median':
+                            yval = dist.median()
+                        elif y == 'sd_ln_x':
+                            yval = dist.sd_ln()
+                        elif y == 'sd_x':
+                            yval = dist.sd()
+                        else:
+                            yval = None
+                        
+                        line = "{}{:>20.6}".format(line, yval)
+                print(line)
+                
+
         elif self._options['structloss-type'] == 'by-fate':
-            x_label = 'IM'
+            x_label = self._function.get_IM().id()
             y_label = self._columns
             fates = ['repair', 'demo', 'coll']
 

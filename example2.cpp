@@ -133,7 +133,7 @@ int main(int argc, char **argv)
         }
 
         ofstream ofile("parser/example2/c-results/im_rate");
-        ofile << setw(15) << "IM" << setw(15) << "lambda" << endl;
+        ofile << setw(15) << "IM.1" << setw(15) << "lambda" << endl;
 
         for (size_t i=0; i < im_vals.size(); i++) 
         {
@@ -152,7 +152,7 @@ int main(int argc, char **argv)
         }
         
         ofstream ofile("parser/example2/c-results/collapse.txt");
-        ofile << setw(15) << "IM" << setw(15) << "p(Demolition)"
+        ofile << setw(15) << "IM.1" << setw(15) << "p(Demolition)"
               << setw(15) << "p(Collapse)" << endl;
 
         for (size_t i=0; i < im_vals.size(); i++) 
@@ -173,7 +173,7 @@ int main(int argc, char **argv)
         ofstream ofile("parser/example2/c-results/collrate.txt");
         ofile << setw(15) << "IM" << setw(30) << "rate(Demolition)"
               << setw(30) << "rate(Collapse)" << endl;
-        ofile << setw(15) << "IM_1"
+        ofile << setw(15) << "IM.1"
               << setw(30) << setprecision(16) << im_rel->DemolitionRate()
               << setw(30) << setprecision(16) << im_rel->CollapseRate()
               << endl;
@@ -239,7 +239,7 @@ int main(int argc, char **argv)
             {
                 
                 stringstream name;
-                name << "EDP." << n;
+                name << "EDP." << setw(2) << setfill('0') << n << ".mean_x";
 
                 edp_rels[n] = make_shared<EDP>(
                     im_rel, 
@@ -270,7 +270,7 @@ int main(int argc, char **argv)
             path << "parser/example2/c-results/im_edp_" << n << ".txt";
             
             ofstream outfile(path.str());
-            outfile << setw(15) << "IM" << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
+            outfile << setw(15) << "IM.1" << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
             
             for (size_t i=0; i < im_vals.size(); i++) {
                 outfile << setw(15) << im_vals[i]
@@ -496,7 +496,7 @@ int main(int argc, char **argv)
                 path << "parser/example2/c-results/loss_" << n << "_im.txt";
             
                 ofstream outfile(path.str());
-                outfile << setw(15) << "IM" << setw(15) << "mean_x" 
+                outfile << setw(15) << "IM.1" << setw(15) << "mean_x" 
                         << setw(15) << "sd_ln_x" << endl;
         
                 vector<double> im_vals = linrange(0.01, 3.0, 199);
@@ -621,10 +621,10 @@ int main(int argc, char **argv)
     {
         // Record the deaggregated loss for the structure:
         ofstream outfile("parser/example2/c-results/loss_by_fate");
-        outfile << setw(15) << "IM" 
-                << setw(15) << "repair.mean"
-                << setw(15) << "demo.mean"
-                << setw(15) << "coll.mean"
+        outfile << setw(15) << "IM.1" 
+                << setw(15) << "repair.mean_x"
+                << setw(15) << "demo.mean_x"
+                << setw(15) << "coll.mean_x"
                 << endl;
         
         vector<double> im_vals = linrange(0.01, 3.0, 199);
@@ -646,10 +646,9 @@ int main(int argc, char **argv)
     {
         // Record the expected loss for the structure:
         ofstream outfile("parser/example2/c-results/ann_loss");
-        outfile << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
+        outfile << setw(15) << "mean_x" << endl;
         LogNormalDist annloss = building->AnnualLoss();
         outfile << setw(15) << annloss.get_mean_X()
-                << setw(15) << annloss.get_sigma_lnX()
                 << endl;
     }
 
@@ -680,7 +679,7 @@ int main(int argc, char **argv)
 
         {
             ofstream outfile("parser/example2/c-results/loss_by_edp");
-            outfile << setw(15) << "IM";
+            outfile << setw(15) << "IM.1";
             for (int i=1; i <= N_EDPS; i++) {
                 outfile << setw(15) << edp_rels[i]->get_Name();
             }
@@ -745,14 +744,14 @@ int main(int argc, char **argv)
 
         {
             ofstream outfile("parser/example2/c-results/loss_by_frag");
-            outfile << setw(15) << "IM";
+            outfile << setw(15) << "IM.1";
             for (set<int>::iterator i=fragilities.begin();
                  i != fragilities.end();
                  i++)
             {
                 stringstream column;
-                column << "C" << *i;
-                outfile << setw(15) << column.str();
+                column << "FRAG." << setw(3) << setfill('0') << *i << ".mean_x";
+                outfile << setw(20) << column.str();
             }
             outfile << endl;
         
@@ -771,7 +770,7 @@ int main(int argc, char **argv)
                     for (size_t i=0; i < losses_by_fragility[*f].size(); i++) {
                         dists[i] = components[losses_by_fragility[*f][i]]->LossDist_IM(*im);
                     }
-                    outfile << setw(15) << LogNormalDist::AddDistributions(dists).get_mean_X();
+                    outfile << setw(20) << LogNormalDist::AddDistributions(dists).get_mean_X();
                 }
                 outfile << endl;
             }

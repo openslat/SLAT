@@ -511,6 +511,10 @@ namespace SLAT {
         python::list pExceeded(double edp);
         python::list pHighest(double edp);
         int n_states() { return fragility->n_states(); };
+        bool AreSame(const FragilityFnWrapper &other)
+        {
+            return this->fragility == other.fragility;
+        }
     private:
         std::shared_ptr<FragilityFn> fragility;
         friend CompGroupWrapper *MakeCompGroup(EDPWrapper edp, FragilityFnWrapper frag_fn,
@@ -659,7 +663,7 @@ namespace SLAT {
             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->AnnualLoss())));
         };
         python::list ComponentsByEDP(void) {
- python::list result;
+            python::list result;
             const std::vector<std::shared_ptr<CompGroup>> components = wrapper->Components();
             std::map<std::shared_ptr<EDP>, std::vector<std::shared_ptr<CompGroup>>> edp_cg_mapping;
             std::set<std::shared_ptr<EDP>> keys;
@@ -681,6 +685,36 @@ namespace SLAT {
                 }
                 result.append(mapping);
             }
+            return result;
+        };
+        python::list ComponentsByFragility(void) {
+//            std::cout << "> ComponentsByFragility()" << std::endl;
+            python::list result;
+            const std::vector<std::shared_ptr<CompGroup>> components = wrapper->Components();
+            std::map<std::shared_ptr<FragilityFn>, std::vector<std::shared_ptr<CompGroup>>> frag_cg_mapping;
+            std::set<std::shared_ptr<FragilityFn>> keys;
+
+            for (size_t i=0; i < components.size(); i++) {
+                frag_cg_mapping[components[i]->get_Fragility()].push_back(components[i]);
+                keys.insert(components[i]->get_Fragility());
+            }
+            
+            for (std::set<std::shared_ptr<FragilityFn>>::iterator key = keys.begin();
+                 key != keys.end();
+                 key++)
+            {
+//                std::cout << "KEY: " << *key << std::endl;
+                
+                python::list mapping;
+                mapping.append(FragilityFnWrapper(*key));
+
+                for (size_t j=0; j < frag_cg_mapping[*key].size(); j++) {
+                    //std::cout << "   " << frag_cg_mapping[*key][j] << std::endl;
+                    mapping.append(CompGroupWrapper(frag_cg_mapping[*key][j]));
+                }
+                result.append(mapping);
+            }
+            //std::cout << "< ComponentsByFragility()" << std::endl;
             return result;
         };
     private:
@@ -795,6 +829,7 @@ namespace SLAT {
             .def("pExceeded", &FragilityFnWrapper::pExceeded)
             .def("pHighest", &FragilityFnWrapper::pHighest)
             .def("n_states", &FragilityFnWrapper::n_states)
+            .def("AreSame", &FragilityFnWrapper::AreSame)
             ;
 
         python::def("MakeFragilityFn", 
@@ -835,6 +870,7 @@ namespace SLAT {
             .def("AnnualLoss", &StructureWrapper::AnnualLoss)
             .def("LossesByFate", &StructureWrapper::LossesByFate)
             .def("ComponentsByEDP", &StructureWrapper::ComponentsByEDP)
+            .def("ComponentsByFragility", &StructureWrapper::ComponentsByFragility)
             ;
 
         

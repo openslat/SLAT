@@ -129,7 +129,7 @@ DQ_ESCAPED_CHAR : '\\"' | '\\\\';
 
 
 fragment
-Nondigit : [a-zA-Z_];
+Nondigit : [a-zA-Z_.];
 
 fragment
 Digit : [0-9];
