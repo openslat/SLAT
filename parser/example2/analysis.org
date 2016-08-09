@@ -1509,31 +1509,74 @@
 \clearpage
 *** Loss-IM Relation
 * Loss by Fate
-   #+NAME: structloss.by.fate
-   #+HEADER: :results graphics
-   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
-   #+BEGIN_SRC R :session *R-2*
-     loss.by.fate <- read.csv("c-results/loss_by_fate", header=TRUE, sep="")
-     fate.names = names(loss.by.fate)
-     fate.im.name = fate.names[1]
-     fate.names = fate.names[2:length(fate.names)]
+** Loss by Fate (Lines)
+    #+NAME: structloss.by.fate
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R :session *R-2*
+      loss.by.fate <- read.csv("c-results/loss_by_fate", header=TRUE, sep="")
+      fate.names = names(loss.by.fate)
+      fate.im.name = fate.names[1]
+      fate.names = fate.names[2:length(fate.names)]
 
-     palette(rainbow(length(fate.names)))
-     plot(NULL, xlim=range(loss.by.fate$IM),
-          ylim=range(loss.by.fate$coll.mean),
-   	xlab="IM", ylab="Mean Loss",
-   	main="Mean Loss vs. IM")
-     for (i in 1:length(fate.names)) {
-         lines(loss.by.fate[,(i+1)] ~ loss.by.fate[,fate.im.name], col=i)
-     }
-     legend(x="topleft", ncol=1, legend=c(fate.names), fill=palette())
-   #+END_SRC
+      palette(rainbow(length(fate.names)))
+      plot(NULL, xlim=range(loss.by.fate$IM),
+           ylim=range(loss.by.fate$coll.mean),
+   	 xlab="IM", ylab="Mean Loss",
+   	 main="Mean Loss vs. IM")
+      for (i in 1:length(fate.names)) {
+          lines(loss.by.fate[,(i+1)] ~ loss.by.fate[,fate.im.name], col=i)
+      }
+      legend(x="topleft", ncol=1, legend=c(fate.names), fill=palette())
+    #+END_SRC
 
-   #+CAPTION: Mean Loss by FATE
-   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
-   #+NAME: fig:structloss.by.fate
-   #+RESULTS: structloss.by.fate
-   [[file:/tmp/babel-1768wy-/figure-17680Yf.pdf]]
+    #+CAPTION: Mean Loss by FATE
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:structloss.by.fate
+    #+RESULTS: structloss.by.fate
+    [[file:/tmp/babel-1782NP6/figure-1782nfm.pdf]]
+   
+** Loss by Fate (Solid)
+    #+NAME: structloss.by.fate-filled
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R :session *R-2*
+      loss.by.fate.summed <- read.csv("c-results/loss_by_fate", header=TRUE, sep="")
+      names(loss.by.fate.summed) = c("IM", "Repair", "Demolition", "Collapse")
+      fate.names = names(loss.by.fate.summed)
+      fate.im.name = fate.names[1]
+      fate.names = fate.names[2:length(fate.names)]
+
+      loss.by.fate.summed$Demolition = loss.by.fate.summed$Demolition + loss.by.fate.summed$Repair
+      loss.by.fate.summed$Collapse = loss.by.fate.summed$Collapse + loss.by.fate.summed$Demolition
+
+      palette(rainbow(length(fate.names)))
+      plot(NULL, xlim=range(loss.by.fate.summed$IM),
+           ylim=range(loss.by.fate.summed$Collapse),
+         xlab="IM", ylab="Mean Loss ($ Million)",
+         main="Mean Loss vs. IM", yaxt="n")
+      for (i in 1:length(fate.names)) {
+          lines(loss.by.fate.summed[,(i+1)] ~ loss.by.fate.summed[,fate.im.name], col=i)
+      }
+      polygon(c(loss.by.fate.summed$IM, rev(loss.by.fate.summed$IM)),
+              c(loss.by.fate.summed$Repair, 0 * loss.by.fate.summed$Repair),
+              col=1)
+      polygon(c(loss.by.fate.summed$IM, rev(loss.by.fate.summed$IM)),
+              c(loss.by.fate.summed$Demolition, rev(loss.by.fate.summed$Repair)),
+              col=2)
+      polygon(c(loss.by.fate.summed$IM, rev(loss.by.fate.summed$IM)),
+              c(loss.by.fate.summed$Collapse, rev(loss.by.fate.summed$Demolition)),
+              col=3)
+      legend(x="topleft", ncol=1, legend=c(fate.names), fill=palette())
+      x=c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+      axis(2, at=x * 1E6, labels=x, las=2)
+    #+END_SRC
+
+    #+CAPTION: Mean Loss by FATE
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:structloss.by.fate-filled
+    #+RESULTS: structloss.by.fate-filled
+    [[file:/tmp/babel-1782NP6/figure-1782SlZ.pdf]]
    
 * Loss by EDP
    #+NAME: structloss.by.edp
