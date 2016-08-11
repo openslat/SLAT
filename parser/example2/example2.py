@@ -29,6 +29,10 @@ pyslat.MakeRecorder('imrate-rec', 'imrate', IM1,
                 {'filename': ResultsFile("im_rate")},
                 None, imvalues)
 
+pyslat.MakeRecorder('imrate-lin-rec', 'imrate', IM1,
+                {'filename': ResultsFile("im_rate_lin")},
+                    None, linvalues)
+
 pyslat.MakeRecorder('collapse-rec', 'collapse', IM1,
                 {'filename': ResultsFile("collapse.txt")},
                 None, pyslat.linrange(0.01, 3.0, 199))

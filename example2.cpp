@@ -141,6 +141,27 @@ int main(int argc, char **argv)
         }
     }
 
+    // Write the IM-RATE relationship, using a linear range:
+    {
+        vector<double> im_vals = linrange(0.01, 3.0, 199);
+
+        // Calculate the data:
+        double results[im_vals.size()];
+        
+#pragma omp parallel for
+        for (size_t i=0; i < im_vals.size(); i++) {
+            results[i] = im_rel->lambda(im_vals[i]);
+        }
+
+        ofstream ofile("parser/example2/c-results/im_rate_lin");
+        ofile << setw(15) << "IM.1" << setw(15) << "lambda" << endl;
+
+        for (size_t i=0; i < im_vals.size(); i++) 
+        {
+            ofile << setw(15) << im_vals[i] << setw(15) << results[i] << endl;
+        }
+    }
+    
     // Write the Collapse data:
     {
         vector<double> im_vals = linrange(0.01, 3.0, 199);

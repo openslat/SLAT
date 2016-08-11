@@ -71,7 +71,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo.im) = c("IM", "lambda")
 
-    neo.im <- read.csv("c-results/im_rate", 
+    neo.im <- read.csv("results/im_rate", 
                        header=TRUE, sep="")
 
     ## Read the EDP-IM data
@@ -86,7 +86,7 @@
         names(paleo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
 
         neo.edp.im[[i]] <- read.csv(
-            sprintf("c-results/im_edp_%d.txt", i),
+            sprintf("results/im_edp_%d.txt", i),
             header=TRUE, sep="")
         names(neo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
 
@@ -113,7 +113,7 @@
         names(paleo.edp.rate[[i]]) = c("EDP", "lambda")
 
         neo.edp.rate[[i]] <- read.csv(
-            sprintf("c-results/edp_%d_rate.txt", i),
+            sprintf("results/edp_%d_rate.txt", i),
             header=TRUE, sep="")
         names(neo.edp.rate[[i]]) = c("EDP", "lambda")
 
@@ -135,7 +135,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo.collapse.im) = c("IM", "pCollapse")
 
-    neo.collapse.im <- read.csv("c-results/collapse.txt", 
+    neo.collapse.im <- read.csv("results/collapse.txt", 
                                 header=TRUE, sep="")
     names(neo.collapse.im) = c("IM", "pDemolition", "pCollapse")
 
@@ -162,7 +162,7 @@
         names(paleo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
         neo.loss.im[[i]] <- read.csv(
-            sprintf("c-results/loss_%d_im.txt", i),
+            sprintf("results/loss_%d_im.txt", i),
             header=TRUE, sep="")
         names(neo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
@@ -183,7 +183,7 @@
         names(paleo.loss.edp[[i]])=c("EDP","mean.x","sd.lnx")
 
         neo.loss.edp[[i]] <- read.csv(
-            sprintf("c-results/loss_%d_edp.txt", i),
+            sprintf("results/loss_%d_edp.txt", i),
             header=TRUE, sep="")
         names(neo.loss.edp[[i]]) = c("EDP","mean.x","sd.lnx")
 
@@ -719,7 +719,7 @@
   #+BEGIN_SRC R  :results value 
     paleo.rate <- scan(paste(results.dir, "collrate.txt", 
                              sep=""), skip=3)
-    neo.rate <- as.numeric(scan("c-results/collrate.txt", 
+    neo.rate <- as.numeric(scan("results/collrate.txt", 
                                 what="string")[8])
     paste(
         sprintf("Paleo: %5.3e; Neo: %5.3e; error: %3.2f%%", 
@@ -1514,7 +1514,7 @@
     #+HEADER: :results graphics
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
     #+BEGIN_SRC R :session *R-2*
-      loss.by.fate <- read.csv("c-results/loss_by_fate", header=TRUE, sep="")
+      loss.by.fate <- read.csv("results/loss_by_fate", header=TRUE, sep="")
       fate.names = names(loss.by.fate)
       fate.im.name = fate.names[1]
       fate.names = fate.names[2:length(fate.names)]
@@ -1541,7 +1541,7 @@
     #+HEADER: :results graphics
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
     #+BEGIN_SRC R :session *R-2*
-      loss.by.fate.summed <- read.csv("c-results/loss_by_fate", header=TRUE, sep="")
+      loss.by.fate.summed <- read.csv("results/loss_by_fate", header=TRUE, sep="")
       names(loss.by.fate.summed) = c("IM", "Repair", "Demolition", "Collapse")
       fate.names = names(loss.by.fate.summed)
       fate.im.name = fate.names[1]
@@ -1576,14 +1576,43 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:structloss.by.fate-filled
     #+RESULTS: structloss.by.fate-filled
-    [[file:/tmp/babel-1782NP6/figure-1782SlZ.pdf]]
+    [[file:/tmp/babel-1782NP6/figure-1782w1X.ps]]
+   
+** Loss Total, Normalised
+    *I'm not sure these calculations are correct*
+    #+NAME: structloss.by.fate-normalised
+    #+HEADER: :results graphics
+    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+    #+BEGIN_SRC R :session *R-2*
+      loss.by.fate.normalised <- read.csv("results/loss_by_fate", header=TRUE, sep="")
+      names(loss.by.fate.normalised) = c("IM", "Repair", "Demolition", "Collapse")
+      fate.names = names(loss.by.fate.normalised)
+      fate.im.name = fate.names[1]
+      fate.names = fate.names[2:length(fate.names)]
+      loss.by.fate.normalised$Total = loss.by.fate.normalised$Repair +
+          loss.by.fate.normalised$Demolition + loss.by.fate.normalised$Collapse
+
+      im.linear <- read.csv("results/im_rate_lin", header=TRUE, sep="")
+      loss.by.fate.normalised$Scaled = loss.by.fate.normalised$Total * im.linear$lambda
+
+      loss.by.fate.normalised$Normalised = loss.by.fate.normalised$Scaled / max(loss.by.fate.normalised$Scaled)
+
+      plot(loss.by.fate.normalised$Normalised ~ loss.by.fate.normalised$IM, type="l",
+          main="Normalised Loss", xlab="IM", ylab="Loss (normalised)")
+    #+END_SRC
+
+    #+CAPTION: Mean Loss by FATE
+    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+    #+NAME: fig:structloss.by.fate-normalised
+    #+RESULTS: structloss.by.fate-normalised
+    [[file:/tmp/babel-1782NP6/figure-1782Eh1.ps]]
    
 * Loss by EDP
    #+NAME: structloss.by.edp
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.edp <- read.csv("c-results/loss_by_edp", header=TRUE, sep="")
+     loss.by.edp <- read.csv("results/loss_by_edp", header=TRUE, sep="")
      edp.names = names(loss.by.edp)
      edp.im.name = edp.names[1]
      edp.names = edp.names[2:length(edp.names)]
@@ -1602,40 +1631,167 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.edp
    #+RESULTS: structloss.by.edp
-   [[file:/tmp/babel-1768wy-/figure-176855S.pdf]]
-   
+   [[file:/tmp/babel-1782NP6/figure-1782Ryv.pdf]]
+
+   #+NAME: structloss.by.edp-20
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+     loss.by.edp <- read.csv("results/loss_by_edp", header=TRUE, sep="")
+     edp.table = data.frame(c("Accel", "Drift"))
+
+     for (i in seq(1:11)) {
+              edp.table[1,i + 1] = loss.by.edp[20, 2 * (i - 1) + 1]
+         if (i > 1) {
+             edp.table[2, i + 1] = loss.by.edp[20, 2 * (i - 1) ]
+         } else {
+             edp.table[2, i + 1] = NA
+         }
+     }
+
+     names(edp.table)=c("EDP", "Ground Floor", 
+         "2nd Story", "3rd Story", "4th Story",
+         "5th Story", "6th Story", "7th Story",
+         "8th Story", "9th Story", "10th Story",
+         "Roof")
+      edp.table
+
+      edp.data <- matrix(c(as.vector(edp.table[1,2:12], mode="numeric"),
+   			as.vector(edp.table[2,2:12], mode="numeric")),
+                         nrow=2, byrow=TRUE)
+     barplot(edp.data, beside=TRUE, horiz=TRUE,
+             names=names(edp.table[2:12]), legend=c("Accel", "Drift"),
+             las.y=2, cex.names=0.7)
+   #+END_SRC
+
+   #+CAPTION: Mean Loss by EDP at IM=0.297
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.by.edp-20
+   #+RESULTS: structloss.by.edp-20
+   [[file:/tmp/babel-1782NP6/figure-17826UF.pdf]]
+
+   #+NAME: structloss.by.edp-67
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+     loss.by.edp <- read.csv("results/loss_by_edp", header=TRUE, sep="")
+     edp.table = data.frame(c("Accel", "Drift"))
+
+     for (i in seq(1:11)) {
+              edp.table[1,i + 1] = loss.by.edp[67, 2 * (i - 1) + 1]
+         if (i > 1) {
+             edp.table[2, i + 1] = loss.by.edp[67, 2 * (i - 1) ]
+         } else {
+             edp.table[2, i + 1] = NA
+         }
+     }
+
+     names(edp.table)=c("EDP", "Ground Floor", 
+         "2nd Story", "3rd Story", "4th Story",
+         "5th Story", "6th Story", "7th Story",
+         "8th Story", "9th Story", "10th Story",
+         "Roof")
+      edp.table
+
+      edp.data <- matrix(c(as.vector(edp.table[1,2:12], mode="numeric"),
+   			as.vector(edp.table[2,2:12], mode="numeric")),
+                         nrow=2, byrow=TRUE)
+     barplot(edp.data, beside=TRUE, horiz=TRUE,
+             names=names(edp.table[2:12]), legend=c("Accel", "Drift"),
+             las.y=2, cex.names=0.7)
+   #+END_SRC
+
+   #+CAPTION: Mean Loss by EDP at IM=1.0
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.by.edp-67
+   #+RESULTS: structloss.by.edp-67
+   [[file:/tmp/babel-1782NP6/figure-1782kew.ps]]
+
 * Loss by Component Type
    #+NAME: structloss.by.comp
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.comp <- read.csv("c-results/loss_by_frag", header=TRUE, sep="")
+     loss.by.comp <- read.csv("results/loss_by_frag", 
+                              header=TRUE, sep="")
      comp.names = names(loss.by.comp)
      comp.im.name = comp.names[1]
      comp.names = comp.names[2:length(comp.names)]
      for (i in 2:length(comp.names)) {
-         loss.by.comp[comp.names[i]] = loss.by.comp[comp.names[i]] + loss.by.comp[comp.names[i-1]]
+         loss.by.comp[comp.names[i]] = 
+             loss.by.comp[comp.names[i]] +
+                 loss.by.comp[comp.names[i-1]]
      }
      palette(rainbow(length(comp.names)))
-     plot(paleo.structloss.nc$mean.x ~ paleo.structloss.nc$IM)
+     ##plot(paleo.structloss.nc$mean.x ~ paleo.structloss.nc$IM)
+     plot(NULL, xlim=range(paleo.structloss.nc$IM),
+          ylim=range(paleo.structloss.nc$mean.x), 
+          xlab="IM", ylab="Mean Loss ($ Million)",
+          main="Mean Loss by Component Type", 
+          yaxt="n")
+     x=c(1, 2, 3, 4, 5, 6)
+     axis(2, at=x * 1E6, labels=x, las=2)
      for (i in 1:length(comp.names)) {
          lines(loss.by.comp[,(i+1)] ~ loss.by.comp[,comp.im.name], col=i)
      }
-     legend(x="topleft", ncol=2, legend=c(comp.names), fill=palette())
+     polygon(c(loss.by.comp[,comp.im.name],
+               rev(loss.by.comp[,comp.im.name])),
+             c(loss.by.comp[,2], 0 * loss.by.comp[,2]),
+             col=1)
+     for (i in 2:length(comp.names)) {
+         polygon(c(loss.by.comp[,comp.im.name],
+   		rev(loss.by.comp[,comp.im.name])),
+             c(loss.by.comp[,(i + 1)], rev(loss.by.comp[,i])),
+             col=i)
+     }
    #+END_SRC
 
    #+CAPTION: Mean Loss by COMP
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.comp
    #+RESULTS: structloss.by.comp
-   [[file:/tmp/babel-1768wy-/figure-1768GLN.pdf]]
+   [[file:/tmp/babel-1782NP6/figure-17829GS.ps]]
+
+   #+NAME: structloss.by.comp-20
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+     loss.by.comp <- read.csv("results/loss_by_frag", header=TRUE, sep="")
+     palette(rainbow(length(comp.names)))
+     pie(as.vector(loss.by.comp[20,2:length(comp.names)], mode="numeric"),
+         label=lapply(comp.names, function(s) sprintf("#%s", strsplit(s, "\\.")[[1]][[2]])),
+	 col=palette())
+   #+END_SRC
+
+   #+CAPTION: Mean Loss by Component Type at IM=0.297
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.by.comp-20
+   #+RESULTS: structloss.by.comp-20
+   [[file:/tmp/babel-1782NP6/figure-17828RJ.pdf]]
+
+   #+NAME: structloss.by.comp-67
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+     loss.by.comp <- read.csv("results/loss_by_frag", header=TRUE, sep="")
+     palette(rainbow(length(comp.names)))
+     pie(as.vector(loss.by.comp[67,2:length(comp.names)], mode="numeric"),
+         label=lapply(comp.names, function(s) sprintf("#%s", strsplit(s, "\\.")[[1]][[2]])),
+	 col=palette())
+   #+END_SRC
+
+   #+CAPTION: Mean Loss by Component Type at IM=1.0
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:structloss.by.comp-67
+   #+RESULTS: structloss.by.comp-67
+   [[file:/tmp/babel-1782NP6/figure-1782KYM.eps]]
    
 * Annual Loss
   The annual loss for the entire structure
   #+BEGIN_SRC R  :results value 
     paleo.ann.loss <- scan(paste(results.dir, "ann_loss", 
                              sep=""), skip=3)
-    neo.ann.loss <- as.numeric(scan("c-results/ann_loss",
+    neo.ann.loss <- as.numeric(scan("results/ann_loss",
                                     skip=1))
 
     paste(

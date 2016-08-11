@@ -340,6 +340,7 @@ set lossedpvalues4 $(pyslat.linrange(0.032, 0.0325, 199));
 set lossedpvalues5 $(pyslat.linrange(0.001, 0.10, 199));
 
 recorder IM_RATE_REC imrate IM.1 $imvalues results/im_rate --new;
+recorder IM_RATE_LIN_REC imrate IM.1 $linvalues results/im_rate_lin --new;
 
 recorder IM_COLLAPSE_REC collapse IM.1 $(pyslat.linrange(0.01, 3.0, 199)) results/collapse.txt --new;
 recorder IM_COLLRATE_REC collrate IM.1 results/collrate.txt --new;
