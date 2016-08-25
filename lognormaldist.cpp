@@ -145,10 +145,7 @@ namespace SLAT {
     LogNormalDist LogNormalDist::WeighDistribution(double weight)
     {
         double new_mean_X = weight * get_mean_X();
-        double new_sigma_X = sqrt(abs(weight *
-                                      (get_mean_X() * get_mean_X() +
-                                       get_sigma_X() * get_sigma_X())
-                                      - new_mean_X * new_mean_X));
+        double new_sigma_X = sqrt(weight * get_sigma_X() * get_sigma_X());
 
         return LogNormalDist_from_mean_X_and_sigma_X(new_mean_X, new_sigma_X);
     }

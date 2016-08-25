@@ -232,7 +232,7 @@
   #+RESULTS:
   #+BEGIN_EXPORT latex
   % latex table generated in R 3.2.2 by xtable 1.8-2 package
-  % Fri Aug  5 14:17:39 2016
+  % Mon Aug 29 14:09:31 2016
   \begin{table}[ht]
   \centering
   \begin{tabular}{rr}
@@ -252,7 +252,7 @@
   <<code:im-rate-plot>>
   #+NAME: im-rate
   #+HEADER: :results graphics 
-  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".eps")
   #+BEGIN_SRC R
      palette(c("red", "blue"))
      plot(paleo.im$lambda ~ paleo.im$IM, log="xy", 
@@ -268,11 +268,14 @@
   	 fill=palette())
   #+END_SRC
 
+  #+RESULTS:
+  [[file:/tmp/babel-1782NP6/figure-1782asb.pdf]]
+
   #+CAPTION: IM rate comparison ([[code:im-rate-plot][code]]).
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:im-rate
   #+RESULTS: im-rate
-  [[file:/tmp/babel-1768wy-/figure-17687OT.pdf]]
+  [[file:/tmp/babel-1786g10/figure-17869EV.eps]]
 
 \clearpage
 * EDP
@@ -337,7 +340,7 @@
     #+RESULTS:
     #+BEGIN_EXPORT latex
     % latex table generated in R 3.2.2 by xtable 1.8-2 package
-    % Fri Aug  5 14:17:51 2016
+    % Mon Aug 29 14:09:32 2016
     \begin{table}[ht]
     \centering
     \begin{tabular}{lrrrrrr}
@@ -398,7 +401,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:accel-im-mean
     #+RESULTS: accel-im-mean
-    [[file:/tmp/babel-1757XZc/figure-1757ama.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786kjn.pdf]]
 
     #+NAME: accel-im-sd-lnx
     #+HEADER: :results graphics 
@@ -434,7 +437,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:accel-im-sd-lnx
     #+RESULTS: accel-im-sd-lnx
-    [[file:/tmp/babel-1757XZc/figure-17570Bb.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786wBD.pdf]]
 
 \clearpage
 *** Rate Relationship
@@ -465,6 +468,32 @@
      #+END_SRC
 
      #+RESULTS:
+     #+BEGIN_EXPORT latex
+     % latex table generated in R 3.2.2 by xtable 1.8-2 package
+     % Mon Aug 29 14:09:32 2016
+     \begin{table}[ht]
+     \centering
+     \begin{tabular}{lrrr}
+       \hline
+     Floor & mean & avg & pct \\ 
+       \hline
+     Ground Floor Accel & 0.01078 & 0.00013 & 7.09145 \\ 
+       2nd Story Accel & 0.00007 & 0.00001 & 1.11364 \\ 
+       3rd Floor Accel & 0.00004 & 0.00001 & 0.67354 \\ 
+       4th Floor Accel & 0.00004 & 0.00001 & 1.30972 \\ 
+       5th Floor Accel & 0.00004 & 0.00001 & 1.17441 \\ 
+       6th Floor Accel & 0.00003 & 0.00000 & 0.56153 \\ 
+       7th Floor Accel & 0.00002 & 0.00000 & 0.44723 \\ 
+       8th Floor Accel & 0.00013 & 0.00000 & 0.59791 \\ 
+       9th Floor Accel & 0.00033 & 0.00001 & 1.42361 \\ 
+       10th Floor Accel & 0.00002 & 0.00001 & 1.57324 \\ 
+       Roof Accel & 0.00004 & 0.00000 & 0.79889 \\ 
+	\hline
+     \end{tabular}
+     \caption{Comparion of EDP-RATE calculations, 
+		       for acceleration-type EDPs} 
+     \end{table}
+     #+END_EXPORT
 
      Plot the calculated curves (Figure [[fig:accel-im-lambda]]):
     #+NAME: accel-im-lambda
@@ -500,7 +529,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:accel-im-lambda
     #+RESULTS: accel-im-lambda
-    [[file:/tmp/babel-1757XZc/figure-17571Ci.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786XgV.pdf]]
 
 \clearpage
 ** Drift   
@@ -542,6 +571,33 @@
     	include.rownames=FALSE)
     #+END_SRC
 
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:33 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{lrrrrrr}
+      \hline
+    Floor & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    2nd Story Drift & 0.00000 & 0.00000 & 0.00379 & 0.17459 & 0.00628 & 33.11192 \\ 
+      3rd Floor Drift & 0.00000 & 0.00000 & 0.00300 & 0.16334 & 0.00521 & 29.37046 \\ 
+      4th Floor Drift & 0.00000 & 0.00000 & 0.00384 & 0.13388 & 0.00398 & 26.64797 \\ 
+      5th Floor Drift & 0.00000 & 0.00000 & 0.00373 & 0.14656 & 0.00414 & 31.22790 \\ 
+      6th Floor Drift & 0.00000 & 0.00000 & 0.00299 & 0.15449 & 0.00448 & 33.14727 \\ 
+      7th Floor Drift & 0.00000 & 0.00000 & 0.00398 & 0.19776 & 0.00545 & 41.44412 \\ 
+      8th Floor Drift & 0.00000 & 0.00000 & 0.00489 & 0.22162 & 0.00716 & 45.24358 \\ 
+      9th Floor Drift & 0.00000 & 0.00000 & 0.00456 & 0.04243 & 0.00390 & 11.78909 \\ 
+      10th Floor Drift & 0.00000 & 0.00000 & 0.00490 & 0.12022 & 0.00947 & 21.42163 \\ 
+      Roof Drift & 0.00000 & 0.00000 & 0.00358 & 0.14249 & 0.00638 & 26.23510 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of EDP-IM calculations
+		      for drift EDPs.} 
+    \end{table}
+    #+END_EXPORT
+
     Plot the mean (Figure [[fig:drift-im-mean]]) and standard deviation (Figure [[fig:drift-im-sd-lnx]]):
     #+NAME: drift-im-mean
     #+HEADER: :results graphics
@@ -575,7 +631,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:drift-im-mean
     #+RESULTS: drift-im-mean
-    [[file:/tmp/babel-1757XZc/figure-1757ama.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786--n.pdf]]
 
     #+NAME: drift-im-sd-lnx
     #+HEADER: :results graphics
@@ -609,7 +665,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:drift-im-sd-lnx
     #+RESULTS: drift-im-sd-lnx
-    [[file:/tmp/babel-1757XZc/figure-17570Bb.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786KdD.pdf]]
 
 \clearpage
 *** Rate Relationship
@@ -639,6 +695,31 @@
      #+END_SRC
 
      #+RESULTS:
+     #+BEGIN_EXPORT latex
+     % latex table generated in R 3.2.2 by xtable 1.8-2 package
+     % Mon Aug 29 14:09:33 2016
+     \begin{table}[ht]
+     \centering
+     \begin{tabular}{lrrr}
+       \hline
+     Floor & mean & avg & pct \\ 
+       \hline
+     2nd Story Drift & 0.00020 & 0.00002 & 3.10339 \\ 
+       3rd Floor Drift & 0.00026 & 0.00005 & 2.42177 \\ 
+       4th Floor Drift & 0.00014 & 0.00004 & 2.37060 \\ 
+       5th Floor Drift & 0.00012 & 0.00004 & 4.84768 \\ 
+       6th Floor Drift & 0.00013 & 0.00004 & 3.30381 \\ 
+       7th Floor Drift & 0.00016 & 0.00005 & 3.96479 \\ 
+       8th Floor Drift & 0.00021 & 0.00006 & 4.17732 \\ 
+       9th Floor Drift & 0.00008 & 0.00001 & 1.70680 \\ 
+       10th Floor Drift & 0.00005 & 0.00001 & 1.56145 \\ 
+       Roof Drift & 0.00002 & 0.00000 & 1.19716 \\ 
+	\hline
+     \end{tabular}
+     \caption{Comparion of EDP-RATE calculations,
+		       for drift-type EDPs} 
+     \end{table}
+     #+END_EXPORT
 
      Plot the calculated curves (Figure [[fig:drift-im-lambda]]):
     #+NAME: drift-im-lambda
@@ -674,7 +755,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:drift-im-lambda
     #+RESULTS: drift-im-lambda
-    [[file:/tmp/babel-1757XZc/figure-17571Ci.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786x7V.pdf]]
 \clearpage
 * COLLAPSE
   Compare the two versions:
@@ -686,6 +767,23 @@
   #+END_SRC
 
   #+RESULTS:
+  #+BEGIN_EXPORT latex
+  % latex table generated in R 3.2.2 by xtable 1.8-2 package
+  % Mon Aug 29 14:09:34 2016
+  \begin{table}[ht]
+  \centering
+  \begin{tabular}{rr}
+    \hline
+   & Value \\ 
+    \hline
+  max(abs(difference)) & 0.24039 \\ 
+    mean(abs(difference)) & 0.09745 \\ 
+    percent(abs(difference)) &    Inf \\ 
+     \hline
+  \end{tabular}
+  \caption{Comparison of Collapse-IM calculations.} 
+  \end{table}
+  #+END_EXPORT
 
   Plot it the collapse curves:
   #+NAME: collapse-im
@@ -713,7 +811,7 @@
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:collapse-im
   #+RESULTS: collapse-im
-  [[file:/tmp/babel-1757XZc/figure-1757lVt.pdf]]
+  [[file:/tmp/babel-1786g10/figure-1786Yao.pdf]]
 
   The overall rate of collapse:
   #+BEGIN_SRC R  :results value 
@@ -730,7 +828,7 @@
   #+END_SRC
   
   #+RESULTS:
-  : Paleo: 2.125e-04; Neo: 2.159e-04; error: 1.57%
+  : Paleo: 2.159e-04; Neo:    NA; error:  NA%
 
 \clearpage
 * Component Groups
@@ -781,6 +879,10 @@
     component.types <- levels(factor(cgs.descrip$Type))
 #+END_SRC
 
+#+RESULTS:
+#+BEGIN_EXPORT latex
+#+END_EXPORT
+
 ** Loss-EDP Relation
    #+BEGIN_SRC R :results output latex 
      ## This data comes from the old Example 2 input file, desc
@@ -806,6 +908,10 @@
      }
    #+END_SRC
 
+   #+RESULTS:
+   #+BEGIN_EXPORT latex
+#+END_EXPORT
+
     
    #+BEGIN_SRC R :results output 
     ## Function to print summary table of  group-EDP relations
@@ -819,6 +925,8 @@
                 digits=3))
     }
    #+END_SRC
+
+   #+RESULTS:
 
    #+BEGIN_SRC R :results output 
     ## Function to plot component group-EDP relations
@@ -892,6 +1000,43 @@
       print.cg.edp.summary(CG)
     #+END_SRC
 
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:35 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    1 & 0.500 & 0.239 & 0.017 & 0.000 & 0.000 & 0.025 \\ 
+      2 & 0.500 & 0.251 & 0.031 & 0.000 & 0.000 & 0.025 \\ 
+      3 & 0.500 & 0.235 & 0.036 & 0.000 & 0.000 & 0.025 \\ 
+      4 & 0.500 & 0.251 & 0.031 & 0.000 & 0.000 & 0.025 \\ 
+      5 & 0.500 & 0.235 & 0.036 & 0.000 & 0.000 & 0.025 \\ 
+      6 & 0.500 & 0.251 & 0.031 & 0.000 & 0.000 & 0.025 \\ 
+      7 & 0.500 & 0.235 & 0.036 & 0.000 & 0.000 & 0.025 \\ 
+      8 & 0.500 & 0.251 & 0.031 & 0.000 & 0.000 & 0.025 \\ 
+      9 & 0.500 & 0.235 & 0.036 & 0.000 & 0.000 & 0.025 \\ 
+      10 & 0.500 & 0.251 & 0.031 & 0.000 & 0.000 & 0.025 \\ 
+      11 & 0.500 & 0.235 & 0.036 & 0.000 & 0.000 & 0.025 \\ 
+      12 & 0.500 & 0.251 & 0.031 & 0.000 & 0.000 & 0.025 \\ 
+      13 & 0.500 & 0.235 & 0.036 & 0.000 & 0.000 & 0.025 \\ 
+      14 & 0.500 & 0.251 & 0.031 & 0.000 & 0.000 & 0.025 \\ 
+      15 & 0.500 & 0.235 & 0.036 & 0.000 & 0.000 & 0.025 \\ 
+      16 & 0.500 & 0.251 & 0.031 & 0.000 & 0.000 & 0.025 \\ 
+      17 & 0.500 & 0.235 & 0.036 & 0.000 & 0.000 & 0.025 \\ 
+      18 & 0.500 & 0.251 & 0.031 & 0.000 & 0.000 & 0.025 \\ 
+      19 & 0.500 & 0.235 & 0.036 & 0.000 & 0.000 & 0.025 \\ 
+      20 & 0.500 & 0.251 & 0.031 & 0.000 & 0.000 & 0.025 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #2.} 
+    \end{table}
+    #+END_EXPORT
+
     #+NAME: cg-2-edp
     #+HEADER: :results graphics
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
@@ -903,7 +1048,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-2-edp
     #+RESULTS: cg-2-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786-MQ.pdf]]
 
     \clearpage
 *** Component Type #3
@@ -911,6 +1056,33 @@
       CG = 3
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:35 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    21 & 1119.080 & 24.029 & 14.043 & 0.327 & 0.009 & 33.369 \\ 
+      22 & 1119.080 & 24.029 & 14.043 & 0.327 & 0.009 & 33.369 \\ 
+      23 & 1119.080 & 24.029 & 14.043 & 0.327 & 0.009 & 33.369 \\ 
+      24 & 1119.080 & 24.029 & 14.043 & 0.327 & 0.009 & 33.369 \\ 
+      25 & 1119.080 & 24.029 & 14.043 & 0.327 & 0.009 & 33.369 \\ 
+      26 & 1119.080 & 24.029 & 14.043 & 0.327 & 0.009 & 33.369 \\ 
+      27 & 1119.080 & 24.029 & 14.043 & 0.327 & 0.009 & 33.369 \\ 
+      28 & 1119.080 & 24.029 & 14.043 & 0.327 & 0.009 & 33.369 \\ 
+      29 & 1119.080 & 24.029 & 14.043 & 0.327 & 0.009 & 33.369 \\ 
+      30 & 1119.080 & 24.029 & 14.043 & 0.327 & 0.009 & 33.369 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #3.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-3-edp
     #+HEADER: :results graphics
@@ -923,7 +1095,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-3-edp
     #+RESULTS: cg-3-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786lri.pdf]]
 
     \clearpage
 *** Component Type #105
@@ -931,6 +1103,33 @@
       CG = 105
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:36 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    31 & 5.000 & 2.609 & 1.271 & 0.001 & 0.000 & 0.022 \\ 
+      32 & 5.000 & 2.609 & 1.271 & 0.001 & 0.000 & 0.022 \\ 
+      33 & 5.000 & 2.609 & 1.271 & 0.001 & 0.000 & 0.022 \\ 
+      34 & 5.000 & 2.609 & 1.271 & 0.001 & 0.000 & 0.022 \\ 
+      35 & 5.000 & 2.609 & 1.271 & 0.001 & 0.000 & 0.022 \\ 
+      36 & 5.000 & 2.609 & 1.271 & 0.001 & 0.000 & 0.022 \\ 
+      37 & 5.000 & 2.609 & 1.271 & 0.001 & 0.000 & 0.022 \\ 
+      38 & 5.000 & 2.609 & 1.271 & 0.001 & 0.000 & 0.022 \\ 
+      39 & 5.000 & 2.609 & 1.271 & 0.001 & 0.000 & 0.022 \\ 
+      40 & 5.000 & 2.609 & 1.271 & 0.001 & 0.000 & 0.022 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #105.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-105-edp
     #+HEADER: :results graphics
@@ -943,7 +1142,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-105-edp
     #+RESULTS: cg-105-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786MK1.pdf]]
 
     \clearpage
 *** Component Type #106
@@ -951,6 +1150,33 @@
       CG = 106
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:36 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    86 & 6057.630 & 71.263 & 63.384 & 0.609 & 0.008 & 236.151 \\ 
+      87 & 6057.630 & 71.263 & 63.384 & 0.609 & 0.008 & 236.151 \\ 
+      88 & 6057.630 & 71.263 & 63.384 & 0.609 & 0.008 & 236.151 \\ 
+      89 & 6057.630 & 71.263 & 63.384 & 0.609 & 0.008 & 236.151 \\ 
+      90 & 6057.630 & 71.263 & 63.384 & 0.609 & 0.008 & 236.151 \\ 
+      91 & 6057.630 & 71.263 & 63.384 & 0.609 & 0.008 & 236.151 \\ 
+      92 & 6057.630 & 71.263 & 63.384 & 0.609 & 0.008 & 236.151 \\ 
+      93 & 6057.630 & 71.263 & 63.384 & 0.609 & 0.008 & 236.151 \\ 
+      94 & 6057.630 & 71.263 & 63.384 & 0.609 & 0.008 & 236.151 \\ 
+      95 & 6057.630 & 71.263 & 63.384 & 0.609 & 0.008 & 236.151 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #106.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-106-edp
     #+HEADER: :results graphics
@@ -963,7 +1189,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-106-edp
     #+RESULTS: cg-106-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786YoQ.pdf]]
 
     \clearpage
 *** Component Type #107
@@ -971,6 +1197,33 @@
       CG = 107
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:36 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    41 & 0.500 & 0.203 &  Inf & 7.347 & 0.070 &  Inf \\ 
+      42 & 0.500 & 0.203 &  Inf & 7.347 & 0.070 &  Inf \\ 
+      43 & 0.500 & 0.203 &  Inf & 7.347 & 0.070 &  Inf \\ 
+      44 & 0.500 & 0.203 &  Inf & 7.347 & 0.070 &  Inf \\ 
+      45 & 0.500 & 0.203 &  Inf & 7.347 & 0.070 &  Inf \\ 
+      46 & 0.500 & 0.203 &  Inf & 7.347 & 0.070 &  Inf \\ 
+      47 & 0.500 & 0.203 &  Inf & 7.347 & 0.070 &  Inf \\ 
+      48 & 0.500 & 0.203 &  Inf & 7.347 & 0.070 &  Inf \\ 
+      49 & 0.500 & 0.203 &  Inf & 7.347 & 0.070 &  Inf \\ 
+      50 & 0.500 & 0.203 &  Inf & 7.347 & 0.070 &  Inf \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #107.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-107-edp
     #+HEADER: :results graphics
@@ -983,7 +1236,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-107-edp
     #+RESULTS: cg-107-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786_Gj.pdf]]
 
     \clearpage
 *** Component Type #108
@@ -991,6 +1244,33 @@
       CG = 108
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:37 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    96 & 0.500 & 0.233 & 0.036 & 0.000 & 0.000 & 0.048 \\ 
+      97 & 0.500 & 0.233 & 0.036 & 0.000 & 0.000 & 0.048 \\ 
+      98 & 0.500 & 0.233 & 0.036 & 0.000 & 0.000 & 0.048 \\ 
+      99 & 0.500 & 0.233 & 0.036 & 0.000 & 0.000 & 0.048 \\ 
+      100 & 0.500 & 0.233 & 0.036 & 0.000 & 0.000 & 0.048 \\ 
+      101 & 0.500 & 0.233 & 0.036 & 0.000 & 0.000 & 0.048 \\ 
+      102 & 0.500 & 0.233 & 0.036 & 0.000 & 0.000 & 0.048 \\ 
+      103 & 0.500 & 0.233 & 0.036 & 0.000 & 0.000 & 0.048 \\ 
+      104 & 0.500 & 0.233 & 0.036 & 0.000 & 0.000 & 0.048 \\ 
+      105 & 0.500 & 0.233 & 0.036 & 0.000 & 0.000 & 0.048 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #108.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-108-edp
     #+HEADER: :results graphics
@@ -1003,7 +1283,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-108-edp
     #+RESULTS: cg-108-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786ml1.pdf]]
 
     \clearpage
 *** Component Type #203
@@ -1011,6 +1291,33 @@
       CG = 203
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:37 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    51 & 23.000 & 14.815 & 0.038 & 0.001 & 0.000 & 0.042 \\ 
+      52 & 23.000 & 14.815 & 0.038 & 0.001 & 0.000 & 0.042 \\ 
+      53 & 23.000 & 14.815 & 0.038 & 0.001 & 0.000 & 0.042 \\ 
+      54 & 23.000 & 14.815 & 0.038 & 0.001 & 0.000 & 0.042 \\ 
+      55 & 23.000 & 14.815 & 0.038 & 0.001 & 0.000 & 0.042 \\ 
+      56 & 23.000 & 14.815 & 0.038 & 0.001 & 0.000 & 0.042 \\ 
+      57 & 23.000 & 14.815 & 0.038 & 0.001 & 0.000 & 0.042 \\ 
+      58 & 23.000 & 14.815 & 0.038 & 0.001 & 0.000 & 0.042 \\ 
+      59 & 23.000 & 14.815 & 0.038 & 0.001 & 0.000 & 0.042 \\ 
+      60 & 23.000 & 14.815 & 0.038 & 0.001 & 0.000 & 0.042 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #203.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-203-edp
     #+HEADER: :results graphics
@@ -1023,7 +1330,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-203-edp
     #+RESULTS: cg-203-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786yDR.pdf]]
 
     \clearpage
 *** Component Type #204
@@ -1031,6 +1338,24 @@
       CG = 204
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:37 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    85 & 0.000 & 0.000 & 49.437 & 0.033 & 0.019 & 0.533 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #204.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-204-edp
     #+HEADER: :results graphics
@@ -1043,7 +1368,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-204-edp
     #+RESULTS: cg-204-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786Zij.pdf]]
 
     \clearpage
 *** Component Type #205
@@ -1051,6 +1376,24 @@
       CG = 205
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:38 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    84 & 5.000 & 2.307 & 0.020 & 0.000 & 0.000 & 0.039 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #205.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-205-edp
     #+HEADER: :results graphics
@@ -1063,7 +1406,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-205-edp
     #+RESULTS: cg-205-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786AB2.pdf]]
 
     \clearpage
 *** Component Type #208
@@ -1071,6 +1414,33 @@
       CG = 208
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:38 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    71 & 0.000 & 0.000 & 0.001 & 0.000 & 0.000 & 0.011 \\ 
+      72 & 0.500 & 0.230 & 0.028 & 0.000 & 0.000 & 0.041 \\ 
+      73 & 0.500 & 0.230 & 0.028 & 0.000 & 0.000 & 0.041 \\ 
+      74 & 0.500 & 0.230 & 0.028 & 0.000 & 0.000 & 0.041 \\ 
+      75 & 0.500 & 0.230 & 0.028 & 0.000 & 0.000 & 0.041 \\ 
+      76 & 0.500 & 0.230 & 0.028 & 0.000 & 0.000 & 0.041 \\ 
+      77 & 0.500 & 0.230 & 0.028 & 0.000 & 0.000 & 0.041 \\ 
+      78 & 0.500 & 0.230 & 0.028 & 0.000 & 0.000 & 0.041 \\ 
+      79 & 0.500 & 0.230 & 0.028 & 0.000 & 0.000 & 0.041 \\ 
+      80 & 0.500 & 0.230 & 0.028 & 0.000 & 0.000 & 0.041 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #208.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-208-edp
     #+HEADER: :results graphics
@@ -1083,7 +1453,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-208-edp
     #+RESULTS: cg-208-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786MfR.pdf]]
 
     \clearpage
 *** Component Type #209
@@ -1091,6 +1461,26 @@
       CG = 209
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:38 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    81 & 5.000 & 2.279 & 0.028 & 0.000 & 0.000 & 0.042 \\ 
+      82 & 5.000 & 2.279 & 0.028 & 0.000 & 0.000 & 0.042 \\ 
+      83 & 5.000 & 2.279 & 0.028 & 0.000 & 0.000 & 0.042 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #209.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-209-edp
     #+HEADER: :results graphics
@@ -1103,7 +1493,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-209-edp
     #+RESULTS: cg-209-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786z9j.pdf]]
 
     \clearpage
 *** Component Type #211
@@ -1111,6 +1501,33 @@
       CG = 211
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:39 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    61 & 0.500 & 0.196 & 0.046 & 0.001 & 0.000 & 0.031 \\ 
+      62 & 0.500 & 0.196 & 0.046 & 0.001 & 0.000 & 0.031 \\ 
+      63 & 0.500 & 0.196 & 0.046 & 0.001 & 0.000 & 0.031 \\ 
+      64 & 0.500 & 0.196 & 0.046 & 0.001 & 0.000 & 0.031 \\ 
+      65 & 0.500 & 0.196 & 0.046 & 0.001 & 0.000 & 0.031 \\ 
+      66 & 0.500 & 0.196 & 0.046 & 0.001 & 0.000 & 0.031 \\ 
+      67 & 0.500 & 0.196 & 0.046 & 0.001 & 0.000 & 0.031 \\ 
+      68 & 0.500 & 0.196 & 0.046 & 0.001 & 0.000 & 0.031 \\ 
+      69 & 0.500 & 0.196 & 0.046 & 0.001 & 0.000 & 0.031 \\ 
+      70 & 0.500 & 0.196 & 0.046 & 0.001 & 0.000 & 0.031 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #211.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-211-edp
     #+HEADER: :results graphics
@@ -1123,7 +1540,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-211-edp
     #+RESULTS: cg-211-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786ac2.pdf]]
 
     \clearpage
 *** Component Type #214
@@ -1131,6 +1548,33 @@
       CG = 214
       print.cg.edp.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:39 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    106 & 0.000 & 0.000 & 0.026 & 0.000 & 0.000 & 0.018 \\ 
+      107 & 0.500 & 0.248 & 0.032 & 0.000 & 0.000 & 0.047 \\ 
+      108 & 0.500 & 0.248 & 0.032 & 0.000 & 0.000 & 0.047 \\ 
+      109 & 0.500 & 0.248 & 0.032 & 0.000 & 0.000 & 0.047 \\ 
+      110 & 0.500 & 0.248 & 0.032 & 0.000 & 0.000 & 0.047 \\ 
+      111 & 0.500 & 0.248 & 0.032 & 0.000 & 0.000 & 0.047 \\ 
+      112 & 0.500 & 0.248 & 0.032 & 0.000 & 0.000 & 0.047 \\ 
+      113 & 0.500 & 0.248 & 0.032 & 0.000 & 0.000 & 0.047 \\ 
+      114 & 0.500 & 0.248 & 0.032 & 0.000 & 0.000 & 0.047 \\ 
+      115 & 0.500 & 0.248 & 0.032 & 0.000 & 0.000 & 0.047 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #214.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-214-edp
     #+HEADER: :results graphics
@@ -1143,7 +1587,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-214-edp
     #+RESULTS: cg-214-edp
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786m6R.pdf]]
 
     \clearpage
 ** Loss-IM Relation
@@ -1169,6 +1613,10 @@
     }
 #+END_SRC
 
+#+RESULTS:
+#+BEGIN_EXPORT latex
+#+END_EXPORT
+
     
   #+BEGIN_SRC R :results output 
     ## Function to print summary table of  group-IM relations
@@ -1182,6 +1630,8 @@
                 digits=3))
     }
     #+END_SRC
+
+    #+RESULTS:
 
   #+BEGIN_SRC R :results output 
     ## Function to plot component group-IM relations
@@ -1246,12 +1696,51 @@
     }
   #+END_SRC
 
+  #+RESULTS:
+
 \clearpage
 *** Component Type #2
     #+BEGIN_SRC R :results output latex 
       CG = 2
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:40 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    1 & 790.210 & 51.826 & 100.000 & 6.731 & 0.063 & 100.000 \\ 
+      2 & 711.190 & 46.679 & 100.000 & 6.731 & 0.063 & 100.000 \\ 
+      3 & 397.210 & 12.940 & 100.000 & 5.374 & 0.029 & 100.000 \\ 
+      4 & 1786.900 & 57.652 & 100.000 & 5.374 & 0.029 & 100.000 \\ 
+      5 & 416.970 & 11.720 & 5.781 & 0.055 & 0.001 & 6.326 \\ 
+      6 & 1875.900 & 52.352 & 5.779 & 0.055 & 0.001 & 6.326 \\ 
+      7 & 527.720 & 14.330 & 6.631 & 0.063 & 0.002 & 7.828 \\ 
+      8 & 2374.700 & 64.124 & 6.625 & 0.063 & 0.002 & 7.828 \\ 
+      9 & 545.270 & 15.356 & 6.919 & 0.066 & 0.002 & 8.115 \\ 
+      10 & 2451.700 & 68.554 & 6.921 & 0.066 & 0.002 & 8.115 \\ 
+      11 & 563.710 & 15.873 & 8.302 & 0.077 & 0.002 & 8.667 \\ 
+      12 & 2535.700 & 71.246 & 8.299 & 0.077 & 0.002 & 8.667 \\ 
+      13 & 220.160 & 14.734 & 100.000 & 5.444 & 0.029 & 100.000 \\ 
+      14 & 991.200 & 65.557 & 100.000 & 5.444 & 0.029 & 100.000 \\ 
+      15 & 89.000 & 9.342 & 100.000 & 5.943 & 0.031 & 100.000 \\ 
+      16 & 397.800 & 41.180 & 100.000 & 5.943 & 0.031 & 100.000 \\ 
+      17 & 248.740 & 10.579 & 100.000 & 6.365 & 0.059 & 100.000 \\ 
+      18 & 1120.300 & 47.493 & 100.000 & 6.365 & 0.059 & 100.000 \\ 
+      19 & 118.730 & 4.516 &  & 5.455 & 0.053 &  \\ 
+      20 & 532.800 & 20.089 &  & 5.455 & 0.053 &  \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #2.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-2-im
     #+HEADER: :results graphics
@@ -1264,7 +1753,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-2-im
     #+RESULTS: cg-2-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786NZk.pdf]]
 
 \clearpage
 *** Component Type #3
@@ -1272,6 +1761,33 @@
       CG = 3
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:40 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    21 & 5994.900 & 165.588 & 100.000 & 6.504 & 0.065 & 100.000 \\ 
+      22 & 1026.300 & 63.790 & 100.000 & 5.153 & 0.034 & 100.000 \\ 
+      23 & 1180.800 & 56.049 & 51.086 & 0.188 & 0.009 & 13.527 \\ 
+      24 & 1768.900 & 70.927 & 29.668 & 0.183 & 0.009 & 12.894 \\ 
+      25 & 1808.100 & 76.188 & 32.773 & 0.179 & 0.009 & 12.917 \\ 
+      26 & 1635.800 & 74.745 & 66.848 & 0.185 & 0.010 & 13.384 \\ 
+      27 & 1396.450 & 108.165 & 100.000 & 5.224 & 0.036 & 100.000 \\ 
+      28 & 573.600 & 158.956 & 100.000 & 5.725 & 0.040 & 100.000 \\ 
+      29 & 810.900 & 409.300 & 100.000 & 6.149 & 0.084 & 100.000 \\ 
+      30 & 1042.910 & 271.817 & 100.000 & 6.704 & 0.154 & 100.000 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #3.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-3-im
     #+HEADER: :results graphics
@@ -1284,7 +1800,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-3-im
     #+RESULTS: cg-3-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786032.pdf]]
 
 \clearpage
 *** Component Type #105
@@ -1292,6 +1808,33 @@
       CG = 105
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:40 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    31 & 1553.090 & 101.876 &  & 0.157 & 0.005 &  \\ 
+      32 & 4334.200 & 128.597 &  & 0.066 & 0.002 &  \\ 
+      33 & 5055.800 & 122.533 &  Inf & 6.758 & 0.036 &  Inf \\ 
+      34 & 6852.900 & 154.284 & 20.925 & 0.063 & 0.002 & 9.211 \\ 
+      35 & 6996.600 & 164.143 & 28.465 & 0.065 & 0.002 & 9.370 \\ 
+      36 & 6497.700 & 164.619 &  Inf & 6.904 & 0.037 &  Inf \\ 
+      37 & 2884.800 & 169.056 &  & 0.059 & 0.003 &  \\ 
+      38 & 1194.000 & 106.950 &  & 0.031 & 0.002 &  \\ 
+      39 & 3023.200 & 124.104 &  & 0.040 & 0.003 &  \\ 
+      40 & 1589.500 & 53.270 &  & 0.048 & 0.003 &  \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #105.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-105-im
     #+HEADER: :results graphics
@@ -1304,7 +1847,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-105-im
     #+RESULTS: cg-105-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786AWS.pdf]]
 
 \clearpage
 *** Component Type #106
@@ -1312,6 +1855,33 @@
       CG = 106
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:41 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    86 & 670.470 & 284.752 &  & 0.104 & 0.039 &  \\ 
+      87 & 2204.190 & 94.940 &  & 0.207 & 0.013 &  \\ 
+      88 & 2081.210 & 106.217 &  Inf & 6.758 & 0.049 &  Inf \\ 
+      89 & 2112.330 & 107.810 & 45.282 & 0.217 & 0.015 & 65.597 \\ 
+      90 & 2133.530 & 108.683 & 45.127 & 0.226 & 0.016 & 66.089 \\ 
+      91 & 2630.390 & 124.718 &  Inf & 6.904 & 0.053 &  Inf \\ 
+      92 & 2257.740 & 200.249 &  & 0.216 & 0.026 &  \\ 
+      93 & 1175.610 & 400.180 &  & 0.150 & 0.053 &  \\ 
+      94 & 1456.600 & 1024.182 &  & 0.180 & 0.127 &  \\ 
+      95 & 1971.430 & 1231.422 &  & 0.197 & 0.137 &  \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #106.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-106-im
     #+HEADER: :results graphics
@@ -1324,7 +1894,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-106-im
     #+RESULTS: cg-106-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786n0k.pdf]]
 
 \clearpage
 *** Component Type #107
@@ -1332,6 +1902,33 @@
       CG = 107
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:41 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    41 & 20.854 & 1.106 &  & 7.162 & 0.084 &  \\ 
+      42 & 94.794 & 2.475 &  & 6.902 & 0.043 &  \\ 
+      43 & 93.832 & 2.459 &  & 6.987 & 0.041 &  \\ 
+      44 & 127.242 & 2.960 &  & 0.261 & 0.006 &  \\ 
+      45 & 130.490 & 3.493 &  & 6.790 & 0.040 &  \\ 
+      46 & 131.607 & 3.382 &  & 7.109 & 0.043 &  \\ 
+      47 & 67.440 & 4.440 &  & 6.961 & 0.046 &  \\ 
+      48 & 29.390 & 2.318 &  & 7.071 & 0.043 &  \\ 
+      49 & 46.431 & 2.044 &  & 7.126 & 0.086 &  \\ 
+      50 & 38.086 & 0.780 &  & 7.086 & 0.118 &  \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #107.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-107-im
     #+HEADER: :results graphics
@@ -1344,7 +1941,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-107-im
     #+RESULTS: cg-107-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786zSA.pdf]]
 
 \clearpage
 *** Component Type #108
@@ -1352,6 +1949,33 @@
       CG = 108
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:41 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    96 & 162.247 & 12.700 & 100.000 & 5.292 & 0.049 & 100.000 \\ 
+      97 & 313.890 & 14.064 & 100.000 & 4.276 & 0.024 & 100.000 \\ 
+      98 & 279.220 & 11.283 & 3.607 & 0.081 & 0.002 & 6.472 \\ 
+      99 & 331.080 & 13.741 & 3.624 & 0.084 & 0.002 & 6.867 \\ 
+      100 & 344.020 & 14.622 & 3.869 & 0.090 & 0.002 & 7.380 \\ 
+      101 & 395.500 & 13.595 & 5.528 & 0.123 & 0.002 & 9.830 \\ 
+      102 & 355.130 & 14.359 & 100.000 & 4.345 & 0.025 & 100.000 \\ 
+      103 & 59.210 & 5.519 & 100.000 & 4.684 & 0.025 & 100.000 \\ 
+      104 & 181.940 & 14.049 & 100.000 & 5.011 & 0.049 & 100.000 \\ 
+      105 & 230.040 & 8.207 & 100.000 & 5.448 & 0.071 & 100.000 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #108.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-108-im
     #+HEADER: :results graphics
@@ -1364,7 +1988,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-108-im
     #+RESULTS: cg-108-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786axS.pdf]]
 
 \clearpage
 *** Component Type #203
@@ -1372,6 +1996,33 @@
       CG = 203
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:42 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    51 & 759.000 & 75.831 & 1.995 & 0.004 & 0.000 & 0.598 \\ 
+      52 & 249.000 & 27.941 & 3.715 & 0.004 & 0.000 & 0.221 \\ 
+      53 & 94.050 & 13.817 & 4.077 & 0.004 & 0.000 & 0.199 \\ 
+      54 & 79.980 & 10.675 & 4.313 & 0.005 & 0.000 & 0.248 \\ 
+      55 & 209.000 & 11.919 & 1.123 & 0.002 & 0.000 & 0.179 \\ 
+      56 & 78.940 & 8.088 & 1.410 & 0.002 & 0.000 & 0.096 \\ 
+      57 & 69.100 & 6.570 & 1.076 & 0.002 & 0.000 & 0.088 \\ 
+      58 & 323.490 & 14.199 & 5.881 & 0.003 & 0.000 & 0.190 \\ 
+      59 & 219.430 & 10.138 & 4.602 & 0.003 & 0.000 & 0.156 \\ 
+      60 & 39.700 & 4.841 & 0.525 & 0.001 & 0.000 & 0.080 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #203.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-203-im
     #+HEADER: :results graphics
@@ -1384,7 +2035,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-203-im
     #+RESULTS: cg-203-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786BQl.pdf]]
 
 \clearpage
 *** Component Type #204
@@ -1392,6 +2043,24 @@
       CG = 204
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:42 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    85 & 65.000 & 5.149 & 0.065 & 0.001 & 0.000 & 0.249 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #204.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-204-im
     #+HEADER: :results graphics
@@ -1404,7 +2073,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-204-im
     #+RESULTS: cg-204-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786NuA.pdf]]
 
 \clearpage
 *** Component Type #205
@@ -1412,6 +2081,24 @@
       CG = 205
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:42 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    84 & 66.900 & 6.855 & 1.096 & 0.002 & 0.000 & 0.090 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #205.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-205-im
     #+HEADER: :results graphics
@@ -1424,7 +2111,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-205-im
     #+RESULTS: cg-205-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-17860MT.pdf]]
 
 \clearpage
 *** Component Type #208
@@ -1432,6 +2119,33 @@
       CG = 208
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:43 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    71 & 105.600 & 3.787 & 0.172 & 0.001 & 0.000 & 0.149 \\ 
+      72 & 248.500 & 23.961 & 1.505 & 0.005 & 0.000 & 0.346 \\ 
+      73 & 73.500 & 6.429 & 2.681 & 0.006 & 0.000 & 0.276 \\ 
+      74 & 35.340 & 2.653 & 2.885 & 0.006 & 0.000 & 0.275 \\ 
+      75 & 31.220 & 3.197 & 2.977 & 0.006 & 0.000 & 0.292 \\ 
+      76 & 53.500 & 2.978 & 0.724 & 0.001 & 0.000 & 0.097 \\ 
+      77 & 28.310 & 1.752 & 0.932 & 0.002 & 0.000 & 0.125 \\ 
+      78 & 21.460 & 1.470 & 0.640 & 0.001 & 0.000 & 0.077 \\ 
+      79 & 115.570 & 4.394 & 4.078 & 0.010 & 0.000 & 0.513 \\ 
+      80 & 80.130 & 2.998 & 3.164 & 0.008 & 0.000 & 0.405 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #208.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-208-im
     #+HEADER: :results graphics
@@ -1444,7 +2158,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-208-im
     #+RESULTS: cg-208-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786brl.pdf]]
 
 \clearpage
 *** Component Type #209
@@ -1452,6 +2166,26 @@
       CG = 209
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:43 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    81 & 901.000 & 83.448 & 2.786 & 0.007 & 0.000 & 0.349 \\ 
+      82 & 1204.000 & 74.125 & 0.841 & 0.002 & 0.000 & 0.233 \\ 
+      83 & 1021.600 & 29.815 & 3.180 & 0.009 & 0.000 & 0.493 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #209.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-209-im
     #+HEADER: :results graphics
@@ -1464,7 +2198,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-209-im
     #+RESULTS: cg-209-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786nJB.pdf]]
 
 \clearpage
 *** Component Type #211
@@ -1472,6 +2206,33 @@
       CG = 211
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:43 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    61 & 2.098 & 0.281 & 0.901 & 0.002 & 0.000 & 0.079 \\ 
+      62 & 0.550 & 0.139 & 0.667 & 0.001 & 0.000 & 0.038 \\ 
+      63 & 0.600 & 0.059 & 0.665 & 0.001 & 0.000 & 0.046 \\ 
+      64 & 0.371 & 0.041 & 0.649 & 0.001 & 0.000 & 0.043 \\ 
+      65 & 0.607 & 0.048 & 0.147 & 0.001 & 0.000 & 0.033 \\ 
+      66 & 0.474 & 0.039 & 0.849 & 0.003 & 0.000 & 0.105 \\ 
+      67 & 0.243 & 0.039 & 0.142 & 0.001 & 0.000 & 0.026 \\ 
+      68 & 1.054 & 0.078 & 1.085 & 0.002 & 0.000 & 0.076 \\ 
+      69 & 0.745 & 0.052 & 0.804 & 0.002 & 0.000 & 0.061 \\ 
+      70 & 0.270 & 0.020 & 0.097 & 0.001 & 0.000 & 0.024 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #211.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-211-im
     #+HEADER: :results graphics
@@ -1484,7 +2245,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-211-im
     #+RESULTS: cg-211-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786OoT.pdf]]
 
 \clearpage
 *** Component Type #214
@@ -1492,6 +2253,33 @@
       CG = 214
       print.cg.im.summary(CG)
     #+END_SRC
+
+    #+RESULTS:
+    #+BEGIN_EXPORT latex
+    % latex table generated in R 3.2.2 by xtable 1.8-2 package
+    % Mon Aug 29 14:09:44 2016
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{rrrrrrr}
+      \hline
+     & mean.max & mean.avg & mean.pct & sd.max & sd.avg & sd.pct \\ 
+      \hline
+    106 & 58.300 & 2.148 & 0.112 & 0.001 & 0.000 & 0.101 \\ 
+      107 & 138.300 & 13.429 & 0.386 & 0.005 & 0.000 & 0.397 \\ 
+      108 & 33.800 & 2.973 & 0.565 & 0.003 & 0.000 & 0.188 \\ 
+      109 & 17.390 & 1.265 & 0.579 & 0.003 & 0.000 & 0.193 \\ 
+      110 & 15.860 & 1.504 & 0.580 & 0.003 & 0.000 & 0.219 \\ 
+      111 & 16.900 & 1.404 & 0.129 & 0.001 & 0.000 & 0.123 \\ 
+      112 & 9.740 & 0.912 & 0.159 & 0.002 & 0.000 & 0.142 \\ 
+      113 & 14.500 & 0.714 & 0.129 & 0.082 & 0.001 & 6.788 \\ 
+      114 & 46.500 & 1.743 & 0.713 & 0.007 & 0.000 & 0.528 \\ 
+      115 & 29.570 & 1.182 & 0.529 & 0.006 & 0.000 & 0.406 \\ 
+       \hline
+    \end{tabular}
+    \caption{Comparison of Component
+			      Groups of type #214.} 
+    \end{table}
+    #+END_EXPORT
 
     #+NAME: cg-214-im
     #+HEADER: :results graphics
@@ -1504,7 +2292,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:cg-214-im
     #+RESULTS: cg-214-im
-    [[file:/tmp/babel-1757XZc/figure-1757XMn.pdf]]
+    [[file:/tmp/babel-1786g10/figure-17861Gm.pdf]]
 
 \clearpage
 *** Loss-IM Relation
@@ -1534,7 +2322,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:structloss.by.fate
     #+RESULTS: structloss.by.fate
-    [[file:/tmp/babel-1782NP6/figure-1782nfm.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786BlB.pdf]]
    
 ** Loss by Fate (Solid)
     #+NAME: structloss.by.fate-filled
@@ -1576,7 +2364,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:structloss.by.fate-filled
     #+RESULTS: structloss.by.fate-filled
-    [[file:/tmp/babel-1782NP6/figure-1782w1X.ps]]
+    [[file:/tmp/babel-1786g10/figure-1786oDU.pdf]]
    
 ** Loss Total, Normalised
     *I'm not sure these calculations are correct*
@@ -1605,7 +2393,7 @@
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:structloss.by.fate-normalised
     #+RESULTS: structloss.by.fate-normalised
-    [[file:/tmp/babel-1782NP6/figure-1782Eh1.ps]]
+    [[file:/tmp/babel-1786g10/figure-1786Pim.pdf]]
    
 * Loss by EDP
    #+NAME: structloss.by.edp
@@ -1631,7 +2419,7 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.edp
    #+RESULTS: structloss.by.edp
-   [[file:/tmp/babel-1782NP6/figure-1782Ryv.pdf]]
+   [[file:/tmp/babel-1786g10/figure-1786bAC.pdf]]
 
    #+NAME: structloss.by.edp-20
    #+HEADER: :results graphics
@@ -1661,14 +2449,14 @@
                          nrow=2, byrow=TRUE)
      barplot(edp.data, beside=TRUE, horiz=TRUE,
              names=names(edp.table[2:12]), legend=c("Accel", "Drift"),
-             las.y=2, cex.names=0.7)
+             cex.names=0.7)
    #+END_SRC
 
    #+CAPTION: Mean Loss by EDP at IM=0.297
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.edp-20
    #+RESULTS: structloss.by.edp-20
-   [[file:/tmp/babel-1782NP6/figure-17826UF.pdf]]
+   [[file:/tmp/babel-1786g10/figure-1786CfU.pdf]]
 
    #+NAME: structloss.by.edp-67
    #+HEADER: :results graphics
@@ -1698,14 +2486,14 @@
                          nrow=2, byrow=TRUE)
      barplot(edp.data, beside=TRUE, horiz=TRUE,
              names=names(edp.table[2:12]), legend=c("Accel", "Drift"),
-             las.y=2, cex.names=0.7)
+             cex.names=0.7)
    #+END_SRC
 
    #+CAPTION: Mean Loss by EDP at IM=1.0
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.edp-67
    #+RESULTS: structloss.by.edp-67
-   [[file:/tmp/babel-1782NP6/figure-1782kew.ps]]
+   [[file:/tmp/babel-1786g10/figure-1786p9m.pdf]]
 
 * Loss by Component Type
    #+NAME: structloss.by.comp
@@ -1750,7 +2538,7 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.comp
    #+RESULTS: structloss.by.comp
-   [[file:/tmp/babel-1782NP6/figure-17829GS.ps]]
+   [[file:/tmp/babel-1786g10/figure-17861bC.pdf]]
 
    #+NAME: structloss.by.comp-20
    #+HEADER: :results graphics
@@ -1767,7 +2555,7 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.comp-20
    #+RESULTS: structloss.by.comp-20
-   [[file:/tmp/babel-1782NP6/figure-17828RJ.pdf]]
+   [[file:/tmp/babel-1786g10/figure-1786c6U.pdf]]
 
    #+NAME: structloss.by.comp-67
    #+HEADER: :results graphics
@@ -1784,7 +2572,7 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.comp-67
    #+RESULTS: structloss.by.comp-67
-   [[file:/tmp/babel-1782NP6/figure-1782KYM.eps]]
+   [[file:/tmp/babel-1786g10/figure-1786DZn.pdf]]
    
 * Annual Loss
   The annual loss for the entire structure
@@ -1815,8 +2603,8 @@
   
   #+RESULTS:
   |              |     Paleo |       Neo | Error(%) |
-  | E(loss)      | 1.175e+04 | 1.168e+04 |    0.584 |
-  | SD(ln(loss)) | 2.491e+00 | 2.493e+00 |    0.084 |
+  | E(loss)      | 1.175e+04 | 1.035e+04 |   11.859 |
+  | SD(ln(loss)) | 2.491e+00 | 2.441e+00 |     1.99 |
 
   
 * Scratch 							   :noexport:
@@ -1844,27 +2632,27 @@
 
    #+RESULTS:
    #+begin_example
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
-   0.01 1.0000E-02 ;  2.5 2.500 ;  199 199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
+   1.0000E-02 ;  2.500 ;  199
 #+end_example
 
    EDP-rate relationships
@@ -1885,27 +2673,27 @@
 
    #+RESULTS:
    #+begin_example
-   0.001 1.0000E-03 ;  0.15 0.1500 ;  149 149
-   0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
-   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
+   1.0000E-03 ;  0.1500 ;  149
+   1.0000E-03 ;  0.1000 ;  149
+   5.0000E-02 ;  5.000 ;  199
+   1.0000E-03 ;  0.1000 ;  199
+   5.0000E-02 ;  5.000 ;  199
+   1.0000E-03 ;  0.1000 ;  199
+   5.0000E-02 ;  5.000 ;  199
+   1.0000E-03 ;  0.1000 ;  199
+   5.0000E-02 ;  5.000 ;  199
+   1.0000E-03 ;  0.1000 ;  199
+   5.0000E-02 ;  5.000 ;  199
+   1.0000E-03 ;  0.1000 ;  199
+   5.0000E-02 ;  5.000 ;  199
+   1.0000E-03 ;  0.1000 ;  199
+   5.0000E-02 ;  5.000 ;  199
+   1.0000E-03 ;  0.1000 ;  199
+   5.0000E-02 ;  5.000 ;  199
+   1.0000E-03 ;  0.1000 ;  199
+   5.0000E-02 ;  5.000 ;  199
+   1.0000E-03 ;  0.1000 ;  199
+   5.0000E-02 ;  5.000 ;  199
 #+end_example
 
    Loss-edp
@@ -1931,236 +2719,236 @@
 
    #+RESULTS:
    #+begin_example
-   1: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
-   1: 0.0 0.0 0
-   2: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
-   2: 0.0 0.0 0
-   3: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   3: 0.0 0.0 0
-   4: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   4: 0.0 0.0 0
-   5: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   5: 0.0 0.0 0
-   6: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   6: 0.0 0.0 0
-   7: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   7: 0.0 0.0 0
-   8: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   8: 0.0 0.0 0
-   9: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   9: 0.0 0.0 0
-   10: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   10: 0.0 0.0 0
-   11: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   11: 0.0 0.0 0
-   12: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   12: 0.0 0.0 0
-   13: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   13: 0.0 0.0 0
-   14: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   14: 0.0 0.0 0
-   15: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   15: 0.0 0.0 0
-   16: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   16: 0.0 0.0 0
-   17: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   17: 0.0 0.0 0
-   18: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   18: 0.0 0.0 0
-   19: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   19: 0.0 0.0 0
-   20: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   20: 0.0 0.0 0
-   21: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
-   21: 0.0 0.0 0
-   22: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   22: 0.0 0.0 0
-   23: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   23: 0.0 0.0 0
-   24: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   24: 0.0 0.0 0
-   25: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   25: 0.0 0.0 0
-   26: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   26: 0.0 0.0 0
-   27: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   27: 0.0 0.0 0
-   28: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   28: 0.0 0.0 0
-   29: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   29: 0.0 0.0 0
-   30: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   30: 0.0 0.0 0
-   31: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
-   31: 0.0 0.0 0
-   32: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   32: 0.0 0.0 0
-   33: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   33: 0.0 0.0 0
-   34: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   34: 0.0 0.0 0
-   35: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   35: 0.0 0.0 0
-   36: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   36: 0.0 0.0 0
-   37: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   37: 0.0 0.0 0
-   38: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   38: 0.0 0.0 0
-   39: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   39: 0.0 0.0 0
-   40: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   40: 0.0 0.0 0
-   41: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
-   41: 0.0 0.0 0
-   42: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   42: 0.0 0.0 0
-   43: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   43: 0.0 0.0 0
-   44: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   44: 0.0 0.0 0
-   45: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   45: 0.0 0.0 0
-   46: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   46: 0.0 0.0 0
-   47: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   47: 0.0 0.0 0
-   48: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   48: 0.0 0.0 0
-   49: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   49: 0.0 0.0 0
-   50: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   50: 0.0 0.0 0
-   51: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   51: 0.0 0.0 0
-   52: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   52: 0.0 0.0 0
-   53: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   53: 0.0 0.0 0
-   54: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   54: 0.0 0.0 0
-   55: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   55: 0.0 0.0 0
-   56: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   56: 0.0 0.0 0
-   57: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   57: 0.0 0.0 0
-   58: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   58: 0.0 0.0 0
-   59: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   59: 0.0 0.0 0
-   60: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   60: 0.0 0.0 0
-   61: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   61: 0.0 0.0 0
-   62: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   62: 0.0 0.0 0
-   63: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   63: 0.0 0.0 0
-   64: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   64: 0.0 0.0 0
-   65: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   65: 0.0 0.0 0
-   66: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   66: 0.0 0.0 0
-   67: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   67: 0.0 0.0 0
-   68: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   68: 0.0 0.0 0
-   69: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   69: 0.0 0.0 0
-   70: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   70: 0.0 0.0 0
-   71: 0.001 1.0000E-03 ;  0.15 0.1500 ;  149 149
-   71: 0.0 0.0 0
-   72: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   72: 0.0 0.0 0
-   73: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   73: 0.0 0.0 0
-   74: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   74: 0.0 0.0 0
-   75: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   75: 0.0 0.0 0
-   76: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   76: 0.0 0.0 0
-   77: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   77: 0.0 0.0 0
-   78: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   78: 0.0 0.0 0
-   79: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   79: 0.0 0.0 0
-   80: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   80: 0.0 0.0 0
-   81: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   81: 0.0 0.0 0
-   82: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   82: 0.0 0.0 0
-   83: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   83: 0.0 0.0 0
-   84: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   84: 0.0 0.0 0
-   85: 0.001 1.0000E-03 ;  0.15 0.1500 ;  149 149
-   85: 0.0 0.0 0
-   86: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
-   86: 0.0 0.0 0
-   87: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   87: 0.0 0.0 0
-   88: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   88: 0.0 0.0 0
-   89: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   89: 0.0 0.0 0
-   90: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   90: 0.0 0.0 0
-   91: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   91: 0.0 0.0 0
-   92: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   92: 0.0 0.0 0
-   93: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   93: 0.0 0.0 0
-   94: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   94: 0.0 0.0 0
-   95: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   95: 0.0 0.0 0
-   96: 0.001 1.0000E-03 ;  0.1 0.1000 ;  149 149
-   96: 0.0 0.0 0
-   97: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   97: 0.0 0.0 0
-   98: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   98: 0.0 0.0 0
-   99: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   99: 0.0 0.0 0
-   100: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   100: 0.0 0.0 0
-   101: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   101: 0.0 0.0 0
-   102: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   102: 0.0 0.0 0
-   103: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   103: 0.0 0.0 0
-   104: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   104: 0.0 0.0 0
-   105: 0.001 1.0000E-03 ;  0.1 0.1000 ;  199 199
-   105: 0.0 0.0 0
-   106: 0.001 1.0000E-03 ;  0.15 0.1500 ;  149 149
-   106: 0.0 0.0 0
-   107: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   107: 0.0 0.0 0
-   108: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   108: 0.0 0.0 0
-   109: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   109: 0.0 0.0 0
-   110: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   110: 0.0 0.0 0
-   111: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   111: 0.0 0.0 0
-   112: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   112: 0.0 0.0 0
-   113: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   113: 0.0 0.0 0
-   114: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   114: 0.0 0.0 0
-   115: 0.05 5.0000E-02 ;  5.0 5.000 ;  199 199
-   115: 0.0 0.0 0
+   1: 1.0000E-03 ;  0.1000 ;  149
+   1: -0.001 -0.1 -149
+   2: 1.0000E-03 ;  0.1000 ;  149
+   2: -0.001 -0.1 -149
+   3: 1.0000E-03 ;  0.1000 ;  199
+   3: -0.001 -0.1 -199
+   4: 1.0000E-03 ;  0.1000 ;  199
+   4: -0.001 -0.1 -199
+   5: 1.0000E-03 ;  0.1000 ;  199
+   5: -0.001 -0.1 -199
+   6: 1.0000E-03 ;  0.1000 ;  199
+   6: -0.001 -0.1 -199
+   7: 1.0000E-03 ;  0.1000 ;  199
+   7: -0.001 -0.1 -199
+   8: 1.0000E-03 ;  0.1000 ;  199
+   8: -0.001 -0.1 -199
+   9: 1.0000E-03 ;  0.1000 ;  199
+   9: -0.001 -0.1 -199
+   10: 1.0000E-03 ;  0.1000 ;  199
+   10: -0.001 -0.1 -199
+   11: 1.0000E-03 ;  0.1000 ;  199
+   11: -0.001 -0.1 -199
+   12: 1.0000E-03 ;  0.1000 ;  199
+   12: -0.001 -0.1 -199
+   13: 1.0000E-03 ;  0.1000 ;  199
+   13: -0.001 -0.1 -199
+   14: 1.0000E-03 ;  0.1000 ;  199
+   14: -0.001 -0.1 -199
+   15: 1.0000E-03 ;  0.1000 ;  199
+   15: -0.001 -0.1 -199
+   16: 1.0000E-03 ;  0.1000 ;  199
+   16: -0.001 -0.1 -199
+   17: 1.0000E-03 ;  0.1000 ;  199
+   17: -0.001 -0.1 -199
+   18: 1.0000E-03 ;  0.1000 ;  199
+   18: -0.001 -0.1 -199
+   19: 1.0000E-03 ;  0.1000 ;  199
+   19: -0.001 -0.1 -199
+   20: 1.0000E-03 ;  0.1000 ;  199
+   20: -0.001 -0.1 -199
+   21: 1.0000E-03 ;  0.1000 ;  149
+   21: -0.001 -0.1 -149
+   22: 1.0000E-03 ;  0.1000 ;  199
+   22: -0.001 -0.1 -199
+   23: 1.0000E-03 ;  0.1000 ;  199
+   23: -0.001 -0.1 -199
+   24: 1.0000E-03 ;  0.1000 ;  199
+   24: -0.001 -0.1 -199
+   25: 1.0000E-03 ;  0.1000 ;  199
+   25: -0.001 -0.1 -199
+   26: 1.0000E-03 ;  0.1000 ;  199
+   26: -0.001 -0.1 -199
+   27: 1.0000E-03 ;  0.1000 ;  199
+   27: -0.001 -0.1 -199
+   28: 1.0000E-03 ;  0.1000 ;  199
+   28: -0.001 -0.1 -199
+   29: 1.0000E-03 ;  0.1000 ;  199
+   29: -0.001 -0.1 -199
+   30: 1.0000E-03 ;  0.1000 ;  199
+   30: -0.001 -0.1 -199
+   31: 1.0000E-03 ;  0.1000 ;  149
+   31: -0.001 -0.1 -149
+   32: 1.0000E-03 ;  0.1000 ;  199
+   32: -0.001 -0.1 -199
+   33: 1.0000E-03 ;  0.1000 ;  199
+   33: -0.001 -0.1 -199
+   34: 1.0000E-03 ;  0.1000 ;  199
+   34: -0.001 -0.1 -199
+   35: 1.0000E-03 ;  0.1000 ;  199
+   35: -0.001 -0.1 -199
+   36: 1.0000E-03 ;  0.1000 ;  199
+   36: -0.001 -0.1 -199
+   37: 1.0000E-03 ;  0.1000 ;  199
+   37: -0.001 -0.1 -199
+   38: 1.0000E-03 ;  0.1000 ;  199
+   38: -0.001 -0.1 -199
+   39: 1.0000E-03 ;  0.1000 ;  199
+   39: -0.001 -0.1 -199
+   40: 1.0000E-03 ;  0.1000 ;  199
+   40: -0.001 -0.1 -199
+   41: 1.0000E-03 ;  0.1000 ;  149
+   41: -0.001 -0.1 -149
+   42: 1.0000E-03 ;  0.1000 ;  199
+   42: -0.001 -0.1 -199
+   43: 1.0000E-03 ;  0.1000 ;  199
+   43: -0.001 -0.1 -199
+   44: 1.0000E-03 ;  0.1000 ;  199
+   44: -0.001 -0.1 -199
+   45: 1.0000E-03 ;  0.1000 ;  199
+   45: -0.001 -0.1 -199
+   46: 1.0000E-03 ;  0.1000 ;  199
+   46: -0.001 -0.1 -199
+   47: 1.0000E-03 ;  0.1000 ;  199
+   47: -0.001 -0.1 -199
+   48: 1.0000E-03 ;  0.1000 ;  199
+   48: -0.001 -0.1 -199
+   49: 1.0000E-03 ;  0.1000 ;  199
+   49: -0.001 -0.1 -199
+   50: 1.0000E-03 ;  0.1000 ;  199
+   50: -0.001 -0.1 -199
+   51: 5.0000E-02 ;  5.000 ;  199
+   51: -0.05 -5.0 -199
+   52: 5.0000E-02 ;  5.000 ;  199
+   52: -0.05 -5.0 -199
+   53: 5.0000E-02 ;  5.000 ;  199
+   53: -0.05 -5.0 -199
+   54: 5.0000E-02 ;  5.000 ;  199
+   54: -0.05 -5.0 -199
+   55: 5.0000E-02 ;  5.000 ;  199
+   55: -0.05 -5.0 -199
+   56: 5.0000E-02 ;  5.000 ;  199
+   56: -0.05 -5.0 -199
+   57: 5.0000E-02 ;  5.000 ;  199
+   57: -0.05 -5.0 -199
+   58: 5.0000E-02 ;  5.000 ;  199
+   58: -0.05 -5.0 -199
+   59: 5.0000E-02 ;  5.000 ;  199
+   59: -0.05 -5.0 -199
+   60: 5.0000E-02 ;  5.000 ;  199
+   60: -0.05 -5.0 -199
+   61: 5.0000E-02 ;  5.000 ;  199
+   61: -0.05 -5.0 -199
+   62: 5.0000E-02 ;  5.000 ;  199
+   62: -0.05 -5.0 -199
+   63: 5.0000E-02 ;  5.000 ;  199
+   63: -0.05 -5.0 -199
+   64: 5.0000E-02 ;  5.000 ;  199
+   64: -0.05 -5.0 -199
+   65: 5.0000E-02 ;  5.000 ;  199
+   65: -0.05 -5.0 -199
+   66: 5.0000E-02 ;  5.000 ;  199
+   66: -0.05 -5.0 -199
+   67: 5.0000E-02 ;  5.000 ;  199
+   67: -0.05 -5.0 -199
+   68: 5.0000E-02 ;  5.000 ;  199
+   68: -0.05 -5.0 -199
+   69: 5.0000E-02 ;  5.000 ;  199
+   69: -0.05 -5.0 -199
+   70: 5.0000E-02 ;  5.000 ;  199
+   70: -0.05 -5.0 -199
+   71: 1.0000E-03 ;  0.1500 ;  149
+   71: -0.001 -0.15 -149
+   72: 5.0000E-02 ;  5.000 ;  199
+   72: -0.05 -5.0 -199
+   73: 5.0000E-02 ;  5.000 ;  199
+   73: -0.05 -5.0 -199
+   74: 5.0000E-02 ;  5.000 ;  199
+   74: -0.05 -5.0 -199
+   75: 5.0000E-02 ;  5.000 ;  199
+   75: -0.05 -5.0 -199
+   76: 5.0000E-02 ;  5.000 ;  199
+   76: -0.05 -5.0 -199
+   77: 5.0000E-02 ;  5.000 ;  199
+   77: -0.05 -5.0 -199
+   78: 5.0000E-02 ;  5.000 ;  199
+   78: -0.05 -5.0 -199
+   79: 5.0000E-02 ;  5.000 ;  199
+   79: -0.05 -5.0 -199
+   80: 5.0000E-02 ;  5.000 ;  199
+   80: -0.05 -5.0 -199
+   81: 5.0000E-02 ;  5.000 ;  199
+   81: -0.05 -5.0 -199
+   82: 5.0000E-02 ;  5.000 ;  199
+   82: -0.05 -5.0 -199
+   83: 5.0000E-02 ;  5.000 ;  199
+   83: -0.05 -5.0 -199
+   84: 5.0000E-02 ;  5.000 ;  199
+   84: -0.05 -5.0 -199
+   85: 1.0000E-03 ;  0.1500 ;  149
+   85: -0.001 -0.15 -149
+   86: 1.0000E-03 ;  0.1000 ;  149
+   86: -0.001 -0.1 -149
+   87: 1.0000E-03 ;  0.1000 ;  199
+   87: -0.001 -0.1 -199
+   88: 1.0000E-03 ;  0.1000 ;  199
+   88: -0.001 -0.1 -199
+   89: 1.0000E-03 ;  0.1000 ;  199
+   89: -0.001 -0.1 -199
+   90: 1.0000E-03 ;  0.1000 ;  199
+   90: -0.001 -0.1 -199
+   91: 1.0000E-03 ;  0.1000 ;  199
+   91: -0.001 -0.1 -199
+   92: 1.0000E-03 ;  0.1000 ;  199
+   92: -0.001 -0.1 -199
+   93: 1.0000E-03 ;  0.1000 ;  199
+   93: -0.001 -0.1 -199
+   94: 1.0000E-03 ;  0.1000 ;  199
+   94: -0.001 -0.1 -199
+   95: 1.0000E-03 ;  0.1000 ;  199
+   95: -0.001 -0.1 -199
+   96: 1.0000E-03 ;  0.1000 ;  149
+   96: -0.001 -0.1 -149
+   97: 1.0000E-03 ;  0.1000 ;  199
+   97: -0.001 -0.1 -199
+   98: 1.0000E-03 ;  0.1000 ;  199
+   98: -0.001 -0.1 -199
+   99: 1.0000E-03 ;  0.1000 ;  199
+   99: -0.001 -0.1 -199
+   100: 1.0000E-03 ;  0.1000 ;  199
+   100: -0.001 -0.1 -199
+   101: 1.0000E-03 ;  0.1000 ;  199
+   101: -0.001 -0.1 -199
+   102: 1.0000E-03 ;  0.1000 ;  199
+   102: -0.001 -0.1 -199
+   103: 1.0000E-03 ;  0.1000 ;  199
+   103: -0.001 -0.1 -199
+   104: 1.0000E-03 ;  0.1000 ;  199
+   104: -0.001 -0.1 -199
+   105: 1.0000E-03 ;  0.1000 ;  199
+   105: -0.001 -0.1 -199
+   106: 1.0000E-03 ;  0.1500 ;  149
+   106: -0.001 -0.15 -149
+   107: 5.0000E-02 ;  5.000 ;  199
+   107: -0.05 -5.0 -199
+   108: 5.0000E-02 ;  5.000 ;  199
+   108: -0.05 -5.0 -199
+   109: 5.0000E-02 ;  5.000 ;  199
+   109: -0.05 -5.0 -199
+   110: 5.0000E-02 ;  5.000 ;  199
+   110: -0.05 -5.0 -199
+   111: 5.0000E-02 ;  5.000 ;  199
+   111: -0.05 -5.0 -199
+   112: 5.0000E-02 ;  5.000 ;  199
+   112: -0.05 -5.0 -199
+   113: 5.0000E-02 ;  5.000 ;  199
+   113: -0.05 -5.0 -199
+   114: 5.0000E-02 ;  5.000 ;  199
+   114: -0.05 -5.0 -199
+   115: 5.0000E-02 ;  5.000 ;  199
+   115: -0.05 -5.0 -199
 #+end_example
 
    Loss-im
@@ -2185,121 +2973,121 @@
 
    #+RESULTS:
    #+begin_example
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
-   0.0 0.0 0
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
+   -0.01 -2.5 -199
 #+end_example
 
 *** Per-unit cost
@@ -2343,7 +3131,7 @@
     #+END_SRC
 
     #+RESULTS:
-    [[file:/tmp/babel-1757XZc/figure-1757I4F.pdf]]
+    [[file:/tmp/babel-1786g10/figure-1786qFi.pdf]]
 
 
     #+BEGIN_SRC R :results output
@@ -2383,3 +3171,299 @@
     [1] 40000
 #+end_example
 
+* DS-IM
+   #+HEADER: :results output
+   #+BEGIN_SRC R :session *R-2*
+     graph.ds <- function(n) {
+         edp.values = levels(factor(cgs.descrip$EDP))
+         edp = edp.values[n]
+         cgs = cgs.descrip[cgs.descrip$EDP==edp,]
+         palette(rainbow(length(cgs$Type)))
+         plot(NULL, xlim=c(0,3), ylim=c(0,1), main="", xlab="IM", ylab="p")
+    
+         for (i in 1:length(cgs$Index)) {
+             cg = cgs$Index[i]
+             ds.im <- read.csv(
+                 sprintf("c-results/ds_im_%d.txt", cg), header=TRUE, sep="")
+             N = length(names(ds.im)) - 1
+             for (j in 1:N) {
+                 points(ds.im[,(j+1)] ~ ds.im$IM.1, col=i, pch=j);
+             }
+         }
+     }
+   #+END_SRC
+
+   #+RESULTS:
+
+   #+NAME: p.ds.im-1
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(1)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #1
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-1
+   #+RESULTS: p.ds.im-1
+   [[file:/tmp/babel-1786g10/figure-1786sjA.pdf]]
+
+   #+NAME: p.ds.im-2
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(2)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #2
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-2
+   #+RESULTS: p.ds.im-2
+   [[file:/tmp/babel-1786g10/figure-1786dCQ.pdf]]
+
+   #+NAME: p.ds.im-3
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(3)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #3
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-3
+   #+RESULTS: p.ds.im-3
+   [[file:/tmp/babel-1786g10/figure-1786Ehi.pdf]]
+
+   #+NAME: p.ds.im-4
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(4)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #4
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-4
+   #+RESULTS: p.ds.im-4
+   [[file:/tmp/babel-1786g10/figure-1786r_0.pdf]]
+
+   #+NAME: p.ds.im-5
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(5)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #5
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-5
+   #+RESULTS: p.ds.im-5
+   [[file:/tmp/babel-1786g10/figure-17863dQ.pdf]]
+
+   #+NAME: p.ds.im-6
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(6)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #6
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-6
+   #+RESULTS: p.ds.im-6
+   [[file:/tmp/babel-1786g10/figure-1786e8i.pdf]]
+
+   #+NAME: p.ds.im-7
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(7)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #7
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-7
+   #+RESULTS: p.ds.im-7
+   [[file:/tmp/babel-1786g10/figure-1786Fb1.pdf]]
+
+   #+NAME: p.ds.im-8
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(8)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #8
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-8
+   #+RESULTS: p.ds.im-8
+   [[file:/tmp/babel-1786g10/figure-1786R5Q.pdf]]
+
+   #+NAME: p.ds.im-9
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(9)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #9
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-9
+   #+RESULTS: p.ds.im-9
+   [[file:/tmp/babel-1786g10/figure-17864Xj.pdf]]
+
+   #+NAME: p.ds.im-10
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(10)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #10
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-10
+   #+RESULTS: p.ds.im-10
+   [[file:/tmp/babel-1786g10/figure-1786f21.pdf]]
+
+   #+NAME: p.ds.im-11
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(11)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #11
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-11
+   #+RESULTS: p.ds.im-11
+   [[file:/tmp/babel-1786g10/figure-1786rUR.pdf]]
+
+   #+NAME: p.ds.im-12
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(12)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #12
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-12
+   #+RESULTS: p.ds.im-12
+   [[file:/tmp/babel-1786g10/figure-1786Szj.pdf]]
+
+   #+NAME: p.ds.im-13
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(13)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #13
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-13
+   #+RESULTS: p.ds.im-13
+   [[file:/tmp/babel-1786g10/figure-17865R2.pdf]]
+
+   #+NAME: p.ds.im-14
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(14)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #14
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-14
+   #+RESULTS: p.ds.im-14
+   [[file:/tmp/babel-1786g10/figure-1786FwR.pdf]]
+
+   #+NAME: p.ds.im-15
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(15)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #15
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-15
+   #+RESULTS: p.ds.im-15
+   [[file:/tmp/babel-1786g10/figure-1786sOk.pdf]]
+
+   #+NAME: p.ds.im-16
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(16)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #16
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-16
+   #+RESULTS: p.ds.im-16
+   [[file:/tmp/babel-1786g10/figure-1786Tt2.pdf]]
+
+   #+NAME: p.ds.im-17
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(17)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #17
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-17
+   #+RESULTS: p.ds.im-17
+   [[file:/tmp/babel-1786g10/figure-1786fLS.pdf]]
+
+   #+NAME: p.ds.im-18
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(18)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #18
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-18
+   #+RESULTS: p.ds.im-18
+   [[file:/tmp/babel-1786g10/figure-1786Gqk.pdf]]
+
+   #+NAME: p.ds.im-19
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(19)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #19
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-19
+   #+RESULTS: p.ds.im-19
+   [[file:/tmp/babel-1786g10/figure-1786SIA.pdf]]
+
+   #+NAME: p.ds.im-20
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(20)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #20
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-20
+   #+RESULTS: p.ds.im-20
+   [[file:/tmp/babel-1786g10/figure-17865mS.pdf]]
+
+   #+NAME: p.ds.im-21
+   #+HEADER: :results graphics
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session *R-2*
+   graph.ds(21)
+   #+END_SRC
+
+   #+CAPTION: Probability of Damage States for EDP #21
+   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
+   #+NAME: fig:p.ds.im-21
+   #+RESULTS: p.ds.im-21
+   [[file:/tmp/babel-1786g10/figure-1786gFl.pdf]]

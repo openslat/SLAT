@@ -12,6 +12,7 @@
 #ifndef _COMP_GROUP_H_
 #define _COMP_GROUP_H_
 
+#include <vector>
 #include "maq.h"
 #include "relationships.h"
 #include "fragility.h"
@@ -55,6 +56,8 @@ namespace SLAT {
         std::shared_ptr<EDP> get_EDP(void) { return edp; };
         std::shared_ptr<FragilityFn> get_Fragility(void) { return frag_fn; };
         std::string get_Name(void) { return name; };
+        Caching::CachedValue<std::vector<double>> Rate; 
+        std::vector<double> pDS_IM(double im);
     private:
         std::string name;
         std::shared_ptr<EDP> edp;
@@ -67,6 +70,9 @@ namespace SLAT {
 
         double E_annual_loss_calc(void);
         double lambda_loss_calc(double loss);
+
+        double pDS_IM_calc(std::pair<int, double> params);
+        std::vector<double> calc_Rate(void);
     };
 }
 #endif

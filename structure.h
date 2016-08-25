@@ -25,6 +25,7 @@ namespace SLAT {
         void AddCompGroup(std::shared_ptr<CompGroup> cg);
 
         LogNormalDist Loss(double im, bool consider_collapse);
+        LogNormalDist TotalLoss(double im);
         typedef struct { LogNormalDist repair, demolition, collapse; } LOSSES;
         LOSSES LossesByFate(double im);
         Caching::CachedValue<LogNormalDist> AnnualLoss;

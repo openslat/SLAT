@@ -114,10 +114,8 @@ int main(int argc, char **argv)
             }
         }
         im_rel = make_shared<IM>(make_shared<LogLogInterpolatedFn>(im.data(), lambda.data(), im.size()));
-//        im_rel->SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.47));
         im_rel->SetDemolition(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.47));
         im_rel->SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.2, 0.47));
-//        im_rel->SetDemolition(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.5, 0.47));
     }
         
     // Write the IM-RATE relationship:
@@ -184,13 +182,7 @@ int main(int argc, char **argv)
     }
 
     // Write the rate of collapse:
-    if (false) {
-        ofstream ofile("parser/example2/c-results/collrate.txt");
-        ofile << setw(15) << "Rate of Demolition for IM IM_1 is "
-              << setprecision(16) << im_rel->DemolitionRate() << endl;
-        ofile << setw(15) << "Rate of Collapse for IM IM_1 is "
-              << setprecision(16) << im_rel->CollapseRate() << endl;
-    } else {
+    {
         ofstream ofile("parser/example2/c-results/collrate.txt");
         ofile << setw(15) << "IM" << setw(30) << "rate(Demolition)"
               << setw(30) << "rate(Collapse)" << endl;
@@ -199,6 +191,7 @@ int main(int argc, char **argv)
               << setw(30) << setprecision(16) << im_rel->CollapseRate()
               << endl;
     }
+
     // Read in EDP functions
     const int N_EDPS = 21;
     map<int, shared_ptr<EDP>> edp_rels;
@@ -579,6 +572,61 @@ int main(int argc, char **argv)
                 //cout << "AFTER DS-EDP " << omp_get_wtime() << endl;
             }
                 
+            if (true) {
+                // Record DS-IM relationship
+                stringstream path;
+                path << "parser/example2/c-results/ds_im_" << n << ".txt";
+
+                ofstream outfile(path.str());
+                outfile << setw(15) << "IM.1";
+                for (size_t i=1; i <= cg->FragFn()->n_states(); i++) {
+                    stringstream label;
+                    label << "DS" << i;
+                    outfile << setw(15) << label.str();
+                }
+                outfile << endl;
+                
+                vector<double> im_vals = linrange(0.1, 3.0, 199);
+                vector<double> results[im_vals.size()];
+                
+#pragma omp parallel for
+                for (size_t i=0; i < im_vals.size(); i++) {
+                    vector<double> temp = cg->pDS_IM(im_vals[i]);
+#pragma omp critical
+                    results[i] = temp;
+                }
+
+                for (size_t i=0; i < im_vals.size(); i++) {
+                    outfile << setw(15) << im_vals[i];
+                    for (vector<double>::const_iterator j = results[i].cbegin();
+                         j != results[i].cend();
+                         j++) 
+                    {
+                        outfile << setw(15) << *j;
+                    }
+                    outfile << endl;
+                }
+            }
+
+            // DS-Rate
+            if (true) {
+                stringstream path;
+                path << "parser/example2/c-results/ds_rate_" << n << ".txt";
+                ofstream outfile(path.str());
+                for (size_t i=1; i <= cg->FragFn()->n_states(); i++) {
+                    stringstream label;
+                    label << "DS" << i;
+                    outfile << setw(20) << label.str();
+                }
+                outfile << endl;
+
+                vector<double> rates = cg->Rate();
+                for (size_t i=0; i < rates.size(); i++) {
+                    outfile << setw(20) << setprecision(6) << rates[i];
+                }
+                outfile << endl;
+            }
+
             {
                 // Record LOSS-RATE relationship
                 stringstream path;
@@ -640,6 +688,29 @@ int main(int argc, char **argv)
     building->setDemolitionCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
                 
     {
+        // Record the total Loss|IM relationship:
+        ofstream outfile("parser/example2/c-results/total_loss");
+        outfile << setw(15) << "IM.1" 
+                << setw(15) << "loss.mean.x"
+                << setw(15) << "loss.sd_ln_x"
+                << endl;
+        
+        vector<double> im_vals = linrange(0.01, 3.0, 199);
+                
+        for (vector<double>::const_iterator im = im_vals.begin();
+             im != im_vals.end();
+             im++)
+        {
+            LogNormalDist loss = building->TotalLoss(*im);
+
+            outfile << setw(15) << *im 
+                    << setw(15) << loss.get_mean_X()
+                    << setw(15) << loss.get_sigma_lnX()
+                    << endl;
+        }
+    }
+
+    {
         // Record the deaggregated loss for the structure:
         ofstream outfile("parser/example2/c-results/loss_by_fate");
         outfile << setw(15) << "IM.1" 
@@ -676,7 +747,6 @@ int main(int argc, char **argv)
 
 
     // Deaggregate by EDP
-    cout << "> Deaggregate by EDP" << omp_get_wtime() << endl;
     {
         std::vector<std::vector<size_t>> losses_by_edp(edp_rels.size() + 1);
         std::vector<std::shared_ptr<CompGroup>> components = building->Components();
@@ -690,15 +760,6 @@ int main(int argc, char **argv)
             losses_by_edp[edp_id].push_back(i);
         }
         
-        for (size_t i=1; i < losses_by_edp.size(); i++) {
-            cout << setw(5) << i << ":";
-            for (size_t j=0; j < losses_by_edp[i].size(); j++) 
-            {
-                cout << setw(5) << losses_by_edp[i][j];
-            }
-            cout << endl;
-        }
-
         {
             ofstream outfile("parser/example2/c-results/loss_by_edp");
             outfile << setw(15) << "IM.1";
@@ -714,7 +775,6 @@ int main(int argc, char **argv)
             {
                 outfile << setw(15) << *im;
                 outfile.flush();
-                LogNormalDist dist = building->Loss(*im, true);
                 for (int edp=1; edp <= N_EDPS; edp++) {
                     vector<LogNormalDist> dists(losses_by_edp[edp].size());
 
@@ -727,9 +787,8 @@ int main(int argc, char **argv)
             }
         }
     }
-    cout << "< Deaggregate by EDP" << omp_get_wtime() << endl;
 
-    cout << "> Deaggregate by Component type" << omp_get_wtime() << endl;
+    // Deaggregate by component type
     {
         std::vector<std::shared_ptr<CompGroup>> components = building->Components();
         std::set<int> fragilities;
@@ -740,28 +799,6 @@ int main(int argc, char **argv)
             size_t frag_id = fragility_keys[frag];
             fragilities.insert(frag_id);
             losses_by_fragility[frag_id].push_back(i);
-        }
-        cerr << "sorted by fragility" << endl;
-
-        cerr << "Fragilities: ";
-        for (set<int>::iterator i=fragilities.begin();
-             i != fragilities.end();
-             i++)
-        {
-            cerr << setw(4) << *i;
-        }
-        cerr << endl;
-        
-        cerr << "Component Groups by fragility:" << endl;
-        for (set<int>::iterator i=fragilities.begin();
-             i != fragilities.end();
-             i++)
-        {
-            cerr << setw(4) << *i << ": ";
-            for (size_t j=0; j < losses_by_fragility[*i].size(); j++) {
-                cerr << setw(4) << losses_by_fragility[*i][j];
-            }
-            cerr << endl;
         }
 
         {
@@ -799,7 +836,6 @@ int main(int argc, char **argv)
         }
 
     }
-    cout << "< Deaggregate by Component type" << omp_get_wtime() << endl;
     
     cout << "Done" << endl;
     return 0;

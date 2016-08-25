@@ -347,12 +347,15 @@ recorder IM_COLLRATE_REC collrate IM.1 results/collrate.txt --new;
 
 
 recorder EDPIM.1_REC edpim EDP.01 $linvalues --cols mean_x, sd_ln_x results/im_edp_1.txt --new;
+#recorder EDPIM.1_REC edpim EDP.01 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_1.txt --new;
 recorder EDPRATE_1_REC edprate EDP.01 $(pyslat.logrange(0.032, 0.0325, 199)) results/edp_1_rate.txt --new;
 
 recorder EDPIM_2_REC edpim EDP.02 $linvalues --cols mean_x, sd_ln_x results/im_edp_2.txt --new;
+#recorder EDPIM_2_REC edpim EDP.02 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_2.txt --new;
 recorder EDP_RATE_2_REC edprate EDP.02 $(pyslat.logrange(0.001, 0.10, 199)) results/edp_2_rate.txt --new;
 
 recorder EDPIM_3_REC edpim EDP.03 $linvalues --cols mean_x, sd_ln_x results/im_edp_3.txt --new;
+#recorder EDPIM_3_REC edpim EDP.03 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_3.txt --new;
 recorder EDPRATE_3_REC edprate EDP.03 $edpoddvalues results/edp_3_rate.txt --new;
 
 recorder EDPIM_4_REC edpim EDP.04 $linvalues --cols mean_x, sd_ln_x results/im_edp_4.txt --new;

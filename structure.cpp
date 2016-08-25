@@ -70,6 +70,32 @@ namespace SLAT {
         }
     }
 
+    LogNormalDist Structure::TotalLoss(double im)
+    {
+        LogNormalDist loss_repair = LossNC(im);
+        LogNormalDist loss_demolition = demolition_cost;
+        LogNormalDist loss_collapse = rebuild_cost;
+        
+        double E_loss = loss_repair.get_mean_X() * this->im->pRepair(im)
+            + loss_demolition.get_mean_X() * this->im->pDemolition(im)
+            + loss_collapse.get_mean_X() * this->im->pCollapse(im); 
+        
+        double E_sq_loss_repair = loss_repair.get_mean_X() * loss_repair.get_mean_X() +
+            loss_repair.get_sigma_X() * loss_repair.get_sigma_X();
+        double E_sq_loss_demolition = loss_demolition.get_mean_X() * loss_demolition.get_mean_X() +
+            loss_demolition.get_sigma_X() * loss_demolition.get_sigma_X();
+        double E_sq_loss_collapse = loss_collapse.get_mean_X() * loss_collapse.get_mean_X() +
+            loss_collapse.get_sigma_X() * loss_collapse.get_sigma_X();
+
+        double E_sq_loss = E_sq_loss_repair * this->im->pRepair(im)
+            + E_sq_loss_demolition * this->im->pDemolition(im)
+            + E_sq_loss_collapse * this->im->pCollapse(im);
+        
+        double var_loss = E_sq_loss - E_loss * E_loss;
+        double sigma_loss = sqrt(var_loss);
+        return LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(E_loss, sigma_loss);
+    }
+
     std::pair<LogNormalDist, LogNormalDist> Structure::DeaggregatedLoss(double im)
     {
         LogNormalDist loss_nc = LossNC(im);

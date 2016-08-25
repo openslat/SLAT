@@ -13,6 +13,7 @@
 #include "comp_group.h"
 #include <vector>
 #include <gsl/gsl_deriv.h>
+#include <gsl/gsl_integration.h>
 
 using namespace std;
 
@@ -39,6 +40,9 @@ namespace SLAT {
                  return LogNormalDist::AddWeightedDistributions(this->loss_fn->LossFns(), 
                                                                 this->frag_fn->pHighest(edp)); 
              }, name + std::string("::loss_EDP_dist")),
+         Rate([this] (void) {
+                 return this->calc_Rate();
+             }, name + std::string("::Rate")),
          edp(edp),
          frag_fn(frag_fn),
          loss_fn(loss_fn),
@@ -216,6 +220,80 @@ namespace SLAT {
     std::shared_ptr<FragilityFn> CompGroup::FragFn(void)
     {
         return frag_fn;
+    }
+
+    double CompGroup::pDS_IM_calc(std::pair<int, double> params)
+    {
+        int i = params.first;
+        double im = params.second;
+        LogNormalDist dist = FragFn()->DamageStates()[i];
+
+        Integration::MAQ_RESULT result;
+        result =  Integration::MAQ(
+            [this, im, dist] (double edp) -> double {
+                double result;
+                if (edp == 0) {
+                    result = 0;
+                } else {
+                    std::function<double (double)> local_lambda = [this, im] (double x) {
+                        double result = this->edp->P_exceedence(im, x);
+                        return result;
+                    };
+                    gsl_function F;
+                    F.function = (double (*)(double, void *))wrapper;
+                    F.params = &local_lambda;
+                    double deriv, abserror;
+                    gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                    if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                    if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+
+                    double p = dist.p_at_most(edp);
+                    result = p * std::abs(deriv);
+                }
+                return result;
+            }, local_settings); 
+        
+        if (result.successful) {
+            return result.integral;
+        } else {
+            return 0; // NAN
+        };
+    }
+
+    vector<double> CompGroup::pDS_IM(double im)
+    {
+        vector<double> results(FragFn()->n_states());
+        for (size_t i=0; i < results.size(); i++) {
+            results[i] = pDS_IM_calc(std::pair<int, double>(i, im));
+        };
+        return results;
+    };
+    
+    vector<double> CompGroup::calc_Rate(void)
+    {
+        vector<double> results(FragFn()->n_states());
+        for (size_t i=0; i < results.size(); i++) {
+            // Integrate p(DS|IM) * dlambdaIM/dIM * dIM
+            Integration::MAQ_RESULT result;
+            result =  Integration::MAQ(
+                [this, i] (double im) -> double {
+                    double result;
+                    if (im == 0) {
+                        result = 0;
+                    } else {
+                        double deriv = this->edp->Base_Rate()->DerivativeAt(im);
+                        double p = this->pDS_IM_calc(std::pair<int, double>(i, im));
+                        result = p * std::abs(deriv);
+                    }
+                    return result;
+                }, local_settings); 
+            if (result.successful) {
+                results[i] = result.integral;
+            } else {
+                results[i] = 0; //NAN;;
+            };
+        }
+        return results;
     }
 
 }

@@ -26,6 +26,9 @@ namespace SLAT {
         
         std::vector<double> pExceeded(double edp);
         std::vector<double> pHighest(double edp);
+        const std::vector<LogNormalDist> DamageStates(void) {
+            return damage_states;
+        };
     private:
         omp_lock_t lock;
         std::vector<LogNormalDist> damage_states;

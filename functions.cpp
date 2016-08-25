@@ -203,8 +203,10 @@ namespace SLAT {
         // Use the GSL interpolator allocated by the constructor:
         double y;
         if (x < min_x.first) {
+            //std::cout << "CLIPPED at " << x << std::endl;
             y = min_x.second;
         } else if (x > max_x.first) {
+            //std::cout << "CLIPPED at " << x << std::endl;
             y = max_x.second;
         } else {
             (void)gsl_spline_eval_e(interp, x, accel, &y);
