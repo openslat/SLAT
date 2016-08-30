@@ -691,8 +691,8 @@ int main(int argc, char **argv)
         // Record the total Loss|IM relationship:
         ofstream outfile("parser/example2/c-results/total_loss");
         outfile << setw(15) << "IM.1" 
-                << setw(15) << "loss.mean.x"
-                << setw(15) << "loss.sd_ln_x"
+                << setw(15) << "mean_x"
+                << setw(15) << "sd_ln_x"
                 << endl;
         
         vector<double> im_vals = linrange(0.01, 3.0, 199);

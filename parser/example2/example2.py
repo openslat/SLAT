@@ -338,6 +338,13 @@ pyslat.MakeRecorder("STRUCTLOSS_COMP_REC",
                 None, 
                 linvalues)
 
+pyslat.MakeRecorder("TOTALLOSS_COMP_REC", 
+                "totalloss", 
+                pyslat.structure.lookup("building"),
+                {'filename': "py-results/total_loss", 'append': False},
+                None, 
+                linvalues)
+
 pyslat.IntegrationSettings(1.0E-6, 1024)
 for r in pyslat.recorder.all():
     r.run()

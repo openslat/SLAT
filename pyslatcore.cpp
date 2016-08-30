@@ -635,6 +635,11 @@ namespace SLAT {
         LogNormalDistWrapper Loss(double im, bool consider_collapse) {
             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->Loss(im, consider_collapse))));
         };
+        
+        LogNormalDistWrapper TotalLoss(double im) {
+            return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->TotalLoss(im))));
+        };
+        
         python::list DeaggregatedLoss(double im) {
             std::pair<LogNormalDist, LogNormalDist> values = wrapper->DeaggregatedLoss(im);
             
@@ -895,6 +900,7 @@ namespace SLAT {
             .def("LossesByFate", &StructureWrapper::LossesByFate)
             .def("ComponentsByEDP", &StructureWrapper::ComponentsByEDP)
             .def("ComponentsByFragility", &StructureWrapper::ComponentsByFragility)
+            .def("TotalLoss", &StructureWrapper::TotalLoss)
             ;
 
         

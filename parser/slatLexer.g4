@@ -47,6 +47,7 @@ STRUCTLOSS: 'structloss';
 DSRATE : 'dsrate';
 ANNLOSS: 'annloss';
 LOSSRATE: 'lossrate';
+TOTALLOSS: 'totalloss';
 DEAGG: 'deagg';
 APPEND_OPTION : '--append';
 NEW_OPTION : '--new';

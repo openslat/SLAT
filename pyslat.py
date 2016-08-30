@@ -481,6 +481,9 @@ class structure:
     def Loss(self, im, consider_collapse):
         return lognormaldist(self._structure.Loss(im, consider_collapse))
 
+    def TotalLoss(self, im):
+        return lognormaldist(self._structure.TotalLoss(im))
+
     def LossesByFate(self, im):
         result = self._structure.LossesByFate(im)
         return [lognormaldist(result[0]),
@@ -523,7 +526,8 @@ class recorder:
                 columns.append("DS{}".format(i + 1))
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_ln_x', 'sd_ln_x']
-        elif (type == 'lossedp' or type =='lossim') \
+        elif (type == 'lossedp' or type =='lossim' \
+              or type == 'totalloss') \
              and columns == None:
             columns = ['mean_x', 'sd_ln_x']
         self._columns = columns
@@ -575,6 +579,7 @@ class recorder:
                       'lossim': ['IM', None],
                       'annloss': ['t', ["E[ALt]"]],
                       'lossrate': ['t', 'Rate'],
+                      'totalloss': ['IM', None],
                       'collapse': ['IM', ['p(Demolition)', 'p(Collapse)']],
                       'deagg': ['IM', ['mean_nc', 'sd_nc', 'mean_c', 'sd_c']]}
         
@@ -641,21 +646,34 @@ class recorder:
                                 yval = self._function.E_Loss_EDP(x)
                             elif self._type == 'lossim':
                                 yval = self._function.E_Loss_IM(x)
+                            elif self._type == 'totalloss':
+                                yval = self._function.TotalLoss(x).mean()
                             else:
                                 yval = self._function.Mean(x)
                         elif y == 'mean_ln_x':
-                            yval = self._function.MeanLn(x)
+                            if self._type == 'totalloss':
+                                yval = self._function.TotalLoss(x).mean_ln()
+                            else:
+                                yval = self._function.MeanLn(x)
                         elif y == 'median_x':
-                            yval = self._function.Median(x)
+                            if self._type == 'totalloss':
+                                yval = self._function.TotalLoss(x).median()
+                            else:
+                                yval = self._function.Median(x)
                         elif y == 'sd_ln_x':
                             if self._type == 'lossedp':
                                 yval = self._function.SD_ln_Loss_EDP(x)
                             elif self._type == 'lossim':
                                 yval = self._function.SD_ln_Loss_IM(x)
+                            elif self._type == 'totalloss':
+                                yval = self._function.TotalLoss(x).sd_ln()
                             else:
                                 yval = self._function.SD_ln(x)
                         elif y == 'sd_x':
-                            yval = self._function.SD(x)
+                            if self._type == 'totalloss':
+                                yval = self._function.TotalLoss(x).sd()
+                            else:
+                                yval = self._function.SD(x)
                         else:
                             yval = "+++++++++"
                         line = "{}{:>15.6}".format(line, yval)

@@ -446,6 +446,8 @@ class SlatInterpreter(slatParserListener):
             type = "annloss"
         elif ctx.LOSSRATE():
             type = 'lossrate'
+        elif ctx.TOTALLOSS():
+            type = 'totalloss'
         elif ctx.COLLAPSE():
             type = 'collapse'
         elif ctx.COLLRATE():
@@ -505,7 +507,7 @@ class SlatInterpreter(slatParserListener):
         elif type == 'lossds' or type == 'lossedp' or type == 'lossim' \
              or type == 'annloss' or type == 'lossrate':
             function = pyslat.compgroup.lookup(id)
-        elif type == 'structloss' or type == 'deagg':
+        elif type == 'structloss' or type == 'deagg' or type == 'totalloss':
             function = pyslat.structure.lookup(id)
         else:
             raise ValueError("Unhandled recorder type")

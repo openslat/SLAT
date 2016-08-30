@@ -1455,4 +1455,5 @@ recorder STRUCTLOSS_EDP_REC structloss BUILDING --by-edp $linvalues results/loss
 recorder STRUCTLOSS_FRAG_REC structloss BUILDING --by-frag $linvalues results/loss_by_frag --new;
 
 #recorder DEAGG_REC deagg BUILDING 0.01:3.0 --linear 199 results/deagg --new;
+recorder TOTALLOSS_REC totalloss BUILDING 0.01:3.0 --linear 199 results/total_loss --new;
 analyze;
