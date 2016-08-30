@@ -455,7 +455,14 @@ class SlatInterpreter(slatParserListener):
         elif ctx.DEAGG():
             type = 'deagg'
         else:
-            raise ValueError("Unhandled recorder type: {}")
+            print("---------------")
+            print(type)
+            print("---------------")
+            print(ctx.DSRATE())
+            print("---------------")
+            print(ctx)
+            print("---------------")
+            raise ValueError("Unhandled recorder type: {}".format(type))
 
         if type == 'structloss':
             if ctx.structloss_type():

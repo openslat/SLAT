@@ -425,6 +425,12 @@ class compgroup:
     def lambda_loss(self, loss):
         return self._func.lambda_loss(loss)
 
+    def pDS_IM(self, im):
+        return self._func.pDS_IM(im)
+
+    def Rate(self):
+        return self._func.Rate()
+
     def id(self):
         return(self._id)
         
@@ -547,8 +553,15 @@ class recorder:
     def generate_output(self):
         #print(self)
         if self._type == 'dsrate':
-            # TODO: How does this recorder work?
-            print("DSRATE recorder not implemented")
+            rates = self._function.Rate()
+            line1 = ""
+            line2 = ""
+            for i in range(len(rates)):
+                 label = "DS{}".format(i + 1)
+                 line1 = "{}{:>20}".format(line1, label)
+                 line2 = "{}{:>20.6}".format(line2, rates[i])
+            print(line1)
+            print(line2)
         else:
             labels = {'detfn': ['x', 'y'],
                       'probfn': ['x', None],
@@ -588,6 +601,10 @@ class recorder:
                 line = "{:>15.6}".format(x)
                 if self._type == 'dsedp':
                     yvals = self._function.fragfn().pExceeded(x)
+                    for y in yvals:
+                        line = "{}{:>15.6}".format(line, y)
+                elif self._type == 'dsim':
+                    yvals = self._function.pDS_IM(x)
                     for y in yvals:
                         line = "{}{:>15.6}".format(line, y)
                 elif self._type == 'annloss':

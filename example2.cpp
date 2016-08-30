@@ -586,7 +586,7 @@ int main(int argc, char **argv)
                 }
                 outfile << endl;
                 
-                vector<double> im_vals = linrange(0.1, 3.0, 199);
+                vector<double> im_vals = linrange(0.01, 3.0, 199);
                 vector<double> results[im_vals.size()];
                 
 #pragma omp parallel for
@@ -611,7 +611,7 @@ int main(int argc, char **argv)
             // DS-Rate
             if (true) {
                 stringstream path;
-                path << "parser/example2/c-results/ds_rate_" << n << ".txt";
+                path << "parser/example2/c-results/ds_rate_" << setw(3) << setfill('0')  << n << ".txt";
                 ofstream outfile(path.str());
                 for (size_t i=1; i <= cg->FragFn()->n_states(); i++) {
                     stringstream label;

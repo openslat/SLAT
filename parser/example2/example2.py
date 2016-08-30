@@ -279,6 +279,16 @@ for comp in COMPONENT_DATA:
                     None, 
                     pyslat.frange(0.0, 0.200, 0.01))
 
+    pyslat.MakeRecorder("DSIM_{:>03}_REC".format(id), 'dsim', cg,
+                    {'filename': ResultsFile("ds_im_{}.txt".format(id))},
+                    None, 
+                    linvalues)
+
+    pyslat.MakeRecorder("DSRATE_{:>03}_REC".format(id), 'dsrate', cg,
+                    {'filename': ResultsFile("ds_rate_{:>03}.txt".format(id))},
+                    None, 
+                    None)
+
     pyslat.MakeRecorder("LOSSRATE_{:>03}_REC".format(id), 'lossrate', cg,
                     {'filename': ResultsFile("loss_rate_{}.txt".format(id))},
                     None, 

@@ -584,6 +584,8 @@ namespace SLAT {
         double SD_ln_loss_IM(double edp) { return wrapper->SD_ln_loss_IM(edp); };
         double E_annual_loss(void) { return wrapper->E_annual_loss(); };
         double E_loss(int years, double discount_rate) { return wrapper->E_loss(years, discount_rate); };
+        python::list pDS_IM(double im);
+        python::list Rate(void);
         double lambda_loss(double loss) { return wrapper->lambda_loss(loss); };
         bool AreSame(const CompGroupWrapper &other)
         {
@@ -604,6 +606,26 @@ namespace SLAT {
                                         count));
     }
     
+    python::list CompGroupWrapper::pDS_IM(double im)
+    {
+        std::vector<double> probabilities = wrapper->pDS_IM(im);
+        python::list result;
+        for (std::vector<double>::iterator i = probabilities.begin(); i != probabilities.end(); i++) {
+            result.append(*i);
+        }
+        return result;
+    }
+
+    python::list CompGroupWrapper::Rate(void)
+    {
+        std::vector<double> probabilities = wrapper->Rate();
+        python::list result;
+        for (std::vector<double>::iterator i = probabilities.begin(); i != probabilities.end(); i++) {
+            result.append(*i);
+        }
+        return result;
+    }
+
     class StructureWrapper {
     public:
         StructureWrapper(std::shared_ptr<Structure> structure) { wrapper = structure; };
@@ -853,6 +875,8 @@ namespace SLAT {
             .def("E_loss", &CompGroupWrapper::E_loss)
             .def("lambda_loss", &CompGroupWrapper::lambda_loss)
             .def("AreSame", &CompGroupWrapper::AreSame)
+            .def("pDS_IM", &CompGroupWrapper::pDS_IM)
+            .def("Rate", &CompGroupWrapper::Rate)
             ;
 
         python::def("MakeCompGroup", 
