@@ -135,7 +135,7 @@ Nondigit : [a-zA-Z_.];
 fragment
 Digit : [0-9];
 
-INTEGER : [1-9][0-9]*;
+INTEGER : [0-9]+;
     
 ID :   Nondigit (Nondigit | Digit)*;
 FLOAT_VAL: SIGN? FRACTION EXPONENT?;

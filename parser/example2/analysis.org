@@ -2389,11 +2389,11 @@
           main="Normalised Loss", xlab="IM", ylab="Loss (normalised)")
     #+END_SRC
 
-    #+CAPTION: Mean Loss by FATE
+    #+CAPTION: Loss Total, Normalised
     #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
     #+NAME: fig:structloss.by.fate-normalised
     #+RESULTS: structloss.by.fate-normalised
-    [[file:/tmp/babel-1786g10/figure-1786Pim.pdf]]
+    [[file:/tmp/babel-1803DPc/figure-1803XOd.pdf]]
    
 * Loss by EDP
    #+NAME: structloss.by.edp
@@ -2456,7 +2456,7 @@
    #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
    #+NAME: fig:structloss.by.edp-20
    #+RESULTS: structloss.by.edp-20
-   [[file:/tmp/babel-1786g10/figure-1786CfU.pdf]]
+   [[file:/tmp/babel-1803DPc/figure-1803jlE.pdf]]
 
    #+NAME: structloss.by.edp-67
    #+HEADER: :results graphics
