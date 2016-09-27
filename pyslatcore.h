@@ -10,6 +10,8 @@ enum FUNCTION_TYPE { NLH=0, PLC, LIN, LOGLOG };
 enum LOGNORMAL_MU_TYPE { MEAN_X, MEDIAN_X, MEAN_LN_X };
 enum LOGNORMAL_SIGMA_TYPE { SD_X, SD_LN_X };
 
+class IM;
+class EDP;
 
 class DeterministicFn {
 public:
@@ -35,6 +37,8 @@ public:
     double SD(double x);
 private:
     std::shared_ptr<SLAT::ProbabilisticFn> function;
+    friend EDP *MakeEDP(IM base_wrate, ProbabilisticFn dependent_rate, std::string name);
+
 };
 
 ProbabilisticFn *MakeLogNormalProbabilisticFn(const DeterministicFn &mu_function,
@@ -61,9 +65,14 @@ private:
     // friend FragilityFn *MakeFragilityFn(python::list);
     // friend LossFn *MakeLossFn(python::list);        
     // friend class Structure;
-    // friend class IM;
+    friend class IM;
     friend LogNormalDist AddDistributions(std::vector<LogNormalDist> dists);
 };
+
+LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
+                                 double sigma, LOGNORMAL_SIGMA_TYPE sigma_type);
+
+
 
 class IM {
 public:
@@ -84,3 +93,23 @@ public:
 
 IM *MakeIM(DeterministicFn f);
 
+class EDP {
+public:
+    EDP();
+    EDP(std::shared_ptr<SLAT::EDP> r);
+    double lambda(double x);
+    double P_exceedence(double x, double y);
+    double Mean(double x);
+    double MeanLn(double x);
+    double Median(double x);
+    double SD_ln(double x);
+    double SD(double x);
+    std::string get_Name(void);
+    bool AreSame(const EDP &other);
+public:
+    std::shared_ptr<SLAT::EDP> relationship;
+    // friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
+    //                                        LossFn loss_fn, int count);
+};
+
+EDP *MakeEDP(IM base_wrate, ProbabilisticFn dependent_rate, std::string name);

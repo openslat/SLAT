@@ -1,4 +1,4 @@
- #include "caching.h"
+#include "caching.h"
 #include "maq.h"
 #include "pyslatcore.h"
 
@@ -46,7 +46,7 @@ DeterministicFn *factory(FUNCTION_TYPE t, std::vector<double>x, std::vector<doub
         result = std::make_shared<SLAT::LinearInterpolatedFn>(x.data(), y.data(), x.size());
         break;
     }
-     case LOGLOG:
+    case LOGLOG:
         if (x.size() < 2 || x.size() != y.size()) {
             std::cout << "Data lists must be same size, greater than 1." << std::endl;
             break;
@@ -89,7 +89,7 @@ DeterministicFn *factory(FUNCTION_TYPE t, std::vector<double> params)
     case LIN:
         std::cout << "Must have exactly two lists of data." << std::endl;
         break;
-     case LOGLOG:
+    case LOGLOG:
         std::cout << "Must have exactly two lists of data." << std::endl;
         break;
     default:
@@ -221,10 +221,10 @@ double LogNormalDist::get_sigma_X(void) const
 LogNormalDist AddDistributions(std::vector<LogNormalDist> dists) 
 {
     std::vector<SLAT::LogNormalDist> slat_dists(dists.size());
-        for (size_t i=0; i < dists.size(); i++) {
-            slat_dists[i] = *(dists[i].dist);
-        }
-        return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(SLAT::LogNormalDist::AddDistributions(slat_dists)));
+    for (size_t i=0; i < dists.size(); i++) {
+        slat_dists[i] = *(dists[i].dist);
+    }
+    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(SLAT::LogNormalDist::AddDistributions(slat_dists)));
 };
     
 
@@ -292,130 +292,135 @@ IM::IM(std::shared_ptr<SLAT::IM> r)
 }
 
 
-//     class IMWrapper {
-//     public:
-//         IMWrapper() : relationship(NULL) {};
-//         IMWrapper(std::shared_ptr<IM> r)
-//         {
-//             relationship = r;
-//         }
-//         double lambda(double x) 
-//         {
-//             return relationship->lambda(x);
-//         }
-//         python::list lambda_l(python::list l) 
-//         {
-//             return l;
-//         }
-//         void SetCollapse(LogNormalDistWrapper c)
-//         {
-//            relationship->SetCollapse(c.dist);
-//         }
-//         double pCollapse(double im)
-//         {
-//             return relationship->pCollapse(im);
-//         }
-//         double CollapseRate(void)
-//         {
-//             return relationship->CollapseRate();
-//         }
-//         void SetDemolition(LogNormalDistWrapper d)
-//         {
-//            relationship->SetDemolition(d.dist);
-//         }
-//         double pDemolition(double im)
-//         {
-//             return relationship->pDemolition(im);
-//         }
-//         double DemolitionRate(void)
-//         {
-//             return relationship->DemolitionRate();
-//         }
-//         double pRepair(double im)
-//         {
-//             return relationship->pRepair(im);
-//         }
-//     public:
-//         std::shared_ptr<IM> relationship;
-        
-//     };
-    
-//     class EDPWrapper {
-//     public:
-//         EDPWrapper() : relationship(NULL) {};
-//         EDPWrapper(std::shared_ptr<EDP> r)
-//         {
-//             relationship = r;
-//         }
-//         double lambda(double x) 
-//         {
-//             return relationship->lambda(x);
-//         }
-//         double P_exceedence(double x, double y) 
-//         {
-//             return relationship->P_exceedence(x, y);
-//         }
-//         python::list lambda_l(python::list l) 
-//         {
-//             return l;
-//         }
-//         double Mean(double x)
-//         {
-//             return relationship->Mean(x);
-//         }
-//         double MeanLn(double x)
-//         {
-//             return relationship->MeanLn(x);
-//         }
-//         double Median(double x)
-//         {
-//             return relationship->Median(x);
-//         }
-//         double SD_ln(double x)
-//         {
-//             return relationship->SD_ln(x);
-//         }
-//         double SD(double x)
-//         {
-//             return relationship->SD(x);
-//         }
-//         std::string get_Name(void)
-//         {
-//             return relationship->get_Name();
-//         }
-//         bool AreSame(const EDPWrapper &other)
-//         {
-//             return this->relationship == other.relationship;
-//         }
-//     public:
-//         std::shared_ptr<EDP> relationship;
-//         friend CompGroupWrapper *MakeCompGroup(EDPWrapper edp, FragilityFnWrapper frag_fn,
-//                                                 LossFnWrapper loss_fn, int count);
-//     };
-    
-//     IMWrapper *MakeIM(DeterministicFn f)
-//     {
-//         std::shared_ptr<IM> relationship(new IM(f.function));
-//         return new IMWrapper(relationship);
-//     }
+double IM::lambda(double x) 
+{
+    return relationship->lambda(x);
+}
 
-//     EDPWrapper *MakeEDP(
-//         IMWrapper base_rate,
-//         ProbabilisticFn dependent_rate, 
-//         std::string name)
-//     {
-//         std::shared_ptr<EDP> relationship =
-// 	  std::make_shared<EDP>(base_rate.relationship,
-//                             dependent_rate.function,
-//                             name);
-//         EDPWrapper *result = new EDPWrapper(relationship);
-//         return result;
-//     }
+
+void IM::SetCollapse(LogNormalDist c)
+{
+    relationship->SetCollapse(c.dist);
+}
+
+double IM::pCollapse(double im)
+{
+    return relationship->pCollapse(im);
+}
+
+double IM::CollapseRate(void)
+{
+    return relationship->CollapseRate();
+}
+
+void IM::SetDemolition(LogNormalDist d)
+{
+    relationship->SetDemolition(d.dist);
+}
+
+double IM::pDemolition(double im)
+{
+    return relationship->pDemolition(im);
+}
+
+double IM::DemolitionRate(void)
+{
+    return relationship->DemolitionRate();
+}
+
+double IM::pRepair(double im)
+{
+    return relationship->pRepair(im);
+}
+    
+EDP::EDP() : relationship(NULL)
+{
+}
+
+EDP::EDP(std::shared_ptr<SLAT::EDP> r)
+{
+    relationship = r;
+}
+
+double EDP::lambda(double x) 
+{
+    return relationship->lambda(x);
+}
+
+double EDP::P_exceedence(double x, double y) 
+{
+    return relationship->P_exceedence(x, y);
+}
+
+double EDP::Mean(double x)
+{
+    return relationship->Mean(x);
+}
+
+double EDP::MeanLn(double x)
+{
+    return relationship->MeanLn(x);
+}
+
+double EDP::Median(double x)
+{
+    return relationship->Median(x);
+}
+
+double EDP::SD_ln(double x)
+{
+    return relationship->SD_ln(x);
+}
+
+double EDP::SD(double x)
+{
+    return relationship->SD(x);
+}
+
+std::string EDP::get_Name(void)
+{
+    return relationship->get_Name();
+}
+
+bool EDP::AreSame(const EDP &other)
+{
+    return this->relationship == other.relationship;
+}
+
+EDP *MakeEDP(IM base_rate, ProbabilisticFn dependent_rate, std::string name)
+{
+    std::shared_ptr<SLAT::EDP> relationship =
+        std::make_shared<SLAT::EDP>(base_rate.relationship,
+                                    dependent_rate.function,
+                                    name);
+    EDP *result = new EDP(relationship);
+    return result;
+}
 
 
 //     class FragilityFnWrapper;
 //     class LossFnWrapper;
     
+LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
+                                 double sigma, LOGNORMAL_SIGMA_TYPE sigma_type)
+{
+    SLAT::LogNormalDist dist;
+    if (mu_type == MEAN_LN_X && sigma_type == SD_LN_X) {
+        dist = SLAT::LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(mu, sigma);
+    } else if (mu_type == MEAN_X && sigma_type == SD_LN_X) {
+        dist = SLAT::LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mu, sigma);
+    } else if (mu_type == MEDIAN_X && sigma_type == SD_LN_X) {
+        dist = SLAT::LogNormalDist::LogNormalDist_from_median_X_and_sigma_lnX(mu, sigma);
+    } else if (mu_type == MEAN_X && sigma_type == SD_X) {
+        dist = SLAT::LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(mu, sigma);
+    } else {
+        std::cout << "Unsupported combination of mu and sigma." << std::endl;
+    }
+
+    std::shared_ptr<SLAT::LogNormalDist> temp = std::make_shared<SLAT::LogNormalDist>(dist);
+    return new LogNormalDist(temp);
+}
+
 //     LogNormalDistWrapper *MakeLogNormalDist(python::dict parameters)
 //     {
 //         LogNormalFn::M_TYPE m_type = LogNormalFn::M_TYPE::MEAN_INVALID;
@@ -510,7 +515,7 @@ IM::IM(std::shared_ptr<SLAT::IM> r)
 //         }
 //     private:
 //         std::shared_ptr<FragilityFn> fragility;
-//         friend CompGroupWrapper *MakeCompGroup(EDPWrapper edp, FragilityFnWrapper frag_fn,
+//         friend CompGroupWrapper *MakeCompGroup(EDP edp, FragilityFnWrapper frag_fn,
 //                                                 LossFnWrapper loss_fn, int count);
 //     };
 
@@ -552,7 +557,7 @@ IM::IM(std::shared_ptr<SLAT::IM> r)
 //         int n_states() { return loss->n_states(); };
 //     private:
 //         std::shared_ptr<LossFn> loss;
-//         friend CompGroupWrapper *MakeCompGroup(EDPWrapper edp, FragilityFnWrapper frag_fn,
+//         friend CompGroupWrapper *MakeCompGroup(EDP edp, FragilityFnWrapper frag_fn,
 //                                                 LossFnWrapper loss_fn, int count);
 //     };
 
@@ -590,7 +595,7 @@ IM::IM(std::shared_ptr<SLAT::IM> r)
 //         friend class StructureWrapper;
 //     };
     
-//     CompGroupWrapper *MakeCompGroup(EDPWrapper edp, FragilityFnWrapper frag_fn, LossFnWrapper loss_fn, int count)
+//     CompGroupWrapper *MakeCompGroup(EDP edp, FragilityFnWrapper frag_fn, LossFnWrapper loss_fn, int count)
 //     {
 //         return new CompGroupWrapper(std::make_shared<CompGroup>( 
 //                                         edp.relationship, 
@@ -698,7 +703,7 @@ IM::IM(std::shared_ptr<SLAT::IM> r)
 //                  key++)
 //             {
 //                 python::list mapping;
-//                 mapping.append(EDPWrapper(*key));
+//                 mapping.append(EDP(*key));
 
 //                 for (size_t j=0; j < edp_cg_mapping[*key].size(); j++) {
 //                     mapping.append(CompGroupWrapper(edp_cg_mapping[*key][j]));
@@ -799,16 +804,16 @@ IM::IM(std::shared_ptr<SLAT::IM> r)
 //             .def("pRepair", &IMWrapper::pRepair)
 //             ;
 
-//         python::class_<EDPWrapper>("EDP", python::no_init)
-//             .def("getlambda", &EDPWrapper::lambda)
-//             .def("P_exceedence", &EDPWrapper::P_exceedence)
-//             .def("Mean", &EDPWrapper::Mean)
-//             .def("MeanLn", &EDPWrapper::MeanLn)
-//             .def("Median", &EDPWrapper::Median)
-//             .def("SD_ln", &EDPWrapper::SD_ln)
-//             .def("SD", &EDPWrapper::SD)
-//             .def("get_Name", &EDPWrapper::get_Name)
-//             .def("AreSame", &EDPWrapper::AreSame)
+//         python::class_<EDP>("EDP", python::no_init)
+//             .def("getlambda", &EDP::lambda)
+//             .def("P_exceedence", &EDP::P_exceedence)
+//             .def("Mean", &EDP::Mean)
+//             .def("MeanLn", &EDP::MeanLn)
+//             .def("Median", &EDP::Median)
+//             .def("SD_ln", &EDP::SD_ln)
+//             .def("SD", &EDP::SD)
+//             .def("get_Name", &EDP::get_Name)
+//             .def("AreSame", &EDP::AreSame)
 //             ;
 
 //         python::enum_<FUNCTION_TYPE>("FUNCTION_TYPE")
