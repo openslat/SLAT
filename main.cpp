@@ -29,6 +29,7 @@ int main(int argc, char **argv)
 {
     logging::add_file_log("main.log");
     logging::add_common_attributes();
+    Caching::Init_Caching();
 
     src::logger_mt& logger = main_logger::get();
     BOOST_LOG(logger) << "Starting main().";

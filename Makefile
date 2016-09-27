@@ -1,5 +1,5 @@
 ifeq ($(shell uname), Linux)
-all: main unit_tests pyslatcore.so doc total_loss_debug interp example2
+all: main unit_tests _pyslatcore.so doc total_loss_debug interp example2
 
 clean:
 	rm -f *.pyd *.a *.o *.so main unit_tests total_loss_debug example2
@@ -14,6 +14,7 @@ ANTLR=java -jar ../../antlr-4.5.3-complete.jar -Dlanguage=Python3
 endif
 
 CFLAGS=-g -O3 -fopenmp -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
+CFLAGS+=`pkg-config --cflags python3`
 
 ifeq ($(shell uname), Linux)
 	# Linux Build
@@ -195,3 +196,21 @@ example2.o: example2.cpp functions.h relationships.h maq.h replaceable.h fragili
 cachetest.o: cachetest.cpp caching.h
 cachetest: cachetest.o caching.o
 	$(CC) -fPIC cachetest.o caching.o -o cachetest ${LDFLAGS}
+
+wrap_pyslatcore.cpp: pyslatcore.i pyslatcore.h
+	swig -python -c++ -py3  -modern \
+	-fastdispatch \
+	-nosafecstrings \
+	-fvirtual \
+	-noproxydel \
+	-fastproxy \
+	-nofastinit \
+	-fastunpack \
+	-fastquery \
+	-modernargs \
+	-castmode \
+	-nobuildnone \
+	-o wrap_pyslatcore.cpp pyslatcore.i
+wrap_pyslatcore.o: wrap_pyslatcore.cpp functions.h
+_pyslatcore.so: wrap_pyslatcore.o pyslatcore.o 
+	$(CC) -fPIC -shared -Wl,-soname,_pyslatcore.so wrap_pyslatcore.o pyslatcore.o -o $@ -L. `pkg-config --libs python3` `pkg-config --libs gsl` -L. -lslat 
