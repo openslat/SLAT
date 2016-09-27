@@ -292,7 +292,7 @@ IM::IM(std::shared_ptr<SLAT::IM> r)
 }
 
 
-double IM::lambda(double x) 
+double IM::get_lambda(double x) 
 {
     return relationship->lambda(x);
 }
@@ -342,7 +342,7 @@ EDP::EDP(std::shared_ptr<SLAT::EDP> r)
     relationship = r;
 }
 
-double EDP::lambda(double x) 
+double EDP::get_lambda(double x) 
 {
     return relationship->lambda(x);
 }
@@ -385,6 +385,12 @@ std::string EDP::get_Name(void)
 bool EDP::AreSame(const EDP &other)
 {
     return this->relationship == other.relationship;
+}
+
+IM *MakeIM(DeterministicFn f)
+{
+    std::shared_ptr<SLAT::IM> im = std::make_shared<SLAT::IM>(f.function);
+    return new IM(im);
 }
 
 EDP *MakeEDP(IM base_rate, ProbabilisticFn dependent_rate, std::string name)

@@ -2,6 +2,7 @@
 %{
 #include "pyslatcore.h"
 %}
+%include <std_string.i>
 %include <std_vector.i>
 %include <std_map.i>
 namespace std{
@@ -40,3 +41,38 @@ public:
     double get_sigma_lnX(void) const;
     double get_sigma_X(void) const;
 };
+
+LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
+                                 double sigma, LOGNORMAL_SIGMA_TYPE sigma_type);
+
+class IM {
+public:
+    IM();
+    double get_lambda(double x);
+    void SetCollapse(LogNormalDist c);
+    double pCollapse(double im);
+    double CollapseRate(void);
+    void SetDemolition(LogNormalDist d);
+    double pDemolition(double im);
+    double DemolitionRate(void);
+    double pRepair(double im);
+        
+};
+
+IM *MakeIM(DeterministicFn f);
+
+class EDP {
+public:
+    EDP();
+    double get_lambda(double x);
+    double P_exceedence(double x, double y);
+    double Mean(double x);
+    double MeanLn(double x);
+    double Median(double x);
+    double SD_ln(double x);
+    double SD(double x);
+    std::string get_Name(void);
+    bool AreSame(const EDP &other);
+};
+
+EDP *MakeEDP(IM base_wrate, ProbabilisticFn dependent_rate, std::string name);

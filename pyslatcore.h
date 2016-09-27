@@ -78,7 +78,7 @@ class IM {
 public:
     IM();
     IM(std::shared_ptr<SLAT::IM> r);
-    double lambda(double x);
+    double get_lambda(double x);
     void SetCollapse(LogNormalDist c);
     double pCollapse(double im);
     double CollapseRate(void);
@@ -97,7 +97,7 @@ class EDP {
 public:
     EDP();
     EDP(std::shared_ptr<SLAT::EDP> r);
-    double lambda(double x);
+    double get_lambda(double x);
     double P_exceedence(double x, double y);
     double Mean(double x);
     double MeanLn(double x);

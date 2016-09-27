@@ -61,14 +61,18 @@ class SlatInterpreter(slatParserListener):
             type = 'loglog'
             fntype = pyslat.FUNCTION_TYPE.LOGLOG
         elif ctx.linear_args():
-            type = 'log'
+            type = 'lin'
             fntype = pyslat.FUNCTION_TYPE.LIN
         else:
             raise ValueError("Unhandled DETFN type.")
         value = self._stack.pop()
 
         id = ctx.ID().getText()
-        pyslat.detfn(id, type, value)
+        print(type)
+        if type == 'loglog' or type == 'lin':
+            pyslat.detfn(id, type, value[0], value[1])
+        else:
+            pyslat.detfn(id, type, value)
 
     def enterLoglog_args(self, ctx:slatParser.Loglog_argsContext):
         self._push_stack()
@@ -188,7 +192,7 @@ class SlatInterpreter(slatParserListener):
         mu = params[0]
         sd = params[1]
 
-        dist = pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd})
+        dist = pyslat.MakeLogNormalDist(mu, options['mu'], sd, options['sd'])
         pyslat.im.lookup(id).SetCollapse(dist)
 
     def exitDemolition_command(self, ctx:slatParser.Demolition_commandContext):
@@ -198,7 +202,7 @@ class SlatInterpreter(slatParserListener):
         mu = params[0]
         sd = params[1]
 
-        dist = pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd})
+        dist = pyslat.MakeLogNormalDist(mu, options['mu'], sd, options['sd'])
         pyslat.im.lookup(id).SetDemolition(dist)
 
     # Exit a parse tree produced by slatParser#edp_command.

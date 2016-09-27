@@ -24,23 +24,26 @@ def linrange(start, end, count):
 
 
 class FUNCTION_TYPE:
-    NLH = pyslatcore.FUNCTION_TYPE.NLH
-    PLC = pyslatcore.FUNCTION_TYPE.PLC
-    LIN = pyslatcore.FUNCTION_TYPE.LIN
-    LOGLOG = pyslatcore.FUNCTION_TYPE.LOGLOG
+    NLH = pyslatcore.NLH
+    PLC = pyslatcore.PLC
+    LIN = pyslatcore.LIN
+    LOGLOG = pyslatcore.LOGLOG
 
 class LOGNORMAL_PARAM_TYPE:
-    MEAN_X = pyslatcore.LOGNORMAL_PARAM_TYPE.MEAN_X
-    MEDIAN_X = pyslatcore.LOGNORMAL_PARAM_TYPE.MEDIAN_X
-    MEAN_LN_X = pyslatcore.LOGNORMAL_PARAM_TYPE.MEAN_LN_X
-    SD_X = pyslatcore.LOGNORMAL_PARAM_TYPE.SD_X
-    SD_LN_X = pyslatcore.LOGNORMAL_PARAM_TYPE.SD_LN_X
+    MEAN_X = pyslatcore.MEAN_X
+    MEDIAN_X = pyslatcore.MEDIAN_X
+    MEAN_LN_X = pyslatcore.MEAN_LN_X
+    SD_X = pyslatcore.SD_X
+    SD_LN_X = pyslatcore.SD_LN_X
 
 def factory(t, params):
     return pyslatcore.factory(t, params)
 
-def MakeLogNormalProbabilisticFn(parameters):
-    return pyslatcore.MakeLogNormalProbabilisticFn(parameters)
+def factory(t, param1, param2):
+    return pyslatcore.factory(t, param1, param2)
+
+def MakeLogNormalProbabilisticFn(mu_function, mu_type, sigma_function, sigma_type):
+    return pyslatcore.MakeLogNormalProbabilisticFn(mu_function, mu_type, sigma_function, sigma_type)
 
 def MakeIM(f):
     return pyslatcore.MakeIM(f)
@@ -60,8 +63,8 @@ def MakeCompGroup(edp, frag_fn, loss_fn, count):
 def MakeStructure():
     return pyslatcore.MakeStructure()
 
-def MakeLogNormalDist(parameters):
-    return pyslatcore.MakeLogNormalDist(parameters)
+def MakeLogNormalDist(mu, mu_type, sigma, sigma_type):
+    return pyslatcore.MakeLogNormalDist(mu, mu_type, sigma, sigma_type)
 
 def IntegrationSettings(tolerance, max_evals):
     return pyslatcore.IntegrationSettings(tolerance, max_evals)
@@ -111,7 +114,11 @@ class detfn:
         self._type = type
         self._parameters = parameters.copy()
         #print("PARAMETERS: {}".format(self._parameters))
-        self._func = factory(fntype, parameters)
+        if fntype == FUNCTION_TYPE.LOGLOG or fntype == FUNCTION_TYPE.LIN:
+            self._func = factory(fntype, parameters[0], parameters[1])
+        else:
+            self._func = factory(fntype, parameters)
+
         if id != None:
             detfn.defs[id] = self
 
@@ -143,8 +150,8 @@ class probfn:
         self._type = type
         self._mu_func = mu_func
         self._sigma_func = sigma_func
-        self._func = MakeLogNormalProbabilisticFn({mu_func[0]: mu_func[1].function(),
-                                                   sigma_func[0]: sigma_func[1].function()})
+        self._func = MakeLogNormalProbabilisticFn(mu_func[1].function(), mu_func[0],
+                                                  sigma_func[1].function(), sigma_func[0]) 
         if id != None:
             probfn.defs[id] = self
             
@@ -828,8 +835,8 @@ class StructLossRecorder(recorder):
                         mean = cg.E_Loss_IM(x)
                         sd_ln = cg.SD_ln_Loss_IM(x)
 
-                        dists.append(pyslatcore.MakeLogNormalDist({LOGNORMAL_PARAM_TYPE.MEAN_X: mean,
-                                                                   LOGNORMAL_PARAM_TYPE.SD_LN_X: sd_ln}))
+                        dists.append(pyslatcore.MakeLogNormalDist(mean, LOGNORMAL_PARAM_TYPE.MEAN_X,
+                                                                  sd_ln, LOGNORMAL_PARAM_TYPE.SD_LN_X))
                     dist = lognormaldist(pyslatcore.AddDistributions(dists))
                     
                     for y in self._columns:
