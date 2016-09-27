@@ -132,93 +132,102 @@ double ProbabilisticFn::SD(double x) {
     return function->SD(x);
 };
 
-ProbabilisticFn *MakeLogNormalProbabilisticFn(std::map<int, int>  parameters)
+ProbabilisticFn *MakeLogNormalProbabilisticFn(const DeterministicFn &mu_function,
+                                              LOGNORMAL_MU_TYPE mu_type,
+                                              const DeterministicFn &sigma_function,
+                                              LOGNORMAL_SIGMA_TYPE sigma_type)
 {
-    return new ProbabilisticFn();
-    // Check for valid parameters:
-    // int num_placements = parameters.keys().count(LOGNORMAL_PARAM_TYPE::MEAN_X) + 
-    //     parameters.keys().count(LOGNORMAL_PARAM_TYPE::MEDIAN_X) +
-    //     parameters.keys().count(LOGNORMAL_PARAM_TYPE::MEAN_LN_X);
-    // int num_spreads = parameters.keys().count(LOGNORMAL_PARAM_TYPE::SD_X) + 
-    //     parameters.keys().count(LOGNORMAL_PARAM_TYPE::SD_LN_X);
+    SLAT::LogNormalFn::M_TYPE m;
+    SLAT::LogNormalFn::S_TYPE s;
 
-        
-    // if (num_placements == 0) {
-    //     std::cerr << "Must have at least one placement parameter." << std::endl;
-    //     return (ProbabilisticFn *)0;
-    // } else if (num_placements > 1) {
-    //     std::cerr << "Must have only one placement parameter." << std::endl;
-    //     return (ProbabilisticFn *)0;
-    // }
-
-    // if (num_spreads == 0) {
-    //     std::cerr << "Must have at least one spread parameter." << std::endl;
-    //     return (ProbabilisticFn *)0;
-    // } else if (num_spreads > 1) {
-    //     std::cerr << "Must have only one spread parameter." << std::endl;
-    //     return (ProbabilisticFn *)0;
-    // }
-        
-    // LogNormalFn::M_TYPE m_type = LogNormalFn::M_TYPE::MEAN_INVALID;
-    // LogNormalFn::S_TYPE s_type = LogNormalFn::S_TYPE::SIGMA_INVALID;
-    // DeterministicFn mu_function, sigma_function;
-    // {
-    //     python::stl_input_iterator<int> iter(parameters.keys());
-    //     while (iter != python::stl_input_iterator<int>()) {
-    //         python::object key(*iter);
-    //         python::object value = parameters.get(key);
-
-    //         if (!value.is_none()) {
-    //             DeterministicFn fn = python::extract<DeterministicFn>(value);
-    //             switch (*iter) {
-    //             case LOGNORMAL_PARAM_TYPE::MEAN_X:
-    //                 if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
-    //                     throw std::invalid_argument("MEAN_X");
-    //                 } 
-    //                 m_type = LogNormalFn::M_TYPE::MEAN_X;
-    //                 mu_function = fn;
-    //                 break;
-    //             case LOGNORMAL_PARAM_TYPE::MEDIAN_X:
-    //                 if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
-    //                     throw std::invalid_argument("MEAN_INVALID");
-    //                 } 
-    //                 m_type = LogNormalFn::M_TYPE::MEDIAN_X;
-    //                 mu_function = fn;
-    //                 break;
-    //             case LOGNORMAL_PARAM_TYPE::MEAN_LN_X:
-    //                 if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
-    //                     throw std::invalid_argument("MEAN_LN_X");
-    //                 } 
-    //                 m_type = LogNormalFn::M_TYPE::MEAN_LN_X;
-    //                 mu_function = fn;
-    //                 break;
-    //             case LOGNORMAL_PARAM_TYPE::SD_X:
-    //                 if (s_type != LogNormalFn::S_TYPE::SIGMA_INVALID) {
-    //                     throw std::invalid_argument("SIGMA_X");
-    //                 } 
-    //                 s_type = LogNormalFn::S_TYPE::SIGMA_X;
-    //                 sigma_function = fn;
-    //                 break;
-    //             case LOGNORMAL_PARAM_TYPE::SD_LN_X:
-    //                 if (s_type != LogNormalFn::S_TYPE::SIGMA_INVALID) {
-    //                     throw std::invalid_argument("SIGMA_LN_X");
-    //                 } 
-    //                 s_type = LogNormalFn::S_TYPE::SIGMA_LN_X;
-    //                 sigma_function = fn;
-    //                 break;
-    //             default:
-    //                 throw std::invalid_argument("INVALID");
-    //             };
-    //         }
-    //         iter++;
-    //     }
-    //     std::shared_ptr<ProbabilisticFn> function(
-    //         new LogNormalFn(
-    //             std::shared_ptr<DeterministicFn>(mu_function.function), m_type,
-    //             std::shared_ptr<DeterministicFn>(sigma_function.function), s_type));
-    //     return new ProbabilisticFn(function);
-    // }
+    switch (mu_type) {
+    case LOGNORMAL_MU_TYPE::MEAN_X:
+        m = SLAT::LogNormalFn::M_TYPE::MEAN_X;
+        break;
+    case LOGNORMAL_MU_TYPE::MEDIAN_X:
+        m = SLAT::LogNormalFn::M_TYPE::MEDIAN_X;
+        break;
+    case LOGNORMAL_MU_TYPE::MEAN_LN_X:
+        m = SLAT::LogNormalFn::M_TYPE::MEAN_LN_X;
+        break;
+    default:
+        m = SLAT::LogNormalFn::M_TYPE::MEAN_INVALID;
+    };
+    
+    switch (sigma_type) {
+    case LOGNORMAL_SIGMA_TYPE::SD_X:
+        s = SLAT::LogNormalFn::S_TYPE::SIGMA_X;
+        break;
+    case LOGNORMAL_SIGMA_TYPE::SD_LN_X:
+        s = SLAT::LogNormalFn::S_TYPE::SIGMA_LN_X;
+        break;
+    default:
+        s = SLAT::LogNormalFn::S_TYPE::SIGMA_INVALID;
+    };
+    
+    std::shared_ptr<SLAT::ProbabilisticFn> function = 
+        std::make_shared<SLAT::LogNormalFn>(mu_function.function, m, sigma_function.function, s);
+    return new ProbabilisticFn(function);
 };
+
+
+LogNormalDist::LogNormalDist(std::shared_ptr<SLAT::LogNormalDist> dist)
+{
+    this->dist = dist;
+};
+
+
+double LogNormalDist::p_at_least(double x) const
+{
+    return dist->p_at_least(x); 
+}
+
+double LogNormalDist::p_at_most(double x) const
+{
+    return dist->p_at_most(x); 
+}
+
+double LogNormalDist::x_at_p(double p) const
+{
+    return dist->x_at_p(p); 
+};
+
+double LogNormalDist::get_mu_lnX(void) const
+{
+    return dist->get_mu_lnX();
+}
+
+
+double LogNormalDist::get_median_X(void) const
+{
+    return dist->get_median_X(); 
+};
+
+double LogNormalDist::get_mean_X(void) const
+{
+    return dist->get_mean_X(); 
+}
+
+double LogNormalDist::get_sigma_lnX(void) const
+{
+    return dist->get_sigma_lnX();
+}
+
+double LogNormalDist::get_sigma_X(void) const
+{
+    return dist->get_sigma_X(); 
+}
+
+LogNormalDist AddDistributions(std::vector<LogNormalDist> dists) 
+{
+    std::vector<SLAT::LogNormalDist> slat_dists(dists.size());
+        for (size_t i=0; i < dists.size(); i++) {
+            slat_dists[i] = *(dists[i].dist);
+        }
+        return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(SLAT::LogNormalDist::AddDistributions(slat_dists)));
+};
+    
+
 // /**
 //  * @file   pyslatcore.cpp
 //  * @author Michael Gauland <michael.gauland@canterbury.ac.nz>
@@ -258,41 +267,6 @@ ProbabilisticFn *MakeLogNormalProbabilisticFn(std::map<int, int>  parameters)
 //     class FragilityFnWrapper;
 //     class LossFnWrapper;
     
-//     class LogNormalDistWrapper {
-//     public:
-//         LogNormalDistWrapper(std::shared_ptr<LogNormalDist> dist) { this->dist = dist; };
-//         double p_at_least(double x) const { return dist->p_at_least(x); }
-//         double p_at_most(double x) const { return dist->p_at_most(x); }
-
-//         double x_at_p(double p) const { return dist->x_at_p(p); };
-
-//         double get_mu_lnX(void) const { return dist->get_mu_lnX(); }
-//         double get_median_X(void) const { return dist->get_median_X(); };
-//         double get_mean_X(void) const { return dist->get_mean_X(); }
-//         double get_sigma_lnX(void) const {return dist->get_sigma_lnX(); }
-//         double get_sigma_X(void) const {return dist->get_sigma_X(); }
-
-//     private:
-//         std::shared_ptr<LogNormalDist> dist;
-//         friend FragilityFnWrapper *MakeFragilityFn(python::list);
-//         friend LossFnWrapper *MakeLossFn(python::list);        
-//         friend class StructureWrapper;
-//         friend class IMWrapper;
-//         friend LogNormalDistWrapper AddDistributions(python::list);
-//     };
-
-//     LogNormalDistWrapper AddDistributions(python::list py_dists) 
-//     {
-//         std::vector<LogNormalDist> dists;
-        
-//         while (len(py_dists) > 0) {
-//             python::object obj = py_dists.pop();
-//             LogNormalDistWrapper d = python::extract<LogNormalDistWrapper>(obj);
-//             dists.push_back(*(d.dist));
-//         }
-//         return LogNormalDistWrapper(std::make_shared<LogNormalDist>(LogNormalDist::AddDistributions(dists)));
-//     };
-    
 
 //     class DeterministicFn {
 //     public:
@@ -308,6 +282,14 @@ ProbabilisticFn *MakeLogNormalProbabilisticFn(std::map<int, int>  parameters)
 //     private:
 //     };
 
+
+IM::IM() {
+};
+
+IM::IM(std::shared_ptr<SLAT::IM> r)
+{
+    relationship = r;
+}
 
 
 //     class IMWrapper {
