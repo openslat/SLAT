@@ -209,7 +209,7 @@ class im:
         return self._func
 
     def getlambda(self, x):
-        return self._func.getlambda(x)
+        return self._func.get_lambda(x)
 
     def pRepair(self, x):
         return self._func.pRepair(x)
@@ -284,7 +284,7 @@ class edp:
         return self._func.SD(x)
 
     def getlambda(self, x):
-        return self._func.getlambda(x)
+        return self._func.get_lambda(x)
 
     def X_at_exceedence(self, x, y):
         return self._fn.X_at_exceedence(x, y)

@@ -315,7 +315,7 @@ class SlatInterpreter(slatParserListener):
         params = self._stack.pop()
         mu = params[0]
         sd = params[1]
-        pyslat.structure.lookup(id).setRebuildCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
+        pyslat.structure.lookup(id).setRebuildCost(pyslat.MakeLogNormalDist(mu, options['mu'], sd, options['sd']))
 
     def exitDemolitioncost_command(self, ctx:slatParser.Demolitioncost_commandContext):
         id = ctx.ID().getText()
@@ -323,7 +323,7 @@ class SlatInterpreter(slatParserListener):
         params = self._stack.pop()
         mu = params[0]
         sd = params[1]
-        pyslat.structure.lookup(id).setDemolitionCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
+        pyslat.structure.lookup(id).setDemolitionCost(pyslat.MakeLogNormalDist(mu, options['mu'], sd, options['sd']))
         
     
     # Exit a parse tree produced by slatParser#print_command.

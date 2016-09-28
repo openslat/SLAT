@@ -113,9 +113,29 @@ public:
 private:
     std::shared_ptr<SLAT::CompGroup> wrapper;
         
-    //friend class Structure;
+    friend class Structure;
 };
 
 CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count);
 
+class Structure {
+public:
+    Structure(std::shared_ptr<SLAT::Structure> structure);
+    void AddCompGroup(CompGroup cg);
+    LogNormalDist Loss(double im, bool consider_collapse);
+    LogNormalDist TotalLoss(double im);
+    std::vector<LogNormalDist> DeaggregatedLoss(double im);
+    std::vector<LogNormalDist> LossesByFate(double im);
+    void setRebuildCost(LogNormalDist cost);
+    LogNormalDist getRebuildCost(void);
+    void setDemolitionCost(LogNormalDist cost);
+    LogNormalDist getDemolitionCost(void);
+    LogNormalDist AnnualLoss(void);
+    //python::list ComponentsByEDP(void);
+    //python::list ComponentsByFragility(void);
+private:
+    std::shared_ptr<SLAT::Structure> wrapper;
+};
 
+Structure *MakeStructure();
+ 

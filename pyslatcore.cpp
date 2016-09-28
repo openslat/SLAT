@@ -227,62 +227,6 @@ LogNormalDist AddDistributions(std::vector<LogNormalDist> dists)
     return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(SLAT::LogNormalDist::AddDistributions(slat_dists)));
 };
     
-
-// /**
-//  * @file   pyslatcore.cpp
-//  * @author Michael Gauland <michael.gauland@canterbury.ac.nz>
-//  * @date   Fri Dec  4 10:45:30 2015
-//  * 
-//  * @brief Python interface to SLAT C++ code.
-//  * 
-//  * This file part of SLAT (the Seismic Loss Assessment Tool).
-//  *
-//  * ©2015 Canterbury University
-//  */
-// //#include <time.h>
-// //#include <w32api/windows.h>
-// #include <limits.h>
-// #include <boost/math/special_functions.hpp>
-// #include <boost/python.hpp>
-// #include <boost/python/stl_iterator.hpp>
-// #include <math.h>
-// #include <memory>
-// #include <string>
-// #include <set>
-// #include "functions.h"
-// #include "relationships.h"
-// #include "lognormaldist.h"
-// #include "fragility.h"
-// #include "loss_functions.h"
-// #include "comp_group.h"
-// #include "maq.h"
-// #include "structure.h"
-// #include <iostream>
-// using namespace SLAT;
-
-// namespace python = boost::python;
-
-// namespace SLAT {
-//     class CompGroupWrapper;
-//     class FragilityFnWrapper;
-//     class LossFnWrapper;
-    
-
-//     class DeterministicFn {
-//     public:
-//         DeterministicFn() : function(NULL) {};
-//         DeterministicFn(std::shared_ptr<DeterministicFn> f)
-//         {
-//             function = f;
-//         }
-//         double ValueAt(double v) {
-//             return function->ValueAt(v);
-//         }
-//         std::shared_ptr<DeterministicFn> function;
-//     private:
-//     };
-
-
 IM::IM() {
 };
 
@@ -408,7 +352,7 @@ EDP *MakeEDP(IM base_rate, ProbabilisticFn dependent_rate, std::string name)
 //     class LossFnWrapper;
     
 LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
-                                double sigma, LOGNORMAL_SIGMA_TYPE sigma_type)
+                                 double sigma, LOGNORMAL_SIGMA_TYPE sigma_type)
 {
     SLAT::LogNormalDist dist;
     if (mu_type == MEAN_LN_X && sigma_type == SD_LN_X) {
@@ -530,10 +474,10 @@ bool CompGroup::AreSame(const CompGroup &other)
 CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count)
 {
     return new CompGroup(std::make_shared<SLAT::CompGroup>( 
-                                    edp.relationship, 
-                                    frag_fn.fragility,
-                                    loss_fn.loss, 
-                                    count));
+                             edp.relationship, 
+                             frag_fn.fragility,
+                             loss_fn.loss, 
+                             count));
 }
     
 std::vector<double> CompGroup::pDS_IM(double im)
@@ -546,287 +490,126 @@ std::vector<double> CompGroup::Rate(void)
     return wrapper->Rate();
 }
 
-//     class Structure {
-//     public:
-//         Structure(std::shared_ptr<Structure> structure) { wrapper = structure; };
-//         void AddCompGroup(CompGroup cg) {
-//             wrapper->AddCompGroup(cg.wrapper);
-//         };
-//         LogNormalDist Loss(double im, bool consider_collapse) {
-//             return LogNormalDist(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->Loss(im, consider_collapse))));
-//         };
+Structure::Structure(std::shared_ptr<SLAT::Structure> structure)
+{
+    wrapper = structure;
+};
+
+void Structure::AddCompGroup(CompGroup cg)
+{
+    wrapper->AddCompGroup(cg.wrapper);
+};
+
+LogNormalDist Structure::Loss(double im, bool consider_collapse) {
+    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->Loss(im, consider_collapse)));
+};
         
-//         LogNormalDist TotalLoss(double im) {
-//             return LogNormalDist(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->TotalLoss(im))));
-//         };
-        
-//         python::list DeaggregatedLoss(double im) {
-//             std::pair<LogNormalDist, LogNormalDist> values = wrapper->DeaggregatedLoss(im);
+LogNormalDist Structure::TotalLoss(double im) 
+{
+    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->TotalLoss(im)));
+};
+
+std::vector<LogNormalDist> Structure::DeaggregatedLoss(double im)
+{
+    std::vector<LogNormalDist> results(2);
+    std::pair<SLAT::LogNormalDist, SLAT::LogNormalDist> losses = wrapper->DeaggregatedLoss(im);
+    results[0] = LogNormalDist(std::make_shared<SLAT::LogNormalDist>(losses.first));
+    results[1] = LogNormalDist(std::make_shared<SLAT::LogNormalDist>(losses.second));
+    return results;
+}
+
+std::vector<LogNormalDist> Structure::LossesByFate(double im) 
+{
+    std::vector<LogNormalDist> results(3);
+    SLAT::Structure::LOSSES losses = wrapper->LossesByFate(im);
+    results[0] = LogNormalDist(std::make_shared<SLAT::LogNormalDist>(losses.repair));
+    results[1] = LogNormalDist(std::make_shared<SLAT::LogNormalDist>(losses.demolition));
+    results[2] = LogNormalDist(std::make_shared<SLAT::LogNormalDist>(losses.collapse));
+    return results;
+}
+
+void Structure::setRebuildCost(LogNormalDist cost) 
+{
+    wrapper->setRebuildCost(*cost.dist);
+};
+
+LogNormalDist Structure::getRebuildCost(void) 
+{
+    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->getRebuildCost()));
+};
+
+void Structure::setDemolitionCost(LogNormalDist cost) 
+{
+    wrapper->setDemolitionCost(*cost.dist);
+};
+
+LogNormalDist Structure::getDemolitionCost(void) 
+{
+    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->getDemolitionCost()));
+};
+
+LogNormalDist Structure::AnnualLoss(void) 
+{
+    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->AnnualLoss()));
+};
+
+// python::list ComponentsByEDP(void) {
+//     python::list result;
+//     const std::vector<std::shared_ptr<CompGroup>> components = wrapper->Components();
+//     std::map<std::shared_ptr<EDP>, std::vector<std::shared_ptr<CompGroup>>> edp_cg_mapping;
+//     std::set<std::shared_ptr<EDP>> keys;
+
+//     for (size_t i=0; i < components.size(); i++) {
+//         edp_cg_mapping[components[i]->get_EDP()].push_back(components[i]);
+//         keys.insert(components[i]->get_EDP());
+//     }
             
-//             python::list result;
-//             {
-//                 std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(values.first);
-//                 result.append(LogNormalDist(temp));
-//             }
+//     for (std::set<std::shared_ptr<EDP>>::iterator key = keys.begin();
+//          key != keys.end();
+//          key++)
+//     {
+//         python::list mapping;
+//         mapping.append(EDP(*key));
 
-//             {
-//                 std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(values.second);
-//                 result.append(LogNormalDist(temp));
-//             }
-//             return result;
+//         for (size_t j=0; j < edp_cg_mapping[*key].size(); j++) {
+//             mapping.append(CompGroup(edp_cg_mapping[*key][j]));
 //         }
-
-//         python::list LossesByFate(double im) {
-//             Structure::LOSSES losses = wrapper->LossesByFate(im);
-//             python::list result;
-//             {
-//                 std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(losses.repair);
-//                 result.append(LogNormalDist(temp));
-//             }
-//             {
-//                 std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(losses.demolition);
-//                 result.append(LogNormalDist(temp));
-//             }
-//             {
-//                 std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(losses.collapse);
-//                 result.append(LogNormalDist(temp));
-//             }
-//             return result;
-//         }
-
-//         void setRebuildCost(LogNormalDist cost) {
-//             wrapper->setRebuildCost(*cost.dist);
-//         };
-//         LogNormalDist getRebuildCost(void) {
-//             return LogNormalDist(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->getRebuildCost())));
-//         };
-//         void setDemolitionCost(LogNormalDist cost) {
-//             wrapper->setDemolitionCost(*cost.dist);
-//         };
-//         LogNormalDist getDemolitionCost(void) {
-//             return LogNormalDist(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->getDemolitionCost())));
-//         };
-//         LogNormalDist AnnualLoss(void) {
-//             return LogNormalDist(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->AnnualLoss())));
-//         };
-//         python::list ComponentsByEDP(void) {
-//             python::list result;
-//             const std::vector<std::shared_ptr<CompGroup>> components = wrapper->Components();
-//             std::map<std::shared_ptr<EDP>, std::vector<std::shared_ptr<CompGroup>>> edp_cg_mapping;
-//             std::set<std::shared_ptr<EDP>> keys;
-
-//             for (size_t i=0; i < components.size(); i++) {
-//                 edp_cg_mapping[components[i]->get_EDP()].push_back(components[i]);
-//                 keys.insert(components[i]->get_EDP());
-//             }
-            
-//             for (std::set<std::shared_ptr<EDP>>::iterator key = keys.begin();
-//                  key != keys.end();
-//                  key++)
-//             {
-//                 python::list mapping;
-//                 mapping.append(EDP(*key));
-
-//                 for (size_t j=0; j < edp_cg_mapping[*key].size(); j++) {
-//                     mapping.append(CompGroup(edp_cg_mapping[*key][j]));
-//                 }
-//                 result.append(mapping);
-//             }
-//             return result;
-//         };
-//         python::list ComponentsByFragility(void) {
+//         result.append(mapping);
+//     }
+//     return result;
+// };
+// python::list ComponentsByFragility(void) {
 // //            std::cout << "> ComponentsByFragility()" << std::endl;
-//             python::list result;
-//             const std::vector<std::shared_ptr<CompGroup>> components = wrapper->Components();
-//             std::map<std::shared_ptr<FragilityFn>, std::vector<std::shared_ptr<CompGroup>>> frag_cg_mapping;
-//             std::set<std::shared_ptr<FragilityFn>> keys;
+//     python::list result;
+//     const std::vector<std::shared_ptr<CompGroup>> components = wrapper->Components();
+//     std::map<std::shared_ptr<FragilityFn>, std::vector<std::shared_ptr<CompGroup>>> frag_cg_mapping;
+//     std::set<std::shared_ptr<FragilityFn>> keys;
 
-//             for (size_t i=0; i < components.size(); i++) {
-//                 frag_cg_mapping[components[i]->get_Fragility()].push_back(components[i]);
-//                 keys.insert(components[i]->get_Fragility());
-//             }
+//     for (size_t i=0; i < components.size(); i++) {
+//         frag_cg_mapping[components[i]->get_Fragility()].push_back(components[i]);
+//         keys.insert(components[i]->get_Fragility());
+//     }
             
-//             for (std::set<std::shared_ptr<FragilityFn>>::iterator key = keys.begin();
-//                  key != keys.end();
-//                  key++)
-//             {
+//     for (std::set<std::shared_ptr<FragilityFn>>::iterator key = keys.begin();
+//          key != keys.end();
+//          key++)
+//     {
 // //                std::cout << "KEY: " << *key << std::endl;
                 
-//                 python::list mapping;
-//                 mapping.append(FragilityFn(*key));
+//         python::list mapping;
+//         mapping.append(FragilityFn(*key));
 
-//                 for (size_t j=0; j < frag_cg_mapping[*key].size(); j++) {
-//                     //std::cout << "   " << frag_cg_mapping[*key][j] << std::endl;
-//                     mapping.append(CompGroup(frag_cg_mapping[*key][j]));
-//                 }
-//                 result.append(mapping);
-//             }
-//             //std::cout << "< ComponentsByFragility()" << std::endl;
-//             return result;
-//         };
-//     private:
-//         std::shared_ptr<Structure> wrapper;
-//     };
-
-//     Structure *MakeStructure() 
-//     {
-//         return new Structure(std::make_shared<Structure>("anonymous structure"));
+//         for (size_t j=0; j < frag_cg_mapping[*key].size(); j++) {
+//             //std::cout << "   " << frag_cg_mapping[*key][j] << std::endl;
+//             mapping.append(CompGroup(frag_cg_mapping[*key][j]));
+//         }
+//         result.append(mapping);
 //     }
+//     //std::cout << "< ComponentsByFragility()" << std::endl;
+//     return result;
+// };
 
-//     void IntegrationSettings(double tolerance, unsigned int max_evals)
-//     {
-//         Integration::IntegrationSettings::Set_Tolerance(tolerance);
-//         Integration::IntegrationSettings::Set_Max_Evals(max_evals);
-//     }
-
-// // Python requires an exported function called init<module-name> in every
-// // extension module. This is where we build the module contents.
-//     BOOST_PYTHON_MODULE(pyslatcore)
-//     {
-//       SLAT::Caching::Init_Caching();
-      
-//         python::def("IntegrationSettings", IntegrationSettings);
-        
-//         python::def("factory", factory, python::return_value_policy<python::manage_new_object>());
-//         python::class_<DeterministicFn>("DeterministicFn", 
-//                                                       python::no_init)
-//             .def("ValueAt", &DeterministicFn::ValueAt)
-//             ;
-
-//         python::def("MakeLogNormalProbabilisticFn",
-//                     MakeLogNormalProbabilisticFn, 
-//                     python::return_value_policy<python::manage_new_object>());
-
-//         python::class_<ProbabilisticFn>("ProbabilisticFn", python::no_init)
-//             .def("P_exceedence", &ProbabilisticFn::P_exceedence)
-//             .def("X_at_exceedence", &ProbabilisticFn::X_at_exceedence)
-//             .def("Mean", &ProbabilisticFn::Mean)
-//             .def("MeanLn", &ProbabilisticFn::MeanLn)
-//             .def("Median", &ProbabilisticFn::Median)
-//             .def("SD_ln", &ProbabilisticFn::SD_ln)
-//             .def("SD", &ProbabilisticFn::SD)
-//             ;
-
-//         python::def("MakeIM",
-//                     MakeIM,
-//                     python::return_value_policy<python::manage_new_object>());
-
-//         python::def("MakeEDP",
-//                     MakeEDP,
-//                     python::return_value_policy<python::manage_new_object>());
-
-//         python::class_<IM>("IM", python::no_init)
-//             .def("getlambda", &IM::lambda)
-//             .def("SetCollapse", &IM::SetCollapse)
-//             .def("CollapseRate", &IM::CollapseRate)
-//             .def("pCollapse", &IM::pCollapse)
-//             .def("SetDemolition", &IM::SetDemolition)
-//             .def("DemolitionRate", &IM::DemolitionRate)
-//             .def("pDemolition", &IM::pDemolition)
-//             .def("pRepair", &IM::pRepair)
-//             ;
-
-//         python::class_<EDP>("EDP", python::no_init)
-//             .def("getlambda", &EDP::lambda)
-//             .def("P_exceedence", &EDP::P_exceedence)
-//             .def("Mean", &EDP::Mean)
-//             .def("MeanLn", &EDP::MeanLn)
-//             .def("Median", &EDP::Median)
-//             .def("SD_ln", &EDP::SD_ln)
-//             .def("SD", &EDP::SD)
-//             .def("get_Name", &EDP::get_Name)
-//             .def("AreSame", &EDP::AreSame)
-//             ;
-
-//         python::enum_<FUNCTION_TYPE>("FUNCTION_TYPE")
-//             .value("NLH", NLH)
-//             .value("PLC", PLC)
-//             .value("LIN", LIN)
-//             .value("LOGLOG", LOGLOG)
-//             ;
-
-//         python::enum_<LOGNORMAL_PARAM_TYPE>("LOGNORMAL_PARAM_TYPE")
-//             .value("MEAN_X", MEAN_X)
-//             .value("MEDIAN_X", MEDIAN_X)
-//             .value("MEAN_LN_X", MEAN_LN_X)
-//             .value("SD_X", SD_X)
-//             .value("SD_LN_X", SD_LN_X)
-//             ;
-
-//         python::def("MakeLogNormalDist", 
-//                     MakeLogNormalDist,
-//                     python::return_value_policy<python::manage_new_object>());
-        
-//         python::class_<LogNormalDist>("LogNormalDist", python::no_init)
-//             .def("p_at_least", &LogNormalDist::p_at_least)
-//             .def("p_at_most", &LogNormalDist::p_at_most)
-//             .def("x_at_p", &LogNormalDist::x_at_p)
-//             .def("get_mu_lnX", &LogNormalDist::get_mu_lnX)
-//             .def("get_median_X", &LogNormalDist::get_median_X)
-//             .def("get_mean_X", &LogNormalDist::get_mean_X)
-//             .def("get_sigma_lnX", &LogNormalDist::get_sigma_lnX)
-//             .def("get_sigma_X", &LogNormalDist::get_sigma_X)
-//             ;
-
-//         python::def("AddDistributions", 
-//                     AddDistributions);
-
-        
-//         python::class_<FragilityFn>("FragilityFn", python::no_init)
-//             .def("pExceeded", &FragilityFn::pExceeded)
-//             .def("pHighest", &FragilityFn::pHighest)
-//             .def("n_states", &FragilityFn::n_states)
-//             .def("AreSame", &FragilityFn::AreSame)
-//             ;
-
-//         python::def("MakeFragilityFn", 
-//                     MakeFragilityFn,
-//                     python::return_value_policy<python::manage_new_object>());
-        
-//         python::class_<LossFn>("LossFn", python::no_init)
-//             .def("n_states", &LossFn::n_states)
-//             ;
-
-//         python::def("MakeLossFn", 
-//                     MakeLossFn,
-//                     python::return_value_policy<python::manage_new_object>());
-        
-//         python::class_<CompGroup>("CompGroup", python::no_init)
-//             .def("E_Loss_EDP", &CompGroup::E_Loss_EDP)
-//             .def("SD_ln_loss_EDP", &CompGroup::SD_ln_loss_EDP)
-//             .def("E_Loss_IM", &CompGroup::E_Loss_IM)
-//             .def("SD_ln_loss_IM", &CompGroup::SD_ln_loss_IM)
-//             .def("E_annual_loss", &CompGroup::E_annual_loss)
-//             .def("E_loss", &CompGroup::E_loss)
-//             .def("lambda_loss", &CompGroup::lambda_loss)
-//             .def("AreSame", &CompGroup::AreSame)
-//             .def("pDS_IM", &CompGroup::pDS_IM)
-//             .def("Rate", &CompGroup::Rate)
-//             ;
-
-//         python::def("MakeCompGroup", 
-//                     MakeCompGroup,
-//                     python::return_value_policy<python::manage_new_object>());
-
-//         python::class_<Structure>("Structure", python::no_init)
-//             .def("AddCompGroup", &Structure::AddCompGroup)
-//             .def("Loss", &Structure::Loss)
-//             .def("DeaggregatedLoss", &Structure::DeaggregatedLoss)
-//             .def("setRebuildCost", &Structure::setRebuildCost)
-//             .def("getRebuildCost", &Structure::getRebuildCost)
-//             .def("setDemolitionCost", &Structure::setDemolitionCost)
-//             .def("getDemolitionCost", &Structure::getDemolitionCost)
-//             .def("AnnualLoss", &Structure::AnnualLoss)
-//             .def("LossesByFate", &Structure::LossesByFate)
-//             .def("ComponentsByEDP", &Structure::ComponentsByEDP)
-//             .def("ComponentsByFragility", &Structure::ComponentsByFragility)
-//             .def("TotalLoss", &Structure::TotalLoss)
-//             ;
-
-        
-//         python::def("MakeStructure", 
-//                     MakeStructure,
-//                     python::return_value_policy<python::manage_new_object>());
-        
-//     }
-// }
+Structure *MakeStructure() 
+{
+    return new Structure(std::make_shared<SLAT::Structure>("anonymous structure"));
+}
