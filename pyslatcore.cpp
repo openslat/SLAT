@@ -1,6 +1,8 @@
 #include "caching.h"
 #include "maq.h"
 #include "pyslatcore.h"
+#include <iostream>
+using namespace std;
 
 void Init_Caching(void)
 {
@@ -552,6 +554,12 @@ LogNormalDist Structure::AnnualLoss(void)
 {
     return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->AnnualLoss()));
 };
+
+std::unordered_map<EDP *, std::vector<CompGroup *>> ComponentsByEDP(void)
+{
+    std::unordered_map<EDP *, std::vector<CompGroup *>> results;
+    return results;
+}
 
 // python::list ComponentsByEDP(void) {
 //     python::list result;

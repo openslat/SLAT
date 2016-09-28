@@ -241,13 +241,13 @@ class SlatInterpreter(slatParserListener):
         if ctx.mu_option():
             if ctx.mu_option().MEAN_LN_X():
                 mu = "mean(ln(x))"
-                mu = pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X
+                mu = pyslat.LOGNORMAL_MU_TYPE.MEAN_LN_X
             elif ctx.mu_option().MEDIAN_X():
                 mu = "median(x)"
-                mu = pyslat.LOGNORMAL_PARAM_TYPE.MEDIAN_X
+                mu = pyslat.LOGNORMAL_MU_TYPE.MEDIAN_X
             elif ctx.mu_option().MEAN_X():
                 mu = "mean(x)"
-                mu = pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X
+                mu = pyslat.LOGNORMAL_MU_TYPE.MEAN_X
             else:
                 raise ValueError("Unhandled Lognormal option")
         else:
@@ -257,10 +257,10 @@ class SlatInterpreter(slatParserListener):
         if ctx.sd_option():
             if ctx.sd_option().SD_X():
                 sd = "sd(x)"
-                sd = pyslat.LOGNORMAL_PARAM_TYPE.SD_X
+                sd = pyslat.LOGNORMAL_SIGMA_TYPE.SD_X
             elif ctx.sd_option().SD_LN_X():
                 sd = "sd(ln(x))"
-                sd = pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X
+                sd = pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X
             else:
                 raise ValueError("Unhandled Lognormal option")
         else:
@@ -481,20 +481,22 @@ class SlatInterpreter(slatParserListener):
             elif ctx.ANNUAL_FLAG():
                 options['structloss-type'] = 'annual'
                 cols = []
-                for c in list(self._stack.pop().values()):
-                    if c == pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X:
-                        c = "mean_ln_x"
-                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:
-                        c = "mean_x"
-                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.MEDIAN_X:
-                        c = "median_x"
-                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:
-                        c = "sd_ln_x"
-                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.SD_X:
-                        c = "sd_x"
-                    if c != None:
+                for key, value in self._stack.pop().items():
+                    if key == 'mu':
+                        if value == pyslat.LOGNORMAL_MU_TYPE.MEAN_LN_X:
+                            c = "mean_ln_x"
+                        elif value == pyslat.LOGNORMAL_MU_TYPE.MEAN_X:
+                            c = "mean_x"
+                        elif value == pyslat.LOGNORMAL_MU_TYPE.MEDIAN_X:
+                            c = "median_x"
                         cols.append(c)
-                    cols.reverse() # Want 'mean' first
+                    elif key == 'sd':
+                        if value == pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X:
+                            c = "sd_ln_x"
+                        elif value == pyslat.LOGNORMAL_SIGMA_TYPE.SD_X:
+                            c = "sd_x"
+                        cols.append(c)
+                cols.reverse() # Want 'mean' first
                 
         id = ctx.ID().getText()
 

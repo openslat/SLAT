@@ -29,13 +29,19 @@ class FUNCTION_TYPE:
     LIN = pyslatcore.LIN
     LOGLOG = pyslatcore.LOGLOG
 
-class LOGNORMAL_PARAM_TYPE:
+class LOGNORMAL_MU_TYPE:
     MEAN_X = pyslatcore.MEAN_X
     MEDIAN_X = pyslatcore.MEDIAN_X
     MEAN_LN_X = pyslatcore.MEAN_LN_X
+    
+class LOGNORMAL_SIGMA_TYPE:
     SD_X = pyslatcore.SD_X
     SD_LN_X = pyslatcore.SD_LN_X
 
+print("---- {} ---".format(pyslatcore.SD_X))
+print("---- {} ---".format(LOGNORMAL_SIGMA_TYPE.SD_X))
+
+    
 def factory(t, params):
     return pyslatcore.factory(t, params)
 
@@ -934,8 +940,8 @@ def ImportProbFn(id, filename):
     mu_func = detfn(None, 'linear', [x.copy(), mu.copy()])
     sigma_func = detfn(None, 'linear', [x.copy(), sigma.copy()])
     return(probfn(id, 'lognormal', 
-                  [LOGNORMAL_PARAM_TYPE.MEAN_X, mu_func],
-                  [LOGNORMAL_PARAM_TYPE.SD_X,  sigma_func]))
+                  [LOGNORMAL_MU_TYPE.MEAN_X, mu_func],
+                  [LOGNORMAL_SIGMA_TYPE.SD_X,  sigma_func]))
 
 def ImportIMFn(id, filename):
     data = np.loadtxt(filename, skiprows=2)

@@ -4,10 +4,13 @@
 %}
 %include <std_string.i>
 %include <std_vector.i>
-%include <std_map.i>
+%include <std_unordered_map.i>
 namespace std{
     %template(VectorDouble) std::vector<double>;
-    %template(VectorLogNormal) std::vector<LogNormalDist *>;
+    %template(VectorLogNormal_p) std::vector<LogNormalDist *>;
+    %template(VectorLogNormal) std::vector<LogNormalDist>;
+//    %template(MapEDPComp) std::unordered_map<int, int >;
+//    %template(MapEDPComp) std::unordered_map<EDP *, std::vector<CompGroup *>>;
 }
 
 
@@ -131,11 +134,10 @@ public:
     void setDemolitionCost(LogNormalDist cost);
     LogNormalDist getDemolitionCost(void);
     LogNormalDist AnnualLoss(void);
-    //python::list ComponentsByEDP(void);
+    //std::unordered_map<EDP *, std::vector<CompGroup *>> ComponentsByEDP(void);
     //python::list ComponentsByFragility(void);
 private:
     std::shared_ptr<SLAT::Structure> wrapper;
 };
 
 Structure *MakeStructure();
- 

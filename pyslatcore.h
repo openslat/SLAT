@@ -1,4 +1,5 @@
 #include <vector>
+#include <unordered_map>
 #include "functions.h"
 #include "relationships.h"
 #include "fragility.h"
@@ -181,7 +182,7 @@ public:
     void setDemolitionCost(LogNormalDist cost);
     LogNormalDist getDemolitionCost(void);
     LogNormalDist AnnualLoss(void);
-    //python::list ComponentsByEDP(void);
+    std::unordered_map<EDP *, std::vector<CompGroup *>> ComponentsByEDP(void);
     //python::list ComponentsByFragility(void);
 private:
     std::shared_ptr<SLAT::Structure> wrapper;
