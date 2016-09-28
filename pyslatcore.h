@@ -2,6 +2,7 @@
 #include "functions.h"
 #include "relationships.h"
 #include "fragility.h"
+#include "loss_functions.h"
 
 void Init_Caching(void);
 void IntegrationSettings(double tolerance, unsigned int max_evals);
@@ -14,6 +15,7 @@ enum LOGNORMAL_SIGMA_TYPE { SD_X, SD_LN_X };
 class IM;
 class EDP;
 class FragilityFn;
+class LossFn;
 
 class DeterministicFn {
 public:
@@ -64,8 +66,8 @@ public:
     
 private:
     std::shared_ptr<SLAT::LogNormalDist> dist;
-    friend FragilityFn *MakeFragilityFn(std::vector<LogNormalDist> distributions);
-    // friend LossFn *MakeLossFn(python::list);        
+    friend FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions);
+    friend LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions);
     // friend class Structure;
     friend class IM;
     friend LogNormalDist AddDistributions(std::vector<LogNormalDist> dists);
@@ -130,3 +132,14 @@ private:
 };
 
 FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions);
+
+class LossFn {
+public:
+    LossFn(std::shared_ptr<SLAT::LossFn> function);
+    int n_states();
+private:
+    std::shared_ptr<SLAT::LossFn> loss;
+    
+    // friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
+    //                                 LossFn loss_fn, int count);
+};

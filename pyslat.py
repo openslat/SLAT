@@ -52,7 +52,6 @@ def MakeEDP(base_rate, dependent_rate, name):
     return pyslatcore.MakeEDP(base_rate, dependent_rate, name)
 
 def MakeFragilityFn(parameters):
-    print(parameters)
     return pyslatcore.MakeFragilityFn(parameters)
 
 def MakeLossFn(parameters):
@@ -358,7 +357,7 @@ class lossfn:
 
         params = []
         for d in data:
-            params.append({options['mu']: d[0], options['sd']: d[1]})
+            params.append(MakeLogNormalDist(d[0], options['mu'], d[1], options['sd']))
         self._func = MakeLossFn(params)
         if id != None:
             lossfn.defs[id] = self

@@ -88,3 +88,12 @@ public:
 };
 
 FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions);
+
+class LossFn {
+public:
+    LossFn(std::shared_ptr<SLAT::LossFn> function);
+    int n_states();
+};
+
+LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions);
+

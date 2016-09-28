@@ -455,10 +455,30 @@ std::vector<double> FragilityFn::pHighest(double edp)
 FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions)
 {
     std::vector<SLAT::LogNormalDist> slat_distributions(distributions.size());
-    // for (size_t i=0; i < distributions.size(); i++) {
-    //     slat_distributions[i] = *(distributions[i]->dist);
-    // };
+    for (size_t i=0; i < distributions.size(); i++) {
+        slat_distributions[i] = *(distributions[i]->dist);
+    };
     return new FragilityFn(std::make_shared<SLAT::FragilityFn>(slat_distributions));
+}
+
+LossFn::LossFn(std::shared_ptr<SLAT::LossFn> function) 
+{
+    loss = function; 
+}
+
+int LossFn::n_states() 
+{
+    return loss->n_states(); 
+};
+
+
+LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
+{
+    std::vector<SLAT::LogNormalDist> slat_distributions(distributions.size());
+    for (size_t i=0; i < distributions.size(); i++) {
+        slat_distributions[i] = *(distributions[i]->dist);
+    };
+    return new LossFn(std::make_shared<SLAT::LossFn>(slat_distributions));
 }
 
 //     LogNormalDistWrapper *MakeLogNormalDist(python::dict parameters)
@@ -544,27 +564,6 @@ FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions)
 
 
 
-//     class LossFnWrapper {
-//     public:
-//         LossFnWrapper(std::shared_ptr<LossFn> function) { loss = function; }
-//         int n_states() { return loss->n_states(); };
-//     private:
-//         std::shared_ptr<LossFn> loss;
-//         friend CompGroupWrapper *MakeCompGroup(EDP edp, FragilityFn frag_fn,
-//                                                 LossFnWrapper loss_fn, int count);
-//     };
-
-//     LossFnWrapper *MakeLossFn(python::list parameters)
-//     {
-//         std::vector<LogNormalDist> distributions;
-
-//         python::stl_input_iterator<python::dict> iter(parameters), end;
-//         while (iter != end) {
-//             distributions.push_back(*MakeLogNormalDist(*iter)->dist);
-//             iter++;
-//         }
-//         return new LossFnWrapper(std::make_shared<LossFn>(distributions));
-//     }
 
 //     class CompGroupWrapper {
 //     public:
