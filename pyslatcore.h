@@ -3,6 +3,7 @@
 #include "relationships.h"
 #include "fragility.h"
 #include "loss_functions.h"
+#include "comp_group.h"
 
 void Init_Caching(void);
 void IntegrationSettings(double tolerance, unsigned int max_evals);
@@ -16,6 +17,7 @@ class IM;
 class EDP;
 class FragilityFn;
 class LossFn;
+class CompGroup;
 
 class DeterministicFn {
 public:
@@ -127,8 +129,8 @@ public:
     bool AreSame(const FragilityFn &other);
 private:
     std::shared_ptr<SLAT::FragilityFn> fragility;
-    // friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
-    //                                        LossFn loss_fn, int count);
+    friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
+                                    LossFn loss_fn, int count);
 };
 
 FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions);
@@ -139,7 +141,28 @@ public:
     int n_states();
 private:
     std::shared_ptr<SLAT::LossFn> loss;
-    
-    // friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
-    //                                 LossFn loss_fn, int count);
+    friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
+                                    LossFn loss_fn, int count);
 };
+
+
+class CompGroup {
+public:
+    CompGroup(std::shared_ptr<SLAT::CompGroup> group);
+    double E_Loss_EDP(double edp);
+    double SD_ln_loss_EDP(double edp);
+    double E_Loss_IM(double edp);
+    double SD_ln_loss_IM(double edp);
+    double E_annual_loss(void);
+    double E_loss(int years, double discount_rate);
+    std::vector<double> pDS_IM(double im);
+    std::vector<double> Rate(void);
+    double lambda_loss(double loss);
+    bool AreSame(const CompGroup &other);
+private:
+    std::shared_ptr<SLAT::CompGroup> wrapper;
+        
+    //friend class Structure;
+};
+
+CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count);

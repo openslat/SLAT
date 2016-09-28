@@ -481,153 +481,83 @@ LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
     return new LossFn(std::make_shared<SLAT::LossFn>(slat_distributions));
 }
 
-//     LogNormalDistWrapper *MakeLogNormalDist(python::dict parameters)
-//     {
-//         LogNormalFn::M_TYPE m_type = LogNormalFn::M_TYPE::MEAN_INVALID;
-//         LogNormalFn::S_TYPE s_type = LogNormalFn::S_TYPE::SIGMA_INVALID;
-//         double mu_param=NAN, sigma_param=NAN;
-//         {
-//             python::stl_input_iterator<int> iter(parameters.keys());
-//             while (iter != python::stl_input_iterator<int>()) {
-//                 python::object key(*iter);
-//                 python::object value = parameters.get(key);
 
-//                 if (!value.is_none()) {
-//                     double parameter = python::extract<double>(value);
-//                     switch (*iter) {
-//                     case LOGNORMAL_PARAM_TYPE::MEAN_X:
-//                         if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
-//                             throw std::invalid_argument("MEAN_X");
-//                         } 
-//                         m_type = LogNormalFn::M_TYPE::MEAN_X;
-//                         mu_param = parameter;
-//                         break;
-//                     case LOGNORMAL_PARAM_TYPE::MEDIAN_X:
-//                         if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
-//                             throw std::invalid_argument("MEDIAN_X");
-//                         } 
-//                         m_type = LogNormalFn::M_TYPE::MEDIAN_X;
-//                         mu_param = parameter;
-//                         break;
-//                     case LOGNORMAL_PARAM_TYPE::MEAN_LN_X:
-//                         if (m_type != LogNormalFn::M_TYPE::MEAN_INVALID) {
-//                             throw std::invalid_argument("MEAN_LN_X");
-//                         } 
-//                         m_type = LogNormalFn::M_TYPE::MEAN_LN_X;
-//                         mu_param = parameter;
-//                         break;
-//                     case LOGNORMAL_PARAM_TYPE::SD_X:
-//                         if (s_type != LogNormalFn::S_TYPE::SIGMA_INVALID) {
-//                             throw std::invalid_argument("SIGMA_X");
-//                         } 
-//                         s_type = LogNormalFn::S_TYPE::SIGMA_X;
-//                         sigma_param = parameter;
-//                         break;
-//                     case LOGNORMAL_PARAM_TYPE::SD_LN_X:
-//                         if (s_type != LogNormalFn::S_TYPE::SIGMA_INVALID) {
-//                             throw std::invalid_argument("SIGMA_LN_X");
-//                         } 
-//                         s_type = LogNormalFn::S_TYPE::SIGMA_LN_X;
-//                         sigma_param = parameter;
-//                         break;
-//                     default:
-//                         throw std::invalid_argument("unknown");
-//                     };
-//                         }
-//                 iter++;
-//             }
-//         };
-//         std::shared_ptr<LogNormalDist> dist;
-            
-//         if (m_type == LogNormalFn::M_TYPE::MEAN_LN_X &&
-//             s_type == LogNormalFn::S_TYPE::SIGMA_LN_X)
-//         {
-//             dist = std::make_shared<LogNormalDist>(LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(mu_param, sigma_param));
-//         } else if (m_type == LogNormalFn::M_TYPE::MEAN_X &&
-//             s_type == LogNormalFn::S_TYPE::SIGMA_LN_X)
-//         {
-//             dist = std::make_shared<LogNormalDist>(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mu_param, sigma_param));
-//         } else if (m_type == LogNormalFn::M_TYPE::MEDIAN_X &&
-//             s_type == LogNormalFn::S_TYPE::SIGMA_LN_X)
-//         {
-//             dist = std::make_shared<LogNormalDist>(LogNormalDist::LogNormalDist_from_median_X_and_sigma_lnX(mu_param, sigma_param));
-//         } else if (m_type == LogNormalFn::M_TYPE::MEAN_X &&
-//             s_type == LogNormalFn::S_TYPE::SIGMA_X)
-//         {
-//             dist = std::make_shared<LogNormalDist>(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(mu_param, sigma_param));
-//         } else {
-//             throw std::invalid_argument("mu, sigma combination not supported");
-//         }
+CompGroup::CompGroup(std::shared_ptr<SLAT::CompGroup> group)
+{
+    wrapper = group;
+};
 
-//         return new LogNormalDistWrapper(dist);
-//     };
+double CompGroup::E_Loss_EDP(double edp)
+{
+    return wrapper->E_loss_EDP(edp); 
+};
 
 
+double CompGroup::SD_ln_loss_EDP(double edp) { 
+    return wrapper->SD_ln_loss_EDP(edp); 
+};
 
+double CompGroup::E_Loss_IM(double edp)
+{
+    return wrapper->E_loss_IM(edp); 
+};
 
-//     class CompGroupWrapper {
-//     public:
-//         CompGroupWrapper(std::shared_ptr<CompGroup> group) { wrapper = group; };
-//         double E_Loss_EDP(double edp) { return wrapper->E_loss_EDP(edp); };
-//         double SD_ln_loss_EDP(double edp) { return wrapper->SD_ln_loss_EDP(edp); };
-//         double E_Loss_IM(double edp) { return wrapper->E_loss_IM(edp); };
-//         double SD_ln_loss_IM(double edp) { return wrapper->SD_ln_loss_IM(edp); };
-//         double E_annual_loss(void) { return wrapper->E_annual_loss(); };
-//         double E_loss(int years, double discount_rate) { return wrapper->E_loss(years, discount_rate); };
-//         python::list pDS_IM(double im);
-//         python::list Rate(void);
-//         double lambda_loss(double loss) { return wrapper->lambda_loss(loss); };
-//         bool AreSame(const CompGroupWrapper &other)
-//         {
-//             return this->wrapper == other.wrapper;
-//         }
-//     private:
-//         std::shared_ptr<CompGroup> wrapper;
-        
-//         friend class StructureWrapper;
-//     };
+double CompGroup::SD_ln_loss_IM(double edp)
+{
+    return wrapper->SD_ln_loss_IM(edp); 
+};
+
+double CompGroup::E_annual_loss(void) 
+{
+    return wrapper->E_annual_loss();
+};
+
+double CompGroup::E_loss(int years, double discount_rate) 
+{
+    return wrapper->E_loss(years, discount_rate); 
+};
+
+double CompGroup::lambda_loss(double loss)
+{
+    return wrapper->lambda_loss(loss); 
+};
+
+bool CompGroup::AreSame(const CompGroup &other)
+{
+    return this->wrapper == other.wrapper;
+}
+
+CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count)
+{
+    return new CompGroup(std::make_shared<SLAT::CompGroup>( 
+                                    edp.relationship, 
+                                    frag_fn.fragility,
+                                    loss_fn.loss, 
+                                    count));
+}
     
-//     CompGroupWrapper *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFnWrapper loss_fn, int count)
-//     {
-//         return new CompGroupWrapper(std::make_shared<CompGroup>( 
-//                                         edp.relationship, 
-//                                         frag_fn.fragility,
-//                                         loss_fn.loss, 
-//                                         count));
-//     }
-    
-//     python::list CompGroupWrapper::pDS_IM(double im)
-//     {
-//         std::vector<double> probabilities = wrapper->pDS_IM(im);
-//         python::list result;
-//         for (std::vector<double>::iterator i = probabilities.begin(); i != probabilities.end(); i++) {
-//             result.append(*i);
-//         }
-//         return result;
-//     }
+std::vector<double> CompGroup::pDS_IM(double im)
+{
+    return  wrapper->pDS_IM(im);
+}
 
-//     python::list CompGroupWrapper::Rate(void)
-//     {
-//         std::vector<double> probabilities = wrapper->Rate();
-//         python::list result;
-//         for (std::vector<double>::iterator i = probabilities.begin(); i != probabilities.end(); i++) {
-//             result.append(*i);
-//         }
-//         return result;
-//     }
+std::vector<double> CompGroup::Rate(void)
+{
+    return wrapper->Rate();
+}
 
-//     class StructureWrapper {
+//     class Structure {
 //     public:
-//         StructureWrapper(std::shared_ptr<Structure> structure) { wrapper = structure; };
-//         void AddCompGroup(CompGroupWrapper cg) {
+//         Structure(std::shared_ptr<Structure> structure) { wrapper = structure; };
+//         void AddCompGroup(CompGroup cg) {
 //             wrapper->AddCompGroup(cg.wrapper);
 //         };
-//         LogNormalDistWrapper Loss(double im, bool consider_collapse) {
-//             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->Loss(im, consider_collapse))));
+//         LogNormalDist Loss(double im, bool consider_collapse) {
+//             return LogNormalDist(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->Loss(im, consider_collapse))));
 //         };
         
-//         LogNormalDistWrapper TotalLoss(double im) {
-//             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->TotalLoss(im))));
+//         LogNormalDist TotalLoss(double im) {
+//             return LogNormalDist(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->TotalLoss(im))));
 //         };
         
 //         python::list DeaggregatedLoss(double im) {
@@ -636,12 +566,12 @@ LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
 //             python::list result;
 //             {
 //                 std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(values.first);
-//                 result.append(LogNormalDistWrapper(temp));
+//                 result.append(LogNormalDist(temp));
 //             }
 
 //             {
 //                 std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(values.second);
-//                 result.append(LogNormalDistWrapper(temp));
+//                 result.append(LogNormalDist(temp));
 //             }
 //             return result;
 //         }
@@ -651,33 +581,33 @@ LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
 //             python::list result;
 //             {
 //                 std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(losses.repair);
-//                 result.append(LogNormalDistWrapper(temp));
+//                 result.append(LogNormalDist(temp));
 //             }
 //             {
 //                 std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(losses.demolition);
-//                 result.append(LogNormalDistWrapper(temp));
+//                 result.append(LogNormalDist(temp));
 //             }
 //             {
 //                 std::shared_ptr<LogNormalDist> temp = std::make_shared<LogNormalDist>(losses.collapse);
-//                 result.append(LogNormalDistWrapper(temp));
+//                 result.append(LogNormalDist(temp));
 //             }
 //             return result;
 //         }
 
-//         void setRebuildCost(LogNormalDistWrapper cost) {
+//         void setRebuildCost(LogNormalDist cost) {
 //             wrapper->setRebuildCost(*cost.dist);
 //         };
-//         LogNormalDistWrapper getRebuildCost(void) {
-//             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->getRebuildCost())));
+//         LogNormalDist getRebuildCost(void) {
+//             return LogNormalDist(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->getRebuildCost())));
 //         };
-//         void setDemolitionCost(LogNormalDistWrapper cost) {
+//         void setDemolitionCost(LogNormalDist cost) {
 //             wrapper->setDemolitionCost(*cost.dist);
 //         };
-//         LogNormalDistWrapper getDemolitionCost(void) {
-//             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->getDemolitionCost())));
+//         LogNormalDist getDemolitionCost(void) {
+//             return LogNormalDist(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->getDemolitionCost())));
 //         };
-//         LogNormalDistWrapper AnnualLoss(void) {
-//             return LogNormalDistWrapper(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->AnnualLoss())));
+//         LogNormalDist AnnualLoss(void) {
+//             return LogNormalDist(std::shared_ptr<LogNormalDist>(new LogNormalDist(wrapper->AnnualLoss())));
 //         };
 //         python::list ComponentsByEDP(void) {
 //             python::list result;
@@ -698,7 +628,7 @@ LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
 //                 mapping.append(EDP(*key));
 
 //                 for (size_t j=0; j < edp_cg_mapping[*key].size(); j++) {
-//                     mapping.append(CompGroupWrapper(edp_cg_mapping[*key][j]));
+//                     mapping.append(CompGroup(edp_cg_mapping[*key][j]));
 //                 }
 //                 result.append(mapping);
 //             }
@@ -727,7 +657,7 @@ LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
 
 //                 for (size_t j=0; j < frag_cg_mapping[*key].size(); j++) {
 //                     //std::cout << "   " << frag_cg_mapping[*key][j] << std::endl;
-//                     mapping.append(CompGroupWrapper(frag_cg_mapping[*key][j]));
+//                     mapping.append(CompGroup(frag_cg_mapping[*key][j]));
 //                 }
 //                 result.append(mapping);
 //             }
@@ -738,9 +668,9 @@ LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
 //         std::shared_ptr<Structure> wrapper;
 //     };
 
-//     StructureWrapper *MakeStructure() 
+//     Structure *MakeStructure() 
 //     {
-//         return new StructureWrapper(std::make_shared<Structure>("anonymous structure"));
+//         return new Structure(std::make_shared<Structure>("anonymous structure"));
 //     }
 
 //     void IntegrationSettings(double tolerance, unsigned int max_evals)
@@ -785,15 +715,15 @@ LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
 //                     MakeEDP,
 //                     python::return_value_policy<python::manage_new_object>());
 
-//         python::class_<IMWrapper>("IM", python::no_init)
-//             .def("getlambda", &IMWrapper::lambda)
-//             .def("SetCollapse", &IMWrapper::SetCollapse)
-//             .def("CollapseRate", &IMWrapper::CollapseRate)
-//             .def("pCollapse", &IMWrapper::pCollapse)
-//             .def("SetDemolition", &IMWrapper::SetDemolition)
-//             .def("DemolitionRate", &IMWrapper::DemolitionRate)
-//             .def("pDemolition", &IMWrapper::pDemolition)
-//             .def("pRepair", &IMWrapper::pRepair)
+//         python::class_<IM>("IM", python::no_init)
+//             .def("getlambda", &IM::lambda)
+//             .def("SetCollapse", &IM::SetCollapse)
+//             .def("CollapseRate", &IM::CollapseRate)
+//             .def("pCollapse", &IM::pCollapse)
+//             .def("SetDemolition", &IM::SetDemolition)
+//             .def("DemolitionRate", &IM::DemolitionRate)
+//             .def("pDemolition", &IM::pDemolition)
+//             .def("pRepair", &IM::pRepair)
 //             ;
 
 //         python::class_<EDP>("EDP", python::no_init)
@@ -827,15 +757,15 @@ LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
 //                     MakeLogNormalDist,
 //                     python::return_value_policy<python::manage_new_object>());
         
-//         python::class_<LogNormalDistWrapper>("LogNormalDist", python::no_init)
-//             .def("p_at_least", &LogNormalDistWrapper::p_at_least)
-//             .def("p_at_most", &LogNormalDistWrapper::p_at_most)
-//             .def("x_at_p", &LogNormalDistWrapper::x_at_p)
-//             .def("get_mu_lnX", &LogNormalDistWrapper::get_mu_lnX)
-//             .def("get_median_X", &LogNormalDistWrapper::get_median_X)
-//             .def("get_mean_X", &LogNormalDistWrapper::get_mean_X)
-//             .def("get_sigma_lnX", &LogNormalDistWrapper::get_sigma_lnX)
-//             .def("get_sigma_X", &LogNormalDistWrapper::get_sigma_X)
+//         python::class_<LogNormalDist>("LogNormalDist", python::no_init)
+//             .def("p_at_least", &LogNormalDist::p_at_least)
+//             .def("p_at_most", &LogNormalDist::p_at_most)
+//             .def("x_at_p", &LogNormalDist::x_at_p)
+//             .def("get_mu_lnX", &LogNormalDist::get_mu_lnX)
+//             .def("get_median_X", &LogNormalDist::get_median_X)
+//             .def("get_mean_X", &LogNormalDist::get_mean_X)
+//             .def("get_sigma_lnX", &LogNormalDist::get_sigma_lnX)
+//             .def("get_sigma_X", &LogNormalDist::get_sigma_X)
 //             ;
 
 //         python::def("AddDistributions", 
@@ -853,44 +783,44 @@ LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
 //                     MakeFragilityFn,
 //                     python::return_value_policy<python::manage_new_object>());
         
-//         python::class_<LossFnWrapper>("LossFn", python::no_init)
-//             .def("n_states", &LossFnWrapper::n_states)
+//         python::class_<LossFn>("LossFn", python::no_init)
+//             .def("n_states", &LossFn::n_states)
 //             ;
 
 //         python::def("MakeLossFn", 
 //                     MakeLossFn,
 //                     python::return_value_policy<python::manage_new_object>());
         
-//         python::class_<CompGroupWrapper>("CompGroup", python::no_init)
-//             .def("E_Loss_EDP", &CompGroupWrapper::E_Loss_EDP)
-//             .def("SD_ln_loss_EDP", &CompGroupWrapper::SD_ln_loss_EDP)
-//             .def("E_Loss_IM", &CompGroupWrapper::E_Loss_IM)
-//             .def("SD_ln_loss_IM", &CompGroupWrapper::SD_ln_loss_IM)
-//             .def("E_annual_loss", &CompGroupWrapper::E_annual_loss)
-//             .def("E_loss", &CompGroupWrapper::E_loss)
-//             .def("lambda_loss", &CompGroupWrapper::lambda_loss)
-//             .def("AreSame", &CompGroupWrapper::AreSame)
-//             .def("pDS_IM", &CompGroupWrapper::pDS_IM)
-//             .def("Rate", &CompGroupWrapper::Rate)
+//         python::class_<CompGroup>("CompGroup", python::no_init)
+//             .def("E_Loss_EDP", &CompGroup::E_Loss_EDP)
+//             .def("SD_ln_loss_EDP", &CompGroup::SD_ln_loss_EDP)
+//             .def("E_Loss_IM", &CompGroup::E_Loss_IM)
+//             .def("SD_ln_loss_IM", &CompGroup::SD_ln_loss_IM)
+//             .def("E_annual_loss", &CompGroup::E_annual_loss)
+//             .def("E_loss", &CompGroup::E_loss)
+//             .def("lambda_loss", &CompGroup::lambda_loss)
+//             .def("AreSame", &CompGroup::AreSame)
+//             .def("pDS_IM", &CompGroup::pDS_IM)
+//             .def("Rate", &CompGroup::Rate)
 //             ;
 
 //         python::def("MakeCompGroup", 
 //                     MakeCompGroup,
 //                     python::return_value_policy<python::manage_new_object>());
 
-//         python::class_<StructureWrapper>("Structure", python::no_init)
-//             .def("AddCompGroup", &StructureWrapper::AddCompGroup)
-//             .def("Loss", &StructureWrapper::Loss)
-//             .def("DeaggregatedLoss", &StructureWrapper::DeaggregatedLoss)
-//             .def("setRebuildCost", &StructureWrapper::setRebuildCost)
-//             .def("getRebuildCost", &StructureWrapper::getRebuildCost)
-//             .def("setDemolitionCost", &StructureWrapper::setDemolitionCost)
-//             .def("getDemolitionCost", &StructureWrapper::getDemolitionCost)
-//             .def("AnnualLoss", &StructureWrapper::AnnualLoss)
-//             .def("LossesByFate", &StructureWrapper::LossesByFate)
-//             .def("ComponentsByEDP", &StructureWrapper::ComponentsByEDP)
-//             .def("ComponentsByFragility", &StructureWrapper::ComponentsByFragility)
-//             .def("TotalLoss", &StructureWrapper::TotalLoss)
+//         python::class_<Structure>("Structure", python::no_init)
+//             .def("AddCompGroup", &Structure::AddCompGroup)
+//             .def("Loss", &Structure::Loss)
+//             .def("DeaggregatedLoss", &Structure::DeaggregatedLoss)
+//             .def("setRebuildCost", &Structure::setRebuildCost)
+//             .def("getRebuildCost", &Structure::getRebuildCost)
+//             .def("setDemolitionCost", &Structure::setDemolitionCost)
+//             .def("getDemolitionCost", &Structure::getDemolitionCost)
+//             .def("AnnualLoss", &Structure::AnnualLoss)
+//             .def("LossesByFate", &Structure::LossesByFate)
+//             .def("ComponentsByEDP", &Structure::ComponentsByEDP)
+//             .def("ComponentsByFragility", &Structure::ComponentsByFragility)
+//             .def("TotalLoss", &Structure::TotalLoss)
 //             ;
 
         
