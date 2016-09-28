@@ -52,6 +52,7 @@ def MakeEDP(base_rate, dependent_rate, name):
     return pyslatcore.MakeEDP(base_rate, dependent_rate, name)
 
 def MakeFragilityFn(parameters):
+    print(parameters)
     return pyslatcore.MakeFragilityFn(parameters)
 
 def MakeLossFn(parameters):
@@ -335,7 +336,7 @@ class fragfn_user(fragfn):
         self._scalars = scalars
         params = []
         for s in scalars:
-            params.append({options['mu']: s[0], options['sd']: s[1]})
+            params.append(MakeLogNormalDist(s[0], options['mu'], s[1], options['sd']))
         self._func = MakeFragilityFn(params)
 
     def __str__(self):

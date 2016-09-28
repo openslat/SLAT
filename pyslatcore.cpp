@@ -408,7 +408,7 @@ EDP *MakeEDP(IM base_rate, ProbabilisticFn dependent_rate, std::string name)
 //     class LossFnWrapper;
     
 LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
-                                 double sigma, LOGNORMAL_SIGMA_TYPE sigma_type)
+                                double sigma, LOGNORMAL_SIGMA_TYPE sigma_type)
 {
     SLAT::LogNormalDist dist;
     if (mu_type == MEAN_LN_X && sigma_type == SD_LN_X) {
@@ -425,6 +425,40 @@ LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
 
     std::shared_ptr<SLAT::LogNormalDist> temp = std::make_shared<SLAT::LogNormalDist>(dist);
     return new LogNormalDist(temp);
+}
+
+FragilityFn::FragilityFn(std::shared_ptr<SLAT::FragilityFn> function)
+{
+    fragility = function;
+}
+
+int FragilityFn::n_states()
+{
+    return fragility->n_states(); 
+};
+
+bool FragilityFn::AreSame(const FragilityFn &other)
+{
+    return this->fragility == other.fragility;
+}
+
+std::vector<double> FragilityFn::pExceeded(double edp)
+{
+    return fragility->pExceeded(edp);
+}
+
+std::vector<double> FragilityFn::pHighest(double edp)
+{
+    return fragility->pHighest(edp);
+}
+
+FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions)
+{
+    std::vector<SLAT::LogNormalDist> slat_distributions(distributions.size());
+    // for (size_t i=0; i < distributions.size(); i++) {
+    //     slat_distributions[i] = *(distributions[i]->dist);
+    // };
+    return new FragilityFn(std::make_shared<SLAT::FragilityFn>(slat_distributions));
 }
 
 //     LogNormalDistWrapper *MakeLogNormalDist(python::dict parameters)
@@ -509,53 +543,6 @@ LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
 //     };
 
 
-//     class FragilityFnWrapper {
-//     public:
-//         FragilityFnWrapper(std::shared_ptr<FragilityFn> function) { fragility = function; }
-//         python::list pExceeded(double edp);
-//         python::list pHighest(double edp);
-//         int n_states() { return fragility->n_states(); };
-//         bool AreSame(const FragilityFnWrapper &other)
-//         {
-//             return this->fragility == other.fragility;
-//         }
-//     private:
-//         std::shared_ptr<FragilityFn> fragility;
-//         friend CompGroupWrapper *MakeCompGroup(EDP edp, FragilityFnWrapper frag_fn,
-//                                                 LossFnWrapper loss_fn, int count);
-//     };
-
-//     python::list FragilityFnWrapper::pExceeded(double edp)
-//     {
-//         std::vector<double> probabilities = fragility->pExceeded(edp);
-//         python::list result;
-//         for (std::vector<double>::iterator i = probabilities.begin(); i != probabilities.end(); i++) {
-//             result.append(*i);
-//         }
-//         return result;
-//     }
-
-//     python::list FragilityFnWrapper::pHighest(double edp)
-//     {
-//         std::vector<double> probabilities = fragility->pHighest(edp);
-//         python::list result;
-//         for (std::vector<double>::iterator i = probabilities.begin(); i != probabilities.end(); i++) {
-//             result.append(*i);
-//         }
-//         return result;
-//     }
-
-//     FragilityFnWrapper *MakeFragilityFn(python::list parameters)
-//     {
-//         std::vector<LogNormalDist> distributions;
-
-//         python::stl_input_iterator<python::dict> iter(parameters), end;
-//         while (iter != end) {
-//             distributions.push_back(*MakeLogNormalDist(*iter)->dist);
-//             iter++;
-//         }
-//         return new FragilityFnWrapper(std::make_shared<FragilityFn>(distributions));
-//     }
 
 //     class LossFnWrapper {
 //     public:
@@ -563,7 +550,7 @@ LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
 //         int n_states() { return loss->n_states(); };
 //     private:
 //         std::shared_ptr<LossFn> loss;
-//         friend CompGroupWrapper *MakeCompGroup(EDP edp, FragilityFnWrapper frag_fn,
+//         friend CompGroupWrapper *MakeCompGroup(EDP edp, FragilityFn frag_fn,
 //                                                 LossFnWrapper loss_fn, int count);
 //     };
 
@@ -601,7 +588,7 @@ LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
 //         friend class StructureWrapper;
 //     };
     
-//     CompGroupWrapper *MakeCompGroup(EDP edp, FragilityFnWrapper frag_fn, LossFnWrapper loss_fn, int count)
+//     CompGroupWrapper *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFnWrapper loss_fn, int count)
 //     {
 //         return new CompGroupWrapper(std::make_shared<CompGroup>( 
 //                                         edp.relationship, 
@@ -737,7 +724,7 @@ LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
 // //                std::cout << "KEY: " << *key << std::endl;
                 
 //                 python::list mapping;
-//                 mapping.append(FragilityFnWrapper(*key));
+//                 mapping.append(FragilityFn(*key));
 
 //                 for (size_t j=0; j < frag_cg_mapping[*key].size(); j++) {
 //                     //std::cout << "   " << frag_cg_mapping[*key][j] << std::endl;
@@ -856,11 +843,11 @@ LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
 //                     AddDistributions);
 
         
-//         python::class_<FragilityFnWrapper>("FragilityFn", python::no_init)
-//             .def("pExceeded", &FragilityFnWrapper::pExceeded)
-//             .def("pHighest", &FragilityFnWrapper::pHighest)
-//             .def("n_states", &FragilityFnWrapper::n_states)
-//             .def("AreSame", &FragilityFnWrapper::AreSame)
+//         python::class_<FragilityFn>("FragilityFn", python::no_init)
+//             .def("pExceeded", &FragilityFn::pExceeded)
+//             .def("pHighest", &FragilityFn::pHighest)
+//             .def("n_states", &FragilityFn::n_states)
+//             .def("AreSame", &FragilityFn::AreSame)
 //             ;
 
 //         python::def("MakeFragilityFn", 

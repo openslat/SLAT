@@ -7,6 +7,7 @@
 %include <std_map.i>
 namespace std{
     %template(VectorDouble) std::vector<double>;
+    %template(VectorLogNormal) std::vector<LogNormalDist *>;
 }
 
 
@@ -42,8 +43,8 @@ public:
     double get_sigma_X(void) const;
 };
 
-LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
-                                 double sigma, LOGNORMAL_SIGMA_TYPE sigma_type);
+LogNormalDist * MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
+                                  double sigma, LOGNORMAL_SIGMA_TYPE sigma_type);
 
 class IM {
 public:
@@ -76,3 +77,14 @@ public:
 };
 
 EDP *MakeEDP(IM base_wrate, ProbabilisticFn dependent_rate, std::string name);
+
+class FragilityFn {
+public:
+    FragilityFn(std::shared_ptr<SLAT::FragilityFn> function);
+    std::vector<double> pExceeded(double edp);
+    std::vector<double> pHighest(double edp);
+    int n_states();
+    bool AreSame(const FragilityFn &other);
+};
+
+FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions);
