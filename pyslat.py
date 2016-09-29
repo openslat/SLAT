@@ -423,7 +423,7 @@ class compgroup:
         return self._func.E_Loss_IM(x)
 
     def SD_ln_Loss_IM(self, x):
-        return self._func.SD_ln_loss_IM(x)
+        return self._func.SD_ln_Loss_IM(x)
 
     def E_loss(self, t, l):
         return self._func.E_loss(t, l)
@@ -806,13 +806,10 @@ class StructLossRecorder(recorder):
             
                 
         elif self._options['structloss-type'] == 'by-frag':
-            mapping = self._function.ComponentsByFragility();
+            components = self._function.ComponentsByFragility();
             groups = dict()
-            for m in mapping:
-                components = []
-                for cg in m[1:]:
-                    components.append(compgroup.lookup(cg))
-                groups[fragfn.lookup(m[0]).id()] = components
+            for c in components:
+                groups[compgroup.lookup(c[0]).fragfn().id()] = c
 
             x_label = self._function.get_IM().id()
             y_label = self._columns
@@ -834,8 +831,8 @@ class StructLossRecorder(recorder):
                         mean = cg.E_Loss_IM(x)
                         sd_ln = cg.SD_ln_Loss_IM(x)
 
-                        dists.append(pyslatcore.MakeLogNormalDist(mean, LOGNORMAL_PARAM_TYPE.MEAN_X,
-                                                                  sd_ln, LOGNORMAL_PARAM_TYPE.SD_LN_X))
+                        dists.append(pyslatcore.MakeLogNormalDist(mean, LOGNORMAL_MU_TYPE.MEAN_X,
+                                                                  sd_ln, LOGNORMAL_SIGMA_TYPE.SD_LN_X))
                     dist = lognormaldist(pyslatcore.AddDistributions(dists))
                     
                     for y in self._columns:

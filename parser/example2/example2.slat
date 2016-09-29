@@ -339,1121 +339,1121 @@ set lossedpvalues3 $(pyslat.linrange(0.05, 5.0, 199));
 set lossedpvalues4 $(pyslat.linrange(0.032, 0.0325, 199));
 set lossedpvalues5 $(pyslat.linrange(0.001, 0.10, 199));
 
-#-#recorder IM_RATE_REC imrate IM.1 $imvalues results/im_rate --new;
-#-#recorder IM_RATE_LIN_REC imrate IM.1 $linvalues results/im_rate_lin --new;
+recorder IM_RATE_REC imrate IM.1 $imvalues results/im_rate --new;
+recorder IM_RATE_LIN_REC imrate IM.1 $linvalues results/im_rate_lin --new;
 
-#-#recorder IM_COLLAPSE_REC collapse IM.1 $(pyslat.linrange(0.01, 3.0, 199)) results/collapse.txt --new;
-#-#recorder IM_COLLRATE_REC collrate IM.1 results/collrate.txt --new;
+recorder IM_COLLAPSE_REC collapse IM.1 $(pyslat.linrange(0.01, 3.0, 199)) results/collapse.txt --new;
+recorder IM_COLLRATE_REC collrate IM.1 results/collrate.txt --new;
 
 
-#-#recorder EDPIM.1_REC edpim EDP.01 $linvalues --cols mean_x, sd_ln_x results/im_edp_1.txt --new;
+recorder EDPIM.1_REC edpim EDP.01 $linvalues --cols mean_x, sd_ln_x results/im_edp_1.txt --new;
 #recorder EDPIM.1_REC edpim EDP.01 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_1.txt --new;
-#-#recorder EDPRATE_1_REC edprate EDP.01 $(pyslat.logrange(0.032, 0.0325, 199)) results/edp_1_rate.txt --new;
+recorder EDPRATE_1_REC edprate EDP.01 $(pyslat.logrange(0.032, 0.0325, 199)) results/edp_1_rate.txt --new;
 
-#-#recorder EDPIM_2_REC edpim EDP.02 $linvalues --cols mean_x, sd_ln_x results/im_edp_2.txt --new;
+recorder EDPIM_2_REC edpim EDP.02 $linvalues --cols mean_x, sd_ln_x results/im_edp_2.txt --new;
 #recorder EDPIM_2_REC edpim EDP.02 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_2.txt --new;
-#-#recorder EDP_RATE_2_REC edprate EDP.02 $(pyslat.logrange(0.001, 0.10, 199)) results/edp_2_rate.txt --new;
+recorder EDP_RATE_2_REC edprate EDP.02 $(pyslat.logrange(0.001, 0.10, 199)) results/edp_2_rate.txt --new;
 
-#-#recorder EDPIM_3_REC edpim EDP.03 $linvalues --cols mean_x, sd_ln_x results/im_edp_3.txt --new;
+recorder EDPIM_3_REC edpim EDP.03 $linvalues --cols mean_x, sd_ln_x results/im_edp_3.txt --new;
 #recorder EDPIM_3_REC edpim EDP.03 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_3.txt --new;
-#-#recorder EDPRATE_3_REC edprate EDP.03 $edpoddvalues results/edp_3_rate.txt --new;
+recorder EDPRATE_3_REC edprate EDP.03 $edpoddvalues results/edp_3_rate.txt --new;
 
-#-#recorder EDPIM_4_REC edpim EDP.04 $linvalues --cols mean_x, sd_ln_x results/im_edp_4.txt --new;
-#-#recorder EDPRATE_4_REC edprate EDP.04 $edpevenvalues results/edp_4_rate.txt --new;
+recorder EDPIM_4_REC edpim EDP.04 $linvalues --cols mean_x, sd_ln_x results/im_edp_4.txt --new;
+recorder EDPRATE_4_REC edprate EDP.04 $edpevenvalues results/edp_4_rate.txt --new;
 
-#-#recorder EDPIM_5_REC edpim EDP.05 $linvalues --cols mean_x, sd_ln_x results/im_edp_5.txt --new;
-#-#recorder EDPRATE_5_REC edprate EDP.05 $edpoddvalues results/edp_5_rate.txt --new;
+recorder EDPIM_5_REC edpim EDP.05 $linvalues --cols mean_x, sd_ln_x results/im_edp_5.txt --new;
+recorder EDPRATE_5_REC edprate EDP.05 $edpoddvalues results/edp_5_rate.txt --new;
 
-#-#recorder EDPIM_6_REC edpim EDP.06 $linvalues --cols mean_x, sd_ln_x results/im_edp_6.txt --new;
-#-#recorder EDPRATE_6_REC edprate EDP.06 $edpevenvalues results/edp_6_rate.txt --new;
+recorder EDPIM_6_REC edpim EDP.06 $linvalues --cols mean_x, sd_ln_x results/im_edp_6.txt --new;
+recorder EDPRATE_6_REC edprate EDP.06 $edpevenvalues results/edp_6_rate.txt --new;
 
-#-#recorder EDPIM_7_REC edpim EDP.07 $linvalues --cols mean_x, sd_ln_x results/im_edp_7.txt --new;
-#-#recorder EDPRATE_7_REC edprate EDP.07 $edpoddvalues results/edp_7_rate.txt --new;
+recorder EDPIM_7_REC edpim EDP.07 $linvalues --cols mean_x, sd_ln_x results/im_edp_7.txt --new;
+recorder EDPRATE_7_REC edprate EDP.07 $edpoddvalues results/edp_7_rate.txt --new;
 
-#-#recorder EDPIM_8_REC edpim EDP.08 $linvalues --cols mean_x, sd_ln_x results/im_edp_8.txt --new;
-#-#recorder EDPRATE_8_REC edprate EDP.08 $edpevenvalues results/edp_8_rate.txt --new;
+recorder EDPIM_8_REC edpim EDP.08 $linvalues --cols mean_x, sd_ln_x results/im_edp_8.txt --new;
+recorder EDPRATE_8_REC edprate EDP.08 $edpevenvalues results/edp_8_rate.txt --new;
 
-#-#recorder EDPIM_9_REC edpim EDP.09 $linvalues --cols mean_x, sd_ln_x results/im_edp_9.txt --new;
-#-#recorder EDPRATE_9_REC edprate EDP.09 $edpoddvalues results/edp_9_rate.txt --new;
+recorder EDPIM_9_REC edpim EDP.09 $linvalues --cols mean_x, sd_ln_x results/im_edp_9.txt --new;
+recorder EDPRATE_9_REC edprate EDP.09 $edpoddvalues results/edp_9_rate.txt --new;
 
-#-#recorder EDPIM.10_REC edpim EDP.10 $linvalues --cols mean_x, sd_ln_x results/im_edp_10.txt --new;
-#-#recorder EDPRATE_10_REC edprate EDP.10 $edpevenvalues results/edp_10_rate.txt --new;
+recorder EDPIM.10_REC edpim EDP.10 $linvalues --cols mean_x, sd_ln_x results/im_edp_10.txt --new;
+recorder EDPRATE_10_REC edprate EDP.10 $edpevenvalues results/edp_10_rate.txt --new;
 
-#-#recorder EDPIM.11_REC edpim EDP.11 $linvalues --cols mean_x, sd_ln_x results/im_edp_11.txt --new;
-#-#recorder EDPRATE_11_REC edprate EDP.11 $edpoddvalues results/edp_11_rate.txt --new;
+recorder EDPIM.11_REC edpim EDP.11 $linvalues --cols mean_x, sd_ln_x results/im_edp_11.txt --new;
+recorder EDPRATE_11_REC edprate EDP.11 $edpoddvalues results/edp_11_rate.txt --new;
 
-#-#recorder EDPIM.12_REC edpim EDP.12 $linvalues --cols mean_x, sd_ln_x results/im_edp_12.txt --new;
-#-#recorder EDPRATE_12_REC edprate EDP.12 $edpevenvalues results/edp_12_rate.txt --new;
+recorder EDPIM.12_REC edpim EDP.12 $linvalues --cols mean_x, sd_ln_x results/im_edp_12.txt --new;
+recorder EDPRATE_12_REC edprate EDP.12 $edpevenvalues results/edp_12_rate.txt --new;
 
-#-#recorder EDPIM.13_REC edpim EDP.13 $linvalues --cols mean_x, sd_ln_x results/im_edp_13.txt --new;
-#-#recorder EDPRATE_13_REC edprate EDP.13 $edpoddvalues results/edp_13_rate.txt --new;
+recorder EDPIM.13_REC edpim EDP.13 $linvalues --cols mean_x, sd_ln_x results/im_edp_13.txt --new;
+recorder EDPRATE_13_REC edprate EDP.13 $edpoddvalues results/edp_13_rate.txt --new;
 
-#-#recorder EDPIM.14_REC edpim EDP.14 $linvalues --cols mean_x, sd_ln_x results/im_edp_14.txt --new;
-#-#recorder EDPRATE_14_REC edprate EDP.14 $edpevenvalues results/edp_14_rate.txt --new;
+recorder EDPIM.14_REC edpim EDP.14 $linvalues --cols mean_x, sd_ln_x results/im_edp_14.txt --new;
+recorder EDPRATE_14_REC edprate EDP.14 $edpevenvalues results/edp_14_rate.txt --new;
 
-#-#recorder EDPIM.15_REC edpim EDP.15 $linvalues --cols mean_x, sd_ln_x results/im_edp_15.txt --new;
-#-#recorder EDPRATE_15_REC edprate EDP.15 $edpoddvalues results/edp_15_rate.txt --new;
+recorder EDPIM.15_REC edpim EDP.15 $linvalues --cols mean_x, sd_ln_x results/im_edp_15.txt --new;
+recorder EDPRATE_15_REC edprate EDP.15 $edpoddvalues results/edp_15_rate.txt --new;
 
-#-#recorder EDPIM.16_REC edpim EDP.16 $linvalues --cols mean_x, sd_ln_x results/im_edp_16.txt --new;
-#-#recorder EDPRATE_16_REC edprate EDP.16 $edpevenvalues results/edp_16_rate.txt --new;
+recorder EDPIM.16_REC edpim EDP.16 $linvalues --cols mean_x, sd_ln_x results/im_edp_16.txt --new;
+recorder EDPRATE_16_REC edprate EDP.16 $edpevenvalues results/edp_16_rate.txt --new;
 
-#-#recorder EDPIM.17_REC edpim EDP.17 $linvalues --cols mean_x, sd_ln_x results/im_edp_17.txt --new;
-#-#recorder EDPRATE_17_REC edprate EDP.17 $edpoddvalues results/edp_17_rate.txt --new;
+recorder EDPIM.17_REC edpim EDP.17 $linvalues --cols mean_x, sd_ln_x results/im_edp_17.txt --new;
+recorder EDPRATE_17_REC edprate EDP.17 $edpoddvalues results/edp_17_rate.txt --new;
 
-#-#recorder EDPIM.18_REC edpim EDP.18 $linvalues --cols mean_x, sd_ln_x results/im_edp_18.txt --new;
-#-#recorder EDPRATE_18_REC edprate EDP.18 $edpevenvalues results/edp_18_rate.txt --new;
+recorder EDPIM.18_REC edpim EDP.18 $linvalues --cols mean_x, sd_ln_x results/im_edp_18.txt --new;
+recorder EDPRATE_18_REC edprate EDP.18 $edpevenvalues results/edp_18_rate.txt --new;
 
-#-#recorder EDPIM.19_REC edpim EDP.19 $linvalues --cols mean_x, sd_ln_x results/im_edp_19.txt --new;
-#-#recorder EDPRATE_19_REC edprate EDP.19 $edpoddvalues results/edp_19_rate.txt --new;
+recorder EDPIM.19_REC edpim EDP.19 $linvalues --cols mean_x, sd_ln_x results/im_edp_19.txt --new;
+recorder EDPRATE_19_REC edprate EDP.19 $edpoddvalues results/edp_19_rate.txt --new;
 
-#-#recorder EDPIM_20_REC edpim EDP.20 $linvalues --cols mean_x, sd_ln_x results/im_edp_20.txt --new;
-#-#recorder EDPRATE_20_REC edprate EDP.20 $edpevenvalues results/edp_20_rate.txt --new;
+recorder EDPIM_20_REC edpim EDP.20 $linvalues --cols mean_x, sd_ln_x results/im_edp_20.txt --new;
+recorder EDPRATE_20_REC edprate EDP.20 $edpevenvalues results/edp_20_rate.txt --new;
 
-#-#recorder EDPIM_21_REC edpim EDP.21 $linvalues --cols mean_x, sd_ln_x results/im_edp_21.txt --new;
-#-#recorder EDPRATE_21_REC edprate EDP.21 $edpoddvalues results/edp_21_rate.txt --new;
+recorder EDPIM_21_REC edpim EDP.21 $linvalues --cols mean_x, sd_ln_x results/im_edp_21.txt --new;
+recorder EDPRATE_21_REC edprate EDP.21 $edpoddvalues results/edp_21_rate.txt --new;
 
 
-#-#recorder LOSSEDP.1_REC lossedp COMPGROUP.001 $lossedpvalues1 results/loss_1_edp.txt --new;
-#-#recorder LOSSIM.1_REC lossim COMPGROUP.001 $lossimvalues results/loss_1_im.txt --new;
-#-#recorder DSRATE_001_REC dsrate COMPGROUP.001 results/ds_rate_001.txt --new;
-#-#recorder DSEDP.1_REC dsedp COMPGROUP.001 0.0:0.01:0.200 results/ds_edp_1.txt --new;
-#-#recorder DSIM.1_REC dsim COMPGROUP.001 $linvalues results/ds_im_1.txt --new;
-#-#recorder LOSSRATE_1_REC lossrate COMPGROUP.001 1E-4:4.8E-3:1.2 results/loss_rate_1.txt --new;
-#-#recorder ANNLOSS_REC_01 annloss COMPGROUP.001 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_1.txt --new;
+recorder LOSSEDP.1_REC lossedp COMPGROUP.001 $lossedpvalues1 results/loss_1_edp.txt --new;
+recorder LOSSIM.1_REC lossim COMPGROUP.001 $lossimvalues results/loss_1_im.txt --new;
+recorder DSRATE_001_REC dsrate COMPGROUP.001 results/ds_rate_001.txt --new;
+recorder DSEDP.1_REC dsedp COMPGROUP.001 0.0:0.01:0.200 results/ds_edp_1.txt --new;
+recorder DSIM.1_REC dsim COMPGROUP.001 $linvalues results/ds_im_1.txt --new;
+recorder LOSSRATE_1_REC lossrate COMPGROUP.001 1E-4:4.8E-3:1.2 results/loss_rate_1.txt --new;
+recorder ANNLOSS_REC_01 annloss COMPGROUP.001 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_1.txt --new;
 
 
-#-#recorder LOSSEDP.2_REC lossedp COMPGROUP.002 $lossedpvalues1 results/loss_2_edp.txt --new;
-#-#recorder LOSSIM_2_REC lossim COMPGROUP.002 $lossimvalues results/loss_2_im.txt --new;
-#-#recorder DSRATE_002_REC dsrate COMPGROUP.002 results/ds_rate_002.txt --new;
-#-#recorder DSEDP.2_REC dsedp COMPGROUP.002 0.0:0.01:0.200 results/ds_edp_2.txt --new;
-#-#recorder DSIM.2_REC dsim COMPGROUP.002 $linvalues results/ds_im_2.txt --new;
-#-#recorder LOSSRATE_2_REC lossrate COMPGROUP.002 1E-4:4.8E-3:1.2 results/loss_rate_2.txt --new;
-#-#recorder ANNLOSS_REC_02 annloss COMPGROUP.002 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_2.txt --new;
+recorder LOSSEDP.2_REC lossedp COMPGROUP.002 $lossedpvalues1 results/loss_2_edp.txt --new;
+recorder LOSSIM_2_REC lossim COMPGROUP.002 $lossimvalues results/loss_2_im.txt --new;
+recorder DSRATE_002_REC dsrate COMPGROUP.002 results/ds_rate_002.txt --new;
+recorder DSEDP.2_REC dsedp COMPGROUP.002 0.0:0.01:0.200 results/ds_edp_2.txt --new;
+recorder DSIM.2_REC dsim COMPGROUP.002 $linvalues results/ds_im_2.txt --new;
+recorder LOSSRATE_2_REC lossrate COMPGROUP.002 1E-4:4.8E-3:1.2 results/loss_rate_2.txt --new;
+recorder ANNLOSS_REC_02 annloss COMPGROUP.002 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_2.txt --new;
 
 
-#-#recorder LOSSEDP.3_REC lossedp COMPGROUP.003 $lossedpvalues2 results/loss_3_edp.txt --new;
-#-#recorder LOSSIM_3_REC lossim COMPGROUP.003 $lossimvalues results/loss_3_im.txt --new;
-#-#recorder DSRATE_003_REC dsrate COMPGROUP.003 results/ds_rate_003.txt --new;
-#-#recorder DSEDP.3_REC dsedp COMPGROUP.003 0.0:0.01:0.200 results/ds_edp_3.txt --new;
-#-#recorder DSIM.3_REC dsim COMPGROUP.003 $linvalues results/ds_im_3.txt --new;
-#-#recorder LOSSRATE_3_REC lossrate COMPGROUP.003 1E-4:4.8E-3:1.2 results/loss_rate_3.txt --new;
-#-#recorder ANNLOSS_REC_03 annloss COMPGROUP.003 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_3.txt --new;
+recorder LOSSEDP.3_REC lossedp COMPGROUP.003 $lossedpvalues2 results/loss_3_edp.txt --new;
+recorder LOSSIM_3_REC lossim COMPGROUP.003 $lossimvalues results/loss_3_im.txt --new;
+recorder DSRATE_003_REC dsrate COMPGROUP.003 results/ds_rate_003.txt --new;
+recorder DSEDP.3_REC dsedp COMPGROUP.003 0.0:0.01:0.200 results/ds_edp_3.txt --new;
+recorder DSIM.3_REC dsim COMPGROUP.003 $linvalues results/ds_im_3.txt --new;
+recorder LOSSRATE_3_REC lossrate COMPGROUP.003 1E-4:4.8E-3:1.2 results/loss_rate_3.txt --new;
+recorder ANNLOSS_REC_03 annloss COMPGROUP.003 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_3.txt --new;
 
 
-#-#recorder LOSSEDP.4_REC lossedp COMPGROUP.004 $lossedpvalues2 results/loss_4_edp.txt --new;
-#-#recorder LOSSIM_4_REC lossim COMPGROUP.004 $lossimvalues results/loss_4_im.txt --new;
-#-#recorder DSRATE_004_REC dsrate COMPGROUP.004 results/ds_rate_004.txt --new;
-#-#recorder DSEDP.4_REC dsedp COMPGROUP.004 0.0:0.01:0.200 results/ds_edp_4.txt --new;
-#-#recorder DSIM.4_REC dsim COMPGROUP.004 $linvalues results/ds_im_4.txt --new;
-#-#recorder LOSSRATE_4_REC lossrate COMPGROUP.004 1E-4:4.8E-3:1.2 results/loss_rate_4.txt --new;
-#-#recorder ANNLOSS_REC_04 annloss COMPGROUP.004 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_4.txt --new;
+recorder LOSSEDP.4_REC lossedp COMPGROUP.004 $lossedpvalues2 results/loss_4_edp.txt --new;
+recorder LOSSIM_4_REC lossim COMPGROUP.004 $lossimvalues results/loss_4_im.txt --new;
+recorder DSRATE_004_REC dsrate COMPGROUP.004 results/ds_rate_004.txt --new;
+recorder DSEDP.4_REC dsedp COMPGROUP.004 0.0:0.01:0.200 results/ds_edp_4.txt --new;
+recorder DSIM.4_REC dsim COMPGROUP.004 $linvalues results/ds_im_4.txt --new;
+recorder LOSSRATE_4_REC lossrate COMPGROUP.004 1E-4:4.8E-3:1.2 results/loss_rate_4.txt --new;
+recorder ANNLOSS_REC_04 annloss COMPGROUP.004 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_4.txt --new;
 
 
-#-#recorder LOSSEDP.5_REC lossedp COMPGROUP.005 $lossedpvalues2 results/loss_5_edp.txt --new;
-#-#recorder LOSSIM_5_REC lossim COMPGROUP.005 $lossimvalues results/loss_5_im.txt --new;
-#-#recorder DSRATE_005_REC dsrate COMPGROUP.005 results/ds_rate_005.txt --new;
-#-#recorder DSEDP.5_REC dsedp COMPGROUP.005 0.0:0.01:0.200 results/ds_edp_5.txt --new;
-#-#recorder DSIM.5_REC dsim COMPGROUP.005 $linvalues results/ds_im_5.txt --new;
-#-#recorder LOSSRATE_5_REC lossrate COMPGROUP.005 1E-4:4.8E-3:1.2 results/loss_rate_5.txt --new;
-#-#recorder ANNLOSS_REC_05 annloss COMPGROUP.005 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_5.txt --new;
+recorder LOSSEDP.5_REC lossedp COMPGROUP.005 $lossedpvalues2 results/loss_5_edp.txt --new;
+recorder LOSSIM_5_REC lossim COMPGROUP.005 $lossimvalues results/loss_5_im.txt --new;
+recorder DSRATE_005_REC dsrate COMPGROUP.005 results/ds_rate_005.txt --new;
+recorder DSEDP.5_REC dsedp COMPGROUP.005 0.0:0.01:0.200 results/ds_edp_5.txt --new;
+recorder DSIM.5_REC dsim COMPGROUP.005 $linvalues results/ds_im_5.txt --new;
+recorder LOSSRATE_5_REC lossrate COMPGROUP.005 1E-4:4.8E-3:1.2 results/loss_rate_5.txt --new;
+recorder ANNLOSS_REC_05 annloss COMPGROUP.005 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_5.txt --new;
 
 
-#-#recorder LOSSEDP.6_REC lossedp COMPGROUP.006 $lossedpvalues2 results/loss_6_edp.txt --new;
-#-#recorder LOSSIM_6_REC lossim COMPGROUP.006 $lossimvalues results/loss_6_im.txt --new;
-#-#recorder DSRATE_006_REC dsrate COMPGROUP.006 results/ds_rate_006.txt --new;
-#-#recorder DSEDP.6_REC dsedp COMPGROUP.006 0.0:0.01:0.200 results/ds_edp_6.txt --new;
-#-#recorder DSIM.6_REC dsim COMPGROUP.006 $linvalues results/ds_im_6.txt --new;
-#-#recorder LOSSRATE_6_REC lossrate COMPGROUP.006 1E-4:4.8E-3:1.2 results/loss_rate_6.txt --new;
-#-#recorder ANNLOSS_REC_06 annloss COMPGROUP.006 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_6.txt --new;
-
-
-#-#recorder LOSSEDP.7_REC lossedp COMPGROUP.007 $lossedpvalues2 results/loss_7_edp.txt --new;
-#-#recorder LOSSIM_7_REC lossim COMPGROUP.007 $lossimvalues results/loss_7_im.txt --new;
-#-#recorder DSRATE_007_REC dsrate COMPGROUP.007 results/ds_rate_007.txt --new;
-#-#recorder DSEDP.7_REC dsedp COMPGROUP.007 0.0:0.01:0.200 results/ds_edp_7.txt --new;
-#-#recorder DSIM.7_REC dsim COMPGROUP.007 $linvalues results/ds_im_7.txt --new;
-#-#recorder LOSSRATE_7_REC lossrate COMPGROUP.007 1E-4:4.8E-3:1.2 results/loss_rate_7.txt --new;
-#-#recorder ANNLOSS_REC_07 annloss COMPGROUP.007 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_7.txt --new;
-
-
-#-#recorder LOSSEDP.8_REC lossedp COMPGROUP.008 $lossedpvalues2 results/loss_8_edp.txt --new;
-#-#recorder LOSSIM_8_REC lossim COMPGROUP.008 $lossimvalues results/loss_8_im.txt --new;
-#-#recorder DSRATE_008_REC dsrate COMPGROUP.008 results/ds_rate_008.txt --new;
-#-#recorder DSEDP.8_REC dsedp COMPGROUP.008 0.0:0.01:0.200 results/ds_edp_8.txt --new;
-#-#recorder DSIM.8_REC dsim COMPGROUP.008 $linvalues results/ds_im_8.txt --new;
-#-#recorder LOSSRATE_8_REC lossrate COMPGROUP.008 1E-4:4.8E-3:1.2 results/loss_rate_8.txt --new;
-#-#recorder ANNLOSS_REC_08 annloss COMPGROUP.008 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_8.txt --new;
-
-
-#-#recorder LOSSEDP.9_REC lossedp COMPGROUP.009 $lossedpvalues2 results/loss_9_edp.txt --new;
-#-#recorder LOSSIM_9_REC lossim COMPGROUP.009 $lossimvalues results/loss_9_im.txt --new;
-#-#recorder DSRATE_009_REC dsrate COMPGROUP.009 results/ds_rate_009.txt --new;
-#-#recorder DSEDP.9_REC dsedp COMPGROUP.009 0.0:0.01:0.200 results/ds_edp_9.txt --new;
-#-#recorder DSIM.9_REC dsim COMPGROUP.009 $linvalues results/ds_im_9.txt --new;
-#-#recorder LOSSRATE_9_REC lossrate COMPGROUP.009 1E-4:4.8E-3:1.2 results/loss_rate_9.txt --new;
-#-#recorder ANNLOSS_REC_09 annloss COMPGROUP.009 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_9.txt --new;
-
-
-#-#recorder LOSSEDP.10_REC lossedp COMPGROUP.010 $lossedpvalues2 results/loss_10_edp.txt --new;
-#-#recorder LOSSIM.10_REC lossim COMPGROUP.010 $lossimvalues results/loss_10_im.txt --new;
-#-#recorder DSRATE_010_REC dsrate COMPGROUP.010 results/ds_rate_010.txt --new;
-#-#recorder DSEDP.10_REC dsedp COMPGROUP.010 0.0:0.01:0.200 results/ds_edp_10.txt --new;
-#-#recorder DSIM.10_REC dsim COMPGROUP.010 $linvalues results/ds_im_10.txt --new;
-#-#recorder LOSSRATE_10_REC lossrate COMPGROUP.010 1E-4:4.8E-3:1.2 results/loss_rate_10.txt --new;
-#-#recorder ANNLOSS_REC_10 annloss COMPGROUP.010 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_10.txt --new;
-
-
-#-#recorder LOSSEDP.11_REC lossedp COMPGROUP.011 $lossedpvalues2 results/loss_11_edp.txt --new;
-#-#recorder LOSSIM.11_REC lossim COMPGROUP.011 $lossimvalues results/loss_11_im.txt --new;
-#-#recorder DSRATE_011_REC dsrate COMPGROUP.011 results/ds_rate_011.txt --new;
-#-#recorder DSEDP.11_REC dsedp COMPGROUP.011 0.0:0.01:0.200 results/ds_edp_11.txt --new;
-#-#recorder DSIM.11_REC dsim COMPGROUP.011 $linvalues results/ds_im_11.txt --new;
-#-#recorder LOSSRATE_11_REC lossrate COMPGROUP.011 1E-4:4.8E-3:1.2 results/loss_rate_11.txt --new;
-#-#recorder ANNLOSS_REC_11 annloss COMPGROUP.011 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_11.txt --new;
-
-
-#-#recorder LOSSEDP.12_REC lossedp COMPGROUP.012 $lossedpvalues2 results/loss_12_edp.txt --new;
-#-#recorder LOSSIM.12_REC lossim COMPGROUP.012 $lossimvalues results/loss_12_im.txt --new;
-#-#recorder DSRATE_012_REC dsrate COMPGROUP.012 results/ds_rate_012.txt --new;
-#-#recorder DSEDP.12_REC dsedp COMPGROUP.012 0.0:0.01:0.200 results/ds_edp_12.txt --new;
-#-#recorder DSIM.12_REC dsim COMPGROUP.012 $linvalues results/ds_im_12.txt --new;
-#-#recorder LOSSRATE_12_REC lossrate COMPGROUP.012 1E-4:4.8E-3:1.2 results/loss_rate_12.txt --new;
-#-#recorder ANNLOSS_REC_12 annloss COMPGROUP.012 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_12.txt --new;
-
-
-#-#recorder LOSSEDP.13_REC lossedp COMPGROUP.013 $lossedpvalues2 results/loss_13_edp.txt --new;
-#-#recorder LOSSIM.13_REC lossim COMPGROUP.013 $lossimvalues results/loss_13_im.txt --new;
-#-#recorder DSRATE_013_REC dsrate COMPGROUP.013 results/ds_rate_013.txt --new;
-#-#recorder DSEDP.13_REC dsedp COMPGROUP.013 0.0:0.01:0.200 results/ds_edp_13.txt --new;
-#-#recorder DSIM.13_REC dsim COMPGROUP.013 $linvalues results/ds_im_13.txt --new;
-#-#recorder LOSSRATE_13_REC lossrate COMPGROUP.013 1E-4:4.8E-3:1.2 results/loss_rate_13.txt --new;
-#-#recorder ANNLOSS_REC_13 annloss COMPGROUP.013 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_13.txt --new;
-
-
-#-#recorder LOSSEDP.14_REC lossedp COMPGROUP.014 $lossedpvalues2 results/loss_14_edp.txt --new;
-#-#recorder LOSSIM.14_REC lossim COMPGROUP.014 $lossimvalues results/loss_14_im.txt --new;
-#-#recorder DSRATE_014_REC dsrate COMPGROUP.014 results/ds_rate_014.txt --new;
-#-#recorder DSEDP.14_REC dsedp COMPGROUP.014 0.0:0.01:0.200 results/ds_edp_14.txt --new;
-#-#recorder DSIM.14_REC dsim COMPGROUP.014 $linvalues results/ds_im_14.txt --new;
-#-#recorder LOSSRATE_14_REC lossrate COMPGROUP.014 1E-4:4.8E-3:1.2 results/loss_rate_14.txt --new;
-#-#recorder ANNLOSS_REC_14 annloss COMPGROUP.014 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_14.txt --new;
-
-
-#-#recorder LOSSEDP.15_REC lossedp COMPGROUP.015 $lossedpvalues2 results/loss_15_edp.txt --new;
-#-#recorder LOSSIM.15_REC lossim COMPGROUP.015 $lossimvalues results/loss_15_im.txt --new;
-#-#recorder DSRATE_015_REC dsrate COMPGROUP.015 results/ds_rate_015.txt --new;
-#-#recorder DSEDP.15_REC dsedp COMPGROUP.015 0.0:0.01:0.200 results/ds_edp_15.txt --new;
-#-#recorder DSIM.15_REC dsim COMPGROUP.015 $linvalues results/ds_im_15.txt --new;
-#-#recorder LOSSRATE_15_REC lossrate COMPGROUP.015 1E-4:4.8E-3:1.2 results/loss_rate_15.txt --new;
-#-#recorder ANNLOSS_REC_15 annloss COMPGROUP.015 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_15.txt --new;
-
-
-#-#recorder LOSSEDP.16_REC lossedp COMPGROUP.016 $lossedpvalues2 results/loss_16_edp.txt --new;
-#-#recorder LOSSIM.16_REC lossim COMPGROUP.016 $lossimvalues results/loss_16_im.txt --new;
-#-#recorder DSRATE_016_REC dsrate COMPGROUP.016 results/ds_rate_016.txt --new;
-#-#recorder DSEDP.16_REC dsedp COMPGROUP.016 0.0:0.01:0.200 results/ds_edp_16.txt --new;
-#-#recorder DSIM.16_REC dsim COMPGROUP.016 $linvalues results/ds_im_16.txt --new;
-#-#recorder LOSSRATE_16_REC lossrate COMPGROUP.016 1E-4:4.8E-3:1.2 results/loss_rate_16.txt --new;
-#-#recorder ANNLOSS_REC_16 annloss COMPGROUP.016 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_16.txt --new;
-
-
-#-#recorder LOSSEDP.17_REC lossedp COMPGROUP.017 $lossedpvalues2 results/loss_17_edp.txt --new;
-#-#recorder LOSSIM.17_REC lossim COMPGROUP.017 $lossimvalues results/loss_17_im.txt --new;
-#-#recorder DSRATE_017_REC dsrate COMPGROUP.017 results/ds_rate_017.txt --new;
-#-#recorder DSEDP.17_REC dsedp COMPGROUP.017 0.0:0.01:0.200 results/ds_edp_17.txt --new;
-#-#recorder DSIM.17_REC dsim COMPGROUP.017 $linvalues results/ds_im_17.txt --new;
-#-#recorder LOSSRATE_17_REC lossrate COMPGROUP.017 1E-4:4.8E-3:1.2 results/loss_rate_17.txt --new;
-#-#recorder ANNLOSS_REC_17 annloss COMPGROUP.017 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_17.txt --new;
-
-
-#-#recorder LOSSEDP.18_REC lossedp COMPGROUP.018 $lossedpvalues2 results/loss_18_edp.txt --new;
-#-#recorder LOSSIM.18_REC lossim COMPGROUP.018 $lossimvalues results/loss_18_im.txt --new;
-#-#recorder DSRATE_018_REC dsrate COMPGROUP.018 results/ds_rate_018.txt --new;
-#-#recorder DSEDP.18_REC dsedp COMPGROUP.018 0.0:0.01:0.200 results/ds_edp_18.txt --new;
-#-#recorder DSIM.18_REC dsim COMPGROUP.018 $linvalues results/ds_im_18.txt --new;
-#-#recorder LOSSRATE_18_REC lossrate COMPGROUP.018 1E-4:4.8E-3:1.2 results/loss_rate_18.txt --new;
-#-#recorder ANNLOSS_REC_18 annloss COMPGROUP.018 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_18.txt --new;
-
-
-#-#recorder LOSSEDP.19_REC lossedp COMPGROUP.019 $lossedpvalues2 results/loss_19_edp.txt --new;
-#-#recorder LOSSIM.19_REC lossim COMPGROUP.019 $lossimvalues results/loss_19_im.txt --new;
-#-#recorder DSRATE_019_REC dsrate COMPGROUP.019 results/ds_rate_019.txt --new;
-#-#recorder DSEDP.19_REC dsedp COMPGROUP.019 0.0:0.01:0.200 results/ds_edp_19.txt --new;
-#-#recorder DSIM.19_REC dsim COMPGROUP.019 $linvalues results/ds_im_19.txt --new;
-#-#recorder LOSSRATE_19_REC lossrate COMPGROUP.019 1E-4:4.8E-3:1.2 results/loss_rate_19.txt --new;
-#-#recorder ANNLOSS_REC_19 annloss COMPGROUP.019 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_19.txt --new;
-
-
-#-#recorder LOSSEDP.20_REC lossedp COMPGROUP.020 $lossedpvalues2 results/loss_20_edp.txt --new;
-#-#recorder LOSSIM_20_REC lossim COMPGROUP.020 $lossimvalues results/loss_20_im.txt --new;
-#-#recorder DSRATE_020_REC dsrate COMPGROUP.020 results/ds_rate_020.txt --new;
-#-#recorder DSEDP.20_REC dsedp COMPGROUP.020 0.0:0.01:0.200 results/ds_edp_20.txt --new;
-#-#recorder DSIM.20_REC dsim COMPGROUP.020 $linvalues results/ds_im_20.txt --new;
-#-#recorder LOSSRATE_20_REC lossrate COMPGROUP.020 1E-4:4.8E-3:1.2 results/loss_rate_20.txt --new;
-#-#recorder ANNLOSS_REC_20 annloss COMPGROUP.020 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_20.txt --new;
-
-
-#-#recorder LOSSEDP.21_REC lossedp COMPGROUP.021 $lossedpvalues5 results/loss_21_edp.txt --new;
-#-#recorder LOSSIM_21_REC lossim COMPGROUP.021 $lossimvalues results/loss_21_im.txt --new;
-#-#recorder DSRATE_021_REC dsrate COMPGROUP.021 results/ds_rate_021.txt --new;
-#-#recorder DSEDP.21_REC dsedp COMPGROUP.021 0.0:0.01:0.200 results/ds_edp_21.txt --new;
-#-#recorder DSIM.21_REC dsim COMPGROUP.021 $linvalues results/ds_im_21.txt --new;
-#-#recorder LOSSRATE_21_REC lossrate COMPGROUP.021 1E-4:4.8E-3:1.2 results/loss_rate_21.txt --new;
-#-#recorder ANNLOSS_REC_21 annloss COMPGROUP.021 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_21.txt --new;
-
-
-#-#recorder LOSSEDP.22_REC lossedp COMPGROUP.022 $lossedpvalues2 results/loss_22_edp.txt --new;
-#-#recorder LOSSIM_22_REC lossim COMPGROUP.022 $lossimvalues results/loss_22_im.txt --new;
-#-#recorder DSRATE_022_REC dsrate COMPGROUP.022 results/ds_rate_022.txt --new;
-#-#recorder DSEDP.22_REC dsedp COMPGROUP.022 0.0:0.01:0.200 results/ds_edp_22.txt --new;
-#-#recorder DSIM.22_REC dsim COMPGROUP.022 $linvalues results/ds_im_22.txt --new;
-#-#recorder LOSSRATE_22_REC lossrate COMPGROUP.022 1E-4:4.8E-3:1.2 results/loss_rate_22.txt --new;
-#-#recorder ANNLOSS_REC_22 annloss COMPGROUP.022 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_22.txt --new;
-
-
-#-#recorder LOSSEDP.23_REC lossedp COMPGROUP.023 $lossedpvalues2 results/loss_23_edp.txt --new;
-#-#recorder LOSSIM_23_REC lossim COMPGROUP.023 $lossimvalues results/loss_23_im.txt --new;
-#-#recorder DSRATE_023_REC dsrate COMPGROUP.023 results/ds_rate_023.txt --new;
-#-#recorder DSEDP.23_REC dsedp COMPGROUP.023 0.0:0.01:0.200 results/ds_edp_23.txt --new;
-#-#recorder DSIM.23_REC dsim COMPGROUP.023 $linvalues results/ds_im_23.txt --new;
-#-#recorder LOSSRATE_23_REC lossrate COMPGROUP.023 1E-4:4.8E-3:1.2 results/loss_rate_23.txt --new;
-#-#recorder ANNLOSS_REC_23 annloss COMPGROUP.023 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_23.txt --new;
-
-
-#-#recorder LOSSEDP.24_REC lossedp COMPGROUP.024 $lossedpvalues2 results/loss_24_edp.txt --new;
-#-#recorder LOSSIM_24_REC lossim COMPGROUP.024 $lossimvalues results/loss_24_im.txt --new;
-#-#recorder DSRATE_024_REC dsrate COMPGROUP.024 results/ds_rate_024.txt --new;
-#-#recorder DSEDP.24_REC dsedp COMPGROUP.024 0.0:0.01:0.200 results/ds_edp_24.txt --new;
-#-#recorder DSIM.24_REC dsim COMPGROUP.024 $linvalues results/ds_im_24.txt --new;
-#-#recorder LOSSRATE_24_REC lossrate COMPGROUP.024 1E-4:4.8E-3:1.2 results/loss_rate_24.txt --new;
-#-#recorder ANNLOSS_REC_24 annloss COMPGROUP.024 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_24.txt --new;
-
-
-#-#recorder LOSSEDP.25_REC lossedp COMPGROUP.025 $lossedpvalues2 results/loss_25_edp.txt --new;
-#-#recorder LOSSIM_25_REC lossim COMPGROUP.025 $lossimvalues results/loss_25_im.txt --new;
-#-#recorder DSRATE_025_REC dsrate COMPGROUP.025 results/ds_rate_025.txt --new;
-#-#recorder DSEDP.25_REC dsedp COMPGROUP.025 0.0:0.01:0.200 results/ds_edp_25.txt --new;
-#-#recorder DSIM.25_REC dsim COMPGROUP.025 $linvalues results/ds_im_25.txt --new;
-#-#recorder LOSSRATE_25_REC lossrate COMPGROUP.025 1E-4:4.8E-3:1.2 results/loss_rate_25.txt --new;
-#-#recorder ANNLOSS_REC_25 annloss COMPGROUP.025 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_25.txt --new;
-
-
-#-#recorder LOSSEDP.26_REC lossedp COMPGROUP.026 $lossedpvalues2 results/loss_26_edp.txt --new;
-#-#recorder LOSSIM_26_REC lossim COMPGROUP.026 $lossimvalues results/loss_26_im.txt --new;
-#-#recorder DSRATE_026_REC dsrate COMPGROUP.026 results/ds_rate_026.txt --new;
-#-#recorder DSEDP.26_REC dsedp COMPGROUP.026 0.0:0.01:0.200 results/ds_edp_26.txt --new;
-#-#recorder DSIM.26_REC dsim COMPGROUP.026 $linvalues results/ds_im_26.txt --new;
-#-#recorder LOSSRATE_26_REC lossrate COMPGROUP.026 1E-4:4.8E-3:1.2 results/loss_rate_26.txt --new;
-#-#recorder ANNLOSS_REC_26 annloss COMPGROUP.026 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_26.txt --new;
-
-
-#-#recorder LOSSEDP.27_REC lossedp COMPGROUP.027 $lossedpvalues2 results/loss_27_edp.txt --new;
-#-#recorder LOSSIM_27_REC lossim COMPGROUP.027 $lossimvalues results/loss_27_im.txt --new;
-#-#recorder DSRATE_027_REC dsrate COMPGROUP.027 results/ds_rate_027.txt --new;
-#-#recorder DSEDP.27_REC dsedp COMPGROUP.027 0.0:0.01:0.200 results/ds_edp_27.txt --new;
-#-#recorder DSIM.27_REC dsim COMPGROUP.027 $linvalues results/ds_im_27.txt --new;
-#-#recorder LOSSRATE_27_REC lossrate COMPGROUP.027 1E-4:4.8E-3:1.2 results/loss_rate_27.txt --new;
-#-#recorder ANNLOSS_REC_27 annloss COMPGROUP.027 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_27.txt --new;
-
-
-#-#recorder LOSSEDP.28_REC lossedp COMPGROUP.028 $lossedpvalues2 results/loss_28_edp.txt --new;
-#-#recorder LOSSIM_28_REC lossim COMPGROUP.028 $lossimvalues results/loss_28_im.txt --new;
-#-#recorder DSRATE_028_REC dsrate COMPGROUP.028 results/ds_rate_028.txt --new;
-#-#recorder DSEDP.28_REC dsedp COMPGROUP.028 0.0:0.01:0.200 results/ds_edp_28.txt --new;
-#-#recorder DSIM.28_REC dsim COMPGROUP.028 $linvalues results/ds_im_28.txt --new;
-#-#recorder LOSSRATE_28_REC lossrate COMPGROUP.028 1E-4:4.8E-3:1.2 results/loss_rate_28.txt --new;
-#-#recorder ANNLOSS_REC_28 annloss COMPGROUP.028 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_28.txt --new;
-
-
-#-#recorder LOSSEDP.29_REC lossedp COMPGROUP.029 $lossedpvalues2 results/loss_29_edp.txt --new;
-#-#recorder LOSSIM_29_REC lossim COMPGROUP.029 $lossimvalues results/loss_29_im.txt --new;
-#-#recorder DSRATE_029_REC dsrate COMPGROUP.029 results/ds_rate_029.txt --new;
-#-#recorder DSEDP.29_REC dsedp COMPGROUP.029 0.0:0.01:0.200 results/ds_edp_29.txt --new;
-#-#recorder DSIM.29_REC dsim COMPGROUP.029 $linvalues results/ds_im_29.txt --new;
-#-#recorder LOSSRATE_29_REC lossrate COMPGROUP.029 1E-4:4.8E-3:1.2 results/loss_rate_29.txt --new;
-#-#recorder ANNLOSS_REC_29 annloss COMPGROUP.029 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_29.txt --new;
-
-
-#-#recorder LOSSEDP.30_REC lossedp COMPGROUP.030 $lossedpvalues2 results/loss_30_edp.txt --new;
-#-#recorder LOSSIM_30_REC lossim COMPGROUP.030 $lossimvalues results/loss_30_im.txt --new;
-#-#recorder DSRATE_030_REC dsrate COMPGROUP.030 results/ds_rate_030.txt --new;
-#-#recorder DSEDP.30_REC dsedp COMPGROUP.030 0.0:0.01:0.200 results/ds_edp_30.txt --new;
-#-#recorder DSIM.30_REC dsim COMPGROUP.030 $linvalues results/ds_im_30.txt --new;
-#-#recorder LOSSRATE_30_REC lossrate COMPGROUP.030 1E-4:4.8E-3:1.2 results/loss_rate_30.txt --new;
-#-#recorder ANNLOSS_REC_30 annloss COMPGROUP.030 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_30.txt --new;
-
-
-#-#recorder LOSSEDP.31_REC lossedp COMPGROUP.031 $lossedpvalues5 results/loss_31_edp.txt --new;
-#-#recorder LOSSIM_31_REC lossim COMPGROUP.031 $lossimvalues results/loss_31_im.txt --new;
-#-#recorder DSRATE_031_REC dsrate COMPGROUP.031 results/ds_rate_031.txt --new;
-#-#recorder DSEDP.31_REC dsedp COMPGROUP.031 0.0:0.01:0.200 results/ds_edp_31.txt --new;
-#-#recorder DSIM.31_REC dsim COMPGROUP.031 $linvalues results/ds_im_31.txt --new;
-#-#recorder LOSSRATE_31_REC lossrate COMPGROUP.031 1E-4:4.8E-3:1.2 results/loss_rate_31.txt --new;
-#-#recorder ANNLOSS_REC_31 annloss COMPGROUP.031 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_31.txt --new;
-
-
-#-#recorder LOSSEDP.32_REC lossedp COMPGROUP.032 $lossedpvalues2 results/loss_32_edp.txt --new;
-#-#recorder LOSSIM_32_REC lossim COMPGROUP.032 $lossimvalues results/loss_32_im.txt --new;
-#-#recorder DSRATE_032_REC dsrate COMPGROUP.032 results/ds_rate_032.txt --new;
-#-#recorder DSEDP.32_REC dsedp COMPGROUP.032 0.0:0.01:0.200 results/ds_edp_32.txt --new;
-#-#recorder DSIM.32_REC dsim COMPGROUP.032 $linvalues results/ds_im_32.txt --new;
-#-#recorder LOSSRATE_32_REC lossrate COMPGROUP.032 1E-4:4.8E-3:1.2 results/loss_rate_32.txt --new;
-#-#recorder ANNLOSS_REC_32 annloss COMPGROUP.032 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_32.txt --new;
-
-
-#-#recorder LOSSEDP.33_REC lossedp COMPGROUP.033 $lossedpvalues2 results/loss_33_edp.txt --new;
-#-#recorder LOSSIM_33_REC lossim COMPGROUP.033 $lossimvalues results/loss_33_im.txt --new;
-#-#recorder DSRATE_033_REC dsrate COMPGROUP.033 results/ds_rate_033.txt --new;
-#-#recorder DSEDP.33_REC dsedp COMPGROUP.033 0.0:0.01:0.200 results/ds_edp_33.txt --new;
-#-#recorder DSIM.33_REC dsim COMPGROUP.033 $linvalues results/ds_im_33.txt --new;
-#-#recorder LOSSRATE_33_REC lossrate COMPGROUP.033 1E-4:4.8E-3:1.2 results/loss_rate_33.txt --new;
-#-#recorder ANNLOSS_REC_33 annloss COMPGROUP.033 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_33.txt --new;
-
-
-#-#recorder LOSSEDP.34_REC lossedp COMPGROUP.034 $lossedpvalues2 results/loss_34_edp.txt --new;
-#-#recorder LOSSIM_34_REC lossim COMPGROUP.034 $lossimvalues results/loss_34_im.txt --new;
-#-#recorder DSRATE_034_REC dsrate COMPGROUP.034 results/ds_rate_034.txt --new;
-#-#recorder DSEDP.34_REC dsedp COMPGROUP.034 0.0:0.01:0.200 results/ds_edp_34.txt --new;
-#-#recorder DSIM.34_REC dsim COMPGROUP.034 $linvalues results/ds_im_34.txt --new;
-#-#recorder LOSSRATE_34_REC lossrate COMPGROUP.034 1E-4:4.8E-3:1.2 results/loss_rate_34.txt --new;
-#-#recorder ANNLOSS_REC_34 annloss COMPGROUP.034 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_34.txt --new;
-
-
-#-#recorder LOSSEDP.35_REC lossedp COMPGROUP.035 $lossedpvalues2 results/loss_35_edp.txt --new;
-#-#recorder LOSSIM_35_REC lossim COMPGROUP.035 $lossimvalues results/loss_35_im.txt --new;
-#-#recorder DSRATE_035_REC dsrate COMPGROUP.035 results/ds_rate_035.txt --new;
-#-#recorder DSEDP.35_REC dsedp COMPGROUP.035 0.0:0.01:0.200 results/ds_edp_35.txt --new;
-#-#recorder DSIM.35_REC dsim COMPGROUP.035 $linvalues results/ds_im_35.txt --new;
-#-#recorder LOSSRATE_35_REC lossrate COMPGROUP.035 1E-4:4.8E-3:1.2 results/loss_rate_35.txt --new;
-#-#recorder ANNLOSS_REC_35 annloss COMPGROUP.035 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_35.txt --new;
-
-
-#-#recorder LOSSEDP.36_REC lossedp COMPGROUP.036 $lossedpvalues2 results/loss_36_edp.txt --new;
-#-#recorder LOSSIM_36_REC lossim COMPGROUP.036 $lossimvalues results/loss_36_im.txt --new;
-#-#recorder DSRATE_036_REC dsrate COMPGROUP.036 results/ds_rate_036.txt --new;
-#-#recorder DSEDP.36_REC dsedp COMPGROUP.036 0.0:0.01:0.200 results/ds_edp_36.txt --new;
-#-#recorder DSIM.36_REC dsim COMPGROUP.036 $linvalues results/ds_im_36.txt --new;
-#-#recorder LOSSRATE_36_REC lossrate COMPGROUP.036 1E-4:4.8E-3:1.2 results/loss_rate_36.txt --new;
-#-#recorder ANNLOSS_REC_36 annloss COMPGROUP.036 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_36.txt --new;
-
-
-#-#recorder LOSSEDP.37_REC lossedp COMPGROUP.037 $lossedpvalues2 results/loss_37_edp.txt --new;
-#-#recorder LOSSIM_37_REC lossim COMPGROUP.037 $lossimvalues results/loss_37_im.txt --new;
-#-#recorder DSRATE_037_REC dsrate COMPGROUP.037 results/ds_rate_037.txt --new;
-#-#recorder DSEDP.37_REC dsedp COMPGROUP.037 0.0:0.01:0.200 results/ds_edp_37.txt --new;
-#-#recorder DSIM.37_REC dsim COMPGROUP.037 $linvalues results/ds_im_37.txt --new;
-#-#recorder LOSSRATE_37_REC lossrate COMPGROUP.037 1E-4:4.8E-3:1.2 results/loss_rate_37.txt --new;
-#-#recorder ANNLOSS_REC_37 annloss COMPGROUP.037 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_37.txt --new;
-
-
-#-#recorder LOSSEDP.38_REC lossedp COMPGROUP.038 $lossedpvalues2 results/loss_38_edp.txt --new;
-#-#recorder LOSSIM_38_REC lossim COMPGROUP.038 $lossimvalues results/loss_38_im.txt --new;
-#-#recorder DSRATE_038_REC dsrate COMPGROUP.038 results/ds_rate_038.txt --new;
-#-#recorder DSEDP.38_REC dsedp COMPGROUP.038 0.0:0.01:0.200 results/ds_edp_38.txt --new;
-#-#recorder DSIM.38_REC dsim COMPGROUP.038 $linvalues results/ds_im_38.txt --new;
-#-#recorder LOSSRATE_38_REC lossrate COMPGROUP.038 1E-4:4.8E-3:1.2 results/loss_rate_38.txt --new;
-#-#recorder ANNLOSS_REC_38 annloss COMPGROUP.038 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_38.txt --new;
-
-
-#-#recorder LOSSEDP.39_REC lossedp COMPGROUP.039 $lossedpvalues2 results/loss_39_edp.txt --new;
-#-#recorder LOSSIM_39_REC lossim COMPGROUP.039 $lossimvalues results/loss_39_im.txt --new;
-#-#recorder DSRATE_039_REC dsrate COMPGROUP.039 results/ds_rate_039.txt --new;
-#-#recorder DSEDP.39_REC dsedp COMPGROUP.039 0.0:0.01:0.200 results/ds_edp_39.txt --new;
-#-#recorder DSIM.39_REC dsim COMPGROUP.039 $linvalues results/ds_im_39.txt --new;
-#-#recorder LOSSRATE_39_REC lossrate COMPGROUP.039 1E-4:4.8E-3:1.2 results/loss_rate_39.txt --new;
-#-#recorder ANNLOSS_REC_39 annloss COMPGROUP.039 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_39.txt --new;
-
-
-#-#recorder LOSSEDP.40_REC lossedp COMPGROUP.040 $lossedpvalues2 results/loss_40_edp.txt --new;
-#-#recorder LOSSIM_40_REC lossim COMPGROUP.040 $lossimvalues results/loss_40_im.txt --new;
-#-#recorder DSRATE_040_REC dsrate COMPGROUP.040 results/ds_rate_040.txt --new;
-#-#recorder DSEDP.40_REC dsedp COMPGROUP.040 0.0:0.01:0.200 results/ds_edp_40.txt --new;
-#-#recorder DSIM.40_REC dsim COMPGROUP.040 $linvalues results/ds_im_40.txt --new;
-#-#recorder LOSSRATE_40_REC lossrate COMPGROUP.040 1E-4:4.8E-3:1.2 results/loss_rate_40.txt --new;
-#-#recorder ANNLOSS_REC_40 annloss COMPGROUP.040 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_40.txt --new;
-
-
-#-#recorder LOSSEDP.41_REC lossedp COMPGROUP.041 $lossedpvalues5 results/loss_41_edp.txt --new;
-#-#recorder LOSSIM_41_REC lossim COMPGROUP.041 $lossimvalues results/loss_41_im.txt --new;
-#-#recorder DSRATE_041_REC dsrate COMPGROUP.041 results/ds_rate_041.txt --new;
-#-#recorder DSEDP.41_REC dsedp COMPGROUP.041 0.0:0.01:0.200 results/ds_edp_41.txt --new;
-#-#recorder DSIM.41_REC dsim COMPGROUP.041 $linvalues results/ds_im_41.txt --new;
-#-#recorder LOSSRATE_41_REC lossrate COMPGROUP.041 1E-4:4.8E-3:1.2 results/loss_rate_41.txt --new;
-#-#recorder ANNLOSS_REC_41 annloss COMPGROUP.041 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_41.txt --new;
-
-
-#-#recorder LOSSEDP.42_REC lossedp COMPGROUP.042 $lossedpvalues2 results/loss_42_edp.txt --new;
-#-#recorder LOSSIM_42_REC lossim COMPGROUP.042 $lossimvalues results/loss_42_im.txt --new;
-#-#recorder DSRATE_042_REC dsrate COMPGROUP.042 results/ds_rate_042.txt --new;
-#-#recorder DSEDP.42_REC dsedp COMPGROUP.042 0.0:0.01:0.200 results/ds_edp_42.txt --new;
-#-#recorder DSIM.42_REC dsim COMPGROUP.042 $linvalues results/ds_im_42.txt --new;
-#-#recorder LOSSRATE_42_REC lossrate COMPGROUP.042 1E-4:4.8E-3:1.2 results/loss_rate_42.txt --new;
-#-#recorder ANNLOSS_REC_42 annloss COMPGROUP.042 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_42.txt --new;
-
-
-#-#recorder LOSSEDP.43_REC lossedp COMPGROUP.043 $lossedpvalues2 results/loss_43_edp.txt --new;
-#-#recorder LOSSIM_43_REC lossim COMPGROUP.043 $lossimvalues results/loss_43_im.txt --new;
-#-#recorder DSRATE_043_REC dsrate COMPGROUP.043 results/ds_rate_043.txt --new;
-#-#recorder DSEDP.43_REC dsedp COMPGROUP.043 0.0:0.01:0.200 results/ds_edp_43.txt --new;
-#-#recorder DSIM.43_REC dsim COMPGROUP.043 $linvalues results/ds_im_43.txt --new;
-#-#recorder LOSSRATE_43_REC lossrate COMPGROUP.043 1E-4:4.8E-3:1.2 results/loss_rate_43.txt --new;
-#-#recorder ANNLOSS_REC_43 annloss COMPGROUP.043 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_43.txt --new;
-
-
-#-#recorder LOSSEDP.44_REC lossedp COMPGROUP.044 $lossedpvalues2 results/loss_44_edp.txt --new;
-#-#recorder LOSSIM_44_REC lossim COMPGROUP.044 $lossimvalues results/loss_44_im.txt --new;
-#-#recorder DSRATE_044_REC dsrate COMPGROUP.044 results/ds_rate_044.txt --new;
-#-#recorder DSEDP.44_REC dsedp COMPGROUP.044 0.0:0.01:0.200 results/ds_edp_44.txt --new;
-#-#recorder DSIM.44_REC dsim COMPGROUP.044 $linvalues results/ds_im_44.txt --new;
-#-#recorder LOSSRATE_44_REC lossrate COMPGROUP.044 1E-4:4.8E-3:1.2 results/loss_rate_44.txt --new;
-#-#recorder ANNLOSS_REC_44 annloss COMPGROUP.044 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_44.txt --new;
-
-
-#-#recorder LOSSEDP.45_REC lossedp COMPGROUP.045 $lossedpvalues2 results/loss_45_edp.txt --new;
-#-#recorder LOSSIM_45_REC lossim COMPGROUP.045 $lossimvalues results/loss_45_im.txt --new;
-#-#recorder DSRATE_045_REC dsrate COMPGROUP.045 results/ds_rate_045.txt --new;
-#-#recorder DSEDP.45_REC dsedp COMPGROUP.045 0.0:0.01:0.200 results/ds_edp_45.txt --new;
-#-#recorder DSIM.45_REC dsim COMPGROUP.045 $linvalues results/ds_im_45.txt --new;
-#-#recorder LOSSRATE_45_REC lossrate COMPGROUP.045 1E-4:4.8E-3:1.2 results/loss_rate_45.txt --new;
-#-#recorder ANNLOSS_REC_45 annloss COMPGROUP.045 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_45.txt --new;
-
-
-#-#recorder LOSSEDP.46_REC lossedp COMPGROUP.046 $lossedpvalues2 results/loss_46_edp.txt --new;
-#-#recorder LOSSIM_46_REC lossim COMPGROUP.046 $lossimvalues results/loss_46_im.txt --new;
-#-#recorder DSRATE_046_REC dsrate COMPGROUP.046 results/ds_rate_046.txt --new;
-#-#recorder DSEDP.46_REC dsedp COMPGROUP.046 0.0:0.01:0.200 results/ds_edp_46.txt --new;
-#-#recorder DSIM.46_REC dsim COMPGROUP.046 $linvalues results/ds_im_46.txt --new;
-#-#recorder LOSSRATE_46_REC lossrate COMPGROUP.046 1E-4:4.8E-3:1.2 results/loss_rate_46.txt --new;
-#-#recorder ANNLOSS_REC_46 annloss COMPGROUP.046 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_46.txt --new;
-
-
-#-#recorder LOSSEDP.47_REC lossedp COMPGROUP.047 $lossedpvalues2 results/loss_47_edp.txt --new;
-#-#recorder LOSSIM_47_REC lossim COMPGROUP.047 $lossimvalues results/loss_47_im.txt --new;
-#-#recorder DSRATE_047_REC dsrate COMPGROUP.047 results/ds_rate_047.txt --new;
-#-#recorder DSEDP.47_REC dsedp COMPGROUP.047 0.0:0.01:0.200 results/ds_edp_47.txt --new;
-#-#recorder DSIM.47_REC dsim COMPGROUP.047 $linvalues results/ds_im_47.txt --new;
-#-#recorder LOSSRATE_47_REC lossrate COMPGROUP.047 1E-4:4.8E-3:1.2 results/loss_rate_47.txt --new;
-#-#recorder ANNLOSS_REC_47 annloss COMPGROUP.047 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_47.txt --new;
-
-
-#-#recorder LOSSEDP.48_REC lossedp COMPGROUP.048 $lossedpvalues2 results/loss_48_edp.txt --new;
-#-#recorder LOSSIM_48_REC lossim COMPGROUP.048 $lossimvalues results/loss_48_im.txt --new;
-#-#recorder DSRATE_048_REC dsrate COMPGROUP.048 results/ds_rate_048.txt --new;
-#-#recorder DSEDP.48_REC dsedp COMPGROUP.048 0.0:0.01:0.200 results/ds_edp_48.txt --new;
-#-#recorder DSIM.48_REC dsim COMPGROUP.048 $linvalues results/ds_im_48.txt --new;
-#-#recorder LOSSRATE_48_REC lossrate COMPGROUP.048 1E-4:4.8E-3:1.2 results/loss_rate_48.txt --new;
-#-#recorder ANNLOSS_REC_48 annloss COMPGROUP.048 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_48.txt --new;
-
-
-#-#recorder LOSSEDP.49_REC lossedp COMPGROUP.049 $lossedpvalues2 results/loss_49_edp.txt --new;
-#-#recorder LOSSIM_49_REC lossim COMPGROUP.049 $lossimvalues results/loss_49_im.txt --new;
-#-#recorder DSRATE_049_REC dsrate COMPGROUP.049 results/ds_rate_049.txt --new;
-#-#recorder DSEDP.49_REC dsedp COMPGROUP.049 0.0:0.01:0.200 results/ds_edp_49.txt --new;
-#-#recorder DSIM.49_REC dsim COMPGROUP.049 $linvalues results/ds_im_49.txt --new;
-#-#recorder LOSSRATE_49_REC lossrate COMPGROUP.049 1E-4:4.8E-3:1.2 results/loss_rate_49.txt --new;
-#-#recorder ANNLOSS_REC_49 annloss COMPGROUP.049 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_49.txt --new;
-
-
-#-#recorder LOSSEDP.50_REC lossedp COMPGROUP.050 $lossedpvalues2 results/loss_50_edp.txt --new;
-#-#recorder LOSSIM_50_REC lossim COMPGROUP.050 $lossimvalues results/loss_50_im.txt --new;
-#-#recorder DSRATE_050_REC dsrate COMPGROUP.050 results/ds_rate_050.txt --new;
-#-#recorder DSEDP.50_REC dsedp COMPGROUP.050 0.0:0.01:0.200 results/ds_edp_50.txt --new;
-#-#recorder DSIM.50_REC dsim COMPGROUP.050 $linvalues results/ds_im_50.txt --new;
-#-#recorder LOSSRATE_50_REC lossrate COMPGROUP.050 1E-4:4.8E-3:1.2 results/loss_rate_50.txt --new;
-#-#recorder ANNLOSS_REC_50 annloss COMPGROUP.050 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_50.txt --new;
-
-
-#-#recorder LOSSEDP.51_REC lossedp COMPGROUP.051 $lossedpvalues3 results/loss_51_edp.txt --new;
-#-#recorder LOSSIM_51_REC lossim COMPGROUP.051 $lossimvalues results/loss_51_im.txt --new;
-#-#recorder DSRATE_051_REC dsrate COMPGROUP.051 results/ds_rate_051.txt --new;
-#-#recorder DSEDP.51_REC dsedp COMPGROUP.051 0.0:0.01:0.200 results/ds_edp_51.txt --new;
-#-#recorder DSIM.51_REC dsim COMPGROUP.051 $linvalues results/ds_im_51.txt --new;
-#-#recorder LOSSRATE_51_REC lossrate COMPGROUP.051 1E-4:4.8E-3:1.2 results/loss_rate_51.txt --new;
-#-#recorder ANNLOSS_REC_51 annloss COMPGROUP.051 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_51.txt --new;
-
-
-#-#recorder LOSSEDP.52_REC lossedp COMPGROUP.052 $lossedpvalues3 results/loss_52_edp.txt --new;
-#-#recorder LOSSIM_52_REC lossim COMPGROUP.052 $lossimvalues results/loss_52_im.txt --new;
-#-#recorder DSRATE_052_REC dsrate COMPGROUP.052 results/ds_rate_052.txt --new;
-#-#recorder DSEDP.52_REC dsedp COMPGROUP.052 0.0:0.01:0.200 results/ds_edp_52.txt --new;
-#-#recorder DSIM.52_REC dsim COMPGROUP.052 $linvalues results/ds_im_52.txt --new;
-#-#recorder LOSSRATE_52_REC lossrate COMPGROUP.052 1E-4:4.8E-3:1.2 results/loss_rate_52.txt --new;
-#-#recorder ANNLOSS_REC_52 annloss COMPGROUP.052 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_52.txt --new;
-
-
-#-#recorder LOSSEDP.53_REC lossedp COMPGROUP.053 $lossedpvalues3 results/loss_53_edp.txt --new;
-#-#recorder LOSSIM_53_REC lossim COMPGROUP.053 $lossimvalues results/loss_53_im.txt --new;
-#-#recorder DSRATE_053_REC dsrate COMPGROUP.053 results/ds_rate_053.txt --new;
-#-#recorder DSEDP.53_REC dsedp COMPGROUP.053 0.0:0.01:0.200 results/ds_edp_53.txt --new;
-#-#recorder DSIM.53_REC dsim COMPGROUP.053 $linvalues results/ds_im_53.txt --new;
-#-#recorder LOSSRATE_53_REC lossrate COMPGROUP.053 1E-4:4.8E-3:1.2 results/loss_rate_53.txt --new;
-#-#recorder ANNLOSS_REC_53 annloss COMPGROUP.053 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_53.txt --new;
-
-
-#-#recorder LOSSEDP.54_REC lossedp COMPGROUP.054 $lossedpvalues3 results/loss_54_edp.txt --new;
-#-#recorder LOSSIM_54_REC lossim COMPGROUP.054 $lossimvalues results/loss_54_im.txt --new;
-#-#recorder DSRATE_054_REC dsrate COMPGROUP.054 results/ds_rate_054.txt --new;
-#-#recorder DSEDP.54_REC dsedp COMPGROUP.054 0.0:0.01:0.200 results/ds_edp_54.txt --new;
-#-#recorder DSIM.54_REC dsim COMPGROUP.054 $linvalues results/ds_im_54.txt --new;
-#-#recorder LOSSRATE_54_REC lossrate COMPGROUP.054 1E-4:4.8E-3:1.2 results/loss_rate_54.txt --new;
-#-#recorder ANNLOSS_REC_54 annloss COMPGROUP.054 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_54.txt --new;
-
-
-#-#recorder LOSSEDP.55_REC lossedp COMPGROUP.055 $lossedpvalues3 results/loss_55_edp.txt --new;
-#-#recorder LOSSIM_55_REC lossim COMPGROUP.055 $lossimvalues results/loss_55_im.txt --new;
-#-#recorder DSRATE_055_REC dsrate COMPGROUP.055 results/ds_rate_055.txt --new;
-#-#recorder DSEDP.55_REC dsedp COMPGROUP.055 0.0:0.01:0.200 results/ds_edp_55.txt --new;
-#-#recorder DSIM.55_REC dsim COMPGROUP.055 $linvalues results/ds_im_55.txt --new;
-#-#recorder LOSSRATE_55_REC lossrate COMPGROUP.055 1E-4:4.8E-3:1.2 results/loss_rate_55.txt --new;
-#-#recorder ANNLOSS_REC_55 annloss COMPGROUP.055 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_55.txt --new;
-
-
-#-#recorder LOSSEDP.56_REC lossedp COMPGROUP.056 $lossedpvalues3 results/loss_56_edp.txt --new;
-#-#recorder LOSSIM_56_REC lossim COMPGROUP.056 $lossimvalues results/loss_56_im.txt --new;
-#-#recorder DSRATE_056_REC dsrate COMPGROUP.056 results/ds_rate_056.txt --new;
-#-#recorder DSEDP.56_REC dsedp COMPGROUP.056 0.0:0.01:0.200 results/ds_edp_56.txt --new;
-#-#recorder DSIM.56_REC dsim COMPGROUP.056 $linvalues results/ds_im_56.txt --new;
-#-#recorder LOSSRATE_56_REC lossrate COMPGROUP.056 1E-4:4.8E-3:1.2 results/loss_rate_56.txt --new;
-#-#recorder ANNLOSS_REC_56 annloss COMPGROUP.056 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_56.txt --new;
-
-
-#-#recorder LOSSEDP.57_REC lossedp COMPGROUP.057 $lossedpvalues3 results/loss_57_edp.txt --new;
-#-#recorder LOSSIM_57_REC lossim COMPGROUP.057 $lossimvalues results/loss_57_im.txt --new;
-#-#recorder DSRATE_057_REC dsrate COMPGROUP.057 results/ds_rate_057.txt --new;
-#-#recorder DSEDP.57_REC dsedp COMPGROUP.057 0.0:0.01:0.200 results/ds_edp_57.txt --new;
-#-#recorder DSIM.57_REC dsim COMPGROUP.057 $linvalues results/ds_im_57.txt --new;
-#-#recorder LOSSRATE_57_REC lossrate COMPGROUP.057 1E-4:4.8E-3:1.2 results/loss_rate_57.txt --new;
-#-#recorder ANNLOSS_REC_57 annloss COMPGROUP.057 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_57.txt --new;
-
-
-#-#recorder LOSSEDP.58_REC lossedp COMPGROUP.058 $lossedpvalues3 results/loss_58_edp.txt --new;
-#-#recorder LOSSIM_58_REC lossim COMPGROUP.058 $lossimvalues results/loss_58_im.txt --new;
-#-#recorder DSRATE_058_REC dsrate COMPGROUP.058 results/ds_rate_058.txt --new;
-#-#recorder DSEDP.58_REC dsedp COMPGROUP.058 0.0:0.01:0.200 results/ds_edp_58.txt --new;
-#-#recorder DSIM.58_REC dsim COMPGROUP.058 $linvalues results/ds_im_58.txt --new;
-#-#recorder LOSSRATE_58_REC lossrate COMPGROUP.058 1E-4:4.8E-3:1.2 results/loss_rate_58.txt --new;
-#-#recorder ANNLOSS_REC_58 annloss COMPGROUP.058 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_58.txt --new;
-
-
-#-#recorder LOSSEDP.59_REC lossedp COMPGROUP.059 $lossedpvalues3 results/loss_59_edp.txt --new;
-#-#recorder LOSSIM_59_REC lossim COMPGROUP.059 $lossimvalues results/loss_59_im.txt --new;
-#-#recorder DSRATE_059_REC dsrate COMPGROUP.059 results/ds_rate_059.txt --new;
-#-#recorder DSEDP.59_REC dsedp COMPGROUP.059 0.0:0.01:0.200 results/ds_edp_59.txt --new;
-#-#recorder DSIM.59_REC dsim COMPGROUP.059 $linvalues results/ds_im_59.txt --new;
-#-#recorder LOSSRATE_59_REC lossrate COMPGROUP.059 1E-4:4.8E-3:1.2 results/loss_rate_59.txt --new;
-#-#recorder ANNLOSS_REC_59 annloss COMPGROUP.059 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_59.txt --new;
-
-
-#-#recorder LOSSEDP.60_REC lossedp COMPGROUP.060 $lossedpvalues3 results/loss_60_edp.txt --new;
-#-#recorder LOSSIM_60_REC lossim COMPGROUP.060 $lossimvalues results/loss_60_im.txt --new;
-#-#recorder DSRATE_060_REC dsrate COMPGROUP.060 results/ds_rate_060.txt --new;
-#-#recorder DSEDP.60_REC dsedp COMPGROUP.060 0.0:0.01:0.200 results/ds_edp_60.txt --new;
-#-#recorder DSIM.60_REC dsim COMPGROUP.060 $linvalues results/ds_im_60.txt --new;
-#-#recorder LOSSRATE_60_REC lossrate COMPGROUP.060 1E-4:4.8E-3:1.2 results/loss_rate_60.txt --new;
-#-#recorder ANNLOSS_REC_60 annloss COMPGROUP.060 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_60.txt --new;
-
-
-#-#recorder LOSSEDP.61_REC lossedp COMPGROUP.061 $lossedpvalues3 results/loss_61_edp.txt --new;
-#-#recorder LOSSIM_61_REC lossim COMPGROUP.061 $lossimvalues results/loss_61_im.txt --new;
-#-#recorder DSRATE_061_REC dsrate COMPGROUP.061 results/ds_rate_061.txt --new;
-#-#recorder DSEDP.61_REC dsedp COMPGROUP.061 0.0:0.01:0.200 results/ds_edp_61.txt --new;
-#-#recorder DSIM.61_REC dsim COMPGROUP.061 $linvalues results/ds_im_61.txt --new;
-#-#recorder LOSSRATE_61_REC lossrate COMPGROUP.061 1E-4:4.8E-3:1.2 results/loss_rate_61.txt --new;
-#-#recorder ANNLOSS_REC_61 annloss COMPGROUP.061 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_61.txt --new;
-
-
-#-#recorder LOSSEDP.62_REC lossedp COMPGROUP.062 $lossedpvalues3 results/loss_62_edp.txt --new;
-#-#recorder LOSSIM_62_REC lossim COMPGROUP.062 $lossimvalues results/loss_62_im.txt --new;
-#-#recorder DSRATE_062_REC dsrate COMPGROUP.062 results/ds_rate_062.txt --new;
-#-#recorder DSEDP.62_REC dsedp COMPGROUP.062 0.0:0.01:0.200 results/ds_edp_62.txt --new;
-#-#recorder DSIM.62_REC dsim COMPGROUP.062 $linvalues results/ds_im_62.txt --new;
-#-#recorder LOSSRATE_62_REC lossrate COMPGROUP.062 1E-4:4.8E-3:1.2 results/loss_rate_62.txt --new;
-#-#recorder ANNLOSS_REC_62 annloss COMPGROUP.062 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_62.txt --new;
-
-
-#-#recorder LOSSEDP.63_REC lossedp COMPGROUP.063 $lossedpvalues3 results/loss_63_edp.txt --new;
-#-#recorder LOSSIM_63_REC lossim COMPGROUP.063 $lossimvalues results/loss_63_im.txt --new;
-#-#recorder DSRATE_063_REC dsrate COMPGROUP.063 results/ds_rate_063.txt --new;
-#-#recorder DSEDP.63_REC dsedp COMPGROUP.063 0.0:0.01:0.200 results/ds_edp_63.txt --new;
-#-#recorder DSIM.63_REC dsim COMPGROUP.063 $linvalues results/ds_im_63.txt --new;
-#-#recorder LOSSRATE_63_REC lossrate COMPGROUP.063 1E-4:4.8E-3:1.2 results/loss_rate_63.txt --new;
-#-#recorder ANNLOSS_REC_63 annloss COMPGROUP.063 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_63.txt --new;
-
-
-#-#recorder LOSSEDP.64_REC lossedp COMPGROUP.064 $lossedpvalues3 results/loss_64_edp.txt --new;
-#-#recorder LOSSIM_64_REC lossim COMPGROUP.064 $lossimvalues results/loss_64_im.txt --new;
-#-#recorder DSRATE_064_REC dsrate COMPGROUP.064 results/ds_rate_064.txt --new;
-#-#recorder DSEDP.64_REC dsedp COMPGROUP.064 0.0:0.01:0.200 results/ds_edp_64.txt --new;
-#-#recorder DSIM.64_REC dsim COMPGROUP.064 $linvalues results/ds_im_64.txt --new;
-#-#recorder LOSSRATE_64_REC lossrate COMPGROUP.064 1E-4:4.8E-3:1.2 results/loss_rate_64.txt --new;
-#-#recorder ANNLOSS_REC_64 annloss COMPGROUP.064 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_64.txt --new;
-
-
-#-#recorder LOSSEDP.65_REC lossedp COMPGROUP.065 $lossedpvalues3 results/loss_65_edp.txt --new;
-#-#recorder LOSSIM_65_REC lossim COMPGROUP.065 $lossimvalues results/loss_65_im.txt --new;
-#-#recorder DSRATE_065_REC dsrate COMPGROUP.065 results/ds_rate_065.txt --new;
-#-#recorder DSEDP.65_REC dsedp COMPGROUP.065 0.0:0.01:0.200 results/ds_edp_65.txt --new;
-#-#recorder DSIM.65_REC dsim COMPGROUP.065 $linvalues results/ds_im_65.txt --new;
-#-#recorder LOSSRATE_65_REC lossrate COMPGROUP.065 1E-4:4.8E-3:1.2 results/loss_rate_65.txt --new;
-#-#recorder ANNLOSS_REC_65 annloss COMPGROUP.065 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_65.txt --new;
-
-
-#-#recorder LOSSEDP.66_REC lossedp COMPGROUP.066 $lossedpvalues3 results/loss_66_edp.txt --new;
-#-#recorder LOSSIM_66_REC lossim COMPGROUP.066 $lossimvalues results/loss_66_im.txt --new;
-#-#recorder DSRATE_066_REC dsrate COMPGROUP.066 results/ds_rate_066.txt --new;
-#-#recorder DSEDP.66_REC dsedp COMPGROUP.066 0.0:0.01:0.200 results/ds_edp_66.txt --new;
-#-#recorder DSIM.66_REC dsim COMPGROUP.066 $linvalues results/ds_im_66.txt --new;
-#-#recorder LOSSRATE_66_REC lossrate COMPGROUP.066 1E-4:4.8E-3:1.2 results/loss_rate_66.txt --new;
-#-#recorder ANNLOSS_REC_66 annloss COMPGROUP.066 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_66.txt --new;
-
-
-#-#recorder LOSSEDP.67_REC lossedp COMPGROUP.067 $lossedpvalues3 results/loss_67_edp.txt --new;
-#-#recorder LOSSIM_67_REC lossim COMPGROUP.067 $lossimvalues results/loss_67_im.txt --new;
-#-#recorder DSRATE_067_REC dsrate COMPGROUP.067 results/ds_rate_067.txt --new;
-#-#recorder DSEDP.67_REC dsedp COMPGROUP.067 0.0:0.01:0.200 results/ds_edp_67.txt --new;
-#-#recorder DSIM.67_REC dsim COMPGROUP.067 $linvalues results/ds_im_67.txt --new;
-#-#recorder LOSSRATE_67_REC lossrate COMPGROUP.067 1E-4:4.8E-3:1.2 results/loss_rate_67.txt --new;
-#-#recorder ANNLOSS_REC_67 annloss COMPGROUP.067 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_67.txt --new;
-
-
-#-#recorder LOSSEDP.68_REC lossedp COMPGROUP.068 $lossedpvalues3 results/loss_68_edp.txt --new;
-#-#recorder LOSSIM_68_REC lossim COMPGROUP.068 $lossimvalues results/loss_68_im.txt --new;
-#-#recorder DSRATE_068_REC dsrate COMPGROUP.068 results/ds_rate_068.txt --new;
-#-#recorder DSEDP.68_REC dsedp COMPGROUP.068 0.0:0.01:0.200 results/ds_edp_68.txt --new;
-#-#recorder DSIM.68_REC dsim COMPGROUP.068 $linvalues results/ds_im_68.txt --new;
-#-#recorder LOSSRATE_68_REC lossrate COMPGROUP.068 1E-4:4.8E-3:1.2 results/loss_rate_68.txt --new;
-#-#recorder ANNLOSS_REC_68 annloss COMPGROUP.068 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_68.txt --new;
-
-
-#-#recorder LOSSEDP.69_REC lossedp COMPGROUP.069 $lossedpvalues3 results/loss_69_edp.txt --new;
-#-#recorder LOSSIM_69_REC lossim COMPGROUP.069 $lossimvalues results/loss_69_im.txt --new;
-#-#recorder DSRATE_069_REC dsrate COMPGROUP.069 results/ds_rate_069.txt --new;
-#-#recorder DSEDP.69_REC dsedp COMPGROUP.069 0.0:0.01:0.200 results/ds_edp_69.txt --new;
-#-#recorder DSIM.69_REC dsim COMPGROUP.069 $linvalues results/ds_im_69.txt --new;
-#-#recorder LOSSRATE_69_REC lossrate COMPGROUP.069 1E-4:4.8E-3:1.2 results/loss_rate_69.txt --new;
-#-#recorder ANNLOSS_REC_69 annloss COMPGROUP.069 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_69.txt --new;
-
-
-#-#recorder LOSSEDP.70_REC lossedp COMPGROUP.070 $lossedpvalues3 results/loss_70_edp.txt --new;
-#-#recorder LOSSIM_70_REC lossim COMPGROUP.070 $lossimvalues results/loss_70_im.txt --new;
-#-#recorder DSRATE_070_REC dsrate COMPGROUP.070 results/ds_rate_070.txt --new;
-#-#recorder DSEDP.70_REC dsedp COMPGROUP.070 0.0:0.01:0.200 results/ds_edp_70.txt --new;
-#-#recorder DSIM.70_REC dsim COMPGROUP.070 $linvalues results/ds_im_70.txt --new;
-#-#recorder LOSSRATE_70_REC lossrate COMPGROUP.070 1E-4:4.8E-3:1.2 results/loss_rate_70.txt --new;
-#-#recorder ANNLOSS_REC_70 annloss COMPGROUP.070 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_70.txt --new;
-
-
-#-#recorder LOSSEDP.71_REC lossedp COMPGROUP.071 $lossedpvalues4 results/loss_71_edp.txt --new;
-#-#recorder LOSSIM_71_REC lossim COMPGROUP.071 $lossimvalues results/loss_71_im.txt --new;
-#-#recorder DSRATE_071_REC dsrate COMPGROUP.071 results/ds_rate_071.txt --new;
-#-#recorder DSEDP.71_REC dsedp COMPGROUP.071 0.0:0.01:0.200 results/ds_edp_71.txt --new;
-#-#recorder DSIM.71_REC dsim COMPGROUP.071 $linvalues results/ds_im_71.txt --new;
-#-#recorder LOSSRATE_71_REC lossrate COMPGROUP.071 1E-4:4.8E-3:1.2 results/loss_rate_71.txt --new;
-#-#recorder ANNLOSS_REC_71 annloss COMPGROUP.071 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_71.txt --new;
-
-
-#-#recorder LOSSEDP.72_REC lossedp COMPGROUP.072 $lossedpvalues3 results/loss_72_edp.txt --new;
-#-#recorder LOSSIM_72_REC lossim COMPGROUP.072 $lossimvalues results/loss_72_im.txt --new;
-#-#recorder DSRATE_072_REC dsrate COMPGROUP.072 results/ds_rate_072.txt --new;
-#-#recorder DSEDP.72_REC dsedp COMPGROUP.072 0.0:0.01:0.200 results/ds_edp_72.txt --new;
-#-#recorder DSIM.72_REC dsim COMPGROUP.072 $linvalues results/ds_im_72.txt --new;
-#-#recorder LOSSRATE_72_REC lossrate COMPGROUP.072 1E-4:4.8E-3:1.2 results/loss_rate_72.txt --new;
-#-#recorder ANNLOSS_REC_72 annloss COMPGROUP.072 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_72.txt --new;
-
-
-#-#recorder LOSSEDP.73_REC lossedp COMPGROUP.073 $lossedpvalues3 results/loss_73_edp.txt --new;
-#-#recorder LOSSIM_73_REC lossim COMPGROUP.073 $lossimvalues results/loss_73_im.txt --new;
-#-#recorder DSRATE_073_REC dsrate COMPGROUP.073 results/ds_rate_073.txt --new;
-#-#recorder DSEDP.73_REC dsedp COMPGROUP.073 0.0:0.01:0.200 results/ds_edp_73.txt --new;
-#-#recorder DSIM.73_REC dsim COMPGROUP.073 $linvalues results/ds_im_73.txt --new;
-#-#recorder LOSSRATE_73_REC lossrate COMPGROUP.073 1E-4:4.8E-3:1.2 results/loss_rate_73.txt --new;
-#-#recorder ANNLOSS_REC_73 annloss COMPGROUP.073 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_73.txt --new;
-
-
-#-#recorder LOSSEDP.74_REC lossedp COMPGROUP.074 $lossedpvalues3 results/loss_74_edp.txt --new;
-#-#recorder LOSSIM_74_REC lossim COMPGROUP.074 $lossimvalues results/loss_74_im.txt --new;
-#-#recorder DSRATE_074_REC dsrate COMPGROUP.074 results/ds_rate_074.txt --new;
-#-#recorder DSEDP.74_REC dsedp COMPGROUP.074 0.0:0.01:0.200 results/ds_edp_74.txt --new;
-#-#recorder DSIM.74_REC dsim COMPGROUP.074 $linvalues results/ds_im_74.txt --new;
-#-#recorder LOSSRATE_74_REC lossrate COMPGROUP.074 1E-4:4.8E-3:1.2 results/loss_rate_74.txt --new;
-#-#recorder ANNLOSS_REC_74 annloss COMPGROUP.074 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_74.txt --new;
-
-
-#-#recorder LOSSEDP.75_REC lossedp COMPGROUP.075 $lossedpvalues3 results/loss_75_edp.txt --new;
-#-#recorder LOSSIM_75_REC lossim COMPGROUP.075 $lossimvalues results/loss_75_im.txt --new;
-#-#recorder DSRATE_075_REC dsrate COMPGROUP.075 results/ds_rate_075.txt --new;
-#-#recorder DSEDP.75_REC dsedp COMPGROUP.075 0.0:0.01:0.200 results/ds_edp_75.txt --new;
-#-#recorder DSIM.75_REC dsim COMPGROUP.075 $linvalues results/ds_im_75.txt --new;
-#-#recorder LOSSRATE_75_REC lossrate COMPGROUP.075 1E-4:4.8E-3:1.2 results/loss_rate_75.txt --new;
-#-#recorder ANNLOSS_REC_75 annloss COMPGROUP.075 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_75.txt --new;
-
-
-#-#recorder LOSSEDP.76_REC lossedp COMPGROUP.076 $lossedpvalues3 results/loss_76_edp.txt --new;
-#-#recorder LOSSIM_76_REC lossim COMPGROUP.076 $lossimvalues results/loss_76_im.txt --new;
-#-#recorder DSRATE_076_REC dsrate COMPGROUP.076 results/ds_rate_076.txt --new;
-#-#recorder DSEDP.76_REC dsedp COMPGROUP.076 0.0:0.01:0.200 results/ds_edp_76.txt --new;
-#-#recorder DSIM.76_REC dsim COMPGROUP.076 $linvalues results/ds_im_76.txt --new;
-#-#recorder LOSSRATE_76_REC lossrate COMPGROUP.076 1E-4:4.8E-3:1.2 results/loss_rate_76.txt --new;
-#-#recorder ANNLOSS_REC_76 annloss COMPGROUP.076 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_76.txt --new;
-
-
-#-#recorder LOSSEDP.77_REC lossedp COMPGROUP.077 $lossedpvalues3 results/loss_77_edp.txt --new;
-#-#recorder LOSSIM_77_REC lossim COMPGROUP.077 $lossimvalues results/loss_77_im.txt --new;
-#-#recorder DSRATE_077_REC dsrate COMPGROUP.077 results/ds_rate_077.txt --new;
-#-#recorder DSEDP.77_REC dsedp COMPGROUP.077 0.0:0.01:0.200 results/ds_edp_77.txt --new;
-#-#recorder DSIM.77_REC dsim COMPGROUP.077 $linvalues results/ds_im_77.txt --new;
-#-#recorder LOSSRATE_77_REC lossrate COMPGROUP.077 1E-4:4.8E-3:1.2 results/loss_rate_77.txt --new;
-#-#recorder ANNLOSS_REC_77 annloss COMPGROUP.077 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_77.txt --new;
-
-
-#-#recorder LOSSEDP.78_REC lossedp COMPGROUP.078 $lossedpvalues3 results/loss_78_edp.txt --new;
-#-#recorder LOSSIM_78_REC lossim COMPGROUP.078 $lossimvalues results/loss_78_im.txt --new;
-#-#recorder DSRATE_078_REC dsrate COMPGROUP.078 results/ds_rate_078.txt --new;
-#-#recorder DSEDP.78_REC dsedp COMPGROUP.078 0.0:0.01:0.200 results/ds_edp_78.txt --new;
-#-#recorder DSIM.78_REC dsim COMPGROUP.078 $linvalues results/ds_im_78.txt --new;
-#-#recorder LOSSRATE_78_REC lossrate COMPGROUP.078 1E-4:4.8E-3:1.2 results/loss_rate_78.txt --new;
-#-#recorder ANNLOSS_REC_78 annloss COMPGROUP.078 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_78.txt --new;
-
-
-#-#recorder LOSSEDP.79_REC lossedp COMPGROUP.079 $lossedpvalues3 results/loss_79_edp.txt --new;
-#-#recorder LOSSIM_79_REC lossim COMPGROUP.079 $lossimvalues results/loss_79_im.txt --new;
-#-#recorder DSRATE_079_REC dsrate COMPGROUP.079 results/ds_rate_079.txt --new;
-#-#recorder DSEDP.79_REC dsedp COMPGROUP.079 0.0:0.01:0.200 results/ds_edp_79.txt --new;
-#-#recorder DSIM.79_REC dsim COMPGROUP.079 $linvalues results/ds_im_79.txt --new;
-#-#recorder LOSSRATE_79_REC lossrate COMPGROUP.079 1E-4:4.8E-3:1.2 results/loss_rate_79.txt --new;
-#-#recorder ANNLOSS_REC_79 annloss COMPGROUP.079 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_79.txt --new;
-
-
-#-#recorder LOSSEDP.80_REC lossedp COMPGROUP.080 $lossedpvalues3 results/loss_80_edp.txt --new;
-#-#recorder LOSSIM_80_REC lossim COMPGROUP.080 $lossimvalues results/loss_80_im.txt --new;
-#-#recorder DSRATE_080_REC dsrate COMPGROUP.080 results/ds_rate_080.txt --new;
-#-#recorder DSEDP.80_REC dsedp COMPGROUP.080 0.0:0.01:0.200 results/ds_edp_80.txt --new;
-#-#recorder DSIM.80_REC dsim COMPGROUP.080 $linvalues results/ds_im_80.txt --new;
-#-#recorder LOSSRATE_80_REC lossrate COMPGROUP.080 1E-4:4.8E-3:1.2 results/loss_rate_80.txt --new;
-#-#recorder ANNLOSS_REC_80 annloss COMPGROUP.080 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_80.txt --new;
-
-
-#-#recorder LOSSEDP.81_REC lossedp COMPGROUP.081 $lossedpvalues3 results/loss_81_edp.txt --new;
-#-#recorder LOSSIM_81_REC lossim COMPGROUP.081 $lossimvalues results/loss_81_im.txt --new;
-#-#recorder DSRATE_081_REC dsrate COMPGROUP.081 results/ds_rate_081.txt --new;
-#-#recorder DSEDP.81_REC dsedp COMPGROUP.081 0.0:0.01:0.200 results/ds_edp_81.txt --new;
-#-#recorder DSIM.81_REC dsim COMPGROUP.081 $linvalues results/ds_im_81.txt --new;
-#-#recorder LOSSRATE_81_REC lossrate COMPGROUP.081 1E-4:4.8E-3:1.2 results/loss_rate_81.txt --new;
-#-#recorder ANNLOSS_REC_81 annloss COMPGROUP.081 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_81.txt --new;
-
-
-#-#recorder LOSSEDP.82_REC lossedp COMPGROUP.082 $lossedpvalues3 results/loss_82_edp.txt --new;
-#-#recorder LOSSIM_82_REC lossim COMPGROUP.082 $lossimvalues results/loss_82_im.txt --new;
-#-#recorder DSRATE_082_REC dsrate COMPGROUP.082 results/ds_rate_082.txt --new;
-#-#recorder DSEDP.82_REC dsedp COMPGROUP.082 0.0:0.01:0.200 results/ds_edp_82.txt --new;
-#-#recorder DSIM.82_REC dsim COMPGROUP.082 $linvalues results/ds_im_82.txt --new;
-#-#recorder LOSSRATE_82_REC lossrate COMPGROUP.082 1E-4:4.8E-3:1.2 results/loss_rate_82.txt --new;
-#-#recorder ANNLOSS_REC_82 annloss COMPGROUP.082 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_82.txt --new;
-
-
-#-#recorder LOSSEDP.83_REC lossedp COMPGROUP.083 $lossedpvalues3 results/loss_83_edp.txt --new;
-#-#recorder LOSSIM_83_REC lossim COMPGROUP.083 $lossimvalues results/loss_83_im.txt --new;
-#-#recorder DSRATE_083_REC dsrate COMPGROUP.083 results/ds_rate_083.txt --new;
-#-#recorder DSEDP.83_REC dsedp COMPGROUP.083 0.0:0.01:0.200 results/ds_edp_83.txt --new;
-#-#recorder DSIM.83_REC dsim COMPGROUP.083 $linvalues results/ds_im_83.txt --new;
-#-#recorder LOSSRATE_83_REC lossrate COMPGROUP.083 1E-4:4.8E-3:1.2 results/loss_rate_83.txt --new;
-#-#recorder ANNLOSS_REC_83 annloss COMPGROUP.083 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_83.txt --new;
-
-
-#-#recorder LOSSEDP.84_REC lossedp COMPGROUP.084 $lossedpvalues3 results/loss_84_edp.txt --new;
-#-#recorder LOSSIM_84_REC lossim COMPGROUP.084 $lossimvalues results/loss_84_im.txt --new;
-#-#recorder DSRATE_084_REC dsrate COMPGROUP.084 results/ds_rate_084.txt --new;
-#-#recorder DSEDP.84_REC dsedp COMPGROUP.084 0.0:0.01:0.200 results/ds_edp_84.txt --new;
-#-#recorder DSIM.84_REC dsim COMPGROUP.084 $linvalues results/ds_im_84.txt --new;
-#-#recorder LOSSRATE_84_REC lossrate COMPGROUP.084 1E-4:4.8E-3:1.2 results/loss_rate_84.txt --new;
-#-#recorder ANNLOSS_REC_84 annloss COMPGROUP.084 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_84.txt --new;
-
-
-#-#recorder LOSSEDP.85_REC lossedp COMPGROUP.085 $lossedpvalues4 results/loss_85_edp.txt --new;
-#-#recorder LOSSIM_85_REC lossim COMPGROUP.085 $lossimvalues results/loss_85_im.txt --new;
-#-#recorder DSRATE_085_REC dsrate COMPGROUP.085 results/ds_rate_085.txt --new;
-#-#recorder DSEDP.85_REC dsedp COMPGROUP.085 0.0:0.01:0.200 results/ds_edp_85.txt --new;
-#-#recorder DSIM.85_REC dsim COMPGROUP.085 $linvalues results/ds_im_85.txt --new;
-#-#recorder LOSSRATE_85_REC lossrate COMPGROUP.085 1E-4:4.8E-3:1.2 results/loss_rate_85.txt --new;
-#-#recorder ANNLOSS_REC_85 annloss COMPGROUP.085 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_85.txt --new;
-
-
-#-#recorder LOSSEDP.86_REC lossedp COMPGROUP.086 $lossedpvalues1 results/loss_86_edp.txt --new;
-#-#recorder LOSSIM_86_REC lossim COMPGROUP.086 $lossimvalues results/loss_86_im.txt --new;
-#-#recorder DSRATE_086_REC dsrate COMPGROUP.086 results/ds_rate_086.txt --new;
-#-#recorder DSEDP.86_REC dsedp COMPGROUP.086 0.0:0.01:0.200 results/ds_edp_86.txt --new;
-#-#recorder DSIM.86_REC dsim COMPGROUP.086 $linvalues results/ds_im_86.txt --new;
-#-#recorder LOSSRATE_86_REC lossrate COMPGROUP.086 1E-4:4.8E-3:1.2 results/loss_rate_86.txt --new;
-#-#recorder ANNLOSS_REC_86 annloss COMPGROUP.086 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_86.txt --new;
-
-
-#-#recorder LOSSEDP.87_REC lossedp COMPGROUP.087 $lossedpvalues2 results/loss_87_edp.txt --new;
-#-#recorder LOSSIM_87_REC lossim COMPGROUP.087 $lossimvalues results/loss_87_im.txt --new;
-#-#recorder DSRATE_087_REC dsrate COMPGROUP.087 results/ds_rate_087.txt --new;
-#-#recorder DSEDP.87_REC dsedp COMPGROUP.087 0.0:0.01:0.200 results/ds_edp_87.txt --new;
-#-#recorder DSIM.87_REC dsim COMPGROUP.087 $linvalues results/ds_im_87.txt --new;
-#-#recorder LOSSRATE_87_REC lossrate COMPGROUP.087 1E-4:4.8E-3:1.2 results/loss_rate_87.txt --new;
-#-#recorder ANNLOSS_REC_87 annloss COMPGROUP.087 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_87.txt --new;
-
-
-#-#recorder LOSSEDP.88_REC lossedp COMPGROUP.088 $lossedpvalues2 results/loss_88_edp.txt --new;
-#-#recorder LOSSIM_88_REC lossim COMPGROUP.088 $lossimvalues results/loss_88_im.txt --new;
-#-#recorder DSRATE_088_REC dsrate COMPGROUP.088 results/ds_rate_088.txt --new;
-#-#recorder DSEDP.88_REC dsedp COMPGROUP.088 0.0:0.01:0.200 results/ds_edp_88.txt --new;
-#-#recorder DSIM.88_REC dsim COMPGROUP.088 $linvalues results/ds_im_88.txt --new;
-#-#recorder LOSSRATE_88_REC lossrate COMPGROUP.088 1E-4:4.8E-3:1.2 results/loss_rate_88.txt --new;
-#-#recorder ANNLOSS_REC_88 annloss COMPGROUP.088 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_88.txt --new;
-
-
-#-#recorder LOSSEDP.89_REC lossedp COMPGROUP.089 $lossedpvalues2 results/loss_89_edp.txt --new;
-#-#recorder LOSSIM_89_REC lossim COMPGROUP.089 $lossimvalues results/loss_89_im.txt --new;
-#-#recorder DSRATE_089_REC dsrate COMPGROUP.089 results/ds_rate_089.txt --new;
-#-#recorder DSEDP.89_REC dsedp COMPGROUP.089 0.0:0.01:0.200 results/ds_edp_89.txt --new;
-#-#recorder DSIM.89_REC dsim COMPGROUP.089 $linvalues results/ds_im_89.txt --new;
-#-#recorder LOSSRATE_89_REC lossrate COMPGROUP.089 1E-4:4.8E-3:1.2 results/loss_rate_89.txt --new;
-#-#recorder ANNLOSS_REC_89 annloss COMPGROUP.089 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_89.txt --new;
-
-
-#-#recorder LOSSEDP.90_REC lossedp COMPGROUP.090 $lossedpvalues2 results/loss_90_edp.txt --new;
-#-#recorder LOSSIM_90_REC lossim COMPGROUP.090 $lossimvalues results/loss_90_im.txt --new;
-#-#recorder DSRATE_090_REC dsrate COMPGROUP.090 results/ds_rate_090.txt --new;
-#-#recorder DSEDP.90_REC dsedp COMPGROUP.090 0.0:0.01:0.200 results/ds_edp_90.txt --new;
-#-#recorder DSIM.90_REC dsim COMPGROUP.090 $linvalues results/ds_im_90.txt --new;
-#-#recorder LOSSRATE_90_REC lossrate COMPGROUP.090 1E-4:4.8E-3:1.2 results/loss_rate_90.txt --new;
-#-#recorder ANNLOSS_REC_90 annloss COMPGROUP.090 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_90.txt --new;
-
-
-#-#recorder LOSSEDP.91_REC lossedp COMPGROUP.091 $lossedpvalues2 results/loss_91_edp.txt --new;
-#-#recorder LOSSIM_91_REC lossim COMPGROUP.091 $lossimvalues results/loss_91_im.txt --new;
-#-#recorder DSRATE_091_REC dsrate COMPGROUP.091 results/ds_rate_091.txt --new;
-#-#recorder DSEDP.91_REC dsedp COMPGROUP.091 0.0:0.01:0.200 results/ds_edp_91.txt --new;
-#-#recorder DSIM.91_REC dsim COMPGROUP.091 $linvalues results/ds_im_91.txt --new;
-#-#recorder LOSSRATE_91_REC lossrate COMPGROUP.091 1E-4:4.8E-3:1.2 results/loss_rate_91.txt --new;
-#-#recorder ANNLOSS_REC_91 annloss COMPGROUP.091 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_91.txt --new;
-
-
-#-#recorder LOSSEDP.92_REC lossedp COMPGROUP.092 $lossedpvalues2 results/loss_92_edp.txt --new;
-#-#recorder LOSSIM_92_REC lossim COMPGROUP.092 $lossimvalues results/loss_92_im.txt --new;
-#-#recorder DSRATE_092_REC dsrate COMPGROUP.092 results/ds_rate_092.txt --new;
-#-#recorder DSEDP.92_REC dsedp COMPGROUP.092 0.0:0.01:0.200 results/ds_edp_92.txt --new;
-#-#recorder DSIM.92_REC dsim COMPGROUP.092 $linvalues results/ds_im_92.txt --new;
-#-#recorder LOSSRATE_92_REC lossrate COMPGROUP.092 1E-4:4.8E-3:1.2 results/loss_rate_92.txt --new;
-#-#recorder ANNLOSS_REC_92 annloss COMPGROUP.092 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_92.txt --new;
-
-
-#-#recorder LOSSEDP.93_REC lossedp COMPGROUP.093 $lossedpvalues2 results/loss_93_edp.txt --new;
-#-#recorder LOSSIM_93_REC lossim COMPGROUP.093 $lossimvalues results/loss_93_im.txt --new;
-#-#recorder DSRATE_093_REC dsrate COMPGROUP.093 results/ds_rate_093.txt --new;
-#-#recorder DSEDP.93_REC dsedp COMPGROUP.093 0.0:0.01:0.200 results/ds_edp_93.txt --new;
-#-#recorder DSIM.93_REC dsim COMPGROUP.093 $linvalues results/ds_im_93.txt --new;
-#-#recorder LOSSRATE_93_REC lossrate COMPGROUP.093 1E-4:4.8E-3:1.2 results/loss_rate_93.txt --new;
-#-#recorder ANNLOSS_REC_93 annloss COMPGROUP.093 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_93.txt --new;
-
-
-#-#recorder LOSSEDP.94_REC lossedp COMPGROUP.094 $lossedpvalues2 results/loss_94_edp.txt --new;
-#-#recorder LOSSIM_94_REC lossim COMPGROUP.094 $lossimvalues results/loss_94_im.txt --new;
-#-#recorder DSRATE_094_REC dsrate COMPGROUP.094 results/ds_rate_094.txt --new;
-#-#recorder DSEDP.94_REC dsedp COMPGROUP.094 0.0:0.01:0.200 results/ds_edp_94.txt --new;
-#-#recorder DSIM.94_REC dsim COMPGROUP.094 $linvalues results/ds_im_94.txt --new;
-#-#recorder LOSSRATE_94_REC lossrate COMPGROUP.094 1E-4:4.8E-3:1.2 results/loss_rate_94.txt --new;
-#-#recorder ANNLOSS_REC_94 annloss COMPGROUP.094 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_94.txt --new;
-
-
-#-#recorder LOSSEDP.95_REC lossedp COMPGROUP.095 $lossedpvalues2 results/loss_95_edp.txt --new;
-#-#recorder LOSSIM_95_REC lossim COMPGROUP.095 $lossimvalues results/loss_95_im.txt --new;
-#-#recorder DSRATE_095_REC dsrate COMPGROUP.095 results/ds_rate_095.txt --new;
-#-#recorder DSEDP.95_REC dsedp COMPGROUP.095 0.0:0.01:0.200 results/ds_edp_95.txt --new;
-#-#recorder DSIM.95_REC dsim COMPGROUP.095 $linvalues results/ds_im_95.txt --new;
-#-#recorder LOSSRATE_95_REC lossrate COMPGROUP.095 1E-4:4.8E-3:1.2 results/loss_rate_95.txt --new;
-#-#recorder ANNLOSS_REC_95 annloss COMPGROUP.095 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_95.txt --new;
-
-
-#-#recorder LOSSEDP.96_REC lossedp COMPGROUP.096 $lossedpvalues1 results/loss_96_edp.txt --new;
-#-#recorder LOSSIM_96_REC lossim COMPGROUP.096 $lossimvalues results/loss_96_im.txt --new;
-#-#recorder DSRATE_096_REC dsrate COMPGROUP.096 results/ds_rate_096.txt --new;
-#-#recorder DSEDP.96_REC dsedp COMPGROUP.096 0.0:0.01:0.200 results/ds_edp_96.txt --new;
-#-#recorder DSIM.96_REC dsim COMPGROUP.096 $linvalues results/ds_im_96.txt --new;
-#-#recorder LOSSRATE_96_REC lossrate COMPGROUP.096 1E-4:4.8E-3:1.2 results/loss_rate_96.txt --new;
-#-#recorder ANNLOSS_REC_96 annloss COMPGROUP.096 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_96.txt --new;
-
-
-#-#recorder LOSSEDP.97_REC lossedp COMPGROUP.097 $lossedpvalues2 results/loss_97_edp.txt --new;
-#-#recorder LOSSIM_97_REC lossim COMPGROUP.097 $lossimvalues results/loss_97_im.txt --new;
-#-#recorder DSRATE_097_REC dsrate COMPGROUP.097 results/ds_rate_097.txt --new;
-#-#recorder DSEDP.97_REC dsedp COMPGROUP.097 0.0:0.01:0.200 results/ds_edp_97.txt --new;
-#-#recorder DSIM.97_REC dsim COMPGROUP.097 $linvalues results/ds_im_97.txt --new;
-#-#recorder LOSSRATE_97_REC lossrate COMPGROUP.097 1E-4:4.8E-3:1.2 results/loss_rate_97.txt --new;
-#-#recorder ANNLOSS_REC_97 annloss COMPGROUP.097 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_97.txt --new;
-
-
-#-#recorder LOSSEDP.98_REC lossedp COMPGROUP.098 $lossedpvalues2 results/loss_98_edp.txt --new;
-#-#recorder LOSSIM_98_REC lossim COMPGROUP.098 $lossimvalues results/loss_98_im.txt --new;
-#-#recorder DSRATE_098_REC dsrate COMPGROUP.098 results/ds_rate_098.txt --new;
-#-#recorder DSEDP.98_REC dsedp COMPGROUP.098 0.0:0.01:0.200 results/ds_edp_98.txt --new;
-#-#recorder DSIM.98_REC dsim COMPGROUP.098 $linvalues results/ds_im_98.txt --new;
-#-#recorder LOSSRATE_98_REC lossrate COMPGROUP.098 1E-4:4.8E-3:1.2 results/loss_rate_98.txt --new;
-#-#recorder ANNLOSS_REC_98 annloss COMPGROUP.098 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_98.txt --new;
-
-
-#-#recorder LOSSEDP.99_REC lossedp COMPGROUP.099 $lossedpvalues2 results/loss_99_edp.txt --new;
-#-#recorder LOSSIM_99_REC lossim COMPGROUP.099 $lossimvalues results/loss_99_im.txt --new;
-#-#recorder DSRATE_099_REC dsrate COMPGROUP.099 results/ds_rate_099.txt --new;
-#-#recorder DSEDP.99_REC dsedp COMPGROUP.099 0.0:0.01:0.200 results/ds_edp_99.txt --new;
-#-#recorder DSIM.99_REC dsim COMPGROUP.099 $linvalues results/ds_im_99.txt --new;
-#-#recorder LOSSRATE_99_REC lossrate COMPGROUP.099 1E-4:4.8E-3:1.2 results/loss_rate_99.txt --new;
-#-#recorder ANNLOSS_REC_99 annloss COMPGROUP.099 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_99.txt --new;
-
-
-#-#recorder LOSSEDP.100_REC lossedp COMPGROUP.100 $lossedpvalues2 results/loss_100_edp.txt --new;
-#-#recorder LOSSIM.100_REC lossim COMPGROUP.100 $lossimvalues results/loss_100_im.txt --new;
-#-#recorder DSRATE_100_REC dsrate COMPGROUP.100 results/ds_rate_100.txt --new;
-#-#recorder DSEDP.100_REC dsedp COMPGROUP.100 0.0:0.01:0.200 results/ds_edp_100.txt --new;
-#-#recorder DSIM.100_REC dsim COMPGROUP.100 $linvalues results/ds_im_100.txt --new;
-#-#recorder LOSSRATE_100_REC lossrate COMPGROUP.100 1E-4:4.8E-3:1.2 results/loss_rate_100.txt --new;
-#-#recorder ANNLOSS_REC_100 annloss COMPGROUP.100 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_100.txt --new;
-
-
-#-#recorder LOSSEDP.101_REC lossedp COMPGROUP.101 $lossedpvalues2 results/loss_101_edp.txt --new;
-#-#recorder LOSSIM.101_REC lossim COMPGROUP.101 $lossimvalues results/loss_101_im.txt --new;
-#-#recorder DSRATE_101_REC dsrate COMPGROUP.101 results/ds_rate_101.txt --new;
-#-#recorder DSEDP.101_REC dsedp COMPGROUP.101 0.0:0.01:0.200 results/ds_edp_101.txt --new;
-#-#recorder DSIM.101_REC dsim COMPGROUP.101 $linvalues results/ds_im_101.txt --new;
-#-#recorder LOSSRATE_101_REC lossrate COMPGROUP.101 1E-4:4.8E-3:1.2 results/loss_rate_101.txt --new;
-#-#recorder ANNLOSS_REC_101 annloss COMPGROUP.101 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_101.txt --new;
-
-
-#-#recorder LOSSEDP.102_REC lossedp COMPGROUP.102 $lossedpvalues2 results/loss_102_edp.txt --new;
-#-#recorder LOSSIM.102_REC lossim COMPGROUP.102 $lossimvalues results/loss_102_im.txt --new;
-#-#recorder DSRATE_102_REC dsrate COMPGROUP.102 results/ds_rate_102.txt --new;
-#-#recorder DSEDP.102_REC dsedp COMPGROUP.102 0.0:0.01:0.200 results/ds_edp_102.txt --new;
-#-#recorder DSIM.102_REC dsim COMPGROUP.102 $linvalues results/ds_im_102.txt --new;
-#-#recorder LOSSRATE_102_REC lossrate COMPGROUP.102 1E-4:4.8E-3:1.2 results/loss_rate_102.txt --new;
-#-#recorder ANNLOSS_REC_102 annloss COMPGROUP.102 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_102.txt --new;
-
-
-#-#recorder LOSSEDP.103_REC lossedp COMPGROUP.103 $lossedpvalues2 results/loss_103_edp.txt --new;
-#-#recorder LOSSIM.103_REC lossim COMPGROUP.103 $lossimvalues results/loss_103_im.txt --new;
-#-#recorder DSRATE_103_REC dsrate COMPGROUP.103 results/ds_rate_103.txt --new;
-#-#recorder DSEDP.103_REC dsedp COMPGROUP.103 0.0:0.01:0.200 results/ds_edp_103.txt --new;
-#-#recorder DSIM.103_REC dsim COMPGROUP.103 $linvalues results/ds_im_103.txt --new;
-#-#recorder LOSSRATE_103_REC lossrate COMPGROUP.103 1E-4:4.8E-3:1.2 results/loss_rate_103.txt --new;
-#-#recorder ANNLOSS_REC_103 annloss COMPGROUP.103 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_103.txt --new;
-
-
-#-#recorder LOSSEDP.104_REC lossedp COMPGROUP.104 $lossedpvalues2 results/loss_104_edp.txt --new;
-#-#recorder LOSSIM.104_REC lossim COMPGROUP.104 $lossimvalues results/loss_104_im.txt --new;
-#-#recorder DSRATE_104_REC dsrate COMPGROUP.104 results/ds_rate_104.txt --new;
-#-#recorder DSEDP.104_REC dsedp COMPGROUP.104 0.0:0.01:0.200 results/ds_edp_104.txt --new;
-#-#recorder DSIM.104_REC dsim COMPGROUP.104 $linvalues results/ds_im_104.txt --new;
-#-#recorder LOSSRATE_104_REC lossrate COMPGROUP.104 1E-4:4.8E-3:1.2 results/loss_rate_104.txt --new;
-#-#recorder ANNLOSS_REC_104 annloss COMPGROUP.104 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_104.txt --new;
-
-
-#-#recorder LOSSEDP.105_REC lossedp COMPGROUP.105 $lossedpvalues2 results/loss_105_edp.txt --new;
-#-#recorder LOSSIM.105_REC lossim COMPGROUP.105 $lossimvalues results/loss_105_im.txt --new;
-#-#recorder DSRATE_105_REC dsrate COMPGROUP.105 results/ds_rate_105.txt --new;
-#-#recorder DSEDP.105_REC dsedp COMPGROUP.105 0.0:0.01:0.200 results/ds_edp_105.txt --new;
-#-#recorder DSIM.105_REC dsim COMPGROUP.105 $linvalues results/ds_im_105.txt --new;
-#-#recorder LOSSRATE_105_REC lossrate COMPGROUP.105 1E-4:4.8E-3:1.2 results/loss_rate_105.txt --new;
-#-#recorder ANNLOSS_REC_105 annloss COMPGROUP.105 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_105.txt --new;
-
-
-#-#recorder LOSSEDP.106_REC lossedp COMPGROUP.106 $lossedpvalues4 results/loss_106_edp.txt --new;
-#-#recorder LOSSIM.106_REC lossim COMPGROUP.106 $lossimvalues results/loss_106_im.txt --new;
-#-#recorder DSRATE_106_REC dsrate COMPGROUP.106 results/ds_rate_106.txt --new;
-#-#recorder DSEDP.106_REC dsedp COMPGROUP.106 0.0:0.01:0.200 results/ds_edp_106.txt --new;
-#-#recorder DSIM.106_REC dsim COMPGROUP.106 $linvalues results/ds_im_106.txt --new;
-#-#recorder LOSSRATE_106_REC lossrate COMPGROUP.106 1E-4:4.8E-3:1.2 results/loss_rate_106.txt --new;
-#-#recorder ANNLOSS_REC_106 annloss COMPGROUP.106 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_106.txt --new;
-
-
-#-#recorder LOSSEDP.107_REC lossedp COMPGROUP.107 $lossedpvalues3 results/loss_107_edp.txt --new;
-#-#recorder LOSSIM.107_REC lossim COMPGROUP.107 $lossimvalues results/loss_107_im.txt --new;
-#-#recorder DSRATE_107_REC dsrate COMPGROUP.107 results/ds_rate_107.txt --new;
-#-#recorder DSEDP.107_REC dsedp COMPGROUP.107 0.0:0.01:0.200 results/ds_edp_107.txt --new;
-#-#recorder DSIM.107_REC dsim COMPGROUP.107 $linvalues results/ds_im_107.txt --new;
-#-#recorder LOSSRATE_107_REC lossrate COMPGROUP.107 1E-4:4.8E-3:1.2 results/loss_rate_107.txt --new;
-#-#recorder ANNLOSS_REC_107 annloss COMPGROUP.107 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_107.txt --new;
-
-
-#-#recorder LOSSEDP.108_REC lossedp COMPGROUP.108 $lossedpvalues3 results/loss_108_edp.txt --new;
-#-#recorder LOSSIM.108_REC lossim COMPGROUP.108 $lossimvalues results/loss_108_im.txt --new;
-#-#recorder DSRATE_108_REC dsrate COMPGROUP.108 results/ds_rate_108.txt --new;
-#-#recorder DSEDP.108_REC dsedp COMPGROUP.108 0.0:0.01:0.200 results/ds_edp_108.txt --new;
-#-#recorder DSIM.108_REC dsim COMPGROUP.108 $linvalues results/ds_im_108.txt --new;
-#-#recorder LOSSRATE_108_REC lossrate COMPGROUP.108 1E-4:4.8E-3:1.2 results/loss_rate_108.txt --new;
-#-#recorder ANNLOSS_REC_108 annloss COMPGROUP.108 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_108.txt --new;
-
-
-#-#recorder LOSSEDP.109_REC lossedp COMPGROUP.109 $lossedpvalues3 results/loss_109_edp.txt --new;
-#-#recorder LOSSIM.109_REC lossim COMPGROUP.109 $lossimvalues results/loss_109_im.txt --new;
-#-#recorder DSRATE_109_REC dsrate COMPGROUP.109 results/ds_rate_109.txt --new;
-#-#recorder DSEDP.109_REC dsedp COMPGROUP.109 0.0:0.01:0.200 results/ds_edp_109.txt --new;
-#-#recorder DSIM.109_REC dsim COMPGROUP.109 $linvalues results/ds_im_109.txt --new;
-#-#recorder LOSSRATE_109_REC lossrate COMPGROUP.109 1E-4:4.8E-3:1.2 results/loss_rate_109.txt --new;
-#-#recorder ANNLOSS_REC_109 annloss COMPGROUP.109 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_109.txt --new;
-
-
-#-#recorder LOSSEDP.110_REC lossedp COMPGROUP.110 $lossedpvalues3 results/loss_110_edp.txt --new;
-#-#recorder LOSSIM.110_REC lossim COMPGROUP.110 $lossimvalues results/loss_110_im.txt --new;
-#-#recorder DSRATE_110_REC dsrate COMPGROUP.110 results/ds_rate_110.txt --new;
-#-#recorder DSEDP.110_REC dsedp COMPGROUP.110 0.0:0.01:0.200 results/ds_edp_110.txt --new;
-#-#recorder DSIM.110_REC dsim COMPGROUP.110 $linvalues results/ds_im_110.txt --new;
-#-#recorder LOSSRATE_110_REC lossrate COMPGROUP.110 1E-4:4.8E-3:1.2 results/loss_rate_110.txt --new;
-#-#recorder ANNLOSS_REC_110 annloss COMPGROUP.110 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_110.txt --new;
-
-
-#-#recorder LOSSEDP.111_REC lossedp COMPGROUP.111 $lossedpvalues3 results/loss_111_edp.txt --new;
-#-#recorder LOSSIM.111_REC lossim COMPGROUP.111 $lossimvalues results/loss_111_im.txt --new;
-#-#recorder DSRATE_111_REC dsrate COMPGROUP.111 results/ds_rate_111.txt --new;
-#-#recorder DSEDP.111_REC dsedp COMPGROUP.111 0.0:0.01:0.200 results/ds_edp_111.txt --new;
-#-#recorder DSIM.111_REC dsim COMPGROUP.111 $linvalues results/ds_im_111.txt --new;
-#-#recorder LOSSRATE_111_REC lossrate COMPGROUP.111 1E-4:4.8E-3:1.2 results/loss_rate_111.txt --new;
-#-#recorder ANNLOSS_REC_111 annloss COMPGROUP.111 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_111.txt --new;
-
-
-#-#recorder LOSSEDP.112_REC lossedp COMPGROUP.112 $lossedpvalues3 results/loss_112_edp.txt --new;
-#-#recorder LOSSIM.112_REC lossim COMPGROUP.112 $lossimvalues results/loss_112_im.txt --new;
-#-#recorder DSRATE_112_REC dsrate COMPGROUP.112 results/ds_rate_112.txt --new;
-#-#recorder DSEDP.112_REC dsedp COMPGROUP.112 0.0:0.01:0.200 results/ds_edp_112.txt --new;
-#-#recorder DSIM.112_REC dsim COMPGROUP.112 $linvalues results/ds_im_112.txt --new;
-#-#recorder LOSSRATE_112_REC lossrate COMPGROUP.112 1E-4:4.8E-3:1.2 results/loss_rate_112.txt --new;
-#-#recorder ANNLOSS_REC_112 annloss COMPGROUP.112 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_112.txt --new;
-
-
-#-#recorder LOSSEDP.113_REC lossedp COMPGROUP.113 $lossedpvalues3 results/loss_113_edp.txt --new;
-#-#recorder LOSSIM.113_REC lossim COMPGROUP.113 $lossimvalues results/loss_113_im.txt --new;
-#-#recorder DSRATE_113_REC dsrate COMPGROUP.113 results/ds_rate_113.txt --new;
-#-#recorder DSEDP.113_REC dsedp COMPGROUP.113 0.0:0.01:0.200 results/ds_edp_113.txt --new;
-#-#recorder DSIM.113_REC dsim COMPGROUP.113 $linvalues results/ds_im_113.txt --new;
-#-#recorder LOSSRATE_113_REC lossrate COMPGROUP.113 1E-4:4.8E-3:1.2 results/loss_rate_113.txt --new;
-#-#recorder ANNLOSS_REC_113 annloss COMPGROUP.113 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_113.txt --new;
-
-
-#-#recorder LOSSEDP.114_REC lossedp COMPGROUP.114 $lossedpvalues3 results/loss_114_edp.txt --new;
-#-#recorder LOSSIM.114_REC lossim COMPGROUP.114 $lossimvalues results/loss_114_im.txt --new;
-#-#recorder DSRATE_114_REC dsrate COMPGROUP.114 results/ds_rate_114.txt --new;
-#-#recorder DSEDP.114_REC dsedp COMPGROUP.114 0.0:0.01:0.200 results/ds_edp_114.txt --new;
-#-#recorder DSIM.114_REC dsim COMPGROUP.114 $linvalues results/ds_im_114.txt --new;
-#-#recorder LOSSRATE_114_REC lossrate COMPGROUP.114 1E-4:4.8E-3:1.2 results/loss_rate_114.txt --new;
-#-#recorder ANNLOSS_REC_114 annloss COMPGROUP.114 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_114.txt --new;
-
-
-#-#recorder LOSSEDP.115_REC lossedp COMPGROUP.115 $lossedpvalues3 results/loss_115_edp.txt --new;
-#-#recorder LOSSIM.115_REC lossim COMPGROUP.115 $lossimvalues results/loss_115_im.txt --new;
-#-#recorder DSRATE_115_REC dsrate COMPGROUP.115 results/ds_rate_115.txt --new;
-#-#recorder DSEDP.115_REC dsedp COMPGROUP.115 0.0:0.01:0.200 results/ds_edp_115.txt --new;
-#-#recorder DSIM.115_REC dsim COMPGROUP.115 $linvalues results/ds_im_115.txt --new;
-#-#recorder LOSSRATE_115_REC lossrate COMPGROUP.115 1E-4:4.8E-3:1.2 results/loss_rate_115.txt --new;
-#-#recorder ANNLOSS_REC_115 annloss COMPGROUP.115 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_115.txt --new;
+recorder LOSSEDP.6_REC lossedp COMPGROUP.006 $lossedpvalues2 results/loss_6_edp.txt --new;
+recorder LOSSIM_6_REC lossim COMPGROUP.006 $lossimvalues results/loss_6_im.txt --new;
+recorder DSRATE_006_REC dsrate COMPGROUP.006 results/ds_rate_006.txt --new;
+recorder DSEDP.6_REC dsedp COMPGROUP.006 0.0:0.01:0.200 results/ds_edp_6.txt --new;
+recorder DSIM.6_REC dsim COMPGROUP.006 $linvalues results/ds_im_6.txt --new;
+recorder LOSSRATE_6_REC lossrate COMPGROUP.006 1E-4:4.8E-3:1.2 results/loss_rate_6.txt --new;
+recorder ANNLOSS_REC_06 annloss COMPGROUP.006 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_6.txt --new;
+
+
+recorder LOSSEDP.7_REC lossedp COMPGROUP.007 $lossedpvalues2 results/loss_7_edp.txt --new;
+recorder LOSSIM_7_REC lossim COMPGROUP.007 $lossimvalues results/loss_7_im.txt --new;
+recorder DSRATE_007_REC dsrate COMPGROUP.007 results/ds_rate_007.txt --new;
+recorder DSEDP.7_REC dsedp COMPGROUP.007 0.0:0.01:0.200 results/ds_edp_7.txt --new;
+recorder DSIM.7_REC dsim COMPGROUP.007 $linvalues results/ds_im_7.txt --new;
+recorder LOSSRATE_7_REC lossrate COMPGROUP.007 1E-4:4.8E-3:1.2 results/loss_rate_7.txt --new;
+recorder ANNLOSS_REC_07 annloss COMPGROUP.007 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_7.txt --new;
+
+
+recorder LOSSEDP.8_REC lossedp COMPGROUP.008 $lossedpvalues2 results/loss_8_edp.txt --new;
+recorder LOSSIM_8_REC lossim COMPGROUP.008 $lossimvalues results/loss_8_im.txt --new;
+recorder DSRATE_008_REC dsrate COMPGROUP.008 results/ds_rate_008.txt --new;
+recorder DSEDP.8_REC dsedp COMPGROUP.008 0.0:0.01:0.200 results/ds_edp_8.txt --new;
+recorder DSIM.8_REC dsim COMPGROUP.008 $linvalues results/ds_im_8.txt --new;
+recorder LOSSRATE_8_REC lossrate COMPGROUP.008 1E-4:4.8E-3:1.2 results/loss_rate_8.txt --new;
+recorder ANNLOSS_REC_08 annloss COMPGROUP.008 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_8.txt --new;
+
+
+recorder LOSSEDP.9_REC lossedp COMPGROUP.009 $lossedpvalues2 results/loss_9_edp.txt --new;
+recorder LOSSIM_9_REC lossim COMPGROUP.009 $lossimvalues results/loss_9_im.txt --new;
+recorder DSRATE_009_REC dsrate COMPGROUP.009 results/ds_rate_009.txt --new;
+recorder DSEDP.9_REC dsedp COMPGROUP.009 0.0:0.01:0.200 results/ds_edp_9.txt --new;
+recorder DSIM.9_REC dsim COMPGROUP.009 $linvalues results/ds_im_9.txt --new;
+recorder LOSSRATE_9_REC lossrate COMPGROUP.009 1E-4:4.8E-3:1.2 results/loss_rate_9.txt --new;
+recorder ANNLOSS_REC_09 annloss COMPGROUP.009 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_9.txt --new;
+
+
+recorder LOSSEDP.10_REC lossedp COMPGROUP.010 $lossedpvalues2 results/loss_10_edp.txt --new;
+recorder LOSSIM.10_REC lossim COMPGROUP.010 $lossimvalues results/loss_10_im.txt --new;
+recorder DSRATE_010_REC dsrate COMPGROUP.010 results/ds_rate_010.txt --new;
+recorder DSEDP.10_REC dsedp COMPGROUP.010 0.0:0.01:0.200 results/ds_edp_10.txt --new;
+recorder DSIM.10_REC dsim COMPGROUP.010 $linvalues results/ds_im_10.txt --new;
+recorder LOSSRATE_10_REC lossrate COMPGROUP.010 1E-4:4.8E-3:1.2 results/loss_rate_10.txt --new;
+recorder ANNLOSS_REC_10 annloss COMPGROUP.010 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_10.txt --new;
+
+
+recorder LOSSEDP.11_REC lossedp COMPGROUP.011 $lossedpvalues2 results/loss_11_edp.txt --new;
+recorder LOSSIM.11_REC lossim COMPGROUP.011 $lossimvalues results/loss_11_im.txt --new;
+recorder DSRATE_011_REC dsrate COMPGROUP.011 results/ds_rate_011.txt --new;
+recorder DSEDP.11_REC dsedp COMPGROUP.011 0.0:0.01:0.200 results/ds_edp_11.txt --new;
+recorder DSIM.11_REC dsim COMPGROUP.011 $linvalues results/ds_im_11.txt --new;
+recorder LOSSRATE_11_REC lossrate COMPGROUP.011 1E-4:4.8E-3:1.2 results/loss_rate_11.txt --new;
+recorder ANNLOSS_REC_11 annloss COMPGROUP.011 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_11.txt --new;
+
+
+recorder LOSSEDP.12_REC lossedp COMPGROUP.012 $lossedpvalues2 results/loss_12_edp.txt --new;
+recorder LOSSIM.12_REC lossim COMPGROUP.012 $lossimvalues results/loss_12_im.txt --new;
+recorder DSRATE_012_REC dsrate COMPGROUP.012 results/ds_rate_012.txt --new;
+recorder DSEDP.12_REC dsedp COMPGROUP.012 0.0:0.01:0.200 results/ds_edp_12.txt --new;
+recorder DSIM.12_REC dsim COMPGROUP.012 $linvalues results/ds_im_12.txt --new;
+recorder LOSSRATE_12_REC lossrate COMPGROUP.012 1E-4:4.8E-3:1.2 results/loss_rate_12.txt --new;
+recorder ANNLOSS_REC_12 annloss COMPGROUP.012 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_12.txt --new;
+
+
+recorder LOSSEDP.13_REC lossedp COMPGROUP.013 $lossedpvalues2 results/loss_13_edp.txt --new;
+recorder LOSSIM.13_REC lossim COMPGROUP.013 $lossimvalues results/loss_13_im.txt --new;
+recorder DSRATE_013_REC dsrate COMPGROUP.013 results/ds_rate_013.txt --new;
+recorder DSEDP.13_REC dsedp COMPGROUP.013 0.0:0.01:0.200 results/ds_edp_13.txt --new;
+recorder DSIM.13_REC dsim COMPGROUP.013 $linvalues results/ds_im_13.txt --new;
+recorder LOSSRATE_13_REC lossrate COMPGROUP.013 1E-4:4.8E-3:1.2 results/loss_rate_13.txt --new;
+recorder ANNLOSS_REC_13 annloss COMPGROUP.013 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_13.txt --new;
+
+
+recorder LOSSEDP.14_REC lossedp COMPGROUP.014 $lossedpvalues2 results/loss_14_edp.txt --new;
+recorder LOSSIM.14_REC lossim COMPGROUP.014 $lossimvalues results/loss_14_im.txt --new;
+recorder DSRATE_014_REC dsrate COMPGROUP.014 results/ds_rate_014.txt --new;
+recorder DSEDP.14_REC dsedp COMPGROUP.014 0.0:0.01:0.200 results/ds_edp_14.txt --new;
+recorder DSIM.14_REC dsim COMPGROUP.014 $linvalues results/ds_im_14.txt --new;
+recorder LOSSRATE_14_REC lossrate COMPGROUP.014 1E-4:4.8E-3:1.2 results/loss_rate_14.txt --new;
+recorder ANNLOSS_REC_14 annloss COMPGROUP.014 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_14.txt --new;
+
+
+recorder LOSSEDP.15_REC lossedp COMPGROUP.015 $lossedpvalues2 results/loss_15_edp.txt --new;
+recorder LOSSIM.15_REC lossim COMPGROUP.015 $lossimvalues results/loss_15_im.txt --new;
+recorder DSRATE_015_REC dsrate COMPGROUP.015 results/ds_rate_015.txt --new;
+recorder DSEDP.15_REC dsedp COMPGROUP.015 0.0:0.01:0.200 results/ds_edp_15.txt --new;
+recorder DSIM.15_REC dsim COMPGROUP.015 $linvalues results/ds_im_15.txt --new;
+recorder LOSSRATE_15_REC lossrate COMPGROUP.015 1E-4:4.8E-3:1.2 results/loss_rate_15.txt --new;
+recorder ANNLOSS_REC_15 annloss COMPGROUP.015 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_15.txt --new;
+
+
+recorder LOSSEDP.16_REC lossedp COMPGROUP.016 $lossedpvalues2 results/loss_16_edp.txt --new;
+recorder LOSSIM.16_REC lossim COMPGROUP.016 $lossimvalues results/loss_16_im.txt --new;
+recorder DSRATE_016_REC dsrate COMPGROUP.016 results/ds_rate_016.txt --new;
+recorder DSEDP.16_REC dsedp COMPGROUP.016 0.0:0.01:0.200 results/ds_edp_16.txt --new;
+recorder DSIM.16_REC dsim COMPGROUP.016 $linvalues results/ds_im_16.txt --new;
+recorder LOSSRATE_16_REC lossrate COMPGROUP.016 1E-4:4.8E-3:1.2 results/loss_rate_16.txt --new;
+recorder ANNLOSS_REC_16 annloss COMPGROUP.016 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_16.txt --new;
+
+
+recorder LOSSEDP.17_REC lossedp COMPGROUP.017 $lossedpvalues2 results/loss_17_edp.txt --new;
+recorder LOSSIM.17_REC lossim COMPGROUP.017 $lossimvalues results/loss_17_im.txt --new;
+recorder DSRATE_017_REC dsrate COMPGROUP.017 results/ds_rate_017.txt --new;
+recorder DSEDP.17_REC dsedp COMPGROUP.017 0.0:0.01:0.200 results/ds_edp_17.txt --new;
+recorder DSIM.17_REC dsim COMPGROUP.017 $linvalues results/ds_im_17.txt --new;
+recorder LOSSRATE_17_REC lossrate COMPGROUP.017 1E-4:4.8E-3:1.2 results/loss_rate_17.txt --new;
+recorder ANNLOSS_REC_17 annloss COMPGROUP.017 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_17.txt --new;
+
+
+recorder LOSSEDP.18_REC lossedp COMPGROUP.018 $lossedpvalues2 results/loss_18_edp.txt --new;
+recorder LOSSIM.18_REC lossim COMPGROUP.018 $lossimvalues results/loss_18_im.txt --new;
+recorder DSRATE_018_REC dsrate COMPGROUP.018 results/ds_rate_018.txt --new;
+recorder DSEDP.18_REC dsedp COMPGROUP.018 0.0:0.01:0.200 results/ds_edp_18.txt --new;
+recorder DSIM.18_REC dsim COMPGROUP.018 $linvalues results/ds_im_18.txt --new;
+recorder LOSSRATE_18_REC lossrate COMPGROUP.018 1E-4:4.8E-3:1.2 results/loss_rate_18.txt --new;
+recorder ANNLOSS_REC_18 annloss COMPGROUP.018 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_18.txt --new;
+
+
+recorder LOSSEDP.19_REC lossedp COMPGROUP.019 $lossedpvalues2 results/loss_19_edp.txt --new;
+recorder LOSSIM.19_REC lossim COMPGROUP.019 $lossimvalues results/loss_19_im.txt --new;
+recorder DSRATE_019_REC dsrate COMPGROUP.019 results/ds_rate_019.txt --new;
+recorder DSEDP.19_REC dsedp COMPGROUP.019 0.0:0.01:0.200 results/ds_edp_19.txt --new;
+recorder DSIM.19_REC dsim COMPGROUP.019 $linvalues results/ds_im_19.txt --new;
+recorder LOSSRATE_19_REC lossrate COMPGROUP.019 1E-4:4.8E-3:1.2 results/loss_rate_19.txt --new;
+recorder ANNLOSS_REC_19 annloss COMPGROUP.019 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_19.txt --new;
+
+
+recorder LOSSEDP.20_REC lossedp COMPGROUP.020 $lossedpvalues2 results/loss_20_edp.txt --new;
+recorder LOSSIM_20_REC lossim COMPGROUP.020 $lossimvalues results/loss_20_im.txt --new;
+recorder DSRATE_020_REC dsrate COMPGROUP.020 results/ds_rate_020.txt --new;
+recorder DSEDP.20_REC dsedp COMPGROUP.020 0.0:0.01:0.200 results/ds_edp_20.txt --new;
+recorder DSIM.20_REC dsim COMPGROUP.020 $linvalues results/ds_im_20.txt --new;
+recorder LOSSRATE_20_REC lossrate COMPGROUP.020 1E-4:4.8E-3:1.2 results/loss_rate_20.txt --new;
+recorder ANNLOSS_REC_20 annloss COMPGROUP.020 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_20.txt --new;
+
+
+recorder LOSSEDP.21_REC lossedp COMPGROUP.021 $lossedpvalues5 results/loss_21_edp.txt --new;
+recorder LOSSIM_21_REC lossim COMPGROUP.021 $lossimvalues results/loss_21_im.txt --new;
+recorder DSRATE_021_REC dsrate COMPGROUP.021 results/ds_rate_021.txt --new;
+recorder DSEDP.21_REC dsedp COMPGROUP.021 0.0:0.01:0.200 results/ds_edp_21.txt --new;
+recorder DSIM.21_REC dsim COMPGROUP.021 $linvalues results/ds_im_21.txt --new;
+recorder LOSSRATE_21_REC lossrate COMPGROUP.021 1E-4:4.8E-3:1.2 results/loss_rate_21.txt --new;
+recorder ANNLOSS_REC_21 annloss COMPGROUP.021 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_21.txt --new;
+
+
+recorder LOSSEDP.22_REC lossedp COMPGROUP.022 $lossedpvalues2 results/loss_22_edp.txt --new;
+recorder LOSSIM_22_REC lossim COMPGROUP.022 $lossimvalues results/loss_22_im.txt --new;
+recorder DSRATE_022_REC dsrate COMPGROUP.022 results/ds_rate_022.txt --new;
+recorder DSEDP.22_REC dsedp COMPGROUP.022 0.0:0.01:0.200 results/ds_edp_22.txt --new;
+recorder DSIM.22_REC dsim COMPGROUP.022 $linvalues results/ds_im_22.txt --new;
+recorder LOSSRATE_22_REC lossrate COMPGROUP.022 1E-4:4.8E-3:1.2 results/loss_rate_22.txt --new;
+recorder ANNLOSS_REC_22 annloss COMPGROUP.022 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_22.txt --new;
+
+
+recorder LOSSEDP.23_REC lossedp COMPGROUP.023 $lossedpvalues2 results/loss_23_edp.txt --new;
+recorder LOSSIM_23_REC lossim COMPGROUP.023 $lossimvalues results/loss_23_im.txt --new;
+recorder DSRATE_023_REC dsrate COMPGROUP.023 results/ds_rate_023.txt --new;
+recorder DSEDP.23_REC dsedp COMPGROUP.023 0.0:0.01:0.200 results/ds_edp_23.txt --new;
+recorder DSIM.23_REC dsim COMPGROUP.023 $linvalues results/ds_im_23.txt --new;
+recorder LOSSRATE_23_REC lossrate COMPGROUP.023 1E-4:4.8E-3:1.2 results/loss_rate_23.txt --new;
+recorder ANNLOSS_REC_23 annloss COMPGROUP.023 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_23.txt --new;
+
+
+recorder LOSSEDP.24_REC lossedp COMPGROUP.024 $lossedpvalues2 results/loss_24_edp.txt --new;
+recorder LOSSIM_24_REC lossim COMPGROUP.024 $lossimvalues results/loss_24_im.txt --new;
+recorder DSRATE_024_REC dsrate COMPGROUP.024 results/ds_rate_024.txt --new;
+recorder DSEDP.24_REC dsedp COMPGROUP.024 0.0:0.01:0.200 results/ds_edp_24.txt --new;
+recorder DSIM.24_REC dsim COMPGROUP.024 $linvalues results/ds_im_24.txt --new;
+recorder LOSSRATE_24_REC lossrate COMPGROUP.024 1E-4:4.8E-3:1.2 results/loss_rate_24.txt --new;
+recorder ANNLOSS_REC_24 annloss COMPGROUP.024 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_24.txt --new;
+
+
+recorder LOSSEDP.25_REC lossedp COMPGROUP.025 $lossedpvalues2 results/loss_25_edp.txt --new;
+recorder LOSSIM_25_REC lossim COMPGROUP.025 $lossimvalues results/loss_25_im.txt --new;
+recorder DSRATE_025_REC dsrate COMPGROUP.025 results/ds_rate_025.txt --new;
+recorder DSEDP.25_REC dsedp COMPGROUP.025 0.0:0.01:0.200 results/ds_edp_25.txt --new;
+recorder DSIM.25_REC dsim COMPGROUP.025 $linvalues results/ds_im_25.txt --new;
+recorder LOSSRATE_25_REC lossrate COMPGROUP.025 1E-4:4.8E-3:1.2 results/loss_rate_25.txt --new;
+recorder ANNLOSS_REC_25 annloss COMPGROUP.025 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_25.txt --new;
+
+
+recorder LOSSEDP.26_REC lossedp COMPGROUP.026 $lossedpvalues2 results/loss_26_edp.txt --new;
+recorder LOSSIM_26_REC lossim COMPGROUP.026 $lossimvalues results/loss_26_im.txt --new;
+recorder DSRATE_026_REC dsrate COMPGROUP.026 results/ds_rate_026.txt --new;
+recorder DSEDP.26_REC dsedp COMPGROUP.026 0.0:0.01:0.200 results/ds_edp_26.txt --new;
+recorder DSIM.26_REC dsim COMPGROUP.026 $linvalues results/ds_im_26.txt --new;
+recorder LOSSRATE_26_REC lossrate COMPGROUP.026 1E-4:4.8E-3:1.2 results/loss_rate_26.txt --new;
+recorder ANNLOSS_REC_26 annloss COMPGROUP.026 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_26.txt --new;
+
+
+recorder LOSSEDP.27_REC lossedp COMPGROUP.027 $lossedpvalues2 results/loss_27_edp.txt --new;
+recorder LOSSIM_27_REC lossim COMPGROUP.027 $lossimvalues results/loss_27_im.txt --new;
+recorder DSRATE_027_REC dsrate COMPGROUP.027 results/ds_rate_027.txt --new;
+recorder DSEDP.27_REC dsedp COMPGROUP.027 0.0:0.01:0.200 results/ds_edp_27.txt --new;
+recorder DSIM.27_REC dsim COMPGROUP.027 $linvalues results/ds_im_27.txt --new;
+recorder LOSSRATE_27_REC lossrate COMPGROUP.027 1E-4:4.8E-3:1.2 results/loss_rate_27.txt --new;
+recorder ANNLOSS_REC_27 annloss COMPGROUP.027 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_27.txt --new;
+
+
+recorder LOSSEDP.28_REC lossedp COMPGROUP.028 $lossedpvalues2 results/loss_28_edp.txt --new;
+recorder LOSSIM_28_REC lossim COMPGROUP.028 $lossimvalues results/loss_28_im.txt --new;
+recorder DSRATE_028_REC dsrate COMPGROUP.028 results/ds_rate_028.txt --new;
+recorder DSEDP.28_REC dsedp COMPGROUP.028 0.0:0.01:0.200 results/ds_edp_28.txt --new;
+recorder DSIM.28_REC dsim COMPGROUP.028 $linvalues results/ds_im_28.txt --new;
+recorder LOSSRATE_28_REC lossrate COMPGROUP.028 1E-4:4.8E-3:1.2 results/loss_rate_28.txt --new;
+recorder ANNLOSS_REC_28 annloss COMPGROUP.028 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_28.txt --new;
+
+
+recorder LOSSEDP.29_REC lossedp COMPGROUP.029 $lossedpvalues2 results/loss_29_edp.txt --new;
+recorder LOSSIM_29_REC lossim COMPGROUP.029 $lossimvalues results/loss_29_im.txt --new;
+recorder DSRATE_029_REC dsrate COMPGROUP.029 results/ds_rate_029.txt --new;
+recorder DSEDP.29_REC dsedp COMPGROUP.029 0.0:0.01:0.200 results/ds_edp_29.txt --new;
+recorder DSIM.29_REC dsim COMPGROUP.029 $linvalues results/ds_im_29.txt --new;
+recorder LOSSRATE_29_REC lossrate COMPGROUP.029 1E-4:4.8E-3:1.2 results/loss_rate_29.txt --new;
+recorder ANNLOSS_REC_29 annloss COMPGROUP.029 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_29.txt --new;
+
+
+recorder LOSSEDP.30_REC lossedp COMPGROUP.030 $lossedpvalues2 results/loss_30_edp.txt --new;
+recorder LOSSIM_30_REC lossim COMPGROUP.030 $lossimvalues results/loss_30_im.txt --new;
+recorder DSRATE_030_REC dsrate COMPGROUP.030 results/ds_rate_030.txt --new;
+recorder DSEDP.30_REC dsedp COMPGROUP.030 0.0:0.01:0.200 results/ds_edp_30.txt --new;
+recorder DSIM.30_REC dsim COMPGROUP.030 $linvalues results/ds_im_30.txt --new;
+recorder LOSSRATE_30_REC lossrate COMPGROUP.030 1E-4:4.8E-3:1.2 results/loss_rate_30.txt --new;
+recorder ANNLOSS_REC_30 annloss COMPGROUP.030 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_30.txt --new;
+
+
+recorder LOSSEDP.31_REC lossedp COMPGROUP.031 $lossedpvalues5 results/loss_31_edp.txt --new;
+recorder LOSSIM_31_REC lossim COMPGROUP.031 $lossimvalues results/loss_31_im.txt --new;
+recorder DSRATE_031_REC dsrate COMPGROUP.031 results/ds_rate_031.txt --new;
+recorder DSEDP.31_REC dsedp COMPGROUP.031 0.0:0.01:0.200 results/ds_edp_31.txt --new;
+recorder DSIM.31_REC dsim COMPGROUP.031 $linvalues results/ds_im_31.txt --new;
+recorder LOSSRATE_31_REC lossrate COMPGROUP.031 1E-4:4.8E-3:1.2 results/loss_rate_31.txt --new;
+recorder ANNLOSS_REC_31 annloss COMPGROUP.031 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_31.txt --new;
+
+
+recorder LOSSEDP.32_REC lossedp COMPGROUP.032 $lossedpvalues2 results/loss_32_edp.txt --new;
+recorder LOSSIM_32_REC lossim COMPGROUP.032 $lossimvalues results/loss_32_im.txt --new;
+recorder DSRATE_032_REC dsrate COMPGROUP.032 results/ds_rate_032.txt --new;
+recorder DSEDP.32_REC dsedp COMPGROUP.032 0.0:0.01:0.200 results/ds_edp_32.txt --new;
+recorder DSIM.32_REC dsim COMPGROUP.032 $linvalues results/ds_im_32.txt --new;
+recorder LOSSRATE_32_REC lossrate COMPGROUP.032 1E-4:4.8E-3:1.2 results/loss_rate_32.txt --new;
+recorder ANNLOSS_REC_32 annloss COMPGROUP.032 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_32.txt --new;
+
+
+recorder LOSSEDP.33_REC lossedp COMPGROUP.033 $lossedpvalues2 results/loss_33_edp.txt --new;
+recorder LOSSIM_33_REC lossim COMPGROUP.033 $lossimvalues results/loss_33_im.txt --new;
+recorder DSRATE_033_REC dsrate COMPGROUP.033 results/ds_rate_033.txt --new;
+recorder DSEDP.33_REC dsedp COMPGROUP.033 0.0:0.01:0.200 results/ds_edp_33.txt --new;
+recorder DSIM.33_REC dsim COMPGROUP.033 $linvalues results/ds_im_33.txt --new;
+recorder LOSSRATE_33_REC lossrate COMPGROUP.033 1E-4:4.8E-3:1.2 results/loss_rate_33.txt --new;
+recorder ANNLOSS_REC_33 annloss COMPGROUP.033 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_33.txt --new;
+
+
+recorder LOSSEDP.34_REC lossedp COMPGROUP.034 $lossedpvalues2 results/loss_34_edp.txt --new;
+recorder LOSSIM_34_REC lossim COMPGROUP.034 $lossimvalues results/loss_34_im.txt --new;
+recorder DSRATE_034_REC dsrate COMPGROUP.034 results/ds_rate_034.txt --new;
+recorder DSEDP.34_REC dsedp COMPGROUP.034 0.0:0.01:0.200 results/ds_edp_34.txt --new;
+recorder DSIM.34_REC dsim COMPGROUP.034 $linvalues results/ds_im_34.txt --new;
+recorder LOSSRATE_34_REC lossrate COMPGROUP.034 1E-4:4.8E-3:1.2 results/loss_rate_34.txt --new;
+recorder ANNLOSS_REC_34 annloss COMPGROUP.034 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_34.txt --new;
+
+
+recorder LOSSEDP.35_REC lossedp COMPGROUP.035 $lossedpvalues2 results/loss_35_edp.txt --new;
+recorder LOSSIM_35_REC lossim COMPGROUP.035 $lossimvalues results/loss_35_im.txt --new;
+recorder DSRATE_035_REC dsrate COMPGROUP.035 results/ds_rate_035.txt --new;
+recorder DSEDP.35_REC dsedp COMPGROUP.035 0.0:0.01:0.200 results/ds_edp_35.txt --new;
+recorder DSIM.35_REC dsim COMPGROUP.035 $linvalues results/ds_im_35.txt --new;
+recorder LOSSRATE_35_REC lossrate COMPGROUP.035 1E-4:4.8E-3:1.2 results/loss_rate_35.txt --new;
+recorder ANNLOSS_REC_35 annloss COMPGROUP.035 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_35.txt --new;
+
+
+recorder LOSSEDP.36_REC lossedp COMPGROUP.036 $lossedpvalues2 results/loss_36_edp.txt --new;
+recorder LOSSIM_36_REC lossim COMPGROUP.036 $lossimvalues results/loss_36_im.txt --new;
+recorder DSRATE_036_REC dsrate COMPGROUP.036 results/ds_rate_036.txt --new;
+recorder DSEDP.36_REC dsedp COMPGROUP.036 0.0:0.01:0.200 results/ds_edp_36.txt --new;
+recorder DSIM.36_REC dsim COMPGROUP.036 $linvalues results/ds_im_36.txt --new;
+recorder LOSSRATE_36_REC lossrate COMPGROUP.036 1E-4:4.8E-3:1.2 results/loss_rate_36.txt --new;
+recorder ANNLOSS_REC_36 annloss COMPGROUP.036 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_36.txt --new;
+
+
+recorder LOSSEDP.37_REC lossedp COMPGROUP.037 $lossedpvalues2 results/loss_37_edp.txt --new;
+recorder LOSSIM_37_REC lossim COMPGROUP.037 $lossimvalues results/loss_37_im.txt --new;
+recorder DSRATE_037_REC dsrate COMPGROUP.037 results/ds_rate_037.txt --new;
+recorder DSEDP.37_REC dsedp COMPGROUP.037 0.0:0.01:0.200 results/ds_edp_37.txt --new;
+recorder DSIM.37_REC dsim COMPGROUP.037 $linvalues results/ds_im_37.txt --new;
+recorder LOSSRATE_37_REC lossrate COMPGROUP.037 1E-4:4.8E-3:1.2 results/loss_rate_37.txt --new;
+recorder ANNLOSS_REC_37 annloss COMPGROUP.037 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_37.txt --new;
+
+
+recorder LOSSEDP.38_REC lossedp COMPGROUP.038 $lossedpvalues2 results/loss_38_edp.txt --new;
+recorder LOSSIM_38_REC lossim COMPGROUP.038 $lossimvalues results/loss_38_im.txt --new;
+recorder DSRATE_038_REC dsrate COMPGROUP.038 results/ds_rate_038.txt --new;
+recorder DSEDP.38_REC dsedp COMPGROUP.038 0.0:0.01:0.200 results/ds_edp_38.txt --new;
+recorder DSIM.38_REC dsim COMPGROUP.038 $linvalues results/ds_im_38.txt --new;
+recorder LOSSRATE_38_REC lossrate COMPGROUP.038 1E-4:4.8E-3:1.2 results/loss_rate_38.txt --new;
+recorder ANNLOSS_REC_38 annloss COMPGROUP.038 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_38.txt --new;
+
+
+recorder LOSSEDP.39_REC lossedp COMPGROUP.039 $lossedpvalues2 results/loss_39_edp.txt --new;
+recorder LOSSIM_39_REC lossim COMPGROUP.039 $lossimvalues results/loss_39_im.txt --new;
+recorder DSRATE_039_REC dsrate COMPGROUP.039 results/ds_rate_039.txt --new;
+recorder DSEDP.39_REC dsedp COMPGROUP.039 0.0:0.01:0.200 results/ds_edp_39.txt --new;
+recorder DSIM.39_REC dsim COMPGROUP.039 $linvalues results/ds_im_39.txt --new;
+recorder LOSSRATE_39_REC lossrate COMPGROUP.039 1E-4:4.8E-3:1.2 results/loss_rate_39.txt --new;
+recorder ANNLOSS_REC_39 annloss COMPGROUP.039 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_39.txt --new;
+
+
+recorder LOSSEDP.40_REC lossedp COMPGROUP.040 $lossedpvalues2 results/loss_40_edp.txt --new;
+recorder LOSSIM_40_REC lossim COMPGROUP.040 $lossimvalues results/loss_40_im.txt --new;
+recorder DSRATE_040_REC dsrate COMPGROUP.040 results/ds_rate_040.txt --new;
+recorder DSEDP.40_REC dsedp COMPGROUP.040 0.0:0.01:0.200 results/ds_edp_40.txt --new;
+recorder DSIM.40_REC dsim COMPGROUP.040 $linvalues results/ds_im_40.txt --new;
+recorder LOSSRATE_40_REC lossrate COMPGROUP.040 1E-4:4.8E-3:1.2 results/loss_rate_40.txt --new;
+recorder ANNLOSS_REC_40 annloss COMPGROUP.040 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_40.txt --new;
+
+
+recorder LOSSEDP.41_REC lossedp COMPGROUP.041 $lossedpvalues5 results/loss_41_edp.txt --new;
+recorder LOSSIM_41_REC lossim COMPGROUP.041 $lossimvalues results/loss_41_im.txt --new;
+recorder DSRATE_041_REC dsrate COMPGROUP.041 results/ds_rate_041.txt --new;
+recorder DSEDP.41_REC dsedp COMPGROUP.041 0.0:0.01:0.200 results/ds_edp_41.txt --new;
+recorder DSIM.41_REC dsim COMPGROUP.041 $linvalues results/ds_im_41.txt --new;
+recorder LOSSRATE_41_REC lossrate COMPGROUP.041 1E-4:4.8E-3:1.2 results/loss_rate_41.txt --new;
+recorder ANNLOSS_REC_41 annloss COMPGROUP.041 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_41.txt --new;
+
+
+recorder LOSSEDP.42_REC lossedp COMPGROUP.042 $lossedpvalues2 results/loss_42_edp.txt --new;
+recorder LOSSIM_42_REC lossim COMPGROUP.042 $lossimvalues results/loss_42_im.txt --new;
+recorder DSRATE_042_REC dsrate COMPGROUP.042 results/ds_rate_042.txt --new;
+recorder DSEDP.42_REC dsedp COMPGROUP.042 0.0:0.01:0.200 results/ds_edp_42.txt --new;
+recorder DSIM.42_REC dsim COMPGROUP.042 $linvalues results/ds_im_42.txt --new;
+recorder LOSSRATE_42_REC lossrate COMPGROUP.042 1E-4:4.8E-3:1.2 results/loss_rate_42.txt --new;
+recorder ANNLOSS_REC_42 annloss COMPGROUP.042 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_42.txt --new;
+
+
+recorder LOSSEDP.43_REC lossedp COMPGROUP.043 $lossedpvalues2 results/loss_43_edp.txt --new;
+recorder LOSSIM_43_REC lossim COMPGROUP.043 $lossimvalues results/loss_43_im.txt --new;
+recorder DSRATE_043_REC dsrate COMPGROUP.043 results/ds_rate_043.txt --new;
+recorder DSEDP.43_REC dsedp COMPGROUP.043 0.0:0.01:0.200 results/ds_edp_43.txt --new;
+recorder DSIM.43_REC dsim COMPGROUP.043 $linvalues results/ds_im_43.txt --new;
+recorder LOSSRATE_43_REC lossrate COMPGROUP.043 1E-4:4.8E-3:1.2 results/loss_rate_43.txt --new;
+recorder ANNLOSS_REC_43 annloss COMPGROUP.043 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_43.txt --new;
+
+
+recorder LOSSEDP.44_REC lossedp COMPGROUP.044 $lossedpvalues2 results/loss_44_edp.txt --new;
+recorder LOSSIM_44_REC lossim COMPGROUP.044 $lossimvalues results/loss_44_im.txt --new;
+recorder DSRATE_044_REC dsrate COMPGROUP.044 results/ds_rate_044.txt --new;
+recorder DSEDP.44_REC dsedp COMPGROUP.044 0.0:0.01:0.200 results/ds_edp_44.txt --new;
+recorder DSIM.44_REC dsim COMPGROUP.044 $linvalues results/ds_im_44.txt --new;
+recorder LOSSRATE_44_REC lossrate COMPGROUP.044 1E-4:4.8E-3:1.2 results/loss_rate_44.txt --new;
+recorder ANNLOSS_REC_44 annloss COMPGROUP.044 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_44.txt --new;
+
+
+recorder LOSSEDP.45_REC lossedp COMPGROUP.045 $lossedpvalues2 results/loss_45_edp.txt --new;
+recorder LOSSIM_45_REC lossim COMPGROUP.045 $lossimvalues results/loss_45_im.txt --new;
+recorder DSRATE_045_REC dsrate COMPGROUP.045 results/ds_rate_045.txt --new;
+recorder DSEDP.45_REC dsedp COMPGROUP.045 0.0:0.01:0.200 results/ds_edp_45.txt --new;
+recorder DSIM.45_REC dsim COMPGROUP.045 $linvalues results/ds_im_45.txt --new;
+recorder LOSSRATE_45_REC lossrate COMPGROUP.045 1E-4:4.8E-3:1.2 results/loss_rate_45.txt --new;
+recorder ANNLOSS_REC_45 annloss COMPGROUP.045 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_45.txt --new;
+
+
+recorder LOSSEDP.46_REC lossedp COMPGROUP.046 $lossedpvalues2 results/loss_46_edp.txt --new;
+recorder LOSSIM_46_REC lossim COMPGROUP.046 $lossimvalues results/loss_46_im.txt --new;
+recorder DSRATE_046_REC dsrate COMPGROUP.046 results/ds_rate_046.txt --new;
+recorder DSEDP.46_REC dsedp COMPGROUP.046 0.0:0.01:0.200 results/ds_edp_46.txt --new;
+recorder DSIM.46_REC dsim COMPGROUP.046 $linvalues results/ds_im_46.txt --new;
+recorder LOSSRATE_46_REC lossrate COMPGROUP.046 1E-4:4.8E-3:1.2 results/loss_rate_46.txt --new;
+recorder ANNLOSS_REC_46 annloss COMPGROUP.046 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_46.txt --new;
+
+
+recorder LOSSEDP.47_REC lossedp COMPGROUP.047 $lossedpvalues2 results/loss_47_edp.txt --new;
+recorder LOSSIM_47_REC lossim COMPGROUP.047 $lossimvalues results/loss_47_im.txt --new;
+recorder DSRATE_047_REC dsrate COMPGROUP.047 results/ds_rate_047.txt --new;
+recorder DSEDP.47_REC dsedp COMPGROUP.047 0.0:0.01:0.200 results/ds_edp_47.txt --new;
+recorder DSIM.47_REC dsim COMPGROUP.047 $linvalues results/ds_im_47.txt --new;
+recorder LOSSRATE_47_REC lossrate COMPGROUP.047 1E-4:4.8E-3:1.2 results/loss_rate_47.txt --new;
+recorder ANNLOSS_REC_47 annloss COMPGROUP.047 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_47.txt --new;
+
+
+recorder LOSSEDP.48_REC lossedp COMPGROUP.048 $lossedpvalues2 results/loss_48_edp.txt --new;
+recorder LOSSIM_48_REC lossim COMPGROUP.048 $lossimvalues results/loss_48_im.txt --new;
+recorder DSRATE_048_REC dsrate COMPGROUP.048 results/ds_rate_048.txt --new;
+recorder DSEDP.48_REC dsedp COMPGROUP.048 0.0:0.01:0.200 results/ds_edp_48.txt --new;
+recorder DSIM.48_REC dsim COMPGROUP.048 $linvalues results/ds_im_48.txt --new;
+recorder LOSSRATE_48_REC lossrate COMPGROUP.048 1E-4:4.8E-3:1.2 results/loss_rate_48.txt --new;
+recorder ANNLOSS_REC_48 annloss COMPGROUP.048 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_48.txt --new;
+
+
+recorder LOSSEDP.49_REC lossedp COMPGROUP.049 $lossedpvalues2 results/loss_49_edp.txt --new;
+recorder LOSSIM_49_REC lossim COMPGROUP.049 $lossimvalues results/loss_49_im.txt --new;
+recorder DSRATE_049_REC dsrate COMPGROUP.049 results/ds_rate_049.txt --new;
+recorder DSEDP.49_REC dsedp COMPGROUP.049 0.0:0.01:0.200 results/ds_edp_49.txt --new;
+recorder DSIM.49_REC dsim COMPGROUP.049 $linvalues results/ds_im_49.txt --new;
+recorder LOSSRATE_49_REC lossrate COMPGROUP.049 1E-4:4.8E-3:1.2 results/loss_rate_49.txt --new;
+recorder ANNLOSS_REC_49 annloss COMPGROUP.049 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_49.txt --new;
+
+
+recorder LOSSEDP.50_REC lossedp COMPGROUP.050 $lossedpvalues2 results/loss_50_edp.txt --new;
+recorder LOSSIM_50_REC lossim COMPGROUP.050 $lossimvalues results/loss_50_im.txt --new;
+recorder DSRATE_050_REC dsrate COMPGROUP.050 results/ds_rate_050.txt --new;
+recorder DSEDP.50_REC dsedp COMPGROUP.050 0.0:0.01:0.200 results/ds_edp_50.txt --new;
+recorder DSIM.50_REC dsim COMPGROUP.050 $linvalues results/ds_im_50.txt --new;
+recorder LOSSRATE_50_REC lossrate COMPGROUP.050 1E-4:4.8E-3:1.2 results/loss_rate_50.txt --new;
+recorder ANNLOSS_REC_50 annloss COMPGROUP.050 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_50.txt --new;
+
+
+recorder LOSSEDP.51_REC lossedp COMPGROUP.051 $lossedpvalues3 results/loss_51_edp.txt --new;
+recorder LOSSIM_51_REC lossim COMPGROUP.051 $lossimvalues results/loss_51_im.txt --new;
+recorder DSRATE_051_REC dsrate COMPGROUP.051 results/ds_rate_051.txt --new;
+recorder DSEDP.51_REC dsedp COMPGROUP.051 0.0:0.01:0.200 results/ds_edp_51.txt --new;
+recorder DSIM.51_REC dsim COMPGROUP.051 $linvalues results/ds_im_51.txt --new;
+recorder LOSSRATE_51_REC lossrate COMPGROUP.051 1E-4:4.8E-3:1.2 results/loss_rate_51.txt --new;
+recorder ANNLOSS_REC_51 annloss COMPGROUP.051 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_51.txt --new;
+
+
+recorder LOSSEDP.52_REC lossedp COMPGROUP.052 $lossedpvalues3 results/loss_52_edp.txt --new;
+recorder LOSSIM_52_REC lossim COMPGROUP.052 $lossimvalues results/loss_52_im.txt --new;
+recorder DSRATE_052_REC dsrate COMPGROUP.052 results/ds_rate_052.txt --new;
+recorder DSEDP.52_REC dsedp COMPGROUP.052 0.0:0.01:0.200 results/ds_edp_52.txt --new;
+recorder DSIM.52_REC dsim COMPGROUP.052 $linvalues results/ds_im_52.txt --new;
+recorder LOSSRATE_52_REC lossrate COMPGROUP.052 1E-4:4.8E-3:1.2 results/loss_rate_52.txt --new;
+recorder ANNLOSS_REC_52 annloss COMPGROUP.052 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_52.txt --new;
+
+
+recorder LOSSEDP.53_REC lossedp COMPGROUP.053 $lossedpvalues3 results/loss_53_edp.txt --new;
+recorder LOSSIM_53_REC lossim COMPGROUP.053 $lossimvalues results/loss_53_im.txt --new;
+recorder DSRATE_053_REC dsrate COMPGROUP.053 results/ds_rate_053.txt --new;
+recorder DSEDP.53_REC dsedp COMPGROUP.053 0.0:0.01:0.200 results/ds_edp_53.txt --new;
+recorder DSIM.53_REC dsim COMPGROUP.053 $linvalues results/ds_im_53.txt --new;
+recorder LOSSRATE_53_REC lossrate COMPGROUP.053 1E-4:4.8E-3:1.2 results/loss_rate_53.txt --new;
+recorder ANNLOSS_REC_53 annloss COMPGROUP.053 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_53.txt --new;
+
+
+recorder LOSSEDP.54_REC lossedp COMPGROUP.054 $lossedpvalues3 results/loss_54_edp.txt --new;
+recorder LOSSIM_54_REC lossim COMPGROUP.054 $lossimvalues results/loss_54_im.txt --new;
+recorder DSRATE_054_REC dsrate COMPGROUP.054 results/ds_rate_054.txt --new;
+recorder DSEDP.54_REC dsedp COMPGROUP.054 0.0:0.01:0.200 results/ds_edp_54.txt --new;
+recorder DSIM.54_REC dsim COMPGROUP.054 $linvalues results/ds_im_54.txt --new;
+recorder LOSSRATE_54_REC lossrate COMPGROUP.054 1E-4:4.8E-3:1.2 results/loss_rate_54.txt --new;
+recorder ANNLOSS_REC_54 annloss COMPGROUP.054 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_54.txt --new;
+
+
+recorder LOSSEDP.55_REC lossedp COMPGROUP.055 $lossedpvalues3 results/loss_55_edp.txt --new;
+recorder LOSSIM_55_REC lossim COMPGROUP.055 $lossimvalues results/loss_55_im.txt --new;
+recorder DSRATE_055_REC dsrate COMPGROUP.055 results/ds_rate_055.txt --new;
+recorder DSEDP.55_REC dsedp COMPGROUP.055 0.0:0.01:0.200 results/ds_edp_55.txt --new;
+recorder DSIM.55_REC dsim COMPGROUP.055 $linvalues results/ds_im_55.txt --new;
+recorder LOSSRATE_55_REC lossrate COMPGROUP.055 1E-4:4.8E-3:1.2 results/loss_rate_55.txt --new;
+recorder ANNLOSS_REC_55 annloss COMPGROUP.055 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_55.txt --new;
+
+
+recorder LOSSEDP.56_REC lossedp COMPGROUP.056 $lossedpvalues3 results/loss_56_edp.txt --new;
+recorder LOSSIM_56_REC lossim COMPGROUP.056 $lossimvalues results/loss_56_im.txt --new;
+recorder DSRATE_056_REC dsrate COMPGROUP.056 results/ds_rate_056.txt --new;
+recorder DSEDP.56_REC dsedp COMPGROUP.056 0.0:0.01:0.200 results/ds_edp_56.txt --new;
+recorder DSIM.56_REC dsim COMPGROUP.056 $linvalues results/ds_im_56.txt --new;
+recorder LOSSRATE_56_REC lossrate COMPGROUP.056 1E-4:4.8E-3:1.2 results/loss_rate_56.txt --new;
+recorder ANNLOSS_REC_56 annloss COMPGROUP.056 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_56.txt --new;
+
+
+recorder LOSSEDP.57_REC lossedp COMPGROUP.057 $lossedpvalues3 results/loss_57_edp.txt --new;
+recorder LOSSIM_57_REC lossim COMPGROUP.057 $lossimvalues results/loss_57_im.txt --new;
+recorder DSRATE_057_REC dsrate COMPGROUP.057 results/ds_rate_057.txt --new;
+recorder DSEDP.57_REC dsedp COMPGROUP.057 0.0:0.01:0.200 results/ds_edp_57.txt --new;
+recorder DSIM.57_REC dsim COMPGROUP.057 $linvalues results/ds_im_57.txt --new;
+recorder LOSSRATE_57_REC lossrate COMPGROUP.057 1E-4:4.8E-3:1.2 results/loss_rate_57.txt --new;
+recorder ANNLOSS_REC_57 annloss COMPGROUP.057 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_57.txt --new;
+
+
+recorder LOSSEDP.58_REC lossedp COMPGROUP.058 $lossedpvalues3 results/loss_58_edp.txt --new;
+recorder LOSSIM_58_REC lossim COMPGROUP.058 $lossimvalues results/loss_58_im.txt --new;
+recorder DSRATE_058_REC dsrate COMPGROUP.058 results/ds_rate_058.txt --new;
+recorder DSEDP.58_REC dsedp COMPGROUP.058 0.0:0.01:0.200 results/ds_edp_58.txt --new;
+recorder DSIM.58_REC dsim COMPGROUP.058 $linvalues results/ds_im_58.txt --new;
+recorder LOSSRATE_58_REC lossrate COMPGROUP.058 1E-4:4.8E-3:1.2 results/loss_rate_58.txt --new;
+recorder ANNLOSS_REC_58 annloss COMPGROUP.058 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_58.txt --new;
+
+
+recorder LOSSEDP.59_REC lossedp COMPGROUP.059 $lossedpvalues3 results/loss_59_edp.txt --new;
+recorder LOSSIM_59_REC lossim COMPGROUP.059 $lossimvalues results/loss_59_im.txt --new;
+recorder DSRATE_059_REC dsrate COMPGROUP.059 results/ds_rate_059.txt --new;
+recorder DSEDP.59_REC dsedp COMPGROUP.059 0.0:0.01:0.200 results/ds_edp_59.txt --new;
+recorder DSIM.59_REC dsim COMPGROUP.059 $linvalues results/ds_im_59.txt --new;
+recorder LOSSRATE_59_REC lossrate COMPGROUP.059 1E-4:4.8E-3:1.2 results/loss_rate_59.txt --new;
+recorder ANNLOSS_REC_59 annloss COMPGROUP.059 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_59.txt --new;
+
+
+recorder LOSSEDP.60_REC lossedp COMPGROUP.060 $lossedpvalues3 results/loss_60_edp.txt --new;
+recorder LOSSIM_60_REC lossim COMPGROUP.060 $lossimvalues results/loss_60_im.txt --new;
+recorder DSRATE_060_REC dsrate COMPGROUP.060 results/ds_rate_060.txt --new;
+recorder DSEDP.60_REC dsedp COMPGROUP.060 0.0:0.01:0.200 results/ds_edp_60.txt --new;
+recorder DSIM.60_REC dsim COMPGROUP.060 $linvalues results/ds_im_60.txt --new;
+recorder LOSSRATE_60_REC lossrate COMPGROUP.060 1E-4:4.8E-3:1.2 results/loss_rate_60.txt --new;
+recorder ANNLOSS_REC_60 annloss COMPGROUP.060 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_60.txt --new;
+
+
+recorder LOSSEDP.61_REC lossedp COMPGROUP.061 $lossedpvalues3 results/loss_61_edp.txt --new;
+recorder LOSSIM_61_REC lossim COMPGROUP.061 $lossimvalues results/loss_61_im.txt --new;
+recorder DSRATE_061_REC dsrate COMPGROUP.061 results/ds_rate_061.txt --new;
+recorder DSEDP.61_REC dsedp COMPGROUP.061 0.0:0.01:0.200 results/ds_edp_61.txt --new;
+recorder DSIM.61_REC dsim COMPGROUP.061 $linvalues results/ds_im_61.txt --new;
+recorder LOSSRATE_61_REC lossrate COMPGROUP.061 1E-4:4.8E-3:1.2 results/loss_rate_61.txt --new;
+recorder ANNLOSS_REC_61 annloss COMPGROUP.061 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_61.txt --new;
+
+
+recorder LOSSEDP.62_REC lossedp COMPGROUP.062 $lossedpvalues3 results/loss_62_edp.txt --new;
+recorder LOSSIM_62_REC lossim COMPGROUP.062 $lossimvalues results/loss_62_im.txt --new;
+recorder DSRATE_062_REC dsrate COMPGROUP.062 results/ds_rate_062.txt --new;
+recorder DSEDP.62_REC dsedp COMPGROUP.062 0.0:0.01:0.200 results/ds_edp_62.txt --new;
+recorder DSIM.62_REC dsim COMPGROUP.062 $linvalues results/ds_im_62.txt --new;
+recorder LOSSRATE_62_REC lossrate COMPGROUP.062 1E-4:4.8E-3:1.2 results/loss_rate_62.txt --new;
+recorder ANNLOSS_REC_62 annloss COMPGROUP.062 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_62.txt --new;
+
+
+recorder LOSSEDP.63_REC lossedp COMPGROUP.063 $lossedpvalues3 results/loss_63_edp.txt --new;
+recorder LOSSIM_63_REC lossim COMPGROUP.063 $lossimvalues results/loss_63_im.txt --new;
+recorder DSRATE_063_REC dsrate COMPGROUP.063 results/ds_rate_063.txt --new;
+recorder DSEDP.63_REC dsedp COMPGROUP.063 0.0:0.01:0.200 results/ds_edp_63.txt --new;
+recorder DSIM.63_REC dsim COMPGROUP.063 $linvalues results/ds_im_63.txt --new;
+recorder LOSSRATE_63_REC lossrate COMPGROUP.063 1E-4:4.8E-3:1.2 results/loss_rate_63.txt --new;
+recorder ANNLOSS_REC_63 annloss COMPGROUP.063 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_63.txt --new;
+
+
+recorder LOSSEDP.64_REC lossedp COMPGROUP.064 $lossedpvalues3 results/loss_64_edp.txt --new;
+recorder LOSSIM_64_REC lossim COMPGROUP.064 $lossimvalues results/loss_64_im.txt --new;
+recorder DSRATE_064_REC dsrate COMPGROUP.064 results/ds_rate_064.txt --new;
+recorder DSEDP.64_REC dsedp COMPGROUP.064 0.0:0.01:0.200 results/ds_edp_64.txt --new;
+recorder DSIM.64_REC dsim COMPGROUP.064 $linvalues results/ds_im_64.txt --new;
+recorder LOSSRATE_64_REC lossrate COMPGROUP.064 1E-4:4.8E-3:1.2 results/loss_rate_64.txt --new;
+recorder ANNLOSS_REC_64 annloss COMPGROUP.064 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_64.txt --new;
+
+
+recorder LOSSEDP.65_REC lossedp COMPGROUP.065 $lossedpvalues3 results/loss_65_edp.txt --new;
+recorder LOSSIM_65_REC lossim COMPGROUP.065 $lossimvalues results/loss_65_im.txt --new;
+recorder DSRATE_065_REC dsrate COMPGROUP.065 results/ds_rate_065.txt --new;
+recorder DSEDP.65_REC dsedp COMPGROUP.065 0.0:0.01:0.200 results/ds_edp_65.txt --new;
+recorder DSIM.65_REC dsim COMPGROUP.065 $linvalues results/ds_im_65.txt --new;
+recorder LOSSRATE_65_REC lossrate COMPGROUP.065 1E-4:4.8E-3:1.2 results/loss_rate_65.txt --new;
+recorder ANNLOSS_REC_65 annloss COMPGROUP.065 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_65.txt --new;
+
+
+recorder LOSSEDP.66_REC lossedp COMPGROUP.066 $lossedpvalues3 results/loss_66_edp.txt --new;
+recorder LOSSIM_66_REC lossim COMPGROUP.066 $lossimvalues results/loss_66_im.txt --new;
+recorder DSRATE_066_REC dsrate COMPGROUP.066 results/ds_rate_066.txt --new;
+recorder DSEDP.66_REC dsedp COMPGROUP.066 0.0:0.01:0.200 results/ds_edp_66.txt --new;
+recorder DSIM.66_REC dsim COMPGROUP.066 $linvalues results/ds_im_66.txt --new;
+recorder LOSSRATE_66_REC lossrate COMPGROUP.066 1E-4:4.8E-3:1.2 results/loss_rate_66.txt --new;
+recorder ANNLOSS_REC_66 annloss COMPGROUP.066 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_66.txt --new;
+
+
+recorder LOSSEDP.67_REC lossedp COMPGROUP.067 $lossedpvalues3 results/loss_67_edp.txt --new;
+recorder LOSSIM_67_REC lossim COMPGROUP.067 $lossimvalues results/loss_67_im.txt --new;
+recorder DSRATE_067_REC dsrate COMPGROUP.067 results/ds_rate_067.txt --new;
+recorder DSEDP.67_REC dsedp COMPGROUP.067 0.0:0.01:0.200 results/ds_edp_67.txt --new;
+recorder DSIM.67_REC dsim COMPGROUP.067 $linvalues results/ds_im_67.txt --new;
+recorder LOSSRATE_67_REC lossrate COMPGROUP.067 1E-4:4.8E-3:1.2 results/loss_rate_67.txt --new;
+recorder ANNLOSS_REC_67 annloss COMPGROUP.067 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_67.txt --new;
+
+
+recorder LOSSEDP.68_REC lossedp COMPGROUP.068 $lossedpvalues3 results/loss_68_edp.txt --new;
+recorder LOSSIM_68_REC lossim COMPGROUP.068 $lossimvalues results/loss_68_im.txt --new;
+recorder DSRATE_068_REC dsrate COMPGROUP.068 results/ds_rate_068.txt --new;
+recorder DSEDP.68_REC dsedp COMPGROUP.068 0.0:0.01:0.200 results/ds_edp_68.txt --new;
+recorder DSIM.68_REC dsim COMPGROUP.068 $linvalues results/ds_im_68.txt --new;
+recorder LOSSRATE_68_REC lossrate COMPGROUP.068 1E-4:4.8E-3:1.2 results/loss_rate_68.txt --new;
+recorder ANNLOSS_REC_68 annloss COMPGROUP.068 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_68.txt --new;
+
+
+recorder LOSSEDP.69_REC lossedp COMPGROUP.069 $lossedpvalues3 results/loss_69_edp.txt --new;
+recorder LOSSIM_69_REC lossim COMPGROUP.069 $lossimvalues results/loss_69_im.txt --new;
+recorder DSRATE_069_REC dsrate COMPGROUP.069 results/ds_rate_069.txt --new;
+recorder DSEDP.69_REC dsedp COMPGROUP.069 0.0:0.01:0.200 results/ds_edp_69.txt --new;
+recorder DSIM.69_REC dsim COMPGROUP.069 $linvalues results/ds_im_69.txt --new;
+recorder LOSSRATE_69_REC lossrate COMPGROUP.069 1E-4:4.8E-3:1.2 results/loss_rate_69.txt --new;
+recorder ANNLOSS_REC_69 annloss COMPGROUP.069 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_69.txt --new;
+
+
+recorder LOSSEDP.70_REC lossedp COMPGROUP.070 $lossedpvalues3 results/loss_70_edp.txt --new;
+recorder LOSSIM_70_REC lossim COMPGROUP.070 $lossimvalues results/loss_70_im.txt --new;
+recorder DSRATE_070_REC dsrate COMPGROUP.070 results/ds_rate_070.txt --new;
+recorder DSEDP.70_REC dsedp COMPGROUP.070 0.0:0.01:0.200 results/ds_edp_70.txt --new;
+recorder DSIM.70_REC dsim COMPGROUP.070 $linvalues results/ds_im_70.txt --new;
+recorder LOSSRATE_70_REC lossrate COMPGROUP.070 1E-4:4.8E-3:1.2 results/loss_rate_70.txt --new;
+recorder ANNLOSS_REC_70 annloss COMPGROUP.070 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_70.txt --new;
+
+
+recorder LOSSEDP.71_REC lossedp COMPGROUP.071 $lossedpvalues4 results/loss_71_edp.txt --new;
+recorder LOSSIM_71_REC lossim COMPGROUP.071 $lossimvalues results/loss_71_im.txt --new;
+recorder DSRATE_071_REC dsrate COMPGROUP.071 results/ds_rate_071.txt --new;
+recorder DSEDP.71_REC dsedp COMPGROUP.071 0.0:0.01:0.200 results/ds_edp_71.txt --new;
+recorder DSIM.71_REC dsim COMPGROUP.071 $linvalues results/ds_im_71.txt --new;
+recorder LOSSRATE_71_REC lossrate COMPGROUP.071 1E-4:4.8E-3:1.2 results/loss_rate_71.txt --new;
+recorder ANNLOSS_REC_71 annloss COMPGROUP.071 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_71.txt --new;
+
+
+recorder LOSSEDP.72_REC lossedp COMPGROUP.072 $lossedpvalues3 results/loss_72_edp.txt --new;
+recorder LOSSIM_72_REC lossim COMPGROUP.072 $lossimvalues results/loss_72_im.txt --new;
+recorder DSRATE_072_REC dsrate COMPGROUP.072 results/ds_rate_072.txt --new;
+recorder DSEDP.72_REC dsedp COMPGROUP.072 0.0:0.01:0.200 results/ds_edp_72.txt --new;
+recorder DSIM.72_REC dsim COMPGROUP.072 $linvalues results/ds_im_72.txt --new;
+recorder LOSSRATE_72_REC lossrate COMPGROUP.072 1E-4:4.8E-3:1.2 results/loss_rate_72.txt --new;
+recorder ANNLOSS_REC_72 annloss COMPGROUP.072 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_72.txt --new;
+
+
+recorder LOSSEDP.73_REC lossedp COMPGROUP.073 $lossedpvalues3 results/loss_73_edp.txt --new;
+recorder LOSSIM_73_REC lossim COMPGROUP.073 $lossimvalues results/loss_73_im.txt --new;
+recorder DSRATE_073_REC dsrate COMPGROUP.073 results/ds_rate_073.txt --new;
+recorder DSEDP.73_REC dsedp COMPGROUP.073 0.0:0.01:0.200 results/ds_edp_73.txt --new;
+recorder DSIM.73_REC dsim COMPGROUP.073 $linvalues results/ds_im_73.txt --new;
+recorder LOSSRATE_73_REC lossrate COMPGROUP.073 1E-4:4.8E-3:1.2 results/loss_rate_73.txt --new;
+recorder ANNLOSS_REC_73 annloss COMPGROUP.073 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_73.txt --new;
+
+
+recorder LOSSEDP.74_REC lossedp COMPGROUP.074 $lossedpvalues3 results/loss_74_edp.txt --new;
+recorder LOSSIM_74_REC lossim COMPGROUP.074 $lossimvalues results/loss_74_im.txt --new;
+recorder DSRATE_074_REC dsrate COMPGROUP.074 results/ds_rate_074.txt --new;
+recorder DSEDP.74_REC dsedp COMPGROUP.074 0.0:0.01:0.200 results/ds_edp_74.txt --new;
+recorder DSIM.74_REC dsim COMPGROUP.074 $linvalues results/ds_im_74.txt --new;
+recorder LOSSRATE_74_REC lossrate COMPGROUP.074 1E-4:4.8E-3:1.2 results/loss_rate_74.txt --new;
+recorder ANNLOSS_REC_74 annloss COMPGROUP.074 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_74.txt --new;
+
+
+recorder LOSSEDP.75_REC lossedp COMPGROUP.075 $lossedpvalues3 results/loss_75_edp.txt --new;
+recorder LOSSIM_75_REC lossim COMPGROUP.075 $lossimvalues results/loss_75_im.txt --new;
+recorder DSRATE_075_REC dsrate COMPGROUP.075 results/ds_rate_075.txt --new;
+recorder DSEDP.75_REC dsedp COMPGROUP.075 0.0:0.01:0.200 results/ds_edp_75.txt --new;
+recorder DSIM.75_REC dsim COMPGROUP.075 $linvalues results/ds_im_75.txt --new;
+recorder LOSSRATE_75_REC lossrate COMPGROUP.075 1E-4:4.8E-3:1.2 results/loss_rate_75.txt --new;
+recorder ANNLOSS_REC_75 annloss COMPGROUP.075 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_75.txt --new;
+
+
+recorder LOSSEDP.76_REC lossedp COMPGROUP.076 $lossedpvalues3 results/loss_76_edp.txt --new;
+recorder LOSSIM_76_REC lossim COMPGROUP.076 $lossimvalues results/loss_76_im.txt --new;
+recorder DSRATE_076_REC dsrate COMPGROUP.076 results/ds_rate_076.txt --new;
+recorder DSEDP.76_REC dsedp COMPGROUP.076 0.0:0.01:0.200 results/ds_edp_76.txt --new;
+recorder DSIM.76_REC dsim COMPGROUP.076 $linvalues results/ds_im_76.txt --new;
+recorder LOSSRATE_76_REC lossrate COMPGROUP.076 1E-4:4.8E-3:1.2 results/loss_rate_76.txt --new;
+recorder ANNLOSS_REC_76 annloss COMPGROUP.076 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_76.txt --new;
+
+
+recorder LOSSEDP.77_REC lossedp COMPGROUP.077 $lossedpvalues3 results/loss_77_edp.txt --new;
+recorder LOSSIM_77_REC lossim COMPGROUP.077 $lossimvalues results/loss_77_im.txt --new;
+recorder DSRATE_077_REC dsrate COMPGROUP.077 results/ds_rate_077.txt --new;
+recorder DSEDP.77_REC dsedp COMPGROUP.077 0.0:0.01:0.200 results/ds_edp_77.txt --new;
+recorder DSIM.77_REC dsim COMPGROUP.077 $linvalues results/ds_im_77.txt --new;
+recorder LOSSRATE_77_REC lossrate COMPGROUP.077 1E-4:4.8E-3:1.2 results/loss_rate_77.txt --new;
+recorder ANNLOSS_REC_77 annloss COMPGROUP.077 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_77.txt --new;
+
+
+recorder LOSSEDP.78_REC lossedp COMPGROUP.078 $lossedpvalues3 results/loss_78_edp.txt --new;
+recorder LOSSIM_78_REC lossim COMPGROUP.078 $lossimvalues results/loss_78_im.txt --new;
+recorder DSRATE_078_REC dsrate COMPGROUP.078 results/ds_rate_078.txt --new;
+recorder DSEDP.78_REC dsedp COMPGROUP.078 0.0:0.01:0.200 results/ds_edp_78.txt --new;
+recorder DSIM.78_REC dsim COMPGROUP.078 $linvalues results/ds_im_78.txt --new;
+recorder LOSSRATE_78_REC lossrate COMPGROUP.078 1E-4:4.8E-3:1.2 results/loss_rate_78.txt --new;
+recorder ANNLOSS_REC_78 annloss COMPGROUP.078 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_78.txt --new;
+
+
+recorder LOSSEDP.79_REC lossedp COMPGROUP.079 $lossedpvalues3 results/loss_79_edp.txt --new;
+recorder LOSSIM_79_REC lossim COMPGROUP.079 $lossimvalues results/loss_79_im.txt --new;
+recorder DSRATE_079_REC dsrate COMPGROUP.079 results/ds_rate_079.txt --new;
+recorder DSEDP.79_REC dsedp COMPGROUP.079 0.0:0.01:0.200 results/ds_edp_79.txt --new;
+recorder DSIM.79_REC dsim COMPGROUP.079 $linvalues results/ds_im_79.txt --new;
+recorder LOSSRATE_79_REC lossrate COMPGROUP.079 1E-4:4.8E-3:1.2 results/loss_rate_79.txt --new;
+recorder ANNLOSS_REC_79 annloss COMPGROUP.079 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_79.txt --new;
+
+
+recorder LOSSEDP.80_REC lossedp COMPGROUP.080 $lossedpvalues3 results/loss_80_edp.txt --new;
+recorder LOSSIM_80_REC lossim COMPGROUP.080 $lossimvalues results/loss_80_im.txt --new;
+recorder DSRATE_080_REC dsrate COMPGROUP.080 results/ds_rate_080.txt --new;
+recorder DSEDP.80_REC dsedp COMPGROUP.080 0.0:0.01:0.200 results/ds_edp_80.txt --new;
+recorder DSIM.80_REC dsim COMPGROUP.080 $linvalues results/ds_im_80.txt --new;
+recorder LOSSRATE_80_REC lossrate COMPGROUP.080 1E-4:4.8E-3:1.2 results/loss_rate_80.txt --new;
+recorder ANNLOSS_REC_80 annloss COMPGROUP.080 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_80.txt --new;
+
+
+recorder LOSSEDP.81_REC lossedp COMPGROUP.081 $lossedpvalues3 results/loss_81_edp.txt --new;
+recorder LOSSIM_81_REC lossim COMPGROUP.081 $lossimvalues results/loss_81_im.txt --new;
+recorder DSRATE_081_REC dsrate COMPGROUP.081 results/ds_rate_081.txt --new;
+recorder DSEDP.81_REC dsedp COMPGROUP.081 0.0:0.01:0.200 results/ds_edp_81.txt --new;
+recorder DSIM.81_REC dsim COMPGROUP.081 $linvalues results/ds_im_81.txt --new;
+recorder LOSSRATE_81_REC lossrate COMPGROUP.081 1E-4:4.8E-3:1.2 results/loss_rate_81.txt --new;
+recorder ANNLOSS_REC_81 annloss COMPGROUP.081 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_81.txt --new;
+
+
+recorder LOSSEDP.82_REC lossedp COMPGROUP.082 $lossedpvalues3 results/loss_82_edp.txt --new;
+recorder LOSSIM_82_REC lossim COMPGROUP.082 $lossimvalues results/loss_82_im.txt --new;
+recorder DSRATE_082_REC dsrate COMPGROUP.082 results/ds_rate_082.txt --new;
+recorder DSEDP.82_REC dsedp COMPGROUP.082 0.0:0.01:0.200 results/ds_edp_82.txt --new;
+recorder DSIM.82_REC dsim COMPGROUP.082 $linvalues results/ds_im_82.txt --new;
+recorder LOSSRATE_82_REC lossrate COMPGROUP.082 1E-4:4.8E-3:1.2 results/loss_rate_82.txt --new;
+recorder ANNLOSS_REC_82 annloss COMPGROUP.082 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_82.txt --new;
+
+
+recorder LOSSEDP.83_REC lossedp COMPGROUP.083 $lossedpvalues3 results/loss_83_edp.txt --new;
+recorder LOSSIM_83_REC lossim COMPGROUP.083 $lossimvalues results/loss_83_im.txt --new;
+recorder DSRATE_083_REC dsrate COMPGROUP.083 results/ds_rate_083.txt --new;
+recorder DSEDP.83_REC dsedp COMPGROUP.083 0.0:0.01:0.200 results/ds_edp_83.txt --new;
+recorder DSIM.83_REC dsim COMPGROUP.083 $linvalues results/ds_im_83.txt --new;
+recorder LOSSRATE_83_REC lossrate COMPGROUP.083 1E-4:4.8E-3:1.2 results/loss_rate_83.txt --new;
+recorder ANNLOSS_REC_83 annloss COMPGROUP.083 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_83.txt --new;
+
+
+recorder LOSSEDP.84_REC lossedp COMPGROUP.084 $lossedpvalues3 results/loss_84_edp.txt --new;
+recorder LOSSIM_84_REC lossim COMPGROUP.084 $lossimvalues results/loss_84_im.txt --new;
+recorder DSRATE_084_REC dsrate COMPGROUP.084 results/ds_rate_084.txt --new;
+recorder DSEDP.84_REC dsedp COMPGROUP.084 0.0:0.01:0.200 results/ds_edp_84.txt --new;
+recorder DSIM.84_REC dsim COMPGROUP.084 $linvalues results/ds_im_84.txt --new;
+recorder LOSSRATE_84_REC lossrate COMPGROUP.084 1E-4:4.8E-3:1.2 results/loss_rate_84.txt --new;
+recorder ANNLOSS_REC_84 annloss COMPGROUP.084 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_84.txt --new;
+
+
+recorder LOSSEDP.85_REC lossedp COMPGROUP.085 $lossedpvalues4 results/loss_85_edp.txt --new;
+recorder LOSSIM_85_REC lossim COMPGROUP.085 $lossimvalues results/loss_85_im.txt --new;
+recorder DSRATE_085_REC dsrate COMPGROUP.085 results/ds_rate_085.txt --new;
+recorder DSEDP.85_REC dsedp COMPGROUP.085 0.0:0.01:0.200 results/ds_edp_85.txt --new;
+recorder DSIM.85_REC dsim COMPGROUP.085 $linvalues results/ds_im_85.txt --new;
+recorder LOSSRATE_85_REC lossrate COMPGROUP.085 1E-4:4.8E-3:1.2 results/loss_rate_85.txt --new;
+recorder ANNLOSS_REC_85 annloss COMPGROUP.085 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_85.txt --new;
+
+
+recorder LOSSEDP.86_REC lossedp COMPGROUP.086 $lossedpvalues1 results/loss_86_edp.txt --new;
+recorder LOSSIM_86_REC lossim COMPGROUP.086 $lossimvalues results/loss_86_im.txt --new;
+recorder DSRATE_086_REC dsrate COMPGROUP.086 results/ds_rate_086.txt --new;
+recorder DSEDP.86_REC dsedp COMPGROUP.086 0.0:0.01:0.200 results/ds_edp_86.txt --new;
+recorder DSIM.86_REC dsim COMPGROUP.086 $linvalues results/ds_im_86.txt --new;
+recorder LOSSRATE_86_REC lossrate COMPGROUP.086 1E-4:4.8E-3:1.2 results/loss_rate_86.txt --new;
+recorder ANNLOSS_REC_86 annloss COMPGROUP.086 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_86.txt --new;
+
+
+recorder LOSSEDP.87_REC lossedp COMPGROUP.087 $lossedpvalues2 results/loss_87_edp.txt --new;
+recorder LOSSIM_87_REC lossim COMPGROUP.087 $lossimvalues results/loss_87_im.txt --new;
+recorder DSRATE_087_REC dsrate COMPGROUP.087 results/ds_rate_087.txt --new;
+recorder DSEDP.87_REC dsedp COMPGROUP.087 0.0:0.01:0.200 results/ds_edp_87.txt --new;
+recorder DSIM.87_REC dsim COMPGROUP.087 $linvalues results/ds_im_87.txt --new;
+recorder LOSSRATE_87_REC lossrate COMPGROUP.087 1E-4:4.8E-3:1.2 results/loss_rate_87.txt --new;
+recorder ANNLOSS_REC_87 annloss COMPGROUP.087 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_87.txt --new;
+
+
+recorder LOSSEDP.88_REC lossedp COMPGROUP.088 $lossedpvalues2 results/loss_88_edp.txt --new;
+recorder LOSSIM_88_REC lossim COMPGROUP.088 $lossimvalues results/loss_88_im.txt --new;
+recorder DSRATE_088_REC dsrate COMPGROUP.088 results/ds_rate_088.txt --new;
+recorder DSEDP.88_REC dsedp COMPGROUP.088 0.0:0.01:0.200 results/ds_edp_88.txt --new;
+recorder DSIM.88_REC dsim COMPGROUP.088 $linvalues results/ds_im_88.txt --new;
+recorder LOSSRATE_88_REC lossrate COMPGROUP.088 1E-4:4.8E-3:1.2 results/loss_rate_88.txt --new;
+recorder ANNLOSS_REC_88 annloss COMPGROUP.088 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_88.txt --new;
+
+
+recorder LOSSEDP.89_REC lossedp COMPGROUP.089 $lossedpvalues2 results/loss_89_edp.txt --new;
+recorder LOSSIM_89_REC lossim COMPGROUP.089 $lossimvalues results/loss_89_im.txt --new;
+recorder DSRATE_089_REC dsrate COMPGROUP.089 results/ds_rate_089.txt --new;
+recorder DSEDP.89_REC dsedp COMPGROUP.089 0.0:0.01:0.200 results/ds_edp_89.txt --new;
+recorder DSIM.89_REC dsim COMPGROUP.089 $linvalues results/ds_im_89.txt --new;
+recorder LOSSRATE_89_REC lossrate COMPGROUP.089 1E-4:4.8E-3:1.2 results/loss_rate_89.txt --new;
+recorder ANNLOSS_REC_89 annloss COMPGROUP.089 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_89.txt --new;
+
+
+recorder LOSSEDP.90_REC lossedp COMPGROUP.090 $lossedpvalues2 results/loss_90_edp.txt --new;
+recorder LOSSIM_90_REC lossim COMPGROUP.090 $lossimvalues results/loss_90_im.txt --new;
+recorder DSRATE_090_REC dsrate COMPGROUP.090 results/ds_rate_090.txt --new;
+recorder DSEDP.90_REC dsedp COMPGROUP.090 0.0:0.01:0.200 results/ds_edp_90.txt --new;
+recorder DSIM.90_REC dsim COMPGROUP.090 $linvalues results/ds_im_90.txt --new;
+recorder LOSSRATE_90_REC lossrate COMPGROUP.090 1E-4:4.8E-3:1.2 results/loss_rate_90.txt --new;
+recorder ANNLOSS_REC_90 annloss COMPGROUP.090 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_90.txt --new;
+
+
+recorder LOSSEDP.91_REC lossedp COMPGROUP.091 $lossedpvalues2 results/loss_91_edp.txt --new;
+recorder LOSSIM_91_REC lossim COMPGROUP.091 $lossimvalues results/loss_91_im.txt --new;
+recorder DSRATE_091_REC dsrate COMPGROUP.091 results/ds_rate_091.txt --new;
+recorder DSEDP.91_REC dsedp COMPGROUP.091 0.0:0.01:0.200 results/ds_edp_91.txt --new;
+recorder DSIM.91_REC dsim COMPGROUP.091 $linvalues results/ds_im_91.txt --new;
+recorder LOSSRATE_91_REC lossrate COMPGROUP.091 1E-4:4.8E-3:1.2 results/loss_rate_91.txt --new;
+recorder ANNLOSS_REC_91 annloss COMPGROUP.091 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_91.txt --new;
+
+
+recorder LOSSEDP.92_REC lossedp COMPGROUP.092 $lossedpvalues2 results/loss_92_edp.txt --new;
+recorder LOSSIM_92_REC lossim COMPGROUP.092 $lossimvalues results/loss_92_im.txt --new;
+recorder DSRATE_092_REC dsrate COMPGROUP.092 results/ds_rate_092.txt --new;
+recorder DSEDP.92_REC dsedp COMPGROUP.092 0.0:0.01:0.200 results/ds_edp_92.txt --new;
+recorder DSIM.92_REC dsim COMPGROUP.092 $linvalues results/ds_im_92.txt --new;
+recorder LOSSRATE_92_REC lossrate COMPGROUP.092 1E-4:4.8E-3:1.2 results/loss_rate_92.txt --new;
+recorder ANNLOSS_REC_92 annloss COMPGROUP.092 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_92.txt --new;
+
+
+recorder LOSSEDP.93_REC lossedp COMPGROUP.093 $lossedpvalues2 results/loss_93_edp.txt --new;
+recorder LOSSIM_93_REC lossim COMPGROUP.093 $lossimvalues results/loss_93_im.txt --new;
+recorder DSRATE_093_REC dsrate COMPGROUP.093 results/ds_rate_093.txt --new;
+recorder DSEDP.93_REC dsedp COMPGROUP.093 0.0:0.01:0.200 results/ds_edp_93.txt --new;
+recorder DSIM.93_REC dsim COMPGROUP.093 $linvalues results/ds_im_93.txt --new;
+recorder LOSSRATE_93_REC lossrate COMPGROUP.093 1E-4:4.8E-3:1.2 results/loss_rate_93.txt --new;
+recorder ANNLOSS_REC_93 annloss COMPGROUP.093 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_93.txt --new;
+
+
+recorder LOSSEDP.94_REC lossedp COMPGROUP.094 $lossedpvalues2 results/loss_94_edp.txt --new;
+recorder LOSSIM_94_REC lossim COMPGROUP.094 $lossimvalues results/loss_94_im.txt --new;
+recorder DSRATE_094_REC dsrate COMPGROUP.094 results/ds_rate_094.txt --new;
+recorder DSEDP.94_REC dsedp COMPGROUP.094 0.0:0.01:0.200 results/ds_edp_94.txt --new;
+recorder DSIM.94_REC dsim COMPGROUP.094 $linvalues results/ds_im_94.txt --new;
+recorder LOSSRATE_94_REC lossrate COMPGROUP.094 1E-4:4.8E-3:1.2 results/loss_rate_94.txt --new;
+recorder ANNLOSS_REC_94 annloss COMPGROUP.094 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_94.txt --new;
+
+
+recorder LOSSEDP.95_REC lossedp COMPGROUP.095 $lossedpvalues2 results/loss_95_edp.txt --new;
+recorder LOSSIM_95_REC lossim COMPGROUP.095 $lossimvalues results/loss_95_im.txt --new;
+recorder DSRATE_095_REC dsrate COMPGROUP.095 results/ds_rate_095.txt --new;
+recorder DSEDP.95_REC dsedp COMPGROUP.095 0.0:0.01:0.200 results/ds_edp_95.txt --new;
+recorder DSIM.95_REC dsim COMPGROUP.095 $linvalues results/ds_im_95.txt --new;
+recorder LOSSRATE_95_REC lossrate COMPGROUP.095 1E-4:4.8E-3:1.2 results/loss_rate_95.txt --new;
+recorder ANNLOSS_REC_95 annloss COMPGROUP.095 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_95.txt --new;
+
+
+recorder LOSSEDP.96_REC lossedp COMPGROUP.096 $lossedpvalues1 results/loss_96_edp.txt --new;
+recorder LOSSIM_96_REC lossim COMPGROUP.096 $lossimvalues results/loss_96_im.txt --new;
+recorder DSRATE_096_REC dsrate COMPGROUP.096 results/ds_rate_096.txt --new;
+recorder DSEDP.96_REC dsedp COMPGROUP.096 0.0:0.01:0.200 results/ds_edp_96.txt --new;
+recorder DSIM.96_REC dsim COMPGROUP.096 $linvalues results/ds_im_96.txt --new;
+recorder LOSSRATE_96_REC lossrate COMPGROUP.096 1E-4:4.8E-3:1.2 results/loss_rate_96.txt --new;
+recorder ANNLOSS_REC_96 annloss COMPGROUP.096 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_96.txt --new;
+
+
+recorder LOSSEDP.97_REC lossedp COMPGROUP.097 $lossedpvalues2 results/loss_97_edp.txt --new;
+recorder LOSSIM_97_REC lossim COMPGROUP.097 $lossimvalues results/loss_97_im.txt --new;
+recorder DSRATE_097_REC dsrate COMPGROUP.097 results/ds_rate_097.txt --new;
+recorder DSEDP.97_REC dsedp COMPGROUP.097 0.0:0.01:0.200 results/ds_edp_97.txt --new;
+recorder DSIM.97_REC dsim COMPGROUP.097 $linvalues results/ds_im_97.txt --new;
+recorder LOSSRATE_97_REC lossrate COMPGROUP.097 1E-4:4.8E-3:1.2 results/loss_rate_97.txt --new;
+recorder ANNLOSS_REC_97 annloss COMPGROUP.097 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_97.txt --new;
+
+
+recorder LOSSEDP.98_REC lossedp COMPGROUP.098 $lossedpvalues2 results/loss_98_edp.txt --new;
+recorder LOSSIM_98_REC lossim COMPGROUP.098 $lossimvalues results/loss_98_im.txt --new;
+recorder DSRATE_098_REC dsrate COMPGROUP.098 results/ds_rate_098.txt --new;
+recorder DSEDP.98_REC dsedp COMPGROUP.098 0.0:0.01:0.200 results/ds_edp_98.txt --new;
+recorder DSIM.98_REC dsim COMPGROUP.098 $linvalues results/ds_im_98.txt --new;
+recorder LOSSRATE_98_REC lossrate COMPGROUP.098 1E-4:4.8E-3:1.2 results/loss_rate_98.txt --new;
+recorder ANNLOSS_REC_98 annloss COMPGROUP.098 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_98.txt --new;
+
+
+recorder LOSSEDP.99_REC lossedp COMPGROUP.099 $lossedpvalues2 results/loss_99_edp.txt --new;
+recorder LOSSIM_99_REC lossim COMPGROUP.099 $lossimvalues results/loss_99_im.txt --new;
+recorder DSRATE_099_REC dsrate COMPGROUP.099 results/ds_rate_099.txt --new;
+recorder DSEDP.99_REC dsedp COMPGROUP.099 0.0:0.01:0.200 results/ds_edp_99.txt --new;
+recorder DSIM.99_REC dsim COMPGROUP.099 $linvalues results/ds_im_99.txt --new;
+recorder LOSSRATE_99_REC lossrate COMPGROUP.099 1E-4:4.8E-3:1.2 results/loss_rate_99.txt --new;
+recorder ANNLOSS_REC_99 annloss COMPGROUP.099 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_99.txt --new;
+
+
+recorder LOSSEDP.100_REC lossedp COMPGROUP.100 $lossedpvalues2 results/loss_100_edp.txt --new;
+recorder LOSSIM.100_REC lossim COMPGROUP.100 $lossimvalues results/loss_100_im.txt --new;
+recorder DSRATE_100_REC dsrate COMPGROUP.100 results/ds_rate_100.txt --new;
+recorder DSEDP.100_REC dsedp COMPGROUP.100 0.0:0.01:0.200 results/ds_edp_100.txt --new;
+recorder DSIM.100_REC dsim COMPGROUP.100 $linvalues results/ds_im_100.txt --new;
+recorder LOSSRATE_100_REC lossrate COMPGROUP.100 1E-4:4.8E-3:1.2 results/loss_rate_100.txt --new;
+recorder ANNLOSS_REC_100 annloss COMPGROUP.100 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_100.txt --new;
+
+
+recorder LOSSEDP.101_REC lossedp COMPGROUP.101 $lossedpvalues2 results/loss_101_edp.txt --new;
+recorder LOSSIM.101_REC lossim COMPGROUP.101 $lossimvalues results/loss_101_im.txt --new;
+recorder DSRATE_101_REC dsrate COMPGROUP.101 results/ds_rate_101.txt --new;
+recorder DSEDP.101_REC dsedp COMPGROUP.101 0.0:0.01:0.200 results/ds_edp_101.txt --new;
+recorder DSIM.101_REC dsim COMPGROUP.101 $linvalues results/ds_im_101.txt --new;
+recorder LOSSRATE_101_REC lossrate COMPGROUP.101 1E-4:4.8E-3:1.2 results/loss_rate_101.txt --new;
+recorder ANNLOSS_REC_101 annloss COMPGROUP.101 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_101.txt --new;
+
+
+recorder LOSSEDP.102_REC lossedp COMPGROUP.102 $lossedpvalues2 results/loss_102_edp.txt --new;
+recorder LOSSIM.102_REC lossim COMPGROUP.102 $lossimvalues results/loss_102_im.txt --new;
+recorder DSRATE_102_REC dsrate COMPGROUP.102 results/ds_rate_102.txt --new;
+recorder DSEDP.102_REC dsedp COMPGROUP.102 0.0:0.01:0.200 results/ds_edp_102.txt --new;
+recorder DSIM.102_REC dsim COMPGROUP.102 $linvalues results/ds_im_102.txt --new;
+recorder LOSSRATE_102_REC lossrate COMPGROUP.102 1E-4:4.8E-3:1.2 results/loss_rate_102.txt --new;
+recorder ANNLOSS_REC_102 annloss COMPGROUP.102 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_102.txt --new;
+
+
+recorder LOSSEDP.103_REC lossedp COMPGROUP.103 $lossedpvalues2 results/loss_103_edp.txt --new;
+recorder LOSSIM.103_REC lossim COMPGROUP.103 $lossimvalues results/loss_103_im.txt --new;
+recorder DSRATE_103_REC dsrate COMPGROUP.103 results/ds_rate_103.txt --new;
+recorder DSEDP.103_REC dsedp COMPGROUP.103 0.0:0.01:0.200 results/ds_edp_103.txt --new;
+recorder DSIM.103_REC dsim COMPGROUP.103 $linvalues results/ds_im_103.txt --new;
+recorder LOSSRATE_103_REC lossrate COMPGROUP.103 1E-4:4.8E-3:1.2 results/loss_rate_103.txt --new;
+recorder ANNLOSS_REC_103 annloss COMPGROUP.103 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_103.txt --new;
+
+
+recorder LOSSEDP.104_REC lossedp COMPGROUP.104 $lossedpvalues2 results/loss_104_edp.txt --new;
+recorder LOSSIM.104_REC lossim COMPGROUP.104 $lossimvalues results/loss_104_im.txt --new;
+recorder DSRATE_104_REC dsrate COMPGROUP.104 results/ds_rate_104.txt --new;
+recorder DSEDP.104_REC dsedp COMPGROUP.104 0.0:0.01:0.200 results/ds_edp_104.txt --new;
+recorder DSIM.104_REC dsim COMPGROUP.104 $linvalues results/ds_im_104.txt --new;
+recorder LOSSRATE_104_REC lossrate COMPGROUP.104 1E-4:4.8E-3:1.2 results/loss_rate_104.txt --new;
+recorder ANNLOSS_REC_104 annloss COMPGROUP.104 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_104.txt --new;
+
+
+recorder LOSSEDP.105_REC lossedp COMPGROUP.105 $lossedpvalues2 results/loss_105_edp.txt --new;
+recorder LOSSIM.105_REC lossim COMPGROUP.105 $lossimvalues results/loss_105_im.txt --new;
+recorder DSRATE_105_REC dsrate COMPGROUP.105 results/ds_rate_105.txt --new;
+recorder DSEDP.105_REC dsedp COMPGROUP.105 0.0:0.01:0.200 results/ds_edp_105.txt --new;
+recorder DSIM.105_REC dsim COMPGROUP.105 $linvalues results/ds_im_105.txt --new;
+recorder LOSSRATE_105_REC lossrate COMPGROUP.105 1E-4:4.8E-3:1.2 results/loss_rate_105.txt --new;
+recorder ANNLOSS_REC_105 annloss COMPGROUP.105 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_105.txt --new;
+
+
+recorder LOSSEDP.106_REC lossedp COMPGROUP.106 $lossedpvalues4 results/loss_106_edp.txt --new;
+recorder LOSSIM.106_REC lossim COMPGROUP.106 $lossimvalues results/loss_106_im.txt --new;
+recorder DSRATE_106_REC dsrate COMPGROUP.106 results/ds_rate_106.txt --new;
+recorder DSEDP.106_REC dsedp COMPGROUP.106 0.0:0.01:0.200 results/ds_edp_106.txt --new;
+recorder DSIM.106_REC dsim COMPGROUP.106 $linvalues results/ds_im_106.txt --new;
+recorder LOSSRATE_106_REC lossrate COMPGROUP.106 1E-4:4.8E-3:1.2 results/loss_rate_106.txt --new;
+recorder ANNLOSS_REC_106 annloss COMPGROUP.106 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_106.txt --new;
+
+
+recorder LOSSEDP.107_REC lossedp COMPGROUP.107 $lossedpvalues3 results/loss_107_edp.txt --new;
+recorder LOSSIM.107_REC lossim COMPGROUP.107 $lossimvalues results/loss_107_im.txt --new;
+recorder DSRATE_107_REC dsrate COMPGROUP.107 results/ds_rate_107.txt --new;
+recorder DSEDP.107_REC dsedp COMPGROUP.107 0.0:0.01:0.200 results/ds_edp_107.txt --new;
+recorder DSIM.107_REC dsim COMPGROUP.107 $linvalues results/ds_im_107.txt --new;
+recorder LOSSRATE_107_REC lossrate COMPGROUP.107 1E-4:4.8E-3:1.2 results/loss_rate_107.txt --new;
+recorder ANNLOSS_REC_107 annloss COMPGROUP.107 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_107.txt --new;
+
+
+recorder LOSSEDP.108_REC lossedp COMPGROUP.108 $lossedpvalues3 results/loss_108_edp.txt --new;
+recorder LOSSIM.108_REC lossim COMPGROUP.108 $lossimvalues results/loss_108_im.txt --new;
+recorder DSRATE_108_REC dsrate COMPGROUP.108 results/ds_rate_108.txt --new;
+recorder DSEDP.108_REC dsedp COMPGROUP.108 0.0:0.01:0.200 results/ds_edp_108.txt --new;
+recorder DSIM.108_REC dsim COMPGROUP.108 $linvalues results/ds_im_108.txt --new;
+recorder LOSSRATE_108_REC lossrate COMPGROUP.108 1E-4:4.8E-3:1.2 results/loss_rate_108.txt --new;
+recorder ANNLOSS_REC_108 annloss COMPGROUP.108 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_108.txt --new;
+
+
+recorder LOSSEDP.109_REC lossedp COMPGROUP.109 $lossedpvalues3 results/loss_109_edp.txt --new;
+recorder LOSSIM.109_REC lossim COMPGROUP.109 $lossimvalues results/loss_109_im.txt --new;
+recorder DSRATE_109_REC dsrate COMPGROUP.109 results/ds_rate_109.txt --new;
+recorder DSEDP.109_REC dsedp COMPGROUP.109 0.0:0.01:0.200 results/ds_edp_109.txt --new;
+recorder DSIM.109_REC dsim COMPGROUP.109 $linvalues results/ds_im_109.txt --new;
+recorder LOSSRATE_109_REC lossrate COMPGROUP.109 1E-4:4.8E-3:1.2 results/loss_rate_109.txt --new;
+recorder ANNLOSS_REC_109 annloss COMPGROUP.109 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_109.txt --new;
+
+
+recorder LOSSEDP.110_REC lossedp COMPGROUP.110 $lossedpvalues3 results/loss_110_edp.txt --new;
+recorder LOSSIM.110_REC lossim COMPGROUP.110 $lossimvalues results/loss_110_im.txt --new;
+recorder DSRATE_110_REC dsrate COMPGROUP.110 results/ds_rate_110.txt --new;
+recorder DSEDP.110_REC dsedp COMPGROUP.110 0.0:0.01:0.200 results/ds_edp_110.txt --new;
+recorder DSIM.110_REC dsim COMPGROUP.110 $linvalues results/ds_im_110.txt --new;
+recorder LOSSRATE_110_REC lossrate COMPGROUP.110 1E-4:4.8E-3:1.2 results/loss_rate_110.txt --new;
+recorder ANNLOSS_REC_110 annloss COMPGROUP.110 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_110.txt --new;
+
+
+recorder LOSSEDP.111_REC lossedp COMPGROUP.111 $lossedpvalues3 results/loss_111_edp.txt --new;
+recorder LOSSIM.111_REC lossim COMPGROUP.111 $lossimvalues results/loss_111_im.txt --new;
+recorder DSRATE_111_REC dsrate COMPGROUP.111 results/ds_rate_111.txt --new;
+recorder DSEDP.111_REC dsedp COMPGROUP.111 0.0:0.01:0.200 results/ds_edp_111.txt --new;
+recorder DSIM.111_REC dsim COMPGROUP.111 $linvalues results/ds_im_111.txt --new;
+recorder LOSSRATE_111_REC lossrate COMPGROUP.111 1E-4:4.8E-3:1.2 results/loss_rate_111.txt --new;
+recorder ANNLOSS_REC_111 annloss COMPGROUP.111 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_111.txt --new;
+
+
+recorder LOSSEDP.112_REC lossedp COMPGROUP.112 $lossedpvalues3 results/loss_112_edp.txt --new;
+recorder LOSSIM.112_REC lossim COMPGROUP.112 $lossimvalues results/loss_112_im.txt --new;
+recorder DSRATE_112_REC dsrate COMPGROUP.112 results/ds_rate_112.txt --new;
+recorder DSEDP.112_REC dsedp COMPGROUP.112 0.0:0.01:0.200 results/ds_edp_112.txt --new;
+recorder DSIM.112_REC dsim COMPGROUP.112 $linvalues results/ds_im_112.txt --new;
+recorder LOSSRATE_112_REC lossrate COMPGROUP.112 1E-4:4.8E-3:1.2 results/loss_rate_112.txt --new;
+recorder ANNLOSS_REC_112 annloss COMPGROUP.112 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_112.txt --new;
+
+
+recorder LOSSEDP.113_REC lossedp COMPGROUP.113 $lossedpvalues3 results/loss_113_edp.txt --new;
+recorder LOSSIM.113_REC lossim COMPGROUP.113 $lossimvalues results/loss_113_im.txt --new;
+recorder DSRATE_113_REC dsrate COMPGROUP.113 results/ds_rate_113.txt --new;
+recorder DSEDP.113_REC dsedp COMPGROUP.113 0.0:0.01:0.200 results/ds_edp_113.txt --new;
+recorder DSIM.113_REC dsim COMPGROUP.113 $linvalues results/ds_im_113.txt --new;
+recorder LOSSRATE_113_REC lossrate COMPGROUP.113 1E-4:4.8E-3:1.2 results/loss_rate_113.txt --new;
+recorder ANNLOSS_REC_113 annloss COMPGROUP.113 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_113.txt --new;
+
+
+recorder LOSSEDP.114_REC lossedp COMPGROUP.114 $lossedpvalues3 results/loss_114_edp.txt --new;
+recorder LOSSIM.114_REC lossim COMPGROUP.114 $lossimvalues results/loss_114_im.txt --new;
+recorder DSRATE_114_REC dsrate COMPGROUP.114 results/ds_rate_114.txt --new;
+recorder DSEDP.114_REC dsedp COMPGROUP.114 0.0:0.01:0.200 results/ds_edp_114.txt --new;
+recorder DSIM.114_REC dsim COMPGROUP.114 $linvalues results/ds_im_114.txt --new;
+recorder LOSSRATE_114_REC lossrate COMPGROUP.114 1E-4:4.8E-3:1.2 results/loss_rate_114.txt --new;
+recorder ANNLOSS_REC_114 annloss COMPGROUP.114 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_114.txt --new;
+
+
+recorder LOSSEDP.115_REC lossedp COMPGROUP.115 $lossedpvalues3 results/loss_115_edp.txt --new;
+recorder LOSSIM.115_REC lossim COMPGROUP.115 $lossimvalues results/loss_115_im.txt --new;
+recorder DSRATE_115_REC dsrate COMPGROUP.115 results/ds_rate_115.txt --new;
+recorder DSEDP.115_REC dsedp COMPGROUP.115 0.0:0.01:0.200 results/ds_edp_115.txt --new;
+recorder DSIM.115_REC dsim COMPGROUP.115 $linvalues results/ds_im_115.txt --new;
+recorder LOSSRATE_115_REC lossrate COMPGROUP.115 1E-4:4.8E-3:1.2 results/loss_rate_115.txt --new;
+recorder ANNLOSS_REC_115 annloss COMPGROUP.115 1.0:1.0:100.0 --lambda 0.06 results/annual_loss_115.txt --new;
 
 
 #recorder STRUCTLOSS_ANNUAL_REC structloss BUILDING --annual results/ann_loss --new;
-#-#recorder STRUCTLOSS_ANNUAL_REC structloss BUILDING --annual --sd sd_ln_x --mu mean_x results/ann_loss --new;
-#-#recorder STRUCTLOSS_FATE_REC structloss BUILDING --by-fate $linvalues results/loss_by_fate --new;
+recorder STRUCTLOSS_ANNUAL_REC structloss BUILDING --annual --sd sd_ln_x --mu mean_x results/ann_loss --new;
+recorder STRUCTLOSS_FATE_REC structloss BUILDING --by-fate $linvalues results/loss_by_fate --new;
 recorder STRUCTLOSS_EDP_REC structloss BUILDING --by-edp $linvalues results/loss_by_edp --new;
-####recorder STRUCTLOSS_FRAG_REC structloss BUILDING --by-frag $linvalues results/loss_by_frag --new;
+recorder STRUCTLOSS_FRAG_REC structloss BUILDING --by-frag $linvalues results/loss_by_frag --new;
 
 #recorder DEAGG_REC deagg BUILDING 0.01:3.0 --linear 199 results/deagg --new;
-#-#recorder TOTALLOSS_REC totalloss BUILDING 0.01:3.0 --linear 199 results/total_loss --new;
+recorder TOTALLOSS_REC totalloss BUILDING 0.01:3.0 --linear 199 results/total_loss --new;
 analyze;

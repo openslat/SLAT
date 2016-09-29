@@ -139,9 +139,7 @@ public:
     LogNormalDist getDemolitionCost(void);
     LogNormalDist AnnualLoss(void);
     std::list<std::list<CompGroup *>> ComponentsByEDP(void);
-    //std::list<CompGroup *> ComponentsByEDP(void);
-    //std::unordered_map<EDP *, std::vector<CompGroup *>> ComponentsByEDP(void);
-    //python::list ComponentsByFragility(void);
+    std::list<std::list<CompGroup *>> ComponentsByFragility(void);
 private:
     std::shared_ptr<SLAT::Structure> wrapper;
 };

@@ -566,18 +566,6 @@ LogNormalDist Structure::AnnualLoss(void)
     return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->AnnualLoss()));
 };
 
-std::unordered_map<EDP *, std::vector<CompGroup *>> ComponentsByEDP(void)
-{
-    std::unordered_map<EDP *, std::vector<CompGroup *>> results;
-    return results;
-}
-
-#if 0
-std::list<CompGroup *> Structure::ComponentsByEDP(void)
-{
-    return std::list<CompGroup *>();
-}
-#else
 std::list<std::list<CompGroup *>> Structure::ComponentsByEDP(void)
 {
     std::list<std::list<CompGroup *>> result;
@@ -602,7 +590,32 @@ std::list<std::list<CompGroup *>> Structure::ComponentsByEDP(void)
     }
     return result;
 };
-#endif
+
+std::list<std::list<CompGroup *>> Structure::ComponentsByFragility(void)
+{
+    std::list<std::list<CompGroup *>> result;
+    const std::vector<std::shared_ptr<SLAT::CompGroup>> components = wrapper->Components();
+    std::map<std::shared_ptr<SLAT::FragilityFn>, std::vector<std::shared_ptr<SLAT::CompGroup>>> frag_cg_mapping;
+    std::set<std::shared_ptr<SLAT::FragilityFn>> keys;
+
+    for (size_t i=0; i < components.size(); i++) {
+        frag_cg_mapping[components[i]->get_Fragility()].push_back(components[i]);
+        keys.insert(components[i]->get_Fragility());
+    }
+            
+    for (std::set<std::shared_ptr<SLAT::FragilityFn>>::iterator key = keys.begin();
+         key != keys.end();
+         key++)
+    {
+        std::list<CompGroup *> components;
+        for (size_t j=0; j < frag_cg_mapping[*key].size(); j++) {
+            components.push_back(new CompGroup(frag_cg_mapping[*key][j]));
+        }
+        result.push_back(components);
+    }
+    return result;
+};
+
 // python::list ComponentsByFragility(void) {
 // //            std::cout << "> ComponentsByFragility()" << std::endl;
 //     python::list result;
