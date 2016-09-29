@@ -2,6 +2,7 @@
 #include "maq.h"
 #include "pyslatcore.h"
 #include <iostream>
+#include <set>
 using namespace std;
 
 void Init_Caching(void)
@@ -433,6 +434,16 @@ CompGroup::CompGroup(std::shared_ptr<SLAT::CompGroup> group)
     wrapper = group;
 };
 
+std::string CompGroup::get_Name()
+{
+    return wrapper->get_Name();
+}
+
+EDP *CompGroup::get_EDP(void)
+{
+    return new EDP(wrapper->get_EDP());
+}
+
 double CompGroup::E_Loss_EDP(double edp)
 {
     return wrapper->E_loss_EDP(edp); 
@@ -448,7 +459,7 @@ double CompGroup::E_Loss_IM(double edp)
     return wrapper->E_loss_IM(edp); 
 };
 
-double CompGroup::SD_ln_loss_IM(double edp)
+double CompGroup::SD_ln_Loss_IM(double edp)
 {
     return wrapper->SD_ln_loss_IM(edp); 
 };
@@ -473,13 +484,13 @@ bool CompGroup::AreSame(const CompGroup &other)
     return this->wrapper == other.wrapper;
 }
 
-CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count)
+CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count, std::string name)
 {
     return new CompGroup(std::make_shared<SLAT::CompGroup>( 
                              edp.relationship, 
                              frag_fn.fragility,
                              loss_fn.loss, 
-                             count));
+                             count, name));
 }
     
 std::vector<double> CompGroup::pDS_IM(double im)
@@ -561,31 +572,37 @@ std::unordered_map<EDP *, std::vector<CompGroup *>> ComponentsByEDP(void)
     return results;
 }
 
-// python::list ComponentsByEDP(void) {
-//     python::list result;
-//     const std::vector<std::shared_ptr<CompGroup>> components = wrapper->Components();
-//     std::map<std::shared_ptr<EDP>, std::vector<std::shared_ptr<CompGroup>>> edp_cg_mapping;
-//     std::set<std::shared_ptr<EDP>> keys;
+#if 0
+std::list<CompGroup *> Structure::ComponentsByEDP(void)
+{
+    return std::list<CompGroup *>();
+}
+#else
+std::list<std::list<CompGroup *>> Structure::ComponentsByEDP(void)
+{
+    std::list<std::list<CompGroup *>> result;
+    const std::vector<std::shared_ptr<SLAT::CompGroup>> components = wrapper->Components();
+    std::map<std::shared_ptr<SLAT::EDP>, std::vector<std::shared_ptr<SLAT::CompGroup>>> edp_cg_mapping;
+    std::set<std::shared_ptr<SLAT::EDP>> keys;
 
-//     for (size_t i=0; i < components.size(); i++) {
-//         edp_cg_mapping[components[i]->get_EDP()].push_back(components[i]);
-//         keys.insert(components[i]->get_EDP());
-//     }
+    for (size_t i=0; i < components.size(); i++) {
+        edp_cg_mapping[components[i]->get_EDP()].push_back(components[i]);
+        keys.insert(components[i]->get_EDP());
+    }
             
-//     for (std::set<std::shared_ptr<EDP>>::iterator key = keys.begin();
-//          key != keys.end();
-//          key++)
-//     {
-//         python::list mapping;
-//         mapping.append(EDP(*key));
-
-//         for (size_t j=0; j < edp_cg_mapping[*key].size(); j++) {
-//             mapping.append(CompGroup(edp_cg_mapping[*key][j]));
-//         }
-//         result.append(mapping);
-//     }
-//     return result;
-// };
+    for (std::set<std::shared_ptr<SLAT::EDP>>::iterator key = keys.begin();
+         key != keys.end();
+         key++)
+    {
+        std::list<CompGroup *> components;
+        for (size_t j=0; j < edp_cg_mapping[*key].size(); j++) {
+            components.push_back(new CompGroup(edp_cg_mapping[*key][j]));
+        }
+        result.push_back(components);
+    }
+    return result;
+};
+#endif
 // python::list ComponentsByFragility(void) {
 // //            std::cout << "> ComponentsByFragility()" << std::endl;
 //     python::list result;

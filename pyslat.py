@@ -38,10 +38,6 @@ class LOGNORMAL_SIGMA_TYPE:
     SD_X = pyslatcore.SD_X
     SD_LN_X = pyslatcore.SD_LN_X
 
-print("---- {} ---".format(pyslatcore.SD_X))
-print("---- {} ---".format(LOGNORMAL_SIGMA_TYPE.SD_X))
-
-    
 def factory(t, params):
     return pyslatcore.factory(t, params)
 
@@ -63,8 +59,8 @@ def MakeFragilityFn(parameters):
 def MakeLossFn(parameters):
     return pyslatcore.MakeLossFn(parameters)
 
-def MakeCompGroup(edp, frag_fn, loss_fn, count):
-    return pyslatcore.MakeCompGroup(edp, frag_fn, loss_fn, count)
+def MakeCompGroup(edp, frag_fn, loss_fn, count, name):
+    return pyslatcore.MakeCompGroup(edp, frag_fn, loss_fn, count, name)
 
 def MakeStructure():
     return pyslatcore.MakeStructure()
@@ -392,7 +388,7 @@ class compgroup:
         self._func = MakeCompGroup(edp.function(),
                                    frag.function(),
                                    loss.function(),
-                                   count)
+                                   count, id)
         if id != None:
             compgroup.defs[id] = self
 
@@ -762,19 +758,16 @@ class StructLossRecorder(recorder):
             print(line1)
             print(line2)
         elif self._options['structloss-type'] == 'by-edp':
-            mapping = self._function.ComponentsByEDP();
+            components = self._function.ComponentsByEDP();
             groups = dict()
-            for m in mapping:
-                components = []
-                for cg in m[1:]:
-                    components.append(compgroup.lookup(cg))
-                groups[edp.lookup(m[0]).id()] = components
+            for c in components:
+                groups[edp.lookup(c[0].get_EDP()).id()] = c
 
             x_label = self._function.get_IM().id()
             y_label = self._columns
             categories = list(groups.keys())
             categories.sort()
-            
+
             # Print column headers:
             line = "{:>15}".format(x_label)
             for c in categories:
@@ -790,8 +783,8 @@ class StructLossRecorder(recorder):
                         mean = cg.E_Loss_IM(x)
                         sd_ln = cg.SD_ln_Loss_IM(x)
 
-                        dists.append(pyslatcore.MakeLogNormalDist({LOGNORMAL_PARAM_TYPE.MEAN_X: mean,
-                                                                   LOGNORMAL_PARAM_TYPE.SD_LN_X: sd_ln}))
+                        dists.append(pyslatcore.MakeLogNormalDist(mean, LOGNORMAL_MU_TYPE.MEAN_X,
+                                                                  sd_ln, LOGNORMAL_SIGMA_TYPE.SD_LN_X))
                     dist = lognormaldist(pyslatcore.AddDistributions(dists))
                     
                     for y in self._columns:

@@ -48,6 +48,7 @@ namespace SLAT {
          loss_fn(loss_fn),
          count(count)
     {
+        this->name = name;
     };
 
     double CompGroup::E_loss_EDP(double edp)

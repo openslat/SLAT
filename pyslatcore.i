@@ -4,13 +4,14 @@
 %}
 %include <std_string.i>
 %include <std_vector.i>
-%include <std_unordered_map.i>
+%include <std_list.i>
+%include <std_map.i>
 namespace std{
     %template(VectorDouble) std::vector<double>;
     %template(VectorLogNormal_p) std::vector<LogNormalDist *>;
     %template(VectorLogNormal) std::vector<LogNormalDist>;
-//    %template(MapEDPComp) std::unordered_map<int, int >;
-//    %template(MapEDPComp) std::unordered_map<EDP *, std::vector<CompGroup *>>;
+    %template(ListCompGroup) std::list<CompGroup *>;
+    %template(ListCompGroups) std::list<std::list<CompGroup *>>;
 }
 
 
@@ -46,6 +47,7 @@ public:
     double get_sigma_X(void) const;
 };
 
+LogNormalDist AddDistributions(std::vector<LogNormalDist> dists);
 LogNormalDist * MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
                                   double sigma, LOGNORMAL_SIGMA_TYPE sigma_type);
 
@@ -103,23 +105,25 @@ LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions);
 class CompGroup {
 public:
     CompGroup(std::shared_ptr<SLAT::CompGroup> group);
+    std::string get_Name();
     double E_Loss_EDP(double edp);
     double SD_ln_loss_EDP(double edp);
     double E_Loss_IM(double edp);
-    double SD_ln_loss_IM(double edp);
+    double SD_ln_Loss_IM(double edp);
     double E_annual_loss(void);
     double E_loss(int years, double discount_rate);
     std::vector<double> pDS_IM(double im);
     std::vector<double> Rate(void);
     double lambda_loss(double loss);
     bool AreSame(const CompGroup &other);
+    EDP *get_EDP(void);
 private:
     std::shared_ptr<SLAT::CompGroup> wrapper;
         
     friend class Structure;
 };
 
-CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count);
+CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count, std::string name);
 
 class Structure {
 public:
@@ -134,6 +138,8 @@ public:
     void setDemolitionCost(LogNormalDist cost);
     LogNormalDist getDemolitionCost(void);
     LogNormalDist AnnualLoss(void);
+    std::list<std::list<CompGroup *>> ComponentsByEDP(void);
+    //std::list<CompGroup *> ComponentsByEDP(void);
     //std::unordered_map<EDP *, std::vector<CompGroup *>> ComponentsByEDP(void);
     //python::list ComponentsByFragility(void);
 private:

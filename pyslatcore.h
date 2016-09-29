@@ -132,7 +132,7 @@ public:
 private:
     std::shared_ptr<SLAT::FragilityFn> fragility;
     friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
-                                    LossFn loss_fn, int count);
+                                    LossFn loss_fn, int count, std::string name);
 };
 
 FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions);
@@ -144,30 +144,32 @@ public:
 private:
     std::shared_ptr<SLAT::LossFn> loss;
     friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
-                                    LossFn loss_fn, int count);
+                                    LossFn loss_fn, int count, std::string name);
 };
 
 
 class CompGroup {
 public:
     CompGroup(std::shared_ptr<SLAT::CompGroup> group);
+    std::string get_Name();
     double E_Loss_EDP(double edp);
     double SD_ln_loss_EDP(double edp);
     double E_Loss_IM(double edp);
-    double SD_ln_loss_IM(double edp);
+    double SD_ln_Loss_IM(double edp);
     double E_annual_loss(void);
     double E_loss(int years, double discount_rate);
     std::vector<double> pDS_IM(double im);
     std::vector<double> Rate(void);
     double lambda_loss(double loss);
     bool AreSame(const CompGroup &other);
+    EDP *get_EDP(void);
 private:
     std::shared_ptr<SLAT::CompGroup> wrapper;
         
     friend class Structure;
 };
 
-CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count);
+CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count, std::string name);
 
 class Structure {
 public:
@@ -182,7 +184,8 @@ public:
     void setDemolitionCost(LogNormalDist cost);
     LogNormalDist getDemolitionCost(void);
     LogNormalDist AnnualLoss(void);
-    std::unordered_map<EDP *, std::vector<CompGroup *>> ComponentsByEDP(void);
+    std::list<std::list<CompGroup *>> ComponentsByEDP(void);
+    //std::list<CompGroup *> ComponentsByEDP(void);
     //python::list ComponentsByFragility(void);
 private:
     std::shared_ptr<SLAT::Structure> wrapper;
