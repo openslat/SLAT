@@ -1,5 +1,6 @@
 %module pyslatcore
 %{
+#include <cmath>
 #include "pyslatcore.h"
 %}
 %include <std_string.i>
