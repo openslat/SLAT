@@ -604,6 +604,7 @@ class SlatInterpreter(slatParserListener):
         pyslat.ImportIMFn(id, filename)
 
 def main(argv):
+    pyslat.Init_Caching()
     for file in argv[1:]:
         print("File:", file)
         text = open(file).read()
