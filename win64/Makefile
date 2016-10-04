@@ -1,10 +1,11 @@
-CC=/opt/mxe/usr/bin/i686-w64-mingw32.shared-g++
-CFLAGS=-g -O3 -fopenmp -Wall -Werror -std=gnu++11 -DBOOST_ALL_DYN_LINK
+CC=/opt/mxe/usr/bin/x86_64-w64-mingw32.shared-g++
+CFLAGS=-g -O3 -fopenmp -Wall -std=gnu++11 -DBOOST_ALL_DYN_LINK
 CFLAGS+=-I ../Python-3.5.2/PC -I../Python-3.5.2/Include
+CFLAGS+=-DMS_WIN64
 
 DLLFLAGS=-Wl,--dll -Wl,--export-all-symbols -Wl,--out-implib,_example.a 
-LDFLAGS=-L/opt/mxe/usr/bin/i686-w64-mingw32.shared/bin -L/opt/mxe/usr/bin/i686-w64-mingw32.shared/lib 
-LDFLAGS+=-L../python-win32 -lpython35 -L.
+LDFLAGS=-L/opt/mxe/usr/bin/x86_64-w64-mingw32.shared/bin -L/opt/mxe/usr/bin/x86_64-w64-mingw32.shared/lib 
+LDFLAGS+=-L../python-amd64 -lpython35 -L.
 LDFLAGS+=-lboost_log-mt -lboost_thread_win32-mt -lboost_system-mt -lpthread
 LDFLAGS+=-lboost_filesystem-mt -lboost_log_setup-mt -lboost_unit_test_framework-mt
 LDFLAGS+=-lpthread -fopenmp -lgsl

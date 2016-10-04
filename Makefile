@@ -14,10 +14,10 @@ ANTLR=java -jar ../../antlr-4.5.3-complete.jar -Dlanguage=Python3
 endif
 
 CFLAGS=-g -O3 -fopenmp -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 -DBOOST_ALL_DYN_LINK
-CFLAGS+=`pkg-config --cflags python3`
 
 ifeq ($(shell uname), Linux)
 	# Linux Build
+	CFLAGS+=`pkg-config --cflags python3`
 	CC=g++
 	CFLAGS +=  -fPIC `pkg-config --cflags gsl`
 

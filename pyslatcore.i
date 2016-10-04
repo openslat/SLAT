@@ -1,5 +1,5 @@
 %module pyslatcore
-%{
+%begin %{
 #include <cmath>
 #include "pyslatcore.h"
 %}

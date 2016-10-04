@@ -72,6 +72,8 @@ vector<double> frange(double min, double max, double step)
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(main_logger, src::logger_mt)
 int main(int argc, char **argv)
 {
+    double start_time = omp_get_wtime();
+
     signal(SIGSEGV, catch_signal);
     signal(SIGINT, catch_signal);
         
@@ -838,5 +840,8 @@ int main(int argc, char **argv)
     }
     
     cout << "Done" << endl;
+    double end_time = omp_get_wtime();
+
+    cout << "Elapsed time: " << end_time - start_time << endl;
     return 0;
 }
