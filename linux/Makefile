@@ -12,6 +12,7 @@ CFLAGS +=  -fPIC `pkg-config --cflags gsl`
 LDFLAGS=-lboost_log -lboost_thread -lboost_system -lpthread 
 LDFLAGS += `pkg-config --libs gsl`
 LDFLAGS += -lpthread -fopenmp
+PYLIBFLAGS=-fPIC -shared -Wl,-soname,_pyslatcore.so `pkg-config --libs python3` `pkg-config --libs gsl`
 
 # Uncomment the next line to add the current directory to the search path. This is *NOT*
 # generally recommended, but saves on from specifying 'LD_LIBRARY_PATH=.':
@@ -126,4 +127,4 @@ $(OBJDIR)/wrap_pyslatcore.o: $(OBJDIR)/wrap_pyslatcore.cpp $(SRCDIR)/functions.h
 	$(CC) -c $(CFLAGS) -I$(SRCDIR) $< -o $@
 
 $(LIBDIR)/_pyslatcore.so: $(OBJDIR)/wrap_pyslatcore.o $(OBJDIR)/pyslatcore.o 
-	$(CC) -fPIC -shared -Wl,-soname,_pyslatcore.so $(OBJDIR)/wrap_pyslatcore.o $(OBJDIR)/pyslatcore.o -o $@ `pkg-config --libs python3` `pkg-config --libs gsl` -L$(LIBDIR) -lslat 
+	$(CC) $(PYLIBFLAGS) -fPIC -shared -Wl,-soname,_pyslatcore.so $(OBJDIR)/wrap_pyslatcore.o $(OBJDIR)/pyslatcore.o -o $@  -L$(LIBDIR) -lslat 
