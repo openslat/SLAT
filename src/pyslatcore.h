@@ -7,7 +7,6 @@
 #include "comp_group.h"
 #include "structure.h" 
 
-void Init_Caching(void);
 void IntegrationSettings(double tolerance, unsigned int max_evals);
 
 

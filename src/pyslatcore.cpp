@@ -5,12 +5,6 @@
 #include <set>
 using namespace std;
 
-void Init_Caching(void)
-{
-    SLAT::Caching::Init_Caching();
-}
-
-
 void IntegrationSettings(double tolerance, unsigned int max_evals)
 {
     SLAT::Integration::IntegrationSettings::Set_Tolerance(tolerance);

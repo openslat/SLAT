@@ -18,7 +18,11 @@ namespace SLAT {
 
         void Init_Caching(void)
         {
-            omp_init_lock(&lock);
+            static bool first_call = true;
+            if (first_call) {
+                omp_init_lock(&lock);
+            };
+            first_call = false;
         }
 
         /**

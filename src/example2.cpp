@@ -84,9 +84,6 @@ int main(int argc, char **argv)
     BOOST_LOG(logger) << "Starting main().";
 
         
-    // Initialise Caching System:
-    Caching::Init_Caching();
-    
     // Set up Integration parameters:
     Integration::IntegrationSettings::Set_Tolerance(1E-6);
     Integration::IntegrationSettings::Set_Max_Evals(1024);

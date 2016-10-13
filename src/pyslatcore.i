@@ -16,7 +16,6 @@ namespace std{
 }
 
 
-void Init_Caching(void);
 void IntegrationSettings(double tolerance, unsigned int max_evals);
 
 enum FUNCTION_TYPE { NLH, PLC, LIN, LOGLOG };

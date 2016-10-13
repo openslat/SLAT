@@ -3,7 +3,6 @@ import pyslat
 import filecmp
 
 
-pyslat.Init_Caching()
 IM1 = pyslat.ImportIMFn("IM.1", "imfunc.txt")
 IM1.SetCollapse(pyslat.MakeLogNormalDist(
     1.2, pyslat.LOGNORMAL_MU_TYPE.MEAN_X,

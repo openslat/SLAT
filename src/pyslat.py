@@ -71,9 +71,6 @@ def MakeLogNormalDist(mu, mu_type, sigma, sigma_type):
 def IntegrationSettings(tolerance, max_evals):
     return pyslatcore.IntegrationSettings(tolerance, max_evals)
 
-def Init_Caching():
-    pyslatcore.Init_Caching()
-
 class lognormaldist:
     def __init__(self, dist):
         self._dist = dist
