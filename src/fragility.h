@@ -19,7 +19,7 @@
 namespace SLAT {
     class FragilityFn {
     public:
-        FragilityFn(std::vector<LogNormalDist> onsets);
+        FragilityFn(std::vector<LogNormalDist> distributions);
         
         ~FragilityFn();
         std::size_t n_states(void);

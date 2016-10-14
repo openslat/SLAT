@@ -61,14 +61,18 @@ class SlatInterpreter(slatParserListener):
             type = 'loglog'
             fntype = pyslat.FUNCTION_TYPE.LOGLOG
         elif ctx.linear_args():
-            type = 'log'
+            type = 'lin'
             fntype = pyslat.FUNCTION_TYPE.LIN
         else:
             raise ValueError("Unhandled DETFN type.")
         value = self._stack.pop()
 
         id = ctx.ID().getText()
-        pyslat.detfn(id, type, value)
+        print(type)
+        if type == 'loglog' or type == 'lin':
+            pyslat.detfn(id, type, value[0], value[1])
+        else:
+            pyslat.detfn(id, type, value)
 
     def enterLoglog_args(self, ctx:slatParser.Loglog_argsContext):
         self._push_stack()
@@ -188,7 +192,7 @@ class SlatInterpreter(slatParserListener):
         mu = params[0]
         sd = params[1]
 
-        dist = pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd})
+        dist = pyslat.MakeLogNormalDist(mu, options['mu'], sd, options['sd'])
         pyslat.im.lookup(id).SetCollapse(dist)
 
     def exitDemolition_command(self, ctx:slatParser.Demolition_commandContext):
@@ -198,7 +202,7 @@ class SlatInterpreter(slatParserListener):
         mu = params[0]
         sd = params[1]
 
-        dist = pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd})
+        dist = pyslat.MakeLogNormalDist(mu, options['mu'], sd, options['sd'])
         pyslat.im.lookup(id).SetDemolition(dist)
 
     # Exit a parse tree produced by slatParser#edp_command.
@@ -237,13 +241,13 @@ class SlatInterpreter(slatParserListener):
         if ctx.mu_option():
             if ctx.mu_option().MEAN_LN_X():
                 mu = "mean(ln(x))"
-                mu = pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X
+                mu = pyslat.LOGNORMAL_MU_TYPE.MEAN_LN_X
             elif ctx.mu_option().MEDIAN_X():
                 mu = "median(x)"
-                mu = pyslat.LOGNORMAL_PARAM_TYPE.MEDIAN_X
+                mu = pyslat.LOGNORMAL_MU_TYPE.MEDIAN_X
             elif ctx.mu_option().MEAN_X():
                 mu = "mean(x)"
-                mu = pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X
+                mu = pyslat.LOGNORMAL_MU_TYPE.MEAN_X
             else:
                 raise ValueError("Unhandled Lognormal option")
         else:
@@ -253,10 +257,10 @@ class SlatInterpreter(slatParserListener):
         if ctx.sd_option():
             if ctx.sd_option().SD_X():
                 sd = "sd(x)"
-                sd = pyslat.LOGNORMAL_PARAM_TYPE.SD_X
+                sd = pyslat.LOGNORMAL_SIGMA_TYPE.SD_X
             elif ctx.sd_option().SD_LN_X():
                 sd = "sd(ln(x))"
-                sd = pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X
+                sd = pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X
             else:
                 raise ValueError("Unhandled Lognormal option")
         else:
@@ -311,7 +315,7 @@ class SlatInterpreter(slatParserListener):
         params = self._stack.pop()
         mu = params[0]
         sd = params[1]
-        pyslat.structure.lookup(id).setRebuildCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
+        pyslat.structure.lookup(id).setRebuildCost(pyslat.MakeLogNormalDist(mu, options['mu'], sd, options['sd']))
 
     def exitDemolitioncost_command(self, ctx:slatParser.Demolitioncost_commandContext):
         id = ctx.ID().getText()
@@ -319,7 +323,7 @@ class SlatInterpreter(slatParserListener):
         params = self._stack.pop()
         mu = params[0]
         sd = params[1]
-        pyslat.structure.lookup(id).setDemolitionCost(pyslat.MakeLogNormalDist({options['mu']: mu, options['sd']: sd}))
+        pyslat.structure.lookup(id).setDemolitionCost(pyslat.MakeLogNormalDist(mu, options['mu'], sd, options['sd']))
         
     
     # Exit a parse tree produced by slatParser#print_command.
@@ -477,20 +481,22 @@ class SlatInterpreter(slatParserListener):
             elif ctx.ANNUAL_FLAG():
                 options['structloss-type'] = 'annual'
                 cols = []
-                for c in list(self._stack.pop().values()):
-                    if c == pyslat.LOGNORMAL_PARAM_TYPE.MEAN_LN_X:
-                        c = "mean_ln_x"
-                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:
-                        c = "mean_x"
-                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.MEDIAN_X:
-                        c = "median_x"
-                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:
-                        c = "sd_ln_x"
-                    elif c == pyslat.LOGNORMAL_PARAM_TYPE.SD_X:
-                        c = "sd_x"
-                    if c != None:
+                for key, value in self._stack.pop().items():
+                    if key == 'mu':
+                        if value == pyslat.LOGNORMAL_MU_TYPE.MEAN_LN_X:
+                            c = "mean_ln_x"
+                        elif value == pyslat.LOGNORMAL_MU_TYPE.MEAN_X:
+                            c = "mean_x"
+                        elif value == pyslat.LOGNORMAL_MU_TYPE.MEDIAN_X:
+                            c = "median_x"
                         cols.append(c)
-                    cols.reverse() # Want 'mean' first
+                    elif key == 'sd':
+                        if value == pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X:
+                            c = "sd_ln_x"
+                        elif value == pyslat.LOGNORMAL_SIGMA_TYPE.SD_X:
+                            c = "sd_x"
+                        cols.append(c)
+                cols.reverse() # Want 'mean' first
                 
         id = ctx.ID().getText()
 

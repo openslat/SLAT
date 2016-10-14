@@ -5,11 +5,11 @@ import filecmp
 
 IM1 = pyslat.ImportIMFn("IM.1", "imfunc.txt")
 IM1.SetCollapse(pyslat.MakeLogNormalDist(
-    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 1.2,
-     pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X: 0.470}))
+    1.2, pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
+    0.470, pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X))
 IM1.SetDemolition(pyslat.MakeLogNormalDist(
-    {pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 0.9,
-     pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X: 0.470}))
+    0.9, pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
+    0.470, pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X)) 
 
 def ResultsFile(name):
     return "py-results/{}".format(name)
@@ -104,14 +104,14 @@ for f in FRAG_DATA:
     loss = f[2]
 
     pyslat.fragfn_user("FRAG.{:>03}".format(id), 
-                       {'mu': pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X,
-                        'sd': pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X},
+                       {'mu': pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
+                        'sd': pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X},
                        frag)
     
 
     pyslat.lossfn("LOSS_{:>03}".format(id), 
-                  {'mu': pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X,
-                   'sd': pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X},
+                  {'mu': pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
+                   'sd': pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X},
                   loss)
 
 COMPONENT_DATA = [[1, "EDP.02", "FRAG.002", "LOSS_002", 20],
@@ -231,12 +231,12 @@ COMPONENT_DATA = [[1, "EDP.02", "FRAG.002", "LOSS_002", 20],
                   [115, "EDP.19", "FRAG.214", "LOSS_214", 10]]
 
 building = pyslat.structure("building")
-building.setRebuildCost(pyslat.MakeLogNormalDist({pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:14E6,
-                                                  pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.35}))
-building.setRebuildCost(pyslat.MakeLogNormalDist({pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X:14E6,
-                                                  pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X:0.35}))
-building.setDemolitionCost(pyslat.MakeLogNormalDist({pyslat.LOGNORMAL_PARAM_TYPE.MEAN_X: 14E6,
-                                                     pyslat.LOGNORMAL_PARAM_TYPE.SD_LN_X: 0.35}))
+building.setRebuildCost(pyslat.MakeLogNormalDist(14E6, pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
+                                                  0.35, pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X))
+building.setRebuildCost(pyslat.MakeLogNormalDist(14E6, pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
+                                                  0.35, pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X))
+building.setDemolitionCost(pyslat.MakeLogNormalDist(14E6, pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
+                                                  0.35, pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X))
 for comp in COMPONENT_DATA:
     id = comp[0]
     edp = comp[1]

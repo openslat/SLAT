@@ -72,6 +72,8 @@ vector<double> frange(double min, double max, double step)
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(main_logger, src::logger_mt)
 int main(int argc, char **argv)
 {
+    double start_time = omp_get_wtime();
+
     signal(SIGSEGV, catch_signal);
     signal(SIGINT, catch_signal);
         
@@ -82,9 +84,6 @@ int main(int argc, char **argv)
     BOOST_LOG(logger) << "Starting main().";
 
         
-    // Initialise Caching System:
-    Caching::Init_Caching();
-    
     // Set up Integration parameters:
     Integration::IntegrationSettings::Set_Tolerance(1E-6);
     Integration::IntegrationSettings::Set_Max_Evals(1024);
@@ -92,7 +91,7 @@ int main(int argc, char **argv)
     // Read IM data
     shared_ptr<IM> im_rel;
     {
-        ifstream infile("parser/example2/imfunc.txt");
+        ifstream infile("imfunc.txt");
         char s[512];
         infile.getline(s, sizeof(s));
         if (infile.fail()) {
@@ -130,7 +129,7 @@ int main(int argc, char **argv)
             results[i] = im_rel->lambda(im_vals[i]);
         }
 
-        ofstream ofile("parser/example2/c-results/im_rate");
+        ofstream ofile("c-results/im_rate");
         ofile << setw(15) << "IM.1" << setw(15) << "lambda" << endl;
 
         for (size_t i=0; i < im_vals.size(); i++) 
@@ -151,7 +150,7 @@ int main(int argc, char **argv)
             results[i] = im_rel->lambda(im_vals[i]);
         }
 
-        ofstream ofile("parser/example2/c-results/im_rate_lin");
+        ofstream ofile("c-results/im_rate_lin");
         ofile << setw(15) << "IM.1" << setw(15) << "lambda" << endl;
 
         for (size_t i=0; i < im_vals.size(); i++) 
@@ -170,7 +169,7 @@ int main(int argc, char **argv)
             demolition[i] = im_rel->pDemolition(im_vals[i]);
         }
         
-        ofstream ofile("parser/example2/c-results/collapse.txt");
+        ofstream ofile("c-results/collapse.txt");
         ofile << setw(15) << "IM.1" << setw(15) << "p(Demolition)"
               << setw(15) << "p(Collapse)" << endl;
 
@@ -183,7 +182,7 @@ int main(int argc, char **argv)
 
     // Write the rate of collapse:
     {
-        ofstream ofile("parser/example2/c-results/collrate.txt");
+        ofstream ofile("c-results/collrate.txt");
         ofile << setw(15) << "IM" << setw(30) << "rate(Demolition)"
               << setw(30) << "rate(Collapse)" << endl;
         ofile << setw(15) << "IM.1"
@@ -200,7 +199,7 @@ int main(int argc, char **argv)
             int n = i + 1;
             
             stringstream path;
-            path << "parser/example2/RB_EDP" << n << ".txt";
+            path << "RB_EDP" << n << ".txt";
 
             ifstream infile(path.str());
             char s[512];
@@ -281,7 +280,7 @@ int main(int argc, char **argv)
             }
             
             stringstream path;
-            path << "parser/example2/c-results/im_edp_" << n << ".txt";
+            path << "c-results/im_edp_" << n << ".txt";
             
             ofstream outfile(path.str());
             outfile << setw(15) << "IM.1" << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
@@ -295,7 +294,7 @@ int main(int argc, char **argv)
 
         {
             stringstream path;
-            path << "parser/example2/c-results/edp_" << n << "_rate.txt";
+            path << "c-results/edp_" << n << "_rate.txt";
 
             ofstream outfile(path.str());
             outfile << setw(15) << "EDP" << setw(15) << "lambda" << endl;
@@ -459,7 +458,7 @@ int main(int argc, char **argv)
             {
                 // Record LOSS-EDP relationship
                 stringstream path;
-                path << "parser/example2/c-results/loss_" << n << "_edp.txt";
+                path << "c-results/loss_" << n << "_edp.txt";
             
                 ofstream outfile(path.str());
                 outfile << setw(15) << "EDP" << setw(15) << "mean_x" 
@@ -507,7 +506,7 @@ int main(int argc, char **argv)
             {
                 // Record LOSS-IM relationship
                 stringstream path;
-                path << "parser/example2/c-results/loss_" << n << "_im.txt";
+                path << "c-results/loss_" << n << "_im.txt";
             
                 ofstream outfile(path.str());
                 outfile << setw(15) << "IM.1" << setw(15) << "mean_x" 
@@ -535,7 +534,7 @@ int main(int argc, char **argv)
             {
                 // Record DS-EDP relationship
                 stringstream path;
-                path << "parser/example2/c-results/ds_edp_" << n << ".txt";
+                path << "c-results/ds_edp_" << n << ".txt";
 
                 shared_ptr<FragilityFn> fragility = cg->FragFn();
                 
@@ -575,7 +574,7 @@ int main(int argc, char **argv)
             if (true) {
                 // Record DS-IM relationship
                 stringstream path;
-                path << "parser/example2/c-results/ds_im_" << n << ".txt";
+                path << "c-results/ds_im_" << n << ".txt";
 
                 ofstream outfile(path.str());
                 outfile << setw(15) << "IM.1";
@@ -611,7 +610,7 @@ int main(int argc, char **argv)
             // DS-Rate
             if (true) {
                 stringstream path;
-                path << "parser/example2/c-results/ds_rate_" << setw(3) << setfill('0')  << n << ".txt";
+                path << "c-results/ds_rate_" << setw(3) << setfill('0')  << n << ".txt";
                 ofstream outfile(path.str());
                 for (size_t i=1; i <= cg->FragFn()->n_states(); i++) {
                     stringstream label;
@@ -630,7 +629,7 @@ int main(int argc, char **argv)
             {
                 // Record LOSS-RATE relationship
                 stringstream path;
-                path << "parser/example2/c-results/loss_rate_" << n << ".txt";
+                path << "c-results/loss_rate_" << n << ".txt";
 
                 ofstream outfile(path.str());
                 outfile << setw(15) << "t" << setw(15) << "Rate" << endl;
@@ -653,7 +652,7 @@ int main(int argc, char **argv)
             {
                 // Record Annual Loss relationship
                 stringstream path;
-                path << "parser/example2/c-results/annual_loss_" << n << ".txt";
+                path << "c-results/annual_loss_" << n << ".txt";
 
                 ofstream outfile(path.str());
                 outfile << setw(15) << "t" << setw(15) << "E[ALt]" << endl;
@@ -689,7 +688,7 @@ int main(int argc, char **argv)
                 
     {
         // Record the total Loss|IM relationship:
-        ofstream outfile("parser/example2/c-results/total_loss");
+        ofstream outfile("c-results/total_loss");
         outfile << setw(15) << "IM.1" 
                 << setw(15) << "mean_x"
                 << setw(15) << "sd_ln_x"
@@ -712,7 +711,7 @@ int main(int argc, char **argv)
 
     {
         // Record the deaggregated loss for the structure:
-        ofstream outfile("parser/example2/c-results/loss_by_fate");
+        ofstream outfile("c-results/loss_by_fate");
         outfile << setw(15) << "IM.1" 
                 << setw(15) << "repair.mean_x"
                 << setw(15) << "demo.mean_x"
@@ -737,7 +736,7 @@ int main(int argc, char **argv)
 
     {
         // Record the expected loss for the structure:
-        ofstream outfile("parser/example2/c-results/ann_loss");
+        ofstream outfile("c-results/ann_loss");
         outfile << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
         LogNormalDist annloss = building->AnnualLoss();
         outfile << setw(15) << annloss.get_mean_X()
@@ -761,7 +760,7 @@ int main(int argc, char **argv)
         }
         
         {
-            ofstream outfile("parser/example2/c-results/loss_by_edp");
+            ofstream outfile("c-results/loss_by_edp");
             outfile << setw(15) << "IM.1";
             for (int i=1; i <= N_EDPS; i++) {
                 outfile << setw(15) << edp_rels[i]->get_Name();
@@ -802,7 +801,7 @@ int main(int argc, char **argv)
         }
 
         {
-            ofstream outfile("parser/example2/c-results/loss_by_frag");
+            ofstream outfile("c-results/loss_by_frag");
             outfile << setw(15) << "IM.1";
             for (set<int>::iterator i=fragilities.begin();
                  i != fragilities.end();
@@ -838,5 +837,8 @@ int main(int argc, char **argv)
     }
     
     cout << "Done" << endl;
+    double end_time = omp_get_wtime();
+
+    cout << "Elapsed time: " << end_time - start_time << endl;
     return 0;
 }
