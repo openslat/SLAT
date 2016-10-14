@@ -34,13 +34,15 @@ namespace SLAT {
             std::unordered_map<V, T> cache;
             bool cache_active;
         public:
-            CachedFunction() {
+        CachedFunction()  {
+            Caching::Init_Caching();
                 name = "Anonymous";
                 hits = 0;
                 total_calls = 0;
                 omp_init_lock(&lock);
             };
             CachedFunction(std::function<T (V)> base_func, std::string name="Anonymous", bool activate_cache=true) { 
+                Caching::Init_Caching();
                 omp_init_lock(&lock);
                 this->name = name;
                 cache_active = activate_cache;
@@ -136,6 +138,7 @@ namespace SLAT {
             std::string name;
         public:
         CachedValue() : cache_valid(false) { 
+                Caching::Init_Caching();
                 name = "Anonymous";
                 total_calls = 0;
                 hits = 0;
@@ -145,6 +148,7 @@ namespace SLAT {
                 in_process = false;
             };
             CachedValue(std::function<T (void)> base_func, std::string name = "Anonymous") { 
+                Caching::Init_Caching();
                 omp_init_lock(&lock);
                 omp_init_lock(&waiting_lock);
                 omp_set_lock(&waiting_lock);

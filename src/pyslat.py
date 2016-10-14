@@ -24,23 +24,28 @@ def linrange(start, end, count):
 
 
 class FUNCTION_TYPE:
-    NLH = pyslatcore.FUNCTION_TYPE.NLH
-    PLC = pyslatcore.FUNCTION_TYPE.PLC
-    LIN = pyslatcore.FUNCTION_TYPE.LIN
-    LOGLOG = pyslatcore.FUNCTION_TYPE.LOGLOG
+    NLH = pyslatcore.NLH
+    PLC = pyslatcore.PLC
+    LIN = pyslatcore.LIN
+    LOGLOG = pyslatcore.LOGLOG
 
-class LOGNORMAL_PARAM_TYPE:
-    MEAN_X = pyslatcore.LOGNORMAL_PARAM_TYPE.MEAN_X
-    MEDIAN_X = pyslatcore.LOGNORMAL_PARAM_TYPE.MEDIAN_X
-    MEAN_LN_X = pyslatcore.LOGNORMAL_PARAM_TYPE.MEAN_LN_X
-    SD_X = pyslatcore.LOGNORMAL_PARAM_TYPE.SD_X
-    SD_LN_X = pyslatcore.LOGNORMAL_PARAM_TYPE.SD_LN_X
+class LOGNORMAL_MU_TYPE:
+    MEAN_X = pyslatcore.MEAN_X
+    MEDIAN_X = pyslatcore.MEDIAN_X
+    MEAN_LN_X = pyslatcore.MEAN_LN_X
+    
+class LOGNORMAL_SIGMA_TYPE:
+    SD_X = pyslatcore.SD_X
+    SD_LN_X = pyslatcore.SD_LN_X
 
 def factory(t, params):
     return pyslatcore.factory(t, params)
 
-def MakeLogNormalProbabilisticFn(parameters):
-    return pyslatcore.MakeLogNormalProbabilisticFn(parameters)
+def factory(t, param1, param2):
+    return pyslatcore.factory(t, param1, param2)
+
+def MakeLogNormalProbabilisticFn(mu_function, mu_type, sigma_function, sigma_type):
+    return pyslatcore.MakeLogNormalProbabilisticFn(mu_function, mu_type, sigma_function, sigma_type)
 
 def MakeIM(f):
     return pyslatcore.MakeIM(f)
@@ -54,18 +59,17 @@ def MakeFragilityFn(parameters):
 def MakeLossFn(parameters):
     return pyslatcore.MakeLossFn(parameters)
 
-def MakeCompGroup(edp, frag_fn, loss_fn, count):
-    return pyslatcore.MakeCompGroup(edp, frag_fn, loss_fn, count)
+def MakeCompGroup(edp, frag_fn, loss_fn, count, name):
+    return pyslatcore.MakeCompGroup(edp, frag_fn, loss_fn, count, name)
 
 def MakeStructure():
     return pyslatcore.MakeStructure()
 
-def MakeLogNormalDist(parameters):
-    return pyslatcore.MakeLogNormalDist(parameters)
+def MakeLogNormalDist(mu, mu_type, sigma, sigma_type):
+    return pyslatcore.MakeLogNormalDist(mu, mu_type, sigma, sigma_type)
 
 def IntegrationSettings(tolerance, max_evals):
     return pyslatcore.IntegrationSettings(tolerance, max_evals)
-
 
 class lognormaldist:
     def __init__(self, dist):
@@ -111,7 +115,11 @@ class detfn:
         self._type = type
         self._parameters = parameters.copy()
         #print("PARAMETERS: {}".format(self._parameters))
-        self._func = factory(fntype, parameters)
+        if fntype == FUNCTION_TYPE.LOGLOG or fntype == FUNCTION_TYPE.LIN:
+            self._func = factory(fntype, parameters[0], parameters[1])
+        else:
+            self._func = factory(fntype, parameters)
+
         if id != None:
             detfn.defs[id] = self
 
@@ -143,8 +151,8 @@ class probfn:
         self._type = type
         self._mu_func = mu_func
         self._sigma_func = sigma_func
-        self._func = MakeLogNormalProbabilisticFn({mu_func[0]: mu_func[1].function(),
-                                                   sigma_func[0]: sigma_func[1].function()})
+        self._func = MakeLogNormalProbabilisticFn(mu_func[1].function(), mu_func[0],
+                                                  sigma_func[1].function(), sigma_func[0]) 
         if id != None:
             probfn.defs[id] = self
             
@@ -202,7 +210,7 @@ class im:
         return self._func
 
     def getlambda(self, x):
-        return self._func.getlambda(x)
+        return self._func.get_lambda(x)
 
     def pRepair(self, x):
         return self._func.pRepair(x)
@@ -277,7 +285,7 @@ class edp:
         return self._func.SD(x)
 
     def getlambda(self, x):
-        return self._func.getlambda(x)
+        return self._func.get_lambda(x)
 
     def X_at_exceedence(self, x, y):
         return self._fn.X_at_exceedence(x, y)
@@ -328,7 +336,7 @@ class fragfn_user(fragfn):
         self._scalars = scalars
         params = []
         for s in scalars:
-            params.append({options['mu']: s[0], options['sd']: s[1]})
+            params.append(MakeLogNormalDist(s[0], options['mu'], s[1], options['sd']))
         self._func = MakeFragilityFn(params)
 
     def __str__(self):
@@ -350,7 +358,7 @@ class lossfn:
 
         params = []
         for d in data:
-            params.append({options['mu']: d[0], options['sd']: d[1]})
+            params.append(MakeLogNormalDist(d[0], options['mu'], d[1], options['sd']))
         self._func = MakeLossFn(params)
         if id != None:
             lossfn.defs[id] = self
@@ -379,7 +387,7 @@ class compgroup:
         self._func = MakeCompGroup(edp.function(),
                                    frag.function(),
                                    loss.function(),
-                                   count)
+                                   count, id)
         if id != None:
             compgroup.defs[id] = self
 
@@ -414,7 +422,7 @@ class compgroup:
         return self._func.E_Loss_IM(x)
 
     def SD_ln_Loss_IM(self, x):
-        return self._func.SD_ln_loss_IM(x)
+        return self._func.SD_ln_Loss_IM(x)
 
     def E_loss(self, t, l):
         return self._func.E_loss(t, l)
@@ -749,19 +757,16 @@ class StructLossRecorder(recorder):
             print(line1)
             print(line2)
         elif self._options['structloss-type'] == 'by-edp':
-            mapping = self._function.ComponentsByEDP();
+            components = self._function.ComponentsByEDP();
             groups = dict()
-            for m in mapping:
-                components = []
-                for cg in m[1:]:
-                    components.append(compgroup.lookup(cg))
-                groups[edp.lookup(m[0]).id()] = components
+            for c in components:
+                groups[edp.lookup(c[0].get_EDP()).id()] = c
 
             x_label = self._function.get_IM().id()
             y_label = self._columns
             categories = list(groups.keys())
             categories.sort()
-            
+
             # Print column headers:
             line = "{:>15}".format(x_label)
             for c in categories:
@@ -777,8 +782,8 @@ class StructLossRecorder(recorder):
                         mean = cg.E_Loss_IM(x)
                         sd_ln = cg.SD_ln_Loss_IM(x)
 
-                        dists.append(pyslatcore.MakeLogNormalDist({LOGNORMAL_PARAM_TYPE.MEAN_X: mean,
-                                                                   LOGNORMAL_PARAM_TYPE.SD_LN_X: sd_ln}))
+                        dists.append(pyslatcore.MakeLogNormalDist(mean, LOGNORMAL_MU_TYPE.MEAN_X,
+                                                                  sd_ln, LOGNORMAL_SIGMA_TYPE.SD_LN_X))
                     dist = lognormaldist(pyslatcore.AddDistributions(dists))
                     
                     for y in self._columns:
@@ -800,13 +805,10 @@ class StructLossRecorder(recorder):
             
                 
         elif self._options['structloss-type'] == 'by-frag':
-            mapping = self._function.ComponentsByFragility();
+            components = self._function.ComponentsByFragility();
             groups = dict()
-            for m in mapping:
-                components = []
-                for cg in m[1:]:
-                    components.append(compgroup.lookup(cg))
-                groups[fragfn.lookup(m[0]).id()] = components
+            for c in components:
+                groups[compgroup.lookup(c[0]).fragfn().id()] = c
 
             x_label = self._function.get_IM().id()
             y_label = self._columns
@@ -828,8 +830,8 @@ class StructLossRecorder(recorder):
                         mean = cg.E_Loss_IM(x)
                         sd_ln = cg.SD_ln_Loss_IM(x)
 
-                        dists.append(pyslatcore.MakeLogNormalDist({LOGNORMAL_PARAM_TYPE.MEAN_X: mean,
-                                                                   LOGNORMAL_PARAM_TYPE.SD_LN_X: sd_ln}))
+                        dists.append(pyslatcore.MakeLogNormalDist(mean, LOGNORMAL_MU_TYPE.MEAN_X,
+                                                                  sd_ln, LOGNORMAL_SIGMA_TYPE.SD_LN_X))
                     dist = lognormaldist(pyslatcore.AddDistributions(dists))
                     
                     for y in self._columns:
@@ -927,8 +929,8 @@ def ImportProbFn(id, filename):
     mu_func = detfn(None, 'linear', [x.copy(), mu.copy()])
     sigma_func = detfn(None, 'linear', [x.copy(), sigma.copy()])
     return(probfn(id, 'lognormal', 
-                  [LOGNORMAL_PARAM_TYPE.MEAN_X, mu_func],
-                  [LOGNORMAL_PARAM_TYPE.SD_X,  sigma_func]))
+                  [LOGNORMAL_MU_TYPE.MEAN_X, mu_func],
+                  [LOGNORMAL_SIGMA_TYPE.SD_X,  sigma_func]))
 
 def ImportIMFn(id, filename):
     data = np.loadtxt(filename, skiprows=2)
