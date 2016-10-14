@@ -3,6 +3,7 @@ OBJDIR=obj
 BINDIR=bin
 LIBDIR=lib
 SCRIPTDIR=scripts
+DOCDIR=../doc
 
 ifeq "$(TARGET)" "LINUX"
 EXECEXT:=
@@ -27,7 +28,7 @@ UNIT_OBJS = $(addprefix $(OBJDIR)/,$(UNIT_SRCS:.cpp=.o))
 
 all: $(OBJDIR) $(BINDIR) $(LIBDIR) $(SCRIPTDIR) \
 	$(BINDIR)/main$(EXECEXT) $(BINDIR)/unit_tests$(EXECEXT) $(LIBDIR)/$(PYSLATCORE) \
-	$(BINDIR)/example2$(EXECEXT) interp $(LIBDIR)/pyslatcore.py
+	$(BINDIR)/example2$(EXECEXT) interp $(LIBDIR)/pyslatcore.py doc
 
 $(OBJDIR):
 	mkdir $(OBJDIR)
@@ -42,7 +43,7 @@ $(SCRIPTDIR):
 	mkdir $(SCRIPTDIR)
 
 clean:
-	rm -rf $(OBJDIR) $(BINDIR) $(LIBDIR) $(SCRIPTDIR)
+	rm -rf $(OBJDIR) $(BINDIR) $(LIBDIR) $(SCRIPTDIR) $(DOCDIR)
 
 
 $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
@@ -82,7 +83,7 @@ $(BINDIR)/unit_tests$(EXECEXT): $(OBJDIR)/unit_test.o $(UNIT_OBJS) $(LIBDIR)/lib
 $(OBJDIR)/pyslatcore.o: $(SRCDIR)/pyslatcore.cpp $(SRCDIR)/functions.h $(SRCDIR)/relationships.h $(SRCDIR)/replaceable.h
 	$(CC) -c $(CFLAGS) `pkg-config --cflags python3` -o $@ $<
 doc: $(OBJS) $(HEADERS)
-	doxygen
+	cd .. && doxygen
 
 interp: $(LIBDIR)/slatLexer.py $(LIBDIR)/slatParser.py $(SCRIPTDIR)/SlatInterpreter.py $(LIBDIR)/pyslat.py
 
