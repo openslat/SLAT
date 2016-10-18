@@ -496,7 +496,6 @@ class SlatInterpreter(slatParserListener):
                         elif value == pyslat.LOGNORMAL_SIGMA_TYPE.SD_X:
                             c = "sd_x"
                         cols.append(c)
-                cols.reverse() # Want 'mean' first
                 
         id = ctx.ID().getText()
 

@@ -532,6 +532,7 @@ class recorder:
             columns = []
             for i in range(function.size()):
                 columns.append("DS{}".format(i + 1))
+            columns.append("E(DS)")
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_ln_x', 'sd_ln_x']
         elif (type == 'lossedp' or type =='lossim' \
@@ -572,6 +573,8 @@ class recorder:
                  label = "DS{}".format(i + 1)
                  line1 = "{}{:>20}".format(line1, label)
                  line2 = "{}{:>20.6}".format(line2, rates[i])
+            line1 = "{}{:>20}".format(line1, "E(DS)")
+            line2 = "{}{:>20.6}".format(line2, sum(rates))
             print(line1)
             print(line2)
         else:
@@ -616,10 +619,12 @@ class recorder:
                     yvals = self._function.fragfn().pExceeded(x)
                     for y in yvals:
                         line = "{}{:>15.6}".format(line, y)
+                    line = "{}{:>15.6}".format(line, sum(yvals))
                 elif self._type == 'dsim':
                     yvals = self._function.pDS_IM(x)
                     for y in yvals:
                         line = "{}{:>15.6}".format(line, y)
+                    line = "{}{:>15.6}".format(line, sum(yvals))
                 elif self._type == 'annloss':
                     annual_loss = self._function.E_loss(int(x), self._options['lambda'])
                     line = "{}{:>15.6}".format(line, annual_loss)

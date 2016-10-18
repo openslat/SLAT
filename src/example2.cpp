@@ -545,7 +545,7 @@ int main(int argc, char **argv)
                     label << "DS" << i;
                     outfile << setw(15) << label.str();
                 }
-                outfile << endl;
+                outfile << setw(15) << "E(DS)" << endl;
                 
                 vector<double> edp_vals = frange(0.0, 0.200, 0.01);
                 vector<double> results[edp_vals.size()];
@@ -560,13 +560,15 @@ int main(int argc, char **argv)
 
                 for (size_t i=0; i < edp_vals.size(); i++) {
                     outfile << setw(15) << edp_vals[i];
+                    double expected = 0.0;
                     for (vector<double>::const_iterator j = results[i].cbegin();
                          j != results[i].cend();
                          j++) 
                     {
                         outfile << setw(15) << *j;
+                        expected += *j;
                     }
-                    outfile << endl;
+                    outfile << setw(15) << expected << endl;
                 }
                 //cout << "AFTER DS-EDP " << omp_get_wtime() << endl;
             }
@@ -583,7 +585,7 @@ int main(int argc, char **argv)
                     label << "DS" << i;
                     outfile << setw(15) << label.str();
                 }
-                outfile << endl;
+                outfile << setw(15) << "E(DS)" << endl;
                 
                 vector<double> im_vals = linrange(0.01, 3.0, 199);
                 vector<double> results[im_vals.size()];
@@ -597,13 +599,15 @@ int main(int argc, char **argv)
 
                 for (size_t i=0; i < im_vals.size(); i++) {
                     outfile << setw(15) << im_vals[i];
+                    double expected = 0.0;
                     for (vector<double>::const_iterator j = results[i].cbegin();
                          j != results[i].cend();
                          j++) 
                     {
                         outfile << setw(15) << *j;
+                        expected += *j;
                     }
-                    outfile << endl;
+                    outfile << setw(15) << expected << endl;
                 }
             }
 
@@ -617,13 +621,15 @@ int main(int argc, char **argv)
                     label << "DS" << i;
                     outfile << setw(20) << label.str();
                 }
-                outfile << endl;
+                outfile << setw(20) << "E(DS)" << endl;
 
                 vector<double> rates = cg->Rate();
+                double expected = 0.0;
                 for (size_t i=0; i < rates.size(); i++) {
                     outfile << setw(20) << setprecision(6) << rates[i];
+                    expected += rates[i];
                 }
-                outfile << endl;
+                outfile << setw(20) << expected << endl;
             }
 
             {
