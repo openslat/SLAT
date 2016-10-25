@@ -192,10 +192,10 @@ int main(int argc, char **argv)
 
         for (int i=1; i < 200; i++) {
             double edp = i / 1000.;
-            double loss = component_group->E_loss_EDP(edp);
+            double cost = component_group->E_cost_EDP(edp);
 
-            outfile << setw(10) << edp << setw(15) << loss
-                    << setw(15) << component_group->SD_ln_loss_EDP(edp) << endl;
+            outfile << setw(10) << edp << setw(15) << cost
+                    << setw(15) << component_group->SD_ln_cost_EDP(edp) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-EDP table written." << endl;
@@ -205,18 +205,18 @@ int main(int argc, char **argv)
                 << setw(15) << "SD(ln)" << endl;
         for (int i=0; i < 250; i++) {
             double im = (i + 1)/ 100.;
-            outfile << setw(10) << im << setw(15) << component_group->E_loss_IM(im)
-                    << setw(15) << component_group->SD_ln_loss_IM(im) << endl;
+            outfile << setw(10) << im << setw(15) << component_group->E_cost_IM(im)
+                    << setw(15) << component_group->SD_ln_cost_IM(im) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-IM table written." << endl;
 
-        std::cout << "Expected Annual Loss: " << component_group->E_annual_loss() << std::endl;
+        std::cout << "Expected Annual Loss: " << component_group->E_annual_cost() << std::endl;
         
         outfile.open("annual_loss.dat");
         outfile << setw(10) << "Year" << setw(15) << "Loss" << endl;
         for (int year=0; year <= 100; year++) {
-            outfile << setw(10) << year << setw(15) << component_group->E_loss(year, 0.06) << endl;
+            outfile << setw(10) << year << setw(15) << component_group->E_cost(year, 0.06) << endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "annual loss table written." << endl;
@@ -225,7 +225,7 @@ int main(int argc, char **argv)
         outfile << setw(10) << "Loss" << setw(15) << "Rate" << std::endl;
         for (int i=0; i < 250; i++) {
             double loss = 1E-4 + i * (1.2 - 1E-4) / 250;
-            outfile << setw(10) << loss << setw(15) << component_group->lambda_loss(loss) << std::endl;
+            outfile << setw(10) << loss << setw(15) << component_group->lambda_cost(loss) << std::endl;
         }
         outfile.close();
         BOOST_LOG(logger) << "LOSS-RATE table written." << endl;

@@ -440,37 +440,37 @@ EDP *CompGroup::get_EDP(void)
 
 double CompGroup::E_Loss_EDP(double edp)
 {
-    return wrapper->E_loss_EDP(edp); 
+    return wrapper->E_cost_EDP(edp); 
 };
 
 
 double CompGroup::SD_ln_loss_EDP(double edp) { 
-    return wrapper->SD_ln_loss_EDP(edp); 
+    return wrapper->SD_ln_cost_EDP(edp); 
 };
 
 double CompGroup::E_Loss_IM(double edp)
 {
-    return wrapper->E_loss_IM(edp); 
+    return wrapper->E_cost_IM(edp); 
 };
 
 double CompGroup::SD_ln_Loss_IM(double edp)
 {
-    return wrapper->SD_ln_loss_IM(edp); 
+    return wrapper->SD_ln_cost_IM(edp); 
 };
 
 double CompGroup::E_annual_loss(void) 
 {
-    return wrapper->E_annual_loss();
+    return wrapper->E_annual_cost();
 };
 
 double CompGroup::E_loss(int years, double discount_rate) 
 {
-    return wrapper->E_loss(years, discount_rate); 
+    return wrapper->E_cost(years, discount_rate); 
 };
 
 double CompGroup::lambda_loss(double loss)
 {
-    return wrapper->lambda_loss(loss); 
+    return wrapper->lambda_cost(loss); 
 };
 
 bool CompGroup::AreSame(const CompGroup &other)

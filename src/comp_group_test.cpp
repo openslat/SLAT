@@ -92,10 +92,10 @@ BOOST_AUTO_TEST_CASE(comp_group_edp_test)
     //Caching::Clear_Caches();
     
     for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
-        BOOST_CHECK_CLOSE(component_group.E_loss_EDP(test_data[i].edp), 
+        BOOST_CHECK_CLOSE(component_group.E_cost_EDP(test_data[i].edp), 
                           test_data[i].mu_loss,
                           0.1);
-       BOOST_CHECK_CLOSE(component_group.SD_ln_loss_EDP(test_data[i].edp), 
+       BOOST_CHECK_CLOSE(component_group.SD_ln_cost_EDP(test_data[i].edp), 
                           test_data[i].sd_loss,
                           0.5);
     }
@@ -135,10 +135,10 @@ BOOST_AUTO_TEST_CASE(comp_group_edp_test)
     //component_group = CompGroup(rel, fragFn, lossFn, 1);
     // Skip first entry, which returns NAN instead of 0, since the integrator can't find anything interesting to look at
     for (size_t i=0; i < sizeof(test_data)/sizeof(test_data[0]); i++) {
-        BOOST_CHECK_CLOSE(component_group.E_loss_IM(im_test_data[i].im), 
+        BOOST_CHECK_CLOSE(component_group.E_cost_IM(im_test_data[i].im), 
                           im_test_data[i].mu_loss,
                           0.2);
-        BOOST_CHECK_CLOSE(component_group.SD_ln_loss_IM(im_test_data[i].im), 
+        BOOST_CHECK_CLOSE(component_group.SD_ln_cost_IM(im_test_data[i].im), 
                           im_test_data[i].sd_loss,
                           0.5);
     }
@@ -183,7 +183,7 @@ BOOST_AUTO_TEST_CASE(comp_group_edp_test)
     };
     for (size_t i=0; i < sizeof(annual_loss_test_data)/sizeof(annual_loss_test_data[0]); i++) {
         double years = annual_loss_test_data[i].t;
-        double annual_loss = component_group.E_loss(years, 0.06);
+        double annual_loss = component_group.E_cost(years, 0.06);
         BOOST_CHECK_CLOSE(annual_loss, annual_loss_test_data[i].e_annual, 0.2);
         BOOST_CHECK_CLOSE(annual_loss/years, annual_loss_test_data[i].e_yearly, 0.2);
     }
@@ -205,7 +205,7 @@ BOOST_AUTO_TEST_CASE(comp_group_edp_test)
     };
 
     for (size_t i=0; i < sizeof(loss_rate_test_data)/sizeof(loss_rate_test_data[0]); i++) {
-        BOOST_CHECK_CLOSE(loss_rate_test_data[i].rate, component_group.lambda_loss(loss_rate_test_data[i].loss), 0.2);
+        BOOST_CHECK_CLOSE(loss_rate_test_data[i].rate, component_group.lambda_cost(loss_rate_test_data[i].loss), 0.2);
     }
 }
 

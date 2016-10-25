@@ -443,7 +443,7 @@ int main(int argc, char **argv)
 #pragma omp critical
             compgroups[data[i].id] = cg;
 
-            (void)cg->E_annual_loss();
+            (void)cg->E_annual_cost();
         }
             
         //cout << "post-compgroups " << omp_get_wtime() << endl;
@@ -488,8 +488,8 @@ int main(int argc, char **argv)
 #pragma omp parallel for
                         for (size_t j=0; j < 16; j++) {
                             double edp = edp_vals[i];
-                            e[i] = cg->E_loss_EDP(edp);
-                            sd[i] = cg->SD_ln_loss_EDP(edp);
+                            e[i] = cg->E_cost_EDP(edp);
+                            sd[i] = cg->SD_ln_cost_EDP(edp);
                         }
                     }
                     
@@ -518,8 +518,8 @@ int main(int argc, char **argv)
                 //cout << "BEFORE LOSS-IM " << omp_get_wtime() << endl;
 #pragma omp parallel for
                 for (size_t i=0; i < im_vals.size(); i++) {
-                    e[i] = cg->E_loss_IM(im_vals[i]); 
-                    sd[i] = cg->SD_ln_loss_IM(im_vals[i]); 
+                    e[i] = cg->E_cost_IM(im_vals[i]); 
+                    sd[i] = cg->SD_ln_cost_IM(im_vals[i]); 
                 }
                     
                 for (size_t i=0; i < im_vals.size(); i++) {
@@ -645,7 +645,7 @@ int main(int argc, char **argv)
                 //cout << "BEFORE LOSS-RATE " << omp_get_wtime() << endl;
 #pragma omp parallel for
                 for (size_t i=0; i < t_vals.size(); i++) {
-                    losses[i] = cg->lambda_loss(t_vals[i]);
+                    losses[i] = cg->lambda_cost(t_vals[i]);
                 }
 
                 for (size_t i=0; i < t_vals.size(); i++) {
@@ -668,7 +668,7 @@ int main(int argc, char **argv)
                 //cout << "BEFORE ANNUAL LOSS " << omp_get_wtime() << endl;
 #pragma omp parallel for
                 for (size_t i=0; i < t_vals.size(); i++) {
-                    losses[i] = cg->E_loss(t_vals[i], 0.06);
+                    losses[i] = cg->E_cost(t_vals[i], 0.06);
                 }
 
                 for (size_t i=0; i < t_vals.size(); i++) {
@@ -784,7 +784,7 @@ int main(int argc, char **argv)
                     vector<LogNormalDist> dists(losses_by_edp[edp].size());
 
                     for (size_t i=0; i < losses_by_edp[edp].size(); i++) {
-                        dists[i] = components[losses_by_edp[edp][i]]->LossDist_IM(*im);
+                        dists[i] = components[losses_by_edp[edp][i]]->CostDist_IM(*im);
                     }
                     outfile << setw(15) << LogNormalDist::AddDistributions(dists).get_mean_X();
                 }
@@ -832,7 +832,7 @@ int main(int argc, char **argv)
                     vector<LogNormalDist> dists(losses_by_fragility[*f].size());
 
                     for (size_t i=0; i < losses_by_fragility[*f].size(); i++) {
-                        dists[i] = components[losses_by_fragility[*f][i]]->LossDist_IM(*im);
+                        dists[i] = components[losses_by_fragility[*f][i]]->CostDist_IM(*im);
                     }
                     outfile << setw(20) << LogNormalDist::AddDistributions(dists).get_mean_X();
                 }

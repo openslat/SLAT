@@ -44,7 +44,7 @@ namespace SLAT {
                  components.end(), 
                  [&num_components, &dists, im] (std::shared_ptr<CompGroup> cg) {
                      num_components++;
-                     LogNormalDist dist = cg->LossDist_IM(im);
+                     LogNormalDist dist = cg->CostDist_IM(im);
                      dists.push_back(dist);
                  });
         return LogNormalDist::AddDistributions(dists);
