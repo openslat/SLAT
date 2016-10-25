@@ -379,6 +379,7 @@ class compgroup:
     defs = dict()
     
     def __init__(self, id, edp, frag, loss, count):
+        print("> compgroup: {}, {}, {}, {}, {}".format(id, edp, frag, loss, count))
         self._id = id
         self._edp = edp
         self._frag = frag
@@ -413,25 +414,25 @@ class compgroup:
         return self._func
 
     def E_Loss_EDP(self, x):
-        return self._func.E_Loss_EDP(x)
+        return self._func.E_Cost_EDP(x)
 
     def SD_ln_Loss_EDP(self, x):
-        return self._func.SD_ln_loss_EDP(x)
+        return self._func.SD_ln_cost_EDP(x)
 
     def E_Loss_IM(self, x):
-        return self._func.E_Loss_IM(x)
+        return self._func.E_Cost_IM(x)
 
     def SD_ln_Loss_IM(self, x):
-        return self._func.SD_ln_Loss_IM(x)
+        return self._func.SD_ln_Cost_IM(x)
 
     def E_loss(self, t, l):
-        return self._func.E_loss(t, l)
+        return self._func.E_cost(t, l)
 
     def E_annual_loss(self):
-        return self._func.E_annual_loss()
+        return self._func.E_annual_cost()
 
     def lambda_loss(self, loss):
-        return self._func.lambda_loss(loss)
+        return self._func.lambda_cost(loss)
 
     def pDS_IM(self, im):
         return self._func.pDS_IM(im)
@@ -487,22 +488,22 @@ class structure:
         return lognormaldist(self._structure.getDemolitionCost())
 
     def Loss(self, im, consider_collapse):
-        return lognormaldist(self._structure.Loss(im, consider_collapse))
+        return lognormaldist(self._structure.Cost(im, consider_collapse))
 
     def TotalLoss(self, im):
-        return lognormaldist(self._structure.TotalLoss(im))
+        return lognormaldist(self._structure.TotalCost(im))
 
     def LossesByFate(self, im):
-        result = self._structure.LossesByFate(im)
+        result = self._structure.CostsByFate(im)
         return [lognormaldist(result[0]),
                 lognormaldist(result[1]),
                 lognormaldist(result[2])]
 
     def AnnualLoss(self):
-        return lognormaldist(self._structure.AnnualLoss())
+        return lognormaldist(self._structure.AnnualCost())
 
     def DeaggregatedLoss(self, im):
-        return self._structure.DeaggregatedLoss(im)
+        return self._structure.DeaggregatedCost(im)
 
     def ComponentsByEDP(self):
         return self._structure.ComponentsByEDP()
@@ -784,8 +785,8 @@ class StructLossRecorder(recorder):
                 for c in categories:
                     dists = []
                     for cg in groups[c]:
-                        mean = cg.E_Loss_IM(x)
-                        sd_ln = cg.SD_ln_Loss_IM(x)
+                        mean = cg.E_Cost_IM(x)
+                        sd_ln = cg.SD_ln_Cost_IM(x)
 
                         dists.append(pyslatcore.MakeLogNormalDist(mean, LOGNORMAL_MU_TYPE.MEAN_X,
                                                                   sd_ln, LOGNORMAL_SIGMA_TYPE.SD_LN_X))
@@ -832,8 +833,8 @@ class StructLossRecorder(recorder):
                 for c in categories:
                     dists = []
                     for cg in groups[c]:
-                        mean = cg.E_Loss_IM(x)
-                        sd_ln = cg.SD_ln_Loss_IM(x)
+                        mean = cg.E_Cost_IM(x)
+                        sd_ln = cg.SD_ln_Cost_IM(x)
 
                         dists.append(pyslatcore.MakeLogNormalDist(mean, LOGNORMAL_MU_TYPE.MEAN_X,
                                                                   sd_ln, LOGNORMAL_SIGMA_TYPE.SD_LN_X))

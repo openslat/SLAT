@@ -18,12 +18,12 @@ imvalues = pyslat.logrange(0.01, 3.0, 199)
 edpoddvalues = pyslat.logrange(0.05, 5.0, 199)
 edpevenvalues = pyslat.logrange(0.001, 0.1, 199)
 linvalues = pyslat.linrange(0.01, 3.0, 199)
-lossimvalues = pyslat.linrange(0.01, 3.0, 199)
-lossedpvalues1 = pyslat.linrange(0.001, 0.10, 199)
-lossedpvalues2 = pyslat.linrange(0.001, 0.10, 199)
-lossedpvalues3 = pyslat.linrange(0.05, 5.0, 199)
-lossedpvalues4 = pyslat.linrange(0.032, 0.0325, 199)
-lossedpvalues5 = pyslat.linrange(0.001, 0.10, 199)
+costimvalues = pyslat.linrange(0.01, 3.0, 199)
+costedpvalues1 = pyslat.linrange(0.001, 0.10, 199)
+costedpvalues2 = pyslat.linrange(0.001, 0.10, 199)
+costedpvalues3 = pyslat.linrange(0.05, 5.0, 199)
+costedpvalues4 = pyslat.linrange(0.032, 0.0325, 199)
+costedpvalues5 = pyslat.linrange(0.001, 0.10, 199)
 
 pyslat.MakeRecorder('imrate-rec', 'imrate', IM1,
                 {'filename': ResultsFile("im_rate")},
@@ -101,7 +101,7 @@ FRAG_DATA = [[2, [[0.005, 0.40], [0.010, 0.45], [0.030, 0.50], [0.060, 0.60]],
 for f in FRAG_DATA:
     id = f[0]
     frag = f[1]
-    loss = f[2]
+    cost = f[2]
 
     pyslat.fragfn_user("FRAG.{:>03}".format(id), 
                        {'mu': pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
@@ -109,126 +109,126 @@ for f in FRAG_DATA:
                        frag)
     
 
-    pyslat.lossfn("LOSS_{:>03}".format(id), 
+    pyslat.lossfn("COST_{:>03}".format(id), 
                   {'mu': pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
                    'sd': pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X},
-                  loss)
+                  cost)
 
-COMPONENT_DATA = [[1, "EDP.02", "FRAG.002", "LOSS_002", 20],
-                  [2, "EDP.02", "FRAG.002", "LOSS_002", 18],
-                  [3, "EDP.04", "FRAG.002", "LOSS_002", 4],
-                  [4, "EDP.04", "FRAG.002", "LOSS_002", 18],
-                  [5, "EDP.06", "FRAG.002", "LOSS_002", 4],
-                  [6, "EDP.06", "FRAG.002", "LOSS_002", 18],
-                  [7, "EDP.08", "FRAG.002", "LOSS_002", 4],
-                  [8, "EDP.08", "FRAG.002", "LOSS_002", 18],
-                  [9, "EDP.10", "FRAG.002", "LOSS_002", 4],
-                  [10, "EDP.10", "FRAG.002", "LOSS_002", 18],
-                  [11, "EDP.12", "FRAG.002", "LOSS_002", 4],
-                  [12, "EDP.12", "FRAG.002", "LOSS_002", 18],
-                  [13, "EDP.14", "FRAG.002", "LOSS_002", 4],
-                  [14, "EDP.14", "FRAG.002", "LOSS_002", 18],
-                  [15, "EDP.16", "FRAG.002", "LOSS_002", 4],
-                  [16, "EDP.16", "FRAG.002", "LOSS_002", 18],
-                  [17, "EDP.18", "FRAG.002", "LOSS_002", 4],
-                  [18, "EDP.18", "FRAG.002", "LOSS_002", 18],
-                  [19, "EDP.20", "FRAG.002", "LOSS_002", 4],
-                  [20, "EDP.20", "FRAG.002", "LOSS_002", 18],
-                  [21, "EDP.02", "FRAG.003", "LOSS_003", 16],
-                  [22, "EDP.04", "FRAG.003", "LOSS_003", 16],
-                  [23, "EDP.06", "FRAG.003", "LOSS_003", 16],
-                  [24, "EDP.08", "FRAG.003", "LOSS_003", 16],
-                  [25, "EDP.10", "FRAG.003", "LOSS_003", 16],
-                  [26, "EDP.12", "FRAG.003", "LOSS_003", 16],
-                  [27, "EDP.14", "FRAG.003", "LOSS_003", 16],
-                  [28, "EDP.16", "FRAG.003", "LOSS_003", 16],
-                  [29, "EDP.18", "FRAG.003", "LOSS_003", 16],
-                  [30, "EDP.20", "FRAG.003", "LOSS_003", 16],
-                  [31, "EDP.02", "FRAG.105", "LOSS_105", 721],
-                  [32, "EDP.04", "FRAG.105", "LOSS_105", 721],
-                  [33, "EDP.06", "FRAG.105", "LOSS_105", 721],
-                  [34, "EDP.08", "FRAG.105", "LOSS_105", 721],
-                  [35, "EDP.10", "FRAG.105", "LOSS_105", 721],
-                  [36, "EDP.12", "FRAG.105", "LOSS_105", 721],
-                  [37, "EDP.14", "FRAG.105", "LOSS_105", 721],
-                  [38, "EDP.16", "FRAG.105", "LOSS_105", 721],
-                  [39, "EDP.18", "FRAG.105", "LOSS_105", 721],
-                  [40, "EDP.20", "FRAG.105", "LOSS_105", 721],
-                  [41, "EDP.02", "FRAG.107", "LOSS_107", 99],
-                  [42, "EDP.04", "FRAG.107", "LOSS_107", 99],
-                  [43, "EDP.06", "FRAG.107", "LOSS_107", 99],
-                  [44, "EDP.08", "FRAG.107", "LOSS_107", 99],
-                  [45, "EDP.10", "FRAG.107", "LOSS_107", 99],
-                  [46, "EDP.12", "FRAG.107", "LOSS_107", 99],
-                  [47, "EDP.14", "FRAG.107", "LOSS_107", 99],
-                  [48, "EDP.16", "FRAG.107", "LOSS_107", 99],
-                  [49, "EDP.18", "FRAG.107", "LOSS_107", 99],
-                  [50, "EDP.20", "FRAG.107", "LOSS_107", 99],
-                  [51, "EDP.03", "FRAG.203", "LOSS_203", 693],
-                  [52, "EDP.05", "FRAG.203", "LOSS_203", 693],
-                  [53, "EDP.07", "FRAG.203", "LOSS_203", 693],
-                  [54, "EDP.09", "FRAG.203", "LOSS_203", 693],
-                  [55, "EDP.11", "FRAG.203", "LOSS_203", 693],
-                  [56, "EDP.13", "FRAG.203", "LOSS_203", 693],
-                  [57, "EDP.15", "FRAG.203", "LOSS_203", 693],
-                  [58, "EDP.17", "FRAG.203", "LOSS_203", 693],
-                  [59, "EDP.19", "FRAG.203", "LOSS_203", 693],
-                  [60, "EDP.21", "FRAG.203", "LOSS_203", 693],
-                  [61, "EDP.03", "FRAG.211", "LOSS_211", 23],
-                  [62, "EDP.05", "FRAG.211", "LOSS_211", 23],
-                  [63, "EDP.07", "FRAG.211", "LOSS_211", 23],
-                  [64, "EDP.09", "FRAG.211", "LOSS_211", 23],
-                  [65, "EDP.11", "FRAG.211", "LOSS_211", 23],
-                  [66, "EDP.13", "FRAG.211", "LOSS_211", 23],
-                  [67, "EDP.15", "FRAG.211", "LOSS_211", 23],
-                  [68, "EDP.17", "FRAG.211", "LOSS_211", 23],
-                  [69, "EDP.19", "FRAG.211", "LOSS_211", 23],
-                  [70, "EDP.21", "FRAG.211", "LOSS_211", 23],
-                  [71, "EDP.01", "FRAG.208", "LOSS_208", 53],
-                  [72, "EDP.03", "FRAG.208", "LOSS_208", 53],
-                  [73, "EDP.05", "FRAG.208", "LOSS_208", 53],
-                  [74, "EDP.07", "FRAG.208", "LOSS_208", 53],
-                  [75, "EDP.09", "FRAG.208", "LOSS_208", 53],
-                  [76, "EDP.11", "FRAG.208", "LOSS_208", 53],
-                  [77, "EDP.13", "FRAG.208", "LOSS_208", 53],
-                  [78, "EDP.15", "FRAG.208", "LOSS_208", 53],
-                  [79, "EDP.17", "FRAG.208", "LOSS_208", 53],
-                  [80, "EDP.19", "FRAG.208", "LOSS_208", 53],
-                  [81, "EDP.05", "FRAG.209", "LOSS_209", 16],
-                  [82, "EDP.11", "FRAG.209", "LOSS_209", 16],
-                  [83, "EDP.19", "FRAG.209", "LOSS_209", 16],
-                  [84, "EDP.21", "FRAG.205", "LOSS_205", 4],
-                  [85, "EDP.01", "FRAG.204", "LOSS_204", 2],
-                  [86, "EDP.02", "FRAG.106", "LOSS_106", 721],
-                  [87, "EDP.04", "FRAG.106", "LOSS_106", 721],
-                  [88, "EDP.06", "FRAG.106", "LOSS_106", 721],
-                  [89, "EDP.08", "FRAG.106", "LOSS_106", 721],
-                  [90, "EDP.10", "FRAG.106", "LOSS_106", 721],
-                  [91, "EDP.12", "FRAG.106", "LOSS_106", 721],
-                  [92, "EDP.14", "FRAG.106", "LOSS_106", 721],
-                  [93, "EDP.16", "FRAG.106", "LOSS_106", 721],
-                  [94, "EDP.18", "FRAG.106", "LOSS_106", 721],
-                  [95, "EDP.20", "FRAG.106", "LOSS_106", 721],
-                  [96, "EDP.02", "FRAG.108", "LOSS_108", 10],
-                  [97, "EDP.04", "FRAG.108", "LOSS_108", 10],
-                  [98, "EDP.06", "FRAG.108", "LOSS_108", 10],
-                  [99, "EDP.08", "FRAG.108", "LOSS_108", 10],
-                  [100, "EDP.10", "FRAG.108", "LOSS_108", 10],
-                  [101, "EDP.12", "FRAG.108", "LOSS_108", 10],
-                  [102, "EDP.14", "FRAG.108", "LOSS_108", 10],
-                  [103, "EDP.16", "FRAG.108", "LOSS_108", 10],
-                  [104, "EDP.18", "FRAG.108", "LOSS_108", 10],
-                  [105, "EDP.20", "FRAG.108", "LOSS_108", 10],
-                  [106, "EDP.01", "FRAG.214", "LOSS_214", 10],
-                  [107, "EDP.03", "FRAG.214", "LOSS_214", 10],
-                  [108, "EDP.05", "FRAG.214", "LOSS_214", 10],
-                  [109, "EDP.07", "FRAG.214", "LOSS_214", 10],
-                  [110, "EDP.09", "FRAG.214", "LOSS_214", 10],
-                  [111, "EDP.11", "FRAG.214", "LOSS_214", 10],
-                  [112, "EDP.13", "FRAG.214", "LOSS_214", 10],
-                  [113, "EDP.15", "FRAG.214", "LOSS_214", 10],
-                  [114, "EDP.17", "FRAG.214", "LOSS_214", 10],
-                  [115, "EDP.19", "FRAG.214", "LOSS_214", 10]]
+COMPONENT_DATA = [[1, "EDP.02", "FRAG.002", "COST_002", 20],
+                  [2, "EDP.02", "FRAG.002", "COST_002", 18],
+                  [3, "EDP.04", "FRAG.002", "COST_002", 4],
+                  [4, "EDP.04", "FRAG.002", "COST_002", 18],
+                  [5, "EDP.06", "FRAG.002", "COST_002", 4],
+                  [6, "EDP.06", "FRAG.002", "COST_002", 18],
+                  [7, "EDP.08", "FRAG.002", "COST_002", 4],
+                  [8, "EDP.08", "FRAG.002", "COST_002", 18],
+                  [9, "EDP.10", "FRAG.002", "COST_002", 4],
+                  [10, "EDP.10", "FRAG.002", "COST_002", 18],
+                  [11, "EDP.12", "FRAG.002", "COST_002", 4],
+                  [12, "EDP.12", "FRAG.002", "COST_002", 18],
+                  [13, "EDP.14", "FRAG.002", "COST_002", 4],
+                  [14, "EDP.14", "FRAG.002", "COST_002", 18],
+                  [15, "EDP.16", "FRAG.002", "COST_002", 4],
+                  [16, "EDP.16", "FRAG.002", "COST_002", 18],
+                  [17, "EDP.18", "FRAG.002", "COST_002", 4],
+                  [18, "EDP.18", "FRAG.002", "COST_002", 18],
+                  [19, "EDP.20", "FRAG.002", "COST_002", 4],
+                  [20, "EDP.20", "FRAG.002", "COST_002", 18],
+                  [21, "EDP.02", "FRAG.003", "COST_003", 16],
+                  [22, "EDP.04", "FRAG.003", "COST_003", 16],
+                  [23, "EDP.06", "FRAG.003", "COST_003", 16],
+                  [24, "EDP.08", "FRAG.003", "COST_003", 16],
+                  [25, "EDP.10", "FRAG.003", "COST_003", 16],
+                  [26, "EDP.12", "FRAG.003", "COST_003", 16],
+                  [27, "EDP.14", "FRAG.003", "COST_003", 16],
+                  [28, "EDP.16", "FRAG.003", "COST_003", 16],
+                  [29, "EDP.18", "FRAG.003", "COST_003", 16],
+                  [30, "EDP.20", "FRAG.003", "COST_003", 16],
+                  [31, "EDP.02", "FRAG.105", "COST_105", 721],
+                  [32, "EDP.04", "FRAG.105", "COST_105", 721],
+                  [33, "EDP.06", "FRAG.105", "COST_105", 721],
+                  [34, "EDP.08", "FRAG.105", "COST_105", 721],
+                  [35, "EDP.10", "FRAG.105", "COST_105", 721],
+                  [36, "EDP.12", "FRAG.105", "COST_105", 721],
+                  [37, "EDP.14", "FRAG.105", "COST_105", 721],
+                  [38, "EDP.16", "FRAG.105", "COST_105", 721],
+                  [39, "EDP.18", "FRAG.105", "COST_105", 721],
+                  [40, "EDP.20", "FRAG.105", "COST_105", 721],
+                  [41, "EDP.02", "FRAG.107", "COST_107", 99],
+                  [42, "EDP.04", "FRAG.107", "COST_107", 99],
+                  [43, "EDP.06", "FRAG.107", "COST_107", 99],
+                  [44, "EDP.08", "FRAG.107", "COST_107", 99],
+                  [45, "EDP.10", "FRAG.107", "COST_107", 99],
+                  [46, "EDP.12", "FRAG.107", "COST_107", 99],
+                  [47, "EDP.14", "FRAG.107", "COST_107", 99],
+                  [48, "EDP.16", "FRAG.107", "COST_107", 99],
+                  [49, "EDP.18", "FRAG.107", "COST_107", 99],
+                  [50, "EDP.20", "FRAG.107", "COST_107", 99],
+                  [51, "EDP.03", "FRAG.203", "COST_203", 693],
+                  [52, "EDP.05", "FRAG.203", "COST_203", 693],
+                  [53, "EDP.07", "FRAG.203", "COST_203", 693],
+                  [54, "EDP.09", "FRAG.203", "COST_203", 693],
+                  [55, "EDP.11", "FRAG.203", "COST_203", 693],
+                  [56, "EDP.13", "FRAG.203", "COST_203", 693],
+                  [57, "EDP.15", "FRAG.203", "COST_203", 693],
+                  [58, "EDP.17", "FRAG.203", "COST_203", 693],
+                  [59, "EDP.19", "FRAG.203", "COST_203", 693],
+                  [60, "EDP.21", "FRAG.203", "COST_203", 693],
+                  [61, "EDP.03", "FRAG.211", "COST_211", 23],
+                  [62, "EDP.05", "FRAG.211", "COST_211", 23],
+                  [63, "EDP.07", "FRAG.211", "COST_211", 23],
+                  [64, "EDP.09", "FRAG.211", "COST_211", 23],
+                  [65, "EDP.11", "FRAG.211", "COST_211", 23],
+                  [66, "EDP.13", "FRAG.211", "COST_211", 23],
+                  [67, "EDP.15", "FRAG.211", "COST_211", 23],
+                  [68, "EDP.17", "FRAG.211", "COST_211", 23],
+                  [69, "EDP.19", "FRAG.211", "COST_211", 23],
+                  [70, "EDP.21", "FRAG.211", "COST_211", 23],
+                  [71, "EDP.01", "FRAG.208", "COST_208", 53],
+                  [72, "EDP.03", "FRAG.208", "COST_208", 53],
+                  [73, "EDP.05", "FRAG.208", "COST_208", 53],
+                  [74, "EDP.07", "FRAG.208", "COST_208", 53],
+                  [75, "EDP.09", "FRAG.208", "COST_208", 53],
+                  [76, "EDP.11", "FRAG.208", "COST_208", 53],
+                  [77, "EDP.13", "FRAG.208", "COST_208", 53],
+                  [78, "EDP.15", "FRAG.208", "COST_208", 53],
+                  [79, "EDP.17", "FRAG.208", "COST_208", 53],
+                  [80, "EDP.19", "FRAG.208", "COST_208", 53],
+                  [81, "EDP.05", "FRAG.209", "COST_209", 16],
+                  [82, "EDP.11", "FRAG.209", "COST_209", 16],
+                  [83, "EDP.19", "FRAG.209", "COST_209", 16],
+                  [84, "EDP.21", "FRAG.205", "COST_205", 4],
+                  [85, "EDP.01", "FRAG.204", "COST_204", 2],
+                  [86, "EDP.02", "FRAG.106", "COST_106", 721],
+                  [87, "EDP.04", "FRAG.106", "COST_106", 721],
+                  [88, "EDP.06", "FRAG.106", "COST_106", 721],
+                  [89, "EDP.08", "FRAG.106", "COST_106", 721],
+                  [90, "EDP.10", "FRAG.106", "COST_106", 721],
+                  [91, "EDP.12", "FRAG.106", "COST_106", 721],
+                  [92, "EDP.14", "FRAG.106", "COST_106", 721],
+                  [93, "EDP.16", "FRAG.106", "COST_106", 721],
+                  [94, "EDP.18", "FRAG.106", "COST_106", 721],
+                  [95, "EDP.20", "FRAG.106", "COST_106", 721],
+                  [96, "EDP.02", "FRAG.108", "COST_108", 10],
+                  [97, "EDP.04", "FRAG.108", "COST_108", 10],
+                  [98, "EDP.06", "FRAG.108", "COST_108", 10],
+                  [99, "EDP.08", "FRAG.108", "COST_108", 10],
+                  [100, "EDP.10", "FRAG.108", "COST_108", 10],
+                  [101, "EDP.12", "FRAG.108", "COST_108", 10],
+                  [102, "EDP.14", "FRAG.108", "COST_108", 10],
+                  [103, "EDP.16", "FRAG.108", "COST_108", 10],
+                  [104, "EDP.18", "FRAG.108", "COST_108", 10],
+                  [105, "EDP.20", "FRAG.108", "COST_108", 10],
+                  [106, "EDP.01", "FRAG.214", "COST_214", 10],
+                  [107, "EDP.03", "FRAG.214", "COST_214", 10],
+                  [108, "EDP.05", "FRAG.214", "COST_214", 10],
+                  [109, "EDP.07", "FRAG.214", "COST_214", 10],
+                  [110, "EDP.09", "FRAG.214", "COST_214", 10],
+                  [111, "EDP.11", "FRAG.214", "COST_214", 10],
+                  [112, "EDP.13", "FRAG.214", "COST_214", 10],
+                  [113, "EDP.15", "FRAG.214", "COST_214", 10],
+                  [114, "EDP.17", "FRAG.214", "COST_214", 10],
+                  [115, "EDP.19", "FRAG.214", "COST_214", 10]]
 
 building = pyslat.structure("building")
 building.setRebuildCost(pyslat.MakeLogNormalDist(14E6, pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
@@ -241,28 +241,28 @@ for comp in COMPONENT_DATA:
     id = comp[0]
     edp = comp[1]
     frag = comp[2]
-    loss = comp[3]
+    cost = comp[3]
     count = comp[4]
 
     cg = pyslat.compgroup(
         "COMPGROUP_{:>03}".format(id),
         pyslat.edp.lookup(edp),
         pyslat.fragfn.lookup(frag),
-        pyslat.lossfn.lookup(loss),
+        pyslat.lossfn.lookup(cost),
         count)
-    print(id, edp, frag, loss, count)
+    print(id, edp, frag, cost, count)
     if id in [1, 2, 86, 96]:
-        at_values = lossedpvalues1
+        at_values = costedpvalues1
     elif id in [21, 31, 41]:
-        at_values = lossedpvalues5
+        at_values = costedpvalues5
     elif id in [71, 85, 106]: 
-        at_values = lossedpvalues4
+        at_values = costedpvalues4
     elif id in [86, 87]:
-        at_values = lossedpvalues2
+        at_values = costedpvalues2
     elif (id >= 51 and id < 87) or (id >= 107):
-        at_values = lossedpvalues3
+        at_values = costedpvalues3
     else:
-        at_values = lossedpvalues2
+        at_values = costedpvalues2
         
     pyslat.MakeRecorder("LOSSEDP_{:>03}_REC".format(id), 'lossedp', cg,
                     {'filename': ResultsFile("loss_{}_edp.txt".format(id))},
@@ -272,7 +272,7 @@ for comp in COMPONENT_DATA:
     pyslat.MakeRecorder("LOSSIM_{:>03}_REC".format(id), 'lossim', cg,
                     {'filename': ResultsFile("loss_{}_im.txt".format(id))},
                     None, 
-                    lossimvalues)
+                    costimvalues)
 
     pyslat.MakeRecorder("DSEDP_{:>03}_REC".format(id), 'dsedp', cg,
                     {'filename': ResultsFile("ds_edp_{}.txt".format(id))},

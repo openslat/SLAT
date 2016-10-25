@@ -438,39 +438,39 @@ EDP *CompGroup::get_EDP(void)
     return new EDP(wrapper->get_EDP());
 }
 
-double CompGroup::E_Loss_EDP(double edp)
+double CompGroup::E_Cost_EDP(double edp)
 {
     return wrapper->E_cost_EDP(edp); 
 };
 
 
-double CompGroup::SD_ln_loss_EDP(double edp) { 
+double CompGroup::SD_ln_cost_EDP(double edp) { 
     return wrapper->SD_ln_cost_EDP(edp); 
 };
 
-double CompGroup::E_Loss_IM(double edp)
+double CompGroup::E_Cost_IM(double edp)
 {
     return wrapper->E_cost_IM(edp); 
 };
 
-double CompGroup::SD_ln_Loss_IM(double edp)
+double CompGroup::SD_ln_Cost_IM(double edp)
 {
     return wrapper->SD_ln_cost_IM(edp); 
 };
 
-double CompGroup::E_annual_loss(void) 
+double CompGroup::E_annual_cost(void) 
 {
     return wrapper->E_annual_cost();
 };
 
-double CompGroup::E_loss(int years, double discount_rate) 
+double CompGroup::E_cost(int years, double discount_rate) 
 {
     return wrapper->E_cost(years, discount_rate); 
 };
 
-double CompGroup::lambda_loss(double loss)
+double CompGroup::lambda_cost(double cost)
 {
-    return wrapper->lambda_cost(loss); 
+    return wrapper->lambda_cost(cost); 
 };
 
 bool CompGroup::AreSame(const CompGroup &other)
@@ -507,28 +507,28 @@ void Structure::AddCompGroup(CompGroup cg)
     wrapper->AddCompGroup(cg.wrapper);
 };
 
-LogNormalDist Structure::Loss(double im, bool consider_collapse) {
-    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->Loss(im, consider_collapse)));
+LogNormalDist Structure::Cost(double im, bool consider_collapse) {
+    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->Cost(im, consider_collapse)));
 };
         
-LogNormalDist Structure::TotalLoss(double im) 
+LogNormalDist Structure::TotalCost(double im) 
 {
-    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->TotalLoss(im)));
+    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->TotalCost(im)));
 };
 
-std::vector<LogNormalDist> Structure::DeaggregatedLoss(double im)
+std::vector<LogNormalDist> Structure::DeaggregatedCost(double im)
 {
     std::vector<LogNormalDist> results(2);
-    std::pair<SLAT::LogNormalDist, SLAT::LogNormalDist> losses = wrapper->DeaggregatedLoss(im);
+    std::pair<SLAT::LogNormalDist, SLAT::LogNormalDist> losses = wrapper->DeaggregatedCost(im);
     results[0] = LogNormalDist(std::make_shared<SLAT::LogNormalDist>(losses.first));
     results[1] = LogNormalDist(std::make_shared<SLAT::LogNormalDist>(losses.second));
     return results;
 }
 
-std::vector<LogNormalDist> Structure::LossesByFate(double im) 
+std::vector<LogNormalDist> Structure::CostsByFate(double im) 
 {
     std::vector<LogNormalDist> results(3);
-    SLAT::Structure::LOSSES losses = wrapper->LossesByFate(im);
+    SLAT::Structure::COSTS losses = wrapper->CostsByFate(im);
     results[0] = LogNormalDist(std::make_shared<SLAT::LogNormalDist>(losses.repair));
     results[1] = LogNormalDist(std::make_shared<SLAT::LogNormalDist>(losses.demolition));
     results[2] = LogNormalDist(std::make_shared<SLAT::LogNormalDist>(losses.collapse));
@@ -555,9 +555,9 @@ LogNormalDist Structure::getDemolitionCost(void)
     return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->getDemolitionCost()));
 };
 
-LogNormalDist Structure::AnnualLoss(void) 
+LogNormalDist Structure::AnnualCost(void) 
 {
-    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->AnnualLoss()));
+    return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->AnnualCost()));
 };
 
 std::list<std::list<CompGroup *>> Structure::ComponentsByEDP(void)

@@ -106,15 +106,15 @@ class CompGroup {
 public:
     CompGroup(std::shared_ptr<SLAT::CompGroup> group);
     std::string get_Name();
-    double E_Loss_EDP(double edp);
-    double SD_ln_loss_EDP(double edp);
-    double E_Loss_IM(double edp);
-    double SD_ln_Loss_IM(double edp);
-    double E_annual_loss(void);
-    double E_loss(int years, double discount_rate);
+    double E_Cost_EDP(double edp);
+    double SD_ln_cost_EDP(double edp);
+    double E_Cost_IM(double edp);
+    double SD_ln_Cost_IM(double edp);
+    double E_annual_cost(void);
+    double E_cost(int years, double discount_rate);
     std::vector<double> pDS_IM(double im);
     std::vector<double> Rate(void);
-    double lambda_loss(double loss);
+    double lambda_cost(double cost);
     bool AreSame(const CompGroup &other);
     EDP *get_EDP(void);
 private:
@@ -123,21 +123,21 @@ private:
     friend class Structure;
 };
 
-CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count, std::string name);
+CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn cost_fn, int count, std::string name);
 
 class Structure {
 public:
     Structure(std::shared_ptr<SLAT::Structure> structure);
     void AddCompGroup(CompGroup cg);
-    LogNormalDist Loss(double im, bool consider_collapse);
-    LogNormalDist TotalLoss(double im);
-    std::vector<LogNormalDist> DeaggregatedLoss(double im);
-    std::vector<LogNormalDist> LossesByFate(double im);
+    LogNormalDist Cost(double im, bool consider_collapse);
+    LogNormalDist TotalCost(double im);
+    std::vector<LogNormalDist> DeaggregatedCost(double im);
+    std::vector<LogNormalDist> CostsByFate(double im);
     void setRebuildCost(LogNormalDist cost);
     LogNormalDist getRebuildCost(void);
     void setDemolitionCost(LogNormalDist cost);
     LogNormalDist getDemolitionCost(void);
-    LogNormalDist AnnualLoss(void);
+    LogNormalDist AnnualCost(void);
     std::list<std::list<CompGroup *>> ComponentsByEDP(void);
     std::list<std::list<CompGroup *>> ComponentsByFragility(void);
 private:
