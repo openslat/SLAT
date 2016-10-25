@@ -64,8 +64,8 @@ BOOST_AUTO_TEST_CASE(structure_empty)
 {
     Structure s("empty");
 
-    s.Loss(0.9, false).get_mean_X();
-    s.Loss(0.9, true).get_mean_X();
+    s.Cost(0.9, false).get_mean_X();
+    s.Cost(0.9, true).get_mean_X();
 }
 
 
@@ -74,8 +74,8 @@ BOOST_AUTO_TEST_CASE(structure_just_rb_cost)
     Structure s("just rb");
 
     s.setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(100, 0.1));
-    s.Loss(0.9, false).get_mean_X();
-    s.Loss(0.9, true).get_mean_X();
+    s.Cost(0.9, false).get_mean_X();
+    s.Cost(0.9, true).get_mean_X();
 }
 
 BOOST_AUTO_TEST_CASE(structure_one_cg)
@@ -194,7 +194,7 @@ BOOST_AUTO_TEST_CASE(structure_one_cg)
         {2.5, 19.9578, 0.350795}};
 
     for (size_t i=0; i < sizeof(c_data)/sizeof(c_data[0]); i++) {
-        LogNormalDist dist = s.Loss(c_data[i].im, true);
+        LogNormalDist dist = s.Cost(c_data[i].im, true);
         BOOST_CHECK_CLOSE( c_data[i].mean_x, dist.get_mean_X(), 0.1);
         BOOST_CHECK_CLOSE( c_data[i].sd_ln_x, dist.get_sigma_lnX(), 0.1);
     }
@@ -303,7 +303,7 @@ BOOST_AUTO_TEST_CASE(structure_one_cg)
         {2.5, 14.7233, 0.350687}};
 
     for (size_t i=0; i < sizeof(nc_data)/sizeof(nc_data[0]); i++) {
-        LogNormalDist dist = s.Loss(nc_data[i].im, false);
+        LogNormalDist dist = s.Cost(nc_data[i].im, false);
         BOOST_CHECK_CLOSE( nc_data[i].mean_x, dist.get_mean_X(), 0.1);
         BOOST_CHECK_CLOSE( nc_data[i].sd_ln_x, dist.get_sigma_lnX(), 0.1);
     }

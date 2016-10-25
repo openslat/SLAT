@@ -20,7 +20,7 @@
 #include "maq.h"
 
 namespace SLAT {
-    Structure::Structure(std::string name) : AnnualLoss([this] (void) { return this->calc_AnnualLoss(); })
+    Structure::Structure(std::string name) : AnnualCost([this] (void) { return this->calc_AnnualCost(); })
     {
         this->name = name;
     };
@@ -36,7 +36,7 @@ namespace SLAT {
         components.push_back(cg);
     }
     
-    LogNormalDist Structure::LossNC(double im)
+    LogNormalDist Structure::CostNC(double im)
     {
         std::vector<LogNormalDist> dists;
         int num_components = 0;
@@ -50,9 +50,9 @@ namespace SLAT {
         return LogNormalDist::AddDistributions(dists);
     }
 
-    LogNormalDist Structure::Loss(double im, bool consider_collapse)
+    LogNormalDist Structure::Cost(double im, bool consider_collapse)
     {
-        LogNormalDist nc_dist = LossNC(im);
+        LogNormalDist nc_dist = CostNC(im);
 
         if (consider_collapse) {
             std::vector<LogNormalDist> dists = { nc_dist, rebuild_cost };
@@ -70,53 +70,53 @@ namespace SLAT {
         }
     }
 
-    LogNormalDist Structure::TotalLoss(double im)
+    LogNormalDist Structure::TotalCost(double im)
     {
-        LogNormalDist loss_repair = LossNC(im);
-        LogNormalDist loss_demolition = demolition_cost;
-        LogNormalDist loss_collapse = rebuild_cost;
+        LogNormalDist cost_repair = CostNC(im);
+        LogNormalDist cost_demolition = demolition_cost;
+        LogNormalDist cost_collapse = rebuild_cost;
         
-        double E_loss = loss_repair.get_mean_X() * this->im->pRepair(im)
-            + loss_demolition.get_mean_X() * this->im->pDemolition(im)
-            + loss_collapse.get_mean_X() * this->im->pCollapse(im); 
+        double E_cost = cost_repair.get_mean_X() * this->im->pRepair(im)
+            + cost_demolition.get_mean_X() * this->im->pDemolition(im)
+            + cost_collapse.get_mean_X() * this->im->pCollapse(im); 
         
-        double E_sq_loss_repair = loss_repair.get_mean_X() * loss_repair.get_mean_X() +
-            loss_repair.get_sigma_X() * loss_repair.get_sigma_X();
-        double E_sq_loss_demolition = loss_demolition.get_mean_X() * loss_demolition.get_mean_X() +
-            loss_demolition.get_sigma_X() * loss_demolition.get_sigma_X();
-        double E_sq_loss_collapse = loss_collapse.get_mean_X() * loss_collapse.get_mean_X() +
-            loss_collapse.get_sigma_X() * loss_collapse.get_sigma_X();
+        double E_sq_cost_repair = cost_repair.get_mean_X() * cost_repair.get_mean_X() +
+            cost_repair.get_sigma_X() * cost_repair.get_sigma_X();
+        double E_sq_cost_demolition = cost_demolition.get_mean_X() * cost_demolition.get_mean_X() +
+            cost_demolition.get_sigma_X() * cost_demolition.get_sigma_X();
+        double E_sq_cost_collapse = cost_collapse.get_mean_X() * cost_collapse.get_mean_X() +
+            cost_collapse.get_sigma_X() * cost_collapse.get_sigma_X();
 
-        double E_sq_loss = E_sq_loss_repair * this->im->pRepair(im)
-            + E_sq_loss_demolition * this->im->pDemolition(im)
-            + E_sq_loss_collapse * this->im->pCollapse(im);
+        double E_sq_cost = E_sq_cost_repair * this->im->pRepair(im)
+            + E_sq_cost_demolition * this->im->pDemolition(im)
+            + E_sq_cost_collapse * this->im->pCollapse(im);
         
-        double var_loss = E_sq_loss - E_loss * E_loss;
-        double sigma_loss = sqrt(var_loss);
-        return LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(E_loss, sigma_loss);
+        double var_cost = E_sq_cost - E_cost * E_cost;
+        double sigma_cost = sqrt(var_cost);
+        return LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(E_cost, sigma_cost);
     }
 
-    std::pair<LogNormalDist, LogNormalDist> Structure::DeaggregatedLoss(double im)
+    std::pair<LogNormalDist, LogNormalDist> Structure::DeaggregatedCost(double im)
     {
-        LogNormalDist loss_nc = LossNC(im);
-        LogNormalDist loss_c = rebuild_cost;
-        LogNormalDist loss_demo = demolition_cost;
+        LogNormalDist cost_nc = CostNC(im);
+        LogNormalDist cost_c = rebuild_cost;
+        LogNormalDist cost_demo = demolition_cost;
         double p = this->im->pCollapse(im);
 
-        return std::make_pair(loss_nc.WeighDistribution(1.0 - p),
-                              loss_c.WeighDistribution(p));
+        return std::make_pair(cost_nc.WeighDistribution(1.0 - p),
+                              cost_c.WeighDistribution(p));
     }
 
-    Structure::LOSSES Structure::LossesByFate(double im)
+    Structure::COSTS Structure::CostsByFate(double im)
     {
-        LOSSES result;
-        result.repair = LossNC(im).WeighDistribution(this->im->pRepair(im));
+        COSTS result;
+        result.repair = CostNC(im).WeighDistribution(this->im->pRepair(im));
         result.demolition = demolition_cost.WeighDistribution(this->im->pDemolition(im));
         result.collapse = rebuild_cost.WeighDistribution(this->im->pCollapse(im));
         return result;
     }
 
-    LogNormalDist Structure::calc_AnnualLoss(void)
+    LogNormalDist Structure::calc_AnnualCost(void)
     {
         double mu=NAN, beta=NAN;
 #pragma omp parallel sections
@@ -126,9 +126,9 @@ namespace SLAT {
                 Integration::MAQ_RESULT result;
                 result = Integration::MAQ(
                     [this] (double im) -> double {
-                        double loss = this->Loss(im, true).get_mean_X();
+                        double cost = this->Cost(im, true).get_mean_X();
                         double deriv = std::abs(this->im->DerivativeAt(im));
-                        return loss * deriv;
+                        return cost * deriv;
                     });
                 if (result.successful) {
                     mu = result.integral;
@@ -140,10 +140,10 @@ namespace SLAT {
                 Integration::MAQ_RESULT result;
                 result = Integration::MAQ(
                     [this] (double im) -> double {
-                        double loss = this->Loss(im, true).get_mean_X();
-                        double sd = this->Loss(im, true).get_sigma_X();
+                        double cost = this->Cost(im, true).get_mean_X();
+                        double sd = this->Cost(im, true).get_sigma_X();
                         double deriv = std::abs(this->im->DerivativeAt(im));
-                        return (loss * loss + sd * sd) * deriv ;
+                        return (cost * cost + sd * sd) * deriv ;
                     });
                 if (result.successful) {
                     beta = result.integral;

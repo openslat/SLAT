@@ -706,7 +706,7 @@ int main(int argc, char **argv)
              im != im_vals.end();
              im++)
         {
-            LogNormalDist loss = building->TotalLoss(*im);
+            LogNormalDist loss = building->TotalCost(*im);
 
             outfile << setw(15) << *im 
                     << setw(15) << loss.get_mean_X()
@@ -730,7 +730,7 @@ int main(int argc, char **argv)
              im != im_vals.end();
              im++)
         {
-            Structure::LOSSES losses = building->LossesByFate(*im);
+            Structure::COSTS losses = building->CostsByFate(*im);
 
             outfile << setw(15) << *im 
                     << setw(15) << losses.repair.get_mean_X()
@@ -744,7 +744,7 @@ int main(int argc, char **argv)
         // Record the expected loss for the structure:
         ofstream outfile("c-results/ann_loss");
         outfile << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
-        LogNormalDist annloss = building->AnnualLoss();
+        LogNormalDist annloss = building->AnnualCost();
         outfile << setw(15) << annloss.get_mean_X()
                 << setw(15) << annloss.get_sigma_lnX()
                 << endl;

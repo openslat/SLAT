@@ -24,12 +24,12 @@ namespace SLAT {
 
         void AddCompGroup(std::shared_ptr<CompGroup> cg);
 
-        LogNormalDist Loss(double im, bool consider_collapse);
-        LogNormalDist TotalLoss(double im);
-        typedef struct { LogNormalDist repair, demolition, collapse; } LOSSES;
-        LOSSES LossesByFate(double im);
-        Caching::CachedValue<LogNormalDist> AnnualLoss;
-        std::pair<LogNormalDist, LogNormalDist> DeaggregatedLoss(double im);
+        LogNormalDist Cost(double im, bool consider_collapse);
+        LogNormalDist TotalCost(double im);
+        typedef struct { LogNormalDist repair, demolition, collapse; } COSTS;
+        COSTS CostsByFate(double im);
+        Caching::CachedValue<LogNormalDist> AnnualCost;
+        std::pair<LogNormalDist, LogNormalDist> DeaggregatedCost(double im);
         void setRebuildCost(LogNormalDist dist) { rebuild_cost = dist; };
         LogNormalDist getRebuildCost(void) { return rebuild_cost; };
         void setDemolitionCost(LogNormalDist dist) { demolition_cost = dist; };
@@ -40,8 +40,8 @@ namespace SLAT {
         };
     private:
         std::string name;
-        LogNormalDist calc_AnnualLoss(void);
-        LogNormalDist LossNC(double im);
+        LogNormalDist calc_AnnualCost(void);
+        LogNormalDist CostNC(double im);
         std::vector<std::shared_ptr<CompGroup>> components;
         std::shared_ptr<IM> im;
         LogNormalDist rebuild_cost;
