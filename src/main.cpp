@@ -184,7 +184,9 @@ int main(int argc, char **argv)
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
 
     {
-        std::shared_ptr<CompGroup> component_group = std::make_shared<CompGroup>(rel, fragFn, costFn, 1);
+        std::shared_ptr<CompGroup> component_group = std::make_shared<CompGroup>(rel, fragFn, costFn, 
+                                                                                 std::shared_ptr<LossFn>(),
+                                                                                 1);
         ofstream outfile("cost_edp.dat");
     
         outfile << setw(10) << "EDP" << setw(15) << "Cost"

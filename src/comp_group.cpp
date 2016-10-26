@@ -21,6 +21,7 @@ namespace SLAT {
     CompGroup::CompGroup(std::shared_ptr<EDP> edp,
                          std::shared_ptr<FragilityFn> frag_fn, 
                          std::shared_ptr<LossFn> cost_fn,
+                         std::shared_ptr<LossFn> delay_fn,
                          int count,
                          std::string name)
         :E_cost_IM([this] (double im) {

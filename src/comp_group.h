@@ -25,13 +25,15 @@ namespace SLAT {
         CompGroup(std::shared_ptr<EDP> edp,
                   std::shared_ptr<FragilityFn> frag_fn,
                   std::shared_ptr<LossFn> cost_fn, 
+                  std::shared_ptr<LossFn> delay_fn, 
                   int count,
                   std::string name);
         CompGroup(std::shared_ptr<EDP> edp,
                   std::shared_ptr<FragilityFn> frag_fn,
                   std::shared_ptr<LossFn> cost_fn, 
+                  std::shared_ptr<LossFn> delay_fn, 
                   int count)
-            : CompGroup(edp, frag_fn, cost_fn, count, "Anonymous CompGroup")
+            : CompGroup(edp, frag_fn, cost_fn, delay_fn, count, "Anonymous CompGroup")
         {
         }
 

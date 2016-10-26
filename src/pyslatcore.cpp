@@ -483,7 +483,8 @@ CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count
     return new CompGroup(std::make_shared<SLAT::CompGroup>( 
                              edp.relationship, 
                              frag_fn.fragility,
-                             loss_fn.loss, 
+                             loss_fn.loss,
+                             std::shared_ptr<SLAT::LossFn>(), 
                              count, name));
 }
     

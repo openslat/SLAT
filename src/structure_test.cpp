@@ -56,7 +56,7 @@ std::shared_ptr<CompGroup> CreateCG(double a, double count)
                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
     
-    return std::make_shared<CompGroup>(CreateEDP(a), fragFn, lossFn, count);
+    return std::make_shared<CompGroup>(CreateEDP(a), fragFn, lossFn, std::shared_ptr<LossFn>(), count);
 }
 
 

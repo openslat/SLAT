@@ -438,6 +438,7 @@ int main(int argc, char **argv)
                 edp_rels[data[i].edp],
                 fragility_functions[data[i].frag],
                 cost_functions[data[i].frag],
+                std::shared_ptr<LossFn>(),
                 data[i].count,
                 name.str());
 #pragma omp critical

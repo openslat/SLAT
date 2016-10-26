@@ -38,13 +38,19 @@ BOOST_AUTO_TEST_CASE(comp_group_edp_test)
                                                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
                                                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
                                                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)}));
-    std::shared_ptr<LossFn> lossFn(new LossFn(
+    std::shared_ptr<LossFn> costFn(new LossFn(
                                        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
     
-    CompGroup  component_group(rel, fragFn, lossFn, 1);
+    std::shared_ptr<LossFn> delayFn(new LossFn(
+                                        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.0, 0.1),
+                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(2.0, 0.2), 
+                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(3.0, 0.3),
+                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(4.0, 0.4)}));
+
+    CompGroup  component_group(rel, fragFn, costFn, delayFn, 1);
 
     const struct { double edp, mu_loss, sd_loss; } test_data[] = {
         { 1.0000E-03, 1.9387E-07, 3.480 }, { 2.5051E-03, 5.8299E-04, 2.025 }, 
