@@ -70,7 +70,7 @@ for i in range(1, N_EDPS + 1):
                     at)
 
 
-# Fragility, loss, component group:
+# Fragility, cost, component group:
 FRAG_DATA = [[2, [[0.005, 0.40], [0.010, 0.45], [0.030, 0.50], [0.060, 0.60]],
               [[1143, 0.42], [3214, 0.40], [4900, 0.37], [4900, 0.37]]],
              [3, [[0.004, 0.39], [0.0095, 0.25], [0.02, 0.62], [0.0428, 0.36]],
@@ -264,13 +264,13 @@ for comp in COMPONENT_DATA:
     else:
         at_values = costedpvalues2
         
-    pyslat.MakeRecorder("LOSSEDP_{:>03}_REC".format(id), 'lossedp', cg,
-                    {'filename': ResultsFile("loss_{}_edp.txt".format(id))},
+    pyslat.MakeRecorder("COSTEDP_{:>03}_REC".format(id), 'costedp', cg,
+                    {'filename': ResultsFile("cost_{}_edp.txt".format(id))},
                     None, 
                     at_values)
 
-    pyslat.MakeRecorder("LOSSIM_{:>03}_REC".format(id), 'lossim', cg,
-                    {'filename': ResultsFile("loss_{}_im.txt".format(id))},
+    pyslat.MakeRecorder("COSTIM_{:>03}_REC".format(id), 'costim', cg,
+                    {'filename': ResultsFile("cost_{}_im.txt".format(id))},
                     None, 
                     costimvalues)
 
@@ -289,13 +289,13 @@ for comp in COMPONENT_DATA:
                     None, 
                     None)
 
-    pyslat.MakeRecorder("LOSSRATE_{:>03}_REC".format(id), 'lossrate', cg,
-                    {'filename': ResultsFile("loss_rate_{}.txt".format(id))},
+    pyslat.MakeRecorder("COSTRATE_{:>03}_REC".format(id), 'costrate', cg,
+                    {'filename': ResultsFile("cost_rate_{}.txt".format(id))},
                     None, 
                     pyslat.frange(1E-4, 1.2, 4.8E-3))
 
-    pyslat.MakeRecorder("ANNLOSS_{:>03}_REC".format(id), "annloss", cg,
-                    {'filename': ResultsFile("annual_loss_{}.txt".format(id)),
+    pyslat.MakeRecorder("ANNCOST_{:>03}_REC".format(id), "anncost", cg,
+                    {'filename': ResultsFile("annual_cost_{}.txt".format(id)),
                      "lambda": 0.06},
                     None, 
                     pyslat.frange(1.0, 100.0, 1.0))
@@ -310,38 +310,38 @@ for comp in COMPONENT_DATA:
 #                None, 
 #                linvalues)
 
-pyslat.MakeRecorder("annloss", 
-                "structloss", 
+pyslat.MakeRecorder("anncost", 
+                "structcost", 
                 pyslat.structure.lookup("building"),
-                {'filename': "py-results/ann_loss", 'append': False, 'structloss-type': 'annual'},
+                {'filename': "py-results/ann_cost", 'append': False, 'structcost-type': 'annual'},
                 ['mean_x', 'sd_ln_x'], 
                 None)
 
-pyslat.MakeRecorder("STRUCTLOSS_FATE_REC", 
-                "structloss", 
+pyslat.MakeRecorder("STRUCTCOST_FATE_REC", 
+                "structcost", 
                 pyslat.structure.lookup("building"),
-                {'filename': "py-results/loss_by_fate", 'append': False, 'structloss-type': 'by-fate'},
+                {'filename': "py-results/cost_by_fate", 'append': False, 'structcost-type': 'by-fate'},
                 None, 
                 linvalues)
 
-pyslat.MakeRecorder("STRUCTLOSS_EDP_REC", 
-                "structloss", 
+pyslat.MakeRecorder("STRUCTCOST_EDP_REC", 
+                "structcost", 
                 pyslat.structure.lookup("building"),
-                {'filename': "py-results/loss_by_edp", 'append': False, 'structloss-type': 'by-edp'},
+                {'filename': "py-results/cost_by_edp", 'append': False, 'structcost-type': 'by-edp'},
                 None, 
                 linvalues)
 
-pyslat.MakeRecorder("STRUCTLOSS_COMP_REC", 
-                "structloss", 
+pyslat.MakeRecorder("STRUCTCOST_COMP_REC", 
+                "structcost", 
                 pyslat.structure.lookup("building"),
-                {'filename': "py-results/loss_by_frag", 'append': False, 'structloss-type': 'by-frag'},
+                {'filename': "py-results/cost_by_frag", 'append': False, 'structcost-type': 'by-frag'},
                 None, 
                 linvalues)
 
-pyslat.MakeRecorder("TOTALLOSS_COMP_REC", 
-                "totalloss", 
+pyslat.MakeRecorder("TOTALCOST_COMP_REC", 
+                "totalcost", 
                 pyslat.structure.lookup("building"),
-                {'filename': "py-results/total_loss", 'append': False},
+                {'filename': "py-results/total_cost", 'append': False},
                 None, 
                 linvalues)
 

@@ -96,21 +96,21 @@ integration_method : MAQ;
 
 recorder_command : RECORDER recorder_id ((recorder_type ID recorder_at recorder_cols?) 
                   | ((DSRATE | COLLRATE) ID)
-                  | ((LOSSRATE | COLLAPSE | DEAGG | TOTALLOSS) ID recorder_at)
-		  | (ANNLOSS ID recorder_at LAMBDA_FLAG lambda_value)
-		  | (STRUCTLOSS ID ((structloss_type recorder_at) | (ANNUAL_FLAG lognormal_options)) recorder_cols?))
+                  | ((COSTRATE | COLLAPSE | DEAGG | TOTALCOST) ID recorder_at)
+		  | (ANNCOST ID recorder_at LAMBDA_FLAG lambda_value)
+		  | (STRUCTCOST ID ((structcost_type recorder_at) | (ANNUAL_FLAG lognormal_options)) recorder_cols?))
 		  print_options?;
 lambda_value: numerical_scalar;
 recorder_id : ID;
 
 recorder_type : DETFN | PROBFN | IMRATE | EDPIM | EDPRATE | DSEDP
-	      | DSIM | LOSSDS | LOSSEDP | LOSSIM;
+	      | DSIM | LOSSDS | COSTEDP | COSTIM;
 recorder_at : float_array | (FLOAT_VAL COLON FLOAT_VAL COLON FLOAT_VAL) 
 	    | python_script | var_ref | counted_at;
 counted_at: FLOAT_VAL COLON FLOAT_VAL (LINFLAG | LOGFLAG) INTEGER;
 
 float_array : FLOAT_VAL (COMMA FLOAT_VAL)*;
-structloss_type : BY_FATE_FLAG | BY_EDP_FLAG | BY_FRAG_FLAG;
+structcost_type : BY_FATE_FLAG | BY_EDP_FLAG | BY_FRAG_FLAG;
 
 col_spec : placement_type | spread_type | scalar;
 recorder_cols : COLS_FLAG col_spec (COMMA col_spec)*;

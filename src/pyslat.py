@@ -525,7 +525,7 @@ class recorder:
             self._at = list(at)
 
         if not type == 'dsrate' and not type == 'collrate' \
-           and not type == 'structloss' \
+           and not type == 'structcost' \
            and at==None:
             raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
 
@@ -536,8 +536,8 @@ class recorder:
             columns.append("E(DS)")
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_ln_x', 'sd_ln_x']
-        elif (type == 'lossedp' or type =='lossim' \
-              or type == 'totalloss') \
+        elif (type == 'costedp' or type =='costim' \
+              or type == 'totalcost') \
              and columns == None:
             columns = ['mean_x', 'sd_ln_x']
         self._columns = columns
@@ -587,11 +587,11 @@ class recorder:
                       'dsedp': ['EDP', None],
                       'dsim': ['IM', None],
                       'lossds': ['DS', None],
-                      'lossedp': ['EDP', None],
-                      'lossim': ['IM', None],
-                      'annloss': ['t', ["E[ALt]"]],
-                      'lossrate': ['t', 'Rate'],
-                      'totalloss': ['IM', None],
+                      'costedp': ['EDP', None],
+                      'costim': ['IM', None],
+                      'anncost': ['t', ["E[ALt]"]],
+                      'costrate': ['t', 'Rate'],
+                      'totalcost': ['IM', None],
                       'collapse': ['IM', ['p(Demolition)', 'p(Collapse)']],
                       'deagg': ['IM', ['mean_nc', 'sd_nc', 'mean_c', 'sd_c']]}
         
@@ -626,11 +626,11 @@ class recorder:
                     for y in yvals:
                         line = "{}{:>15.6}".format(line, y)
                     line = "{}{:>15.6}".format(line, sum(yvals))
-                elif self._type == 'annloss':
+                elif self._type == 'anncost':
                     annual_loss = self._function.E_cost(int(x), self._options['lambda'])
                     line = "{}{:>15.6}".format(line, annual_loss)
-                elif self._type == 'lossrate':
-                    loss_rate = self._function.lambda_loss(x)
+                elif self._type == 'costrate':
+                    loss_rate = self._function.lambda_cost(x)
                     line = "{}{:>15.6}".format(line, loss_rate)
                 elif self._type == 'collapse':
                     p = self._function.pDemolition(x)
@@ -656,35 +656,35 @@ class recorder:
                             else:
                                 yval = "----"
                         elif y == 'mean_x':
-                            if self._type == 'lossedp':
-                                yval = self._function.E_Loss_EDP(x)
-                            elif self._type == 'lossim':
+                            if self._type == 'costedp':
+                                yval = self._function.E_Cost_EDP(x)
+                            elif self._type == 'costim':
                                 yval = self._function.E_Cost_IM(x)
-                            elif self._type == 'totalloss':
+                            elif self._type == 'totalcost':
                                 yval = self._function.TotalCost(x).mean()
                             else:
                                 yval = self._function.Mean(x)
                         elif y == 'mean_ln_x':
-                            if self._type == 'totalloss':
+                            if self._type == 'totalcost':
                                 yval = self._function.TotalCost(x).mean_ln()
                             else:
                                 yval = self._function.MeanLn(x)
                         elif y == 'median_x':
-                            if self._type == 'totalloss':
+                            if self._type == 'totalcost':
                                 yval = self._function.TotalCost(x).median()
                             else:
                                 yval = self._function.Median(x)
                         elif y == 'sd_ln_x':
-                            if self._type == 'lossedp':
+                            if self._type == 'costedp':
                                 yval = self._function.SD_ln_Cost_EDP(x)
-                            elif self._type == 'lossim':
+                            elif self._type == 'costim':
                                 yval = self._function.SD_ln_Cost_IM(x)
-                            elif self._type == 'totalloss':
+                            elif self._type == 'totalcost':
                                 yval = self._function.TotalCost(x).sd_ln()
                             else:
                                 yval = self._function.SD_ln(x)
                         elif y == 'sd_x':
-                            if self._type == 'totalloss':
+                            if self._type == 'totalcost':
                                 yval = self._function.TotalCost(x).sd()
                             else:
                                 yval = self._function.SD(x)
@@ -730,9 +730,9 @@ class CollRateRecorder(recorder):
         print("{:>15}{:>30}{:>30}".format(self._function.id(), self._function.DemolitionRate(),
                                           self._function.CollapseRate()))
 
-class StructLossRecorder(recorder):
+class StructcostRecorder(recorder):
     def __init__(self, id, type, function, options, columns, at):
-        if  (not options['structloss-type'] == 'annual') \
+        if  (not options['structcost-type'] == 'annual') \
             and at==None:
             raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
 
@@ -743,10 +743,10 @@ class StructLossRecorder(recorder):
 
 
     def generate_output(self):
-        if self._options['structloss-type'] == 'annual':
+        if self._options['structcost-type'] == 'annual':
             line1 = ""
             line2 = ""
-            annual_loss = self._function.AnnualLoss()
+            annual_loss = self._function.AnnualCost()
             for y_label in self._columns:
                 line1 = "{}{:>15}".format(line1, y_label)
                 if y_label=='mean_x':
@@ -762,7 +762,7 @@ class StructLossRecorder(recorder):
                 line2 = "{}{:>15.6}".format(line2, value)
             print(line1)
             print(line2)
-        elif self._options['structloss-type'] == 'by-edp':
+        elif self._options['structcost-type'] == 'by-edp':
             components = self._function.ComponentsByEDP();
             groups = dict()
             for c in components:
@@ -810,7 +810,7 @@ class StructLossRecorder(recorder):
                 print(line)
             
                 
-        elif self._options['structloss-type'] == 'by-frag':
+        elif self._options['structcost-type'] == 'by-frag':
             components = self._function.ComponentsByFragility();
             groups = dict()
             for c in components:
@@ -858,7 +858,7 @@ class StructLossRecorder(recorder):
                 print(line)
                 
 
-        elif self._options['structloss-type'] == 'by-fate':
+        elif self._options['structcost-type'] == 'by-fate':
             x_label = self._function.get_IM().id()
             y_label = self._columns
             fates = ['repair', 'demo', 'coll']
@@ -873,7 +873,7 @@ class StructLossRecorder(recorder):
                 line = "{:>15.6}".format(x)
                 for f in fates:
                     if f == 'repair':
-                        dist = self._function.CostssByFate(x)[0]
+                        dist = self._function.CostsByFate(x)[0]
                     elif f == 'demo':
                         dist = self._function.CostsByFate(x)[1]
                     elif f == 'coll':
@@ -901,8 +901,8 @@ class StructLossRecorder(recorder):
 def MakeRecorder(id, type, function, options, columns, at):
     if (type == 'collrate'):
         return CollRateRecorder(id, type, function, options, columns, at)
-    elif (type == 'structloss'):
-        return StructLossRecorder(id, type, function, options, columns, at)
+    elif (type == 'structcost'):
+        return StructcostRecorder(id, type, function, options, columns, at)
     else:
         return recorder(id, type, function, options, columns, at)
     

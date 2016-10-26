@@ -36,7 +36,7 @@ class SlatInterpreter(slatParserListener):
     # Enter a parse tree produced by slatParser#command.
     def enterCommand(self, ctx:slatParser.CommandContext):
         self._stack = []
-        #print(ctx.getText())
+        print(ctx.getText())
     
     # Exit a parse tree produced by slatParser#command.
     def exitCommand(self, ctx:slatParser.CommandContext):
@@ -446,18 +446,18 @@ class SlatInterpreter(slatParserListener):
             type = type.getText()
         elif ctx.DSRATE():
             type = "dsrate"
-        elif ctx.ANNLOSS():
-            type = "annloss"
-        elif ctx.LOSSRATE():
-            type = 'lossrate'
-        elif ctx.TOTALLOSS():
-            type = 'totalloss'
+        elif ctx.ANNCOST():
+            type = "anncost"
+        elif ctx.COSTRATE():
+            type = 'costrate'
+        elif ctx.TOTALCOST():
+            type = 'totalcost'
         elif ctx.COLLAPSE():
             type = 'collapse'
         elif ctx.COLLRATE():
             type = 'collrate'
-        elif ctx.STRUCTLOSS():
-            type = 'structloss'
+        elif ctx.STRUCTCOST():
+            type = 'structcost'
         elif ctx.DEAGG():
             type = 'deagg'
         else:
@@ -466,20 +466,20 @@ class SlatInterpreter(slatParserListener):
             print("---------------")
             print(ctx.DSRATE())
             print("---------------")
-            print(ctx)
+            print(ctx.recorder_type())
             print("---------------")
             raise ValueError("Unhandled recorder type: {}".format(type))
 
-        if type == 'structloss':
-            if ctx.structloss_type():
-                if ctx.structloss_type().BY_FATE_FLAG():
-                    options['structloss-type'] = 'by-fate'
-                elif ctx.structloss_type().BY_EDP_FLAG():
-                    options['structloss-type'] = 'by-edp'
-                if ctx.structloss_type().BY_FRAG_FLAG():
-                    options['structloss-type'] = 'by-frag'
+        if type == 'structcost':
+            if ctx.structcost_type():
+                if ctx.structcost_type().BY_FATE_FLAG():
+                    options['structcost-type'] = 'by-fate'
+                elif ctx.structcost_type().BY_EDP_FLAG():
+                    options['structcost-type'] = 'by-edp'
+                if ctx.structcost_type().BY_FRAG_FLAG():
+                    options['structcost-type'] = 'by-frag'
             elif ctx.ANNUAL_FLAG():
-                options['structloss-type'] = 'annual'
+                options['structcost-type'] = 'annual'
                 cols = []
                 for key, value in self._stack.pop().items():
                     if key == 'mu':
@@ -496,6 +496,7 @@ class SlatInterpreter(slatParserListener):
                         elif value == pyslat.LOGNORMAL_SIGMA_TYPE.SD_X:
                             c = "sd_x"
                         cols.append(c)
+                cols.sort()
                 
         id = ctx.ID().getText()
 
@@ -509,10 +510,10 @@ class SlatInterpreter(slatParserListener):
             function = pyslat.im.lookup(id)
         elif type == 'edpim' or type == 'edprate':
             function = pyslat.edp.lookup(id)
-        elif type == 'lossds' or type == 'lossedp' or type == 'lossim' \
-             or type == 'annloss' or type == 'lossrate':
+        elif type == 'lossds' or type == 'costedp' or type == 'costim' \
+             or type == 'anncost' or type == 'costrate':
             function = pyslat.compgroup.lookup(id)
-        elif type == 'structloss' or type == 'deagg' or type == 'totalloss':
+        elif type == 'structcost' or type == 'deagg' or type == 'totalcost':
             function = pyslat.structure.lookup(id)
         else:
             raise ValueError("Unhandled recorder type")

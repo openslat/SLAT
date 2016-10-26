@@ -177,17 +177,17 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "DS-EDP table written.";
     }
 
-    std::shared_ptr<LossFn> lossFn = std::make_shared<LossFn>(
+    std::shared_ptr<LossFn> costFn = std::make_shared<LossFn>(
         std::vector<LogNormalDist>({ LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
 
     {
-        std::shared_ptr<CompGroup> component_group = std::make_shared<CompGroup>(rel, fragFn, lossFn, 1);
-        ofstream outfile("loss_edp.dat");
+        std::shared_ptr<CompGroup> component_group = std::make_shared<CompGroup>(rel, fragFn, costFn, 1);
+        ofstream outfile("cost_edp.dat");
     
-        outfile << setw(10) << "EDP" << setw(15) << "Loss"
+        outfile << setw(10) << "EDP" << setw(15) << "Cost"
                 << setw(15) << "SD(ln)" << endl;
 
         for (int i=1; i < 200; i++) {
@@ -198,10 +198,10 @@ int main(int argc, char **argv)
                     << setw(15) << component_group->SD_ln_cost_EDP(edp) << endl;
         }
         outfile.close();
-        BOOST_LOG(logger) << "LOSS-EDP table written." << endl;
+        BOOST_LOG(logger) << "COST-EDP table written." << endl;
 
-        outfile.open("loss_im.dat");
-        outfile << setw(10) << "IM" << setw(15) << "Loss"
+        outfile.open("cost_im.dat");
+        outfile << setw(10) << "IM" << setw(15) << "Cost"
                 << setw(15) << "SD(ln)" << endl;
         for (int i=0; i < 250; i++) {
             double im = (i + 1)/ 100.;
@@ -209,46 +209,46 @@ int main(int argc, char **argv)
                     << setw(15) << component_group->SD_ln_cost_IM(im) << endl;
         }
         outfile.close();
-        BOOST_LOG(logger) << "LOSS-IM table written." << endl;
+        BOOST_LOG(logger) << "COST-IM table written." << endl;
 
-        std::cout << "Expected Annual Loss: " << component_group->E_annual_cost() << std::endl;
+        std::cout << "Expected Annual Cost: " << component_group->E_annual_cost() << std::endl;
         
-        outfile.open("annual_loss.dat");
-        outfile << setw(10) << "Year" << setw(15) << "Loss" << endl;
+        outfile.open("annual_cost.dat");
+        outfile << setw(10) << "Year" << setw(15) << "Cost" << endl;
         for (int year=0; year <= 100; year++) {
             outfile << setw(10) << year << setw(15) << component_group->E_cost(year, 0.06) << endl;
         }
         outfile.close();
-        BOOST_LOG(logger) << "annual loss table written." << endl;
+        BOOST_LOG(logger) << "annual cost table written." << endl;
 
-        outfile.open("loss_rate.dat");
-        outfile << setw(10) << "Loss" << setw(15) << "Rate" << std::endl;
+        outfile.open("cost_rate.dat");
+        outfile << setw(10) << "Cost" << setw(15) << "Rate" << std::endl;
         for (int i=0; i < 250; i++) {
-            double loss = 1E-4 + i * (1.2 - 1E-4) / 250;
-            outfile << setw(10) << loss << setw(15) << component_group->lambda_cost(loss) << std::endl;
+            double cost = 1E-4 + i * (1.2 - 1E-4) / 250;
+            outfile << setw(10) << cost << setw(15) << component_group->lambda_cost(cost) << std::endl;
         }
         outfile.close();
-        BOOST_LOG(logger) << "LOSS-RATE table written." << endl;
+        BOOST_LOG(logger) << "COST-RATE table written." << endl;
 
 
         Structure structure("structure");
         structure.AddCompGroup(component_group);
         structure.setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
         {
-            LogNormalDist loss = structure.Cost(0, false);
-            std::cout << "Structure Loss: " << loss.get_mu_lnX() << ", " << loss.get_sigma_lnX() << std::endl;
+            LogNormalDist cost = structure.Cost(0, false);
+            std::cout << "Structure Cost: " << cost.get_mu_lnX() << ", " << cost.get_sigma_lnX() << std::endl;
         }
         {
-            LogNormalDist loss = structure.Cost(0, true);
-            std::cout << "Structure Loss: " << loss.get_mu_lnX() << ", " << loss.get_sigma_lnX() << std::endl;
+            LogNormalDist cost = structure.Cost(0, true);
+            std::cout << "Structure Cost: " << cost.get_mu_lnX() << ", " << cost.get_sigma_lnX() << std::endl;
         }
         {
-            LogNormalDist loss = structure.Cost(1, false);
-            std::cout << "Structure Loss: " << loss.get_mu_lnX() << ", " << loss.get_sigma_lnX() << std::endl;
+            LogNormalDist cost = structure.Cost(1, false);
+            std::cout << "Structure Cost: " << cost.get_mu_lnX() << ", " << cost.get_sigma_lnX() << std::endl;
         }
         {
-            LogNormalDist loss = structure.Cost(1, true);
-            std::cout << "Structure Loss: " << loss.get_mu_lnX() << ", " << loss.get_sigma_lnX() << std::endl;
+            LogNormalDist cost = structure.Cost(1, true);
+            std::cout << "Structure Cost: " << cost.get_mu_lnX() << ", " << cost.get_sigma_lnX() << std::endl;
         }
     }
 }
