@@ -41,12 +41,17 @@ namespace SLAT {
                  return LogNormalDist::AddWeightedDistributions(this->cost_fn->LossFns(), 
                                                                 this->frag_fn->pHighest(edp)); 
              }, name + std::string("::cost_EDP_dist")),
+         delay_EDP_dist([this] (double edp) {
+                 return LogNormalDist::AddWeightedDistributions(this->delay_fn->LossFns(), 
+                                                                this->frag_fn->pHighest(edp)); 
+             }, name + std::string("::delay_EDP_dist")),
          Rate([this] (void) {
                  return this->calc_Rate();
              }, name + std::string("::Rate")),
          edp(edp),
          frag_fn(frag_fn),
          cost_fn(cost_fn),
+         delay_fn(delay_fn),
          count(count)
     {
         this->name = name;
@@ -70,6 +75,16 @@ namespace SLAT {
     double CompGroup::SD_cost_EDP(double edp)
     {
         return cost_EDP_dist(edp).get_sigma_X();
+    }
+
+    double CompGroup::E_delay_EDP(double edp)
+    {
+        return this->count * delay_EDP_dist(edp).get_mean_X();
+    }
+
+    double CompGroup::SD_ln_delay_EDP(double edp)
+    {
+        return delay_EDP_dist(edp).get_sigma_lnX();
     }
 
     static double wrapper(double x,  std::function<double (double)> *f)
