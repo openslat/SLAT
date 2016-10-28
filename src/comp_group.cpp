@@ -30,6 +30,12 @@ namespace SLAT {
          SD_ln_cost_IM([this] (double im) {
                  return this->SD_ln_cost_IM_calc(im);
              }, name + std::string("::SD_ln_cost_IM")),
+         E_delay_IM([this] (double im) {
+                return this->E_delay_IM_calc(im);
+            }, name + std::string("::E_cost_IM")),
+         SD_ln_delay_IM([this] (double im) {
+                 return this->SD_ln_delay_IM_calc(im);
+             }, name + std::string("::SD_ln_cost_IM")),
          E_annual_cost([this] (void) {
 
                  return this->E_annual_cost_calc();
@@ -87,6 +93,11 @@ namespace SLAT {
         return delay_EDP_dist(edp).get_sigma_lnX();
     }
 
+    double CompGroup::SD_delay_EDP(double edp)
+    {
+        return delay_EDP_dist(edp).get_sigma_X();
+    }
+    
     static double wrapper(double x,  std::function<double (double)> *f)
     {
         return (*f)(x);
@@ -232,6 +243,90 @@ namespace SLAT {
         } else {
             return 0; //NAN;
         }
+    }
+
+    double CompGroup::E_delay_IM_calc(double im)
+    {
+        Integration::MAQ_RESULT result;
+        result =  Integration::MAQ(
+            [this, im] (double edp) -> double {
+                double result;
+                if (edp == 0) {
+                    result = 0;
+                } else {
+                    std::function<double (double)> local_lambda = [this, im] (double x) {
+                        double result = this->edp->P_exceedence(im, x);
+                        return result;
+                    };
+                    gsl_function F;
+                    F.function = (double (*)(double, void *))wrapper;
+                    F.params = &local_lambda;
+                    double deriv, abserror;
+                    gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                    if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                    if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+                    
+                    double d = deriv;
+                    //double d = this->edp->P_exceedence(im, edp);
+                    double p = this->E_delay_EDP(edp);
+                    result = p * std::abs(d);
+                }
+                return result;
+            }, local_settings); 
+        if (result.successful) {
+            return result.integral;
+        } else {
+            return 0; //NAN;;
+        };
+    }
+
+    double CompGroup::SD_ln_delay_IM_calc(double im)
+    {
+        Integration::MAQ_RESULT result;
+        result =  Integration::MAQ(
+            [this, im] (double edp) -> double {
+                double result;
+                if (edp == 0) {
+                    result = 0;
+                } else {
+                    std::function<double (double)> local_lambda = [this, im] (double x) {
+                        if (false) {
+                            double pExceedence = this->edp->P_exceedence(im, x);
+                            double pRepair = this->edp->Base_Rate()->pRepair(im);
+                            return pExceedence * pRepair + (1.0 - pRepair);
+                        } else {
+                            double result = this->edp->P_exceedence(im, x);
+                            return result;
+                        }
+                    };
+                    gsl_function F;
+                    F.function = (double (*)(double, void *))wrapper;
+                    F.params = &local_lambda;
+                    double deriv, abserror;
+                    gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                    if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                    if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+
+                    double d = deriv;
+                    //double d = this->edp->P_exceedence(im, edp);
+                    double e = this->E_delay_EDP(edp) / this->count;
+                    double sd;
+                    sd = this->SD_delay_EDP(edp);
+                    
+                    result = (e * e + sd * sd) * std::abs(d);
+                }
+                return result;
+            }, local_settings); 
+        if (result.successful) {
+            double mean_x = E_delay_IM(im) / this->count;
+
+            double sigma_x = sqrt(result.integral  - mean_x * mean_x);
+            double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
+            if (mean_x == 0) sigma_lnx = 0; //sigma_x;
+            return sigma_lnx;
+        } else {
+            return 0; //NAN;;
+        };
     }
 
     std::shared_ptr<FragilityFn> CompGroup::FragFn(void)

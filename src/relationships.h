@@ -77,12 +77,14 @@ namespace SLAT {
 
         void SetCollapse(std::shared_ptr<LogNormalDist> new_collapse)
         {
+            CollapseRate.ClearCache();
             collapse = new_collapse;
             notify_change();
         }
 
         void SetCollapse(LogNormalDist new_collapse)
         {
+            CollapseRate.ClearCache();
             collapse = std::make_shared<LogNormalDist>(new_collapse);
             notify_change();
         }
@@ -103,12 +105,14 @@ namespace SLAT {
 
         void SetDemolition(std::shared_ptr<LogNormalDist> new_demolition)
         {
+            DemolitionRate.ClearCache();
             demolition = new_demolition;
             notify_change();
         }
 
         void SetDemolition(LogNormalDist new_demolition)
         {
+            DemolitionRate.ClearCache();
             demolition = std::make_shared<LogNormalDist>(new_demolition);
             notify_change();
         }
