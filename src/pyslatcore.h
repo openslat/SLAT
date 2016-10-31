@@ -157,6 +157,8 @@ public:
     double SD_ln_Cost_IM(double edp);
     double E_annual_cost(void);
     double E_cost(int years, double discount_rate);
+    double E_Delay_IM(double edp);
+    double SD_ln_Delay_IM(double edp);
     std::vector<double> pDS_IM(double im);
     std::vector<double> Rate(void);
     double lambda_cost(double cost);

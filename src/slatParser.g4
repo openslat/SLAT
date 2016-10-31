@@ -104,7 +104,7 @@ lambda_value: numerical_scalar;
 recorder_id : ID;
 
 recorder_type : DETFN | PROBFN | IMRATE | EDPIM | EDPRATE | DSEDP
-	      | DSIM | LOSSDS | COSTEDP | COSTIM;
+	      | DSIM | LOSSDS | COSTEDP | COSTIM | DELAYIM;
 recorder_at : float_array | (FLOAT_VAL COLON FLOAT_VAL COLON FLOAT_VAL) 
 	    | python_script | var_ref | counted_at;
 counted_at: FLOAT_VAL COLON FLOAT_VAL (LINFLAG | LOGFLAG) INTEGER;

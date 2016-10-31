@@ -42,6 +42,7 @@ DSEDP : 'dsedp';
 DSIM : 'dsim';
 LOSSDS : 'lossds';
 COSTEDP : 'costedp';
+DELAYIM: 'delayim';
 COSTIM : 'costim';
 STRUCTCOST: 'structcost';
 DSRATE : 'dsrate';

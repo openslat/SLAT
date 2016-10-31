@@ -51,6 +51,8 @@ BOOST_AUTO_TEST_CASE(comp_group_edp_test)
                                                 LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(23.0, 0.35)}));
 
     CompGroup  component_group(rel, fragFn, costFn, delayFn, 1);
+    CompGroup  component_group_no_cost(rel, fragFn, NULL, delayFn, 1);
+    CompGroup  component_group_no_delay(rel, fragFn, costFn, NULL, 1);
 
     const struct { double edp, mu_loss, sd_loss, mu_delay, sd_delay; } test_data[] = {
         { 0.001, 1.93873040272997e-07, 3.47987132394903, 9.6936520552257e-06,  3.46258637879091 },
@@ -185,6 +187,20 @@ BOOST_AUTO_TEST_CASE(comp_group_edp_test)
         BOOST_CHECK_CLOSE(component_group.SD_ln_delay_EDP(test_data[i].edp), 
                           test_data[i].sd_delay,
                           0.5);
+
+        BOOST_CHECK(std::isnan(component_group_no_cost.E_cost_EDP(test_data[i].edp)));
+        BOOST_CHECK(std::isnan(component_group_no_cost.E_cost_EDP(test_data[i].edp)));
+        BOOST_CHECK_EQUAL(component_group.E_delay_EDP(test_data[i].edp), 
+                          component_group_no_cost.E_delay_EDP(test_data[i].edp));
+        BOOST_CHECK_EQUAL(component_group.SD_ln_delay_EDP(test_data[i].edp), 
+                          component_group_no_cost.SD_ln_delay_EDP(test_data[i].edp));
+
+        BOOST_CHECK_EQUAL(component_group.E_cost_EDP(test_data[i].edp), 
+                          component_group_no_delay.E_cost_EDP(test_data[i].edp));
+        BOOST_CHECK_EQUAL(component_group.SD_ln_cost_EDP(test_data[i].edp), 
+                          component_group_no_delay.SD_ln_cost_EDP(test_data[i].edp));
+        BOOST_CHECK(std::isnan(component_group_no_delay.E_delay_EDP(test_data[i].edp)));
+        BOOST_CHECK(std::isnan(component_group_no_delay.E_delay_EDP(test_data[i].edp)));
     }
 
     const struct { double im, mu_cost, sd_cost, mu_delay, sd_delay; } im_test_data[] = {

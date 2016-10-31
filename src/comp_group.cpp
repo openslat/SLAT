@@ -44,12 +44,20 @@ namespace SLAT {
                  return this->lambda_cost_calc(cost);
              }, name + std::string("::lambda_cost")),
          cost_EDP_dist([this] (double edp) {
-                 return LogNormalDist::AddWeightedDistributions(this->cost_fn->LossFns(), 
-                                                                this->frag_fn->pHighest(edp)); 
+                 if (this->cost_fn  == NULL) {
+                     return LogNormalDist();
+                 } else {
+                     return LogNormalDist::AddWeightedDistributions(this->cost_fn->LossFns(), 
+                                                                    this->frag_fn->pHighest(edp)); 
+                 }
              }, name + std::string("::cost_EDP_dist")),
          delay_EDP_dist([this] (double edp) {
-                 return LogNormalDist::AddWeightedDistributions(this->delay_fn->LossFns(), 
-                                                                this->frag_fn->pHighest(edp)); 
+                 if (this->delay_fn  == NULL) {
+                     return LogNormalDist();
+                 } else {
+                     return LogNormalDist::AddWeightedDistributions(this->delay_fn->LossFns(), 
+                                                                    this->frag_fn->pHighest(edp)); 
+                 }
              }, name + std::string("::delay_EDP_dist")),
          Rate([this] (void) {
                  return this->calc_Rate();

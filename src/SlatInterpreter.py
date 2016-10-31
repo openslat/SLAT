@@ -511,7 +511,8 @@ class SlatInterpreter(slatParserListener):
         elif type == 'edpim' or type == 'edprate':
             function = pyslat.edp.lookup(id)
         elif type == 'lossds' or type == 'costedp' or type == 'costim' \
-             or type == 'anncost' or type == 'costrate':
+             or type == 'delayim' or type == 'anncost' \
+             or type == 'costrate':
             function = pyslat.compgroup.lookup(id)
         elif type == 'structcost' or type == 'deagg' or type == 'totalcost':
             function = pyslat.structure.lookup(id)

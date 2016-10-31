@@ -473,6 +473,16 @@ double CompGroup::lambda_cost(double cost)
     return wrapper->lambda_cost(cost); 
 };
 
+double CompGroup::E_Delay_IM(double edp)
+{
+    return wrapper->E_delay_IM(edp); 
+};
+
+double CompGroup::SD_ln_Delay_IM(double edp)
+{
+    return wrapper->SD_ln_delay_IM(edp); 
+};
+
 bool CompGroup::AreSame(const CompGroup &other)
 {
     return this->wrapper == other.wrapper;

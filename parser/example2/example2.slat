@@ -413,8 +413,9 @@ recorder EDPIM_21_REC edpim EDP.21 $linvalues --cols mean_x, sd_ln_x results/im_
 recorder EDPRATE_21_REC edprate EDP.21 $edpoddvalues results/edp_21_rate.txt --new;
 
 
-recorder COSTEDP.1_REC costedp COMPGROUP.001 $costedpvalues1 results/cost_1_edp.txt --new;
+recorder DELAYIM.1_REC delayim COMPGROUP.001 $costimvalues results/delay_1_im.txt --new;
 recorder COSTIM.1_REC costim COMPGROUP.001 $costimvalues results/cost_1_im.txt --new;
+recorder COSTEDP.1_REC costedp COMPGROUP.001 $costedpvalues1 results/cost_1_edp.txt --new;
 recorder DSRATE_001_REC dsrate COMPGROUP.001 results/ds_rate_001.txt --new;
 recorder DSEDP.1_REC dsedp COMPGROUP.001 0.0:0.01:0.200 results/ds_edp_1.txt --new;
 recorder DSIM.1_REC dsim COMPGROUP.001 $linvalues results/ds_im_1.txt --new;

@@ -11,6 +11,7 @@
  */
 #include <gsl/gsl_cdf.h>
 #include "lognormaldist.h"
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <stdexcept>

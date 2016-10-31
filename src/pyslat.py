@@ -437,6 +437,12 @@ class compgroup:
     def pDS_IM(self, im):
         return self._func.pDS_IM(im)
 
+    def E_Delay_IM(self, x):
+        return self._func.E_Delay_IM(x)
+
+    def SD_ln_Delay_IM(self, x):
+        return self._func.SD_ln_Delay_IM(x)
+
     def Rate(self):
         return self._func.Rate()
 
@@ -537,6 +543,7 @@ class recorder:
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_ln_x', 'sd_ln_x']
         elif (type == 'costedp' or type =='costim' \
+              or type == 'delayim' \
               or type == 'totalcost') \
              and columns == None:
             columns = ['mean_x', 'sd_ln_x']
@@ -589,12 +596,13 @@ class recorder:
                       'lossds': ['DS', None],
                       'costedp': ['EDP', None],
                       'costim': ['IM', None],
+                      'delayim': ['IM', None],
                       'anncost': ['t', ["E[ALt]"]],
                       'costrate': ['t', 'Rate'],
                       'totalcost': ['IM', None],
                       'collapse': ['IM', ['p(Demolition)', 'p(Collapse)']],
                       'deagg': ['IM', ['mean_nc', 'sd_nc', 'mean_c', 'sd_c']]}
-        
+
             x_label = labels[self._type][0]
             if x_label == 'IM':
                 if isinstance(self._function, im):
@@ -613,6 +621,7 @@ class recorder:
             for y in y_label:
                     line = "{}{:>15}".format(line, y)
             print(line)
+
 
             for x in self._at:
                 line = "{:>15.6}".format(x)
@@ -660,6 +669,8 @@ class recorder:
                                 yval = self._function.E_Cost_EDP(x)
                             elif self._type == 'costim':
                                 yval = self._function.E_Cost_IM(x)
+                            elif self._type == 'delayim':
+                                yval = self._function.E_Delay_IM(x)
                             elif self._type == 'totalcost':
                                 yval = self._function.TotalCost(x).mean()
                             else:
@@ -679,6 +690,8 @@ class recorder:
                                 yval = self._function.SD_ln_Cost_EDP(x)
                             elif self._type == 'costim':
                                 yval = self._function.SD_ln_Cost_IM(x)
+                            elif self._type == 'delayim':
+                                yval = self._function.SD_ln_Delay_IM(x)
                             elif self._type == 'totalcost':
                                 yval = self._function.TotalCost(x).sd_ln()
                             else:
@@ -705,7 +718,6 @@ class recorder:
                         yval = "*****"
                     line = "{}{:>15.6}".format(line, yval)
                 print(line)
-                
             
     def run(self):
         #print("RUN {}".format(self))
