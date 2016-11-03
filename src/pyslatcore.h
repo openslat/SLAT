@@ -78,6 +78,7 @@ private:
 
 LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
                                  double sigma, LOGNORMAL_SIGMA_TYPE sigma_type);
+LogNormalDist *MakeLogNormalDist(void);
 
 
 
@@ -131,7 +132,8 @@ public:
 private:
     std::shared_ptr<SLAT::FragilityFn> fragility;
     friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
-                                    LossFn loss_fn, int count, std::string name);
+                                    LossFn cost_fn, LossFn delay_fn,
+                                    int count, std::string name);
 };
 
 FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions);
@@ -143,7 +145,7 @@ public:
 private:
     std::shared_ptr<SLAT::LossFn> loss;
     friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
-                                    LossFn loss_fn, int count, std::string name);
+                                    LossFn cost_fn, LossFn delay_fn, int count, std::string name);
 };
 
 
@@ -152,7 +154,9 @@ public:
     CompGroup(std::shared_ptr<SLAT::CompGroup> group);
     std::string get_Name();
     double E_Cost_EDP(double edp);
+    double E_Delay_EDP(double edp);
     double SD_ln_cost_EDP(double edp);
+    double SD_ln_Delay_EDP(double edp);
     double E_Cost_IM(double edp);
     double SD_ln_Cost_IM(double edp);
     double E_annual_cost(void);
@@ -170,7 +174,7 @@ private:
     friend class Structure;
 };
 
-CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn cost_fn, int count, std::string name);
+CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn cost_fn, LossFn delay_fn, int count, std::string name);
 
 class Structure {
 public:

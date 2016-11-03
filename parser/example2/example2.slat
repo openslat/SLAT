@@ -180,7 +180,14 @@ lossfn COST.214 simple [  200.0, 0.63],
 		       [10000.0, 0.63]
               --mu mean_x --sd sd_ln_x;
 
+lossfn DELAY.002 simple [  57.772, 0.39],
+                        [ 91.2312, 0.3097],
+	 	        [ 108.65175, 0.2964],
+	 	        [ 108.65175, 0.2964]
+              --mu mean_x --sd sd_ln_x;
+
 compgroup COMPGROUP.001 EDP.02 FRAG.002 COST.002 20;
+compgroup COMPGROUP.001 EDP.02 FRAG.002 COST.002 DELAY.002 20;
 compgroup COMPGROUP.002 EDP.02 FRAG.002 COST.002 18;
 compgroup COMPGROUP.003 EDP.04 FRAG.002 COST.002 4;
 compgroup COMPGROUP.004 EDP.04 FRAG.002 COST.002 18;
@@ -413,9 +420,10 @@ recorder EDPIM_21_REC edpim EDP.21 $linvalues --cols mean_x, sd_ln_x results/im_
 recorder EDPRATE_21_REC edprate EDP.21 $edpoddvalues results/edp_21_rate.txt --new;
 
 
-recorder DELAYIM.1_REC delayim COMPGROUP.001 $costimvalues results/delay_1_im.txt --new;
 recorder COSTIM.1_REC costim COMPGROUP.001 $costimvalues results/cost_1_im.txt --new;
+recorder DELAYIM.1_REC delayim COMPGROUP.001 $costimvalues results/delay_1_im.txt --new;
 recorder COSTEDP.1_REC costedp COMPGROUP.001 $costedpvalues1 results/cost_1_edp.txt --new;
+recorder DELAYEDP.1_REC delayedp COMPGROUP.001 $costedpvalues1 results/delay_1_edp.txt --new;
 recorder DSRATE_001_REC dsrate COMPGROUP.001 results/ds_rate_001.txt --new;
 recorder DSEDP.1_REC dsedp COMPGROUP.001 0.0:0.01:0.200 results/ds_edp_1.txt --new;
 recorder DSIM.1_REC dsim COMPGROUP.001 $linvalues results/ds_im_1.txt --new;

@@ -368,6 +368,14 @@ LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
     return new LogNormalDist(temp);
 }
 
+LogNormalDist *MakeLogNormalDist(void)
+{
+   SLAT::LogNormalDist dist;
+    std::shared_ptr<SLAT::LogNormalDist> temp = std::make_shared<SLAT::LogNormalDist>(dist);
+    return new LogNormalDist(temp);
+}
+
+
 FragilityFn::FragilityFn(std::shared_ptr<SLAT::FragilityFn> function)
 {
     fragility = function;
@@ -473,6 +481,15 @@ double CompGroup::lambda_cost(double cost)
     return wrapper->lambda_cost(cost); 
 };
 
+double CompGroup::E_Delay_EDP(double edp)
+{
+    return wrapper->E_delay_EDP(edp); 
+};
+
+double CompGroup::SD_ln_Delay_EDP(double edp) { 
+    return wrapper->SD_ln_delay_EDP(edp); 
+};
+
 double CompGroup::E_Delay_IM(double edp)
 {
     return wrapper->E_delay_IM(edp); 
@@ -488,13 +505,14 @@ bool CompGroup::AreSame(const CompGroup &other)
     return this->wrapper == other.wrapper;
 }
 
-CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn loss_fn, int count, std::string name)
+CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn cost_fn, LossFn delay_fn, int count, std::string name)
 {
+    std::cout << "> MakeCompGroup()" << std::endl;
     return new CompGroup(std::make_shared<SLAT::CompGroup>( 
                              edp.relationship, 
                              frag_fn.fragility,
-                             loss_fn.loss,
-                             std::shared_ptr<SLAT::LossFn>(), 
+                             cost_fn.loss,
+                             delay_fn.loss, 
                              count, name));
 }
     

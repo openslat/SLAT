@@ -44,6 +44,7 @@ class SlatInterpreter(slatParserListener):
             raise  ValueError("Error--stack not empty: {}".format(self._stack))
         if len(self._stack_stack) > 0:
             raise ValueError("Error--stack stack not empty: {}".format(self._stack_stack))
+        print("..........")
 
     # Exit a parse tree produced by slatParser#title_command.
     def exitTitle_command(self, ctx:slatParser.Title_commandContext):
@@ -289,15 +290,18 @@ class SlatInterpreter(slatParserListener):
 
     # Exit a parse tree produced by slatParser#compgroup_command.
     def exitCompgroup_command(self, ctx:slatParser.Compgroup_commandContext):
-        compgroup_id = ctx.ID(0).getText()
-        edp_id =  ctx.ID(1).getText()
-        frag_id =  ctx.ID(2).getText()
-        loss_id =  ctx.ID(3).getText()
+        print(" > exitCompgroup_command()")
+        compgroup_id = ctx.group_id().getText()
+        edp_id =  ctx.edp_id().getText()
+        frag_id =  ctx.frag_id().getText()
+        cost_id =  ctx.cost_id().getText()
+        delay_id = ctx.delay_id() and ctx.delay_id().getText()
         count = int(ctx.INTEGER().getText())
         pyslat.compgroup(compgroup_id,
                          pyslat.edp.lookup(edp_id),
                          pyslat.fragfn.lookup(frag_id),
-                         pyslat.lossfn.lookup(loss_id),
+                         pyslat.lossfn.lookup(cost_id),
+                         delay_id and pyslat.lossfn.lookup(delay_id),
                          count)
 
     def exitStructure_command(self, ctx:slatParser.Structure_commandContext):
@@ -511,7 +515,8 @@ class SlatInterpreter(slatParserListener):
         elif type == 'edpim' or type == 'edprate':
             function = pyslat.edp.lookup(id)
         elif type == 'lossds' or type == 'costedp' or type == 'costim' \
-             or type == 'delayim' or type == 'anncost' \
+             or type == 'delayedp' or type == 'delayim' \
+             or type == 'anncost' \
              or type == 'costrate':
             function = pyslat.compgroup.lookup(id)
         elif type == 'structcost' or type == 'deagg' or type == 'totalcost':
@@ -604,6 +609,7 @@ class SlatInterpreter(slatParserListener):
         filename = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"')
         pyslat.ImportIMFn(id, filename)
 
+
 def main(argv):
     for file in argv[1:]:
         print("File:", file)
@@ -615,6 +621,7 @@ def main(argv):
         lexer = slatLexer(input)
         stream = CommonTokenStream(lexer)
         parser = slatParser(stream)
+        parser._errHandler = BailErrorStrategy()
         tree = parser.script()
         #print(tree.toStringTree(recog=parser))
         listener = SlatInterpreter()
