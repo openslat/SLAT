@@ -50,6 +50,7 @@ public:
 LogNormalDist AddDistributions(std::vector<LogNormalDist> dists);
 LogNormalDist * MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
                                   double sigma, LOGNORMAL_SIGMA_TYPE sigma_type);
+LogNormalDist * MakeLogNormalDist(void);
 
 class IM {
 public:
@@ -112,6 +113,10 @@ public:
     double SD_ln_Cost_IM(double edp);
     double E_annual_cost(void);
     double E_cost(int years, double discount_rate);
+    double E_Delay_EDP(double edp);
+    double SD_ln_Delay_EDP(double edp);
+    double E_Delay_IM(double edp);
+    double SD_ln_Delay_IM(double edp);
     std::vector<double> pDS_IM(double im);
     std::vector<double> Rate(void);
     double lambda_cost(double cost);
@@ -123,7 +128,7 @@ private:
     friend class Structure;
 };
 
-CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn cost_fn, int count, std::string name);
+CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn cost_fn, LossFn delay_fn, int count, std::string name);
 
 class Structure {
 public:

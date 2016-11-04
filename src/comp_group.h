@@ -25,13 +25,15 @@ namespace SLAT {
         CompGroup(std::shared_ptr<EDP> edp,
                   std::shared_ptr<FragilityFn> frag_fn,
                   std::shared_ptr<LossFn> cost_fn, 
+                  std::shared_ptr<LossFn> delay_fn, 
                   int count,
                   std::string name);
         CompGroup(std::shared_ptr<EDP> edp,
                   std::shared_ptr<FragilityFn> frag_fn,
                   std::shared_ptr<LossFn> cost_fn, 
+                  std::shared_ptr<LossFn> delay_fn, 
                   int count)
-            : CompGroup(edp, frag_fn, cost_fn, count, "Anonymous CompGroup")
+            : CompGroup(edp, frag_fn, cost_fn, delay_fn, count, "Anonymous CompGroup")
         {
         }
 
@@ -39,15 +41,22 @@ namespace SLAT {
         double SD_ln_cost_EDP(double edp);
         double SD_cost_EDP(double edp);
 
+        double E_delay_EDP(double edp);
+        double SD_ln_delay_EDP(double edp);
+        double SD_delay_EDP(double edp);
+        
         ~CompGroup() {};
         Integration::IntegrationSettings local_settings;
         static Integration::IntegrationSettings class_settings;
         
         Caching::CachedFunction<double, double> E_cost_IM;
         Caching::CachedFunction<double, double> SD_ln_cost_IM;
+        Caching::CachedFunction<double, double> E_delay_IM;
+        Caching::CachedFunction<double, double> SD_ln_delay_IM;
         Caching::CachedValue<double> E_annual_cost;
         Caching::CachedFunction<double, double> lambda_cost;
         Caching::CachedFunction<LogNormalDist, double> cost_EDP_dist;
+        Caching::CachedFunction<LogNormalDist, double> delay_EDP_dist;
         std::shared_ptr<FragilityFn> FragFn(void);
         double E_cost(int years, double discount_rate);
         double mean_ln_cost_EDP(double edp);
@@ -63,11 +72,15 @@ namespace SLAT {
         std::shared_ptr<EDP> edp;
         std::shared_ptr<FragilityFn> frag_fn;
         std::shared_ptr<LossFn> cost_fn;
+        std::shared_ptr<LossFn> delay_fn;
         int count;
 
         double E_cost_IM_calc(double im);
         double SD_ln_cost_IM_calc(double im);
 
+        double E_delay_IM_calc(double im);
+        double SD_ln_delay_IM_calc(double im);
+        
         double E_annual_cost_calc(void);
         double lambda_cost_calc(double cost);
 

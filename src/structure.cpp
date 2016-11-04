@@ -27,8 +27,11 @@ namespace SLAT {
     
     void  Structure::AddCompGroup(std::shared_ptr<CompGroup> cg)
     {
+        //std::cout << "> Structure::AddCompGroup(): " << cg << std::endl;
         if (components.size() == 0) {
+            //std::cout << "...getIM()" << std::endl;
             im = cg->getIM();
+            //std::cout << "...done()" << std::endl;
         }
         if (cg->getIM() != im) {
             throw std::invalid_argument("WRONG IM");

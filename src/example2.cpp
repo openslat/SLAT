@@ -326,35 +326,54 @@ int main(int argc, char **argv)
     map<int, shared_ptr<FragilityFn>> fragility_functions;
     map<shared_ptr<FragilityFn>, int> fragility_keys;
     map<int, shared_ptr<LossFn>> cost_functions;
+    map<int, shared_ptr<LossFn>> delay_functions;
     {
-        struct DATA {double id; vector<pair<double, double>> frag; vector<pair<double, double>> cost;};
+        struct DATA {
+            double id;
+            vector<pair<double, double>> frag; 
+            vector<pair<double, double>> cost;
+            vector<pair<double, double>> delay;
+        };
         vector<struct DATA> data = {
             {2, {{0.005, 0.40}, {0.010, 0.45}, {0.030, 0.50}, {0.060, 0.60}},
-             {{1143, 0.42}, {3214, 0.40}, {4900, 0.37}, {4900, 0.37}}},
+             {{1143, 0.42}, {3214, 0.40}, {4900, 0.37}, {4900, 0.37}},
+             {{57.772, 0.39}, {91.2312, 0.3097}, {108.65175, 0.2964}, {108.65175, 0.2964}}},
             {3, {{0.004, 0.39}, {0.0095, 0.25}, {0.02, 0.62}, {0.0428, 0.36}},
-             {{590, 0.59}, {2360, 0.63}, {5900, 0.67}, {5900, 0.67}}},
+             {{590, 0.59}, {2360, 0.63}, {5900, 0.67}, {5900, 0.67}},
+             {{NAN, NAN}, {NAN, NAN}, {NAN, NAN}, {NAN, NAN}}},
             {105, {{0.0039, 0.17}, {0.0085, 0.23}},
-             {{29.9, 0.2}, {178.7, 0.2}}},
+             {{29.9, 0.2}, {178.7, 0.2}},
+             {{NAN, NAN}, {NAN, NAN}}},
             {107, {{0.04, 0.36}, {0.046, 0.33}},
-             { {131.7, 0.26}, {131.7, 0.26}}},
+             { {131.7, 0.26}, {131.7, 0.26}},
+             { {NAN, NAN}, {NAN, NAN}}},
             {203, {{0.55, 0.4}, {1.0, 0.4}},
-             {{46.73131, 0.4}, {282.4967, 0.4}}},
+             {{46.73131, 0.4}, {282.4967, 0.4}},
+             {{NAN, NAN}, {NAN, NAN}}},
             {211, {{32, 1.4}},
-             {{900, 1.0}}},
+             {{900, 1.0}},
+             {{NAN, NAN}}},
             {208, {{1.2, 0.6}},
-             {{1783.333, 0.4}}},
+             {{1783.333, 0.4}},
+             {{NAN, NAN}}},
             {209, {{0.8, 0.5}},
-             {{40000, 0.4}}},
+             {{40000, 0.4}},
+             {{NAN, NAN}}},
             {205, {{1.6, 0.5}},
-             {{196666.7, 0.6}}},
+             {{196666.7, 0.6}},
+             {{NAN, NAN}}},
             {204, {{0.4, 0.3}},
-             {{56000, 0.2}}},
+             {{56000, 0.2}},
+             {{NAN, NAN}}},
             {106, {{0.0039, 0.17}},
-             {{16.7, 0.2}}},
+             {{16.7, 0.2}},
+             {{NAN, NAN}}},
             {108, {{0.004, 0.5}, {0.008, 0.5}, {0.025, 0.5}, {0.050, 0.5}},
-             {{  250.0, 0.63}, { 1000.0, 0.63}, { 5000.0, 0.63}, {10000.0, 0.63}}},
+             {{  250.0, 0.63}, { 1000.0, 0.63}, { 5000.0, 0.63}, {10000.0, 0.63}},
+             {{  NAN, NAN}, { NAN, NAN}, { NAN, NAN}, {NAN, NAN}}},
             {214, {{0.25, 0.6}, {0.50, 0.6}, {1.00, 0.6}, {2.00, 0.6}},
-             {{ 200.0, 0.63}, { 1200.0, 0.63}, { 3600.0, 0.63}, {10000.0, 0.63}}}};
+             {{ 200.0, 0.63}, { 1200.0, 0.63}, { 3600.0, 0.63}, {10000.0, 0.63}},
+             {{ NAN, NAN}, { NAN, NAN}, { NAN, NAN}, {NAN, NAN}}}};
 
 #pragma omp parallel for
         for (size_t i=0; i < data.size(); i++) {
@@ -382,6 +401,16 @@ int main(int argc, char **argv)
                 }
 #pragma omp critical
                 cost_functions[data[i].id] = make_shared<LossFn>(dists);
+            }
+            {
+                vector<LogNormalDist> dists(data[i].frag.size());
+                
+                for (size_t j=0; j < data[i].delay.size(); j++) {
+                    dists[j] = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(
+                        data[i].delay[j].first, data[i].delay[j].second);
+                }
+#pragma omp critical
+                delay_functions[data[i].id] = make_shared<LossFn>(dists);
             }
         }
     }
@@ -438,6 +467,7 @@ int main(int argc, char **argv)
                 edp_rels[data[i].edp],
                 fragility_functions[data[i].frag],
                 cost_functions[data[i].frag],
+                delay_functions[data[i].frag],
                 data[i].count,
                 name.str());
 #pragma omp critical
@@ -457,13 +487,6 @@ int main(int argc, char **argv)
 
             {
                 // Record COST-EDP relationship
-                stringstream path;
-                path << "c-results/cost_" << n << "_edp.txt";
-            
-                ofstream outfile(path.str());
-                outfile << setw(15) << "EDP" << setw(15) << "mean_x" 
-                        << setw(15) << "sd_ln_x" << endl;
-        
                 vector<double> edp_vals;
 
                 if (n == 1 || n == 2 || n == 86 || n == 96) {
@@ -481,8 +504,14 @@ int main(int argc, char **argv)
                 }
 
                 //cout << "BEFORE COST-EDP " << omp_get_wtime() << endl;
-        
                 {
+                    stringstream path;
+                    path << "c-results/cost_" << n << "_edp.txt";
+                    
+                    ofstream outfile(path.str());
+                    outfile << setw(15) << "EDP" << setw(15) << "mean_x" 
+                        << setw(15) << "sd_ln_x" << endl;
+        
                     double e[edp_vals.size()], sd[edp_vals.size()];
                     for (size_t i=0; i < edp_vals.size(); i++) {
 #pragma omp parallel for
@@ -501,6 +530,34 @@ int main(int argc, char **argv)
                     }
                 }
                 //cout << "AFTER COST-EDP " << omp_get_wtime() << endl;
+
+                //cout << "BEFORE DELAY-EDP " << omp_get_wtime() << endl;
+                if (n == 1) {
+                    stringstream path;
+                    path << "c-results/delay_" << n << "_edp.txt";
+                    
+                    ofstream outfile(path.str());
+                    outfile << setw(15) << "EDP" << setw(15) << "mean_x" 
+                        << setw(15) << "sd_ln_x" << endl;
+        
+                    double e[edp_vals.size()], sd[edp_vals.size()];
+                    for (size_t i=0; i < edp_vals.size(); i++) {
+#pragma omp parallel for
+                        for (size_t j=0; j < 16; j++) {
+                            double edp = edp_vals[i];
+                            e[i] = cg->E_delay_EDP(edp);
+                            sd[i] = cg->SD_ln_delay_EDP(edp);
+                        }
+                    }
+                    
+                    for (size_t i=0; i < edp_vals.size(); i++) {
+                        outfile << setw(15) << edp_vals[i]
+                                << setw(15) << e[i]
+                                << setw(15) << sd[i]
+                                << endl;
+                    }
+                }
+                //cout << "AFTER DELAY-EDP " << omp_get_wtime() << endl;
             }
 
             {
@@ -531,6 +588,34 @@ int main(int argc, char **argv)
                 //cout << "AFTER COST-IM " << omp_get_wtime() << endl;
             }
 
+            if (n == 1) {
+                // Record DELAY-IM relationship
+                stringstream path;
+                path << "c-results/delay_" << n << "_im.txt";
+            
+                ofstream outfile(path.str());
+                outfile << setw(15) << "IM.1" << setw(15) << "mean_x" 
+                        << setw(15) << "sd_ln_x" << endl;
+        
+                vector<double> im_vals = linrange(0.01, 3.0, 199);
+                double e[im_vals.size()], sd[im_vals.size()];
+                
+                //cout << "BEFORE DELAY-IM " << omp_get_wtime() << endl;
+#pragma omp parallel for
+                for (size_t i=0; i < im_vals.size(); i++) {
+                    e[i] = cg->E_delay_IM(im_vals[i]); 
+                    sd[i] = cg->SD_ln_delay_IM(im_vals[i]); 
+                }
+                    
+                for (size_t i=0; i < im_vals.size(); i++) {
+                    outfile << setw(15) << im_vals[i]
+                            << setw(15) << e[i]
+                            << setw(15) << sd[i]
+                            << endl;
+                }
+                //cout << "AFTER DELAY-IM " << omp_get_wtime() << endl;
+            }
+            
             {
                 // Record DS-EDP relationship
                 stringstream path;

@@ -75,7 +75,12 @@ lossfn_anon_array : LBRACKET parameter_array (COMMA parameter_array)* RBRACKET;
 lossfn_dict : LPAREN lossfn_heading COLON (COMMA lossfn_heading COLON parameter)* RPAREN;
 lossfn_named_array : LBRACKET lossfn_dict (COMMA lossfn_dict)* RBRACKET;
 
-compgroup_command : COMPGROUP ID ID ID ID INTEGER;
+compgroup_command : COMPGROUP group_id edp_id frag_id cost_id delay_id? INTEGER;
+group_id: ID;
+edp_id: ID;
+frag_id: ID;
+cost_id: ID;
+delay_id: ID;
 
 structure_command : STRUCTURE ID id_list;
 id_list: ID (COMMA ID)*;
@@ -104,7 +109,7 @@ lambda_value: numerical_scalar;
 recorder_id : ID;
 
 recorder_type : DETFN | PROBFN | IMRATE | EDPIM | EDPRATE | DSEDP
-	      | DSIM | LOSSDS | COSTEDP | COSTIM;
+	      | DSIM | LOSSDS | COSTEDP | COSTIM | DELAYIM | DELAYEDP;
 recorder_at : float_array | (FLOAT_VAL COLON FLOAT_VAL COLON FLOAT_VAL) 
 	    | python_script | var_ref | counted_at;
 counted_at: FLOAT_VAL COLON FLOAT_VAL (LINFLAG | LOGFLAG) INTEGER;

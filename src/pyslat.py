@@ -59,14 +59,20 @@ def MakeFragilityFn(parameters):
 def MakeLossFn(parameters):
     return pyslatcore.MakeLossFn(parameters)
 
-def MakeCompGroup(edp, frag_fn, cost_fn, count, name):
-    return pyslatcore.MakeCompGroup(edp, frag_fn, cost_fn, count, name)
+def MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, name):
+    print("MakeCompGroup: {} {} {} {} {} {}".format(edp, frag_fn, cost_fn, delay_fn, count, name))
+    if (delay_fn == None):
+        delay_fn = MakeLossFn([DefaultLogNormalDist()])
+    return pyslatcore.MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, name)
 
 def MakeStructure():
     return pyslatcore.MakeStructure()
 
 def MakeLogNormalDist(mu, mu_type, sigma, sigma_type):
     return pyslatcore.MakeLogNormalDist(mu, mu_type, sigma, sigma_type)
+
+def DefaultLogNormalDist():
+    return pyslatcore.MakeLogNormalDist()
 
 def IntegrationSettings(tolerance, max_evals):
     return pyslatcore.IntegrationSettings(tolerance, max_evals)
@@ -358,7 +364,10 @@ class lossfn:
 
         params = []
         for d in data:
-            params.append(MakeLogNormalDist(d[0], options['mu'], d[1], options['sd']))
+            if d[0]:
+                params.append(MakeLogNormalDist(d[0], options['mu'], d[1], options['sd']))
+            else:
+                params.append(DefaultLogNormalDist())
         self._func = MakeLossFn(params)
         if id != None:
             lossfn.defs[id] = self
@@ -378,16 +387,17 @@ class lossfn:
 class compgroup:
     defs = dict()
     
-    def __init__(self, id, edp, frag, cost, count):
-        print("> compgroup: {}, {}, {}, {}, {}".format(id, edp, frag, cost, count))
+    def __init__(self, id, edp, frag, cost, delay, count):
         self._id = id
         self._edp = edp
         self._frag = frag
         self._cost = cost
         self._count = count
+        self._delay = delay
         self._func = MakeCompGroup(edp.function(),
                                    frag.function(),
-                                   cost.function(),
+                                   cost and cost.function(),
+                                   delay and delay.function(),
                                    count, id)
         if id != None:
             compgroup.defs[id] = self
@@ -437,6 +447,18 @@ class compgroup:
     def pDS_IM(self, im):
         return self._func.pDS_IM(im)
 
+    def E_Delay_IM(self, x):
+        return self._func.E_Delay_IM(x)
+
+    def E_Delay_EDP(self, x):
+        return self._func.E_Delay_EDP(x)
+
+    def SD_ln_Delay_IM(self, x):
+        return self._func.SD_ln_Delay_IM(x)
+
+    def SD_ln_Delay_EDP(self, x):
+        return self._func.SD_ln_Delay_EDP(x)
+    
     def Rate(self):
         return self._func.Rate()
 
@@ -444,11 +466,12 @@ class compgroup:
         return(self._id)
         
     def __str__(self):
-        return("Component Group '{}' using {}, {}, and {} ({} component(s))".format(
+        return("Component Group '{}' using {}, {}, {}, and {} ({} component(s))".format(
             self._id, 
             self._edp.id(),
             self._frag.id(),
-            self._cost.id(),
+            self._cost and self._cost.id(),
+            self._delay and self._delay.id(),
             self._count))
 
 class structure:
@@ -517,6 +540,13 @@ class recorder:
     def __init__(self, id, type, function, options, columns, at):
         super().__init__()
 
+        print("recorder")
+        print("id: {}".format(id))
+        print("type: {}".format(type))
+        print("function: {}".format(function))
+        print("options: {}".format(options))
+        print("at: {}".format(at))
+
         self._type = type
         self._function = function
         self._options = options
@@ -537,6 +567,7 @@ class recorder:
         elif (type == 'probfn' or type == 'edpim') and columns == None:
             columns = ['mean_ln_x', 'sd_ln_x']
         elif (type == 'costedp' or type =='costim' \
+              or type == 'delayedp' or type == 'delayim' \
               or type == 'totalcost') \
              and columns == None:
             columns = ['mean_x', 'sd_ln_x']
@@ -589,12 +620,14 @@ class recorder:
                       'lossds': ['DS', None],
                       'costedp': ['EDP', None],
                       'costim': ['IM', None],
+                      'delayedp': ['EDP', None],
+                      'delayim': ['IM', None],
                       'anncost': ['t', ["E[ALt]"]],
                       'costrate': ['t', 'Rate'],
                       'totalcost': ['IM', None],
                       'collapse': ['IM', ['p(Demolition)', 'p(Collapse)']],
                       'deagg': ['IM', ['mean_nc', 'sd_nc', 'mean_c', 'sd_c']]}
-        
+
             x_label = labels[self._type][0]
             if x_label == 'IM':
                 if isinstance(self._function, im):
@@ -613,6 +646,7 @@ class recorder:
             for y in y_label:
                     line = "{}{:>15}".format(line, y)
             print(line)
+
 
             for x in self._at:
                 line = "{:>15.6}".format(x)
@@ -660,6 +694,10 @@ class recorder:
                                 yval = self._function.E_Cost_EDP(x)
                             elif self._type == 'costim':
                                 yval = self._function.E_Cost_IM(x)
+                            elif self._type == 'delayim':
+                                yval = self._function.E_Delay_IM(x)
+                            elif self._type == 'delayedp':
+                                yval = self._function.E_Delay_EDP(x)
                             elif self._type == 'totalcost':
                                 yval = self._function.TotalCost(x).mean()
                             else:
@@ -679,6 +717,10 @@ class recorder:
                                 yval = self._function.SD_ln_Cost_EDP(x)
                             elif self._type == 'costim':
                                 yval = self._function.SD_ln_Cost_IM(x)
+                            elif self._type == 'delayim':
+                                yval = self._function.SD_ln_Delay_IM(x)
+                            elif self._type == 'delayedp':
+                                yval = self._function.SD_ln_Delay_EDP(x)
                             elif self._type == 'totalcost':
                                 yval = self._function.TotalCost(x).sd_ln()
                             else:
@@ -705,7 +747,6 @@ class recorder:
                         yval = "*****"
                     line = "{}{:>15.6}".format(line, yval)
                 print(line)
-                
             
     def run(self):
         #print("RUN {}".format(self))
