@@ -364,7 +364,10 @@ class lossfn:
 
         params = []
         for d in data:
-            params.append(MakeLogNormalDist(d[0], options['mu'], d[1], options['sd']))
+            if d[0]:
+                params.append(MakeLogNormalDist(d[0], options['mu'], d[1], options['sd']))
+            else:
+                params.append(DefaultLogNormalDist())
         self._func = MakeLossFn(params)
         if id != None:
             lossfn.defs[id] = self
