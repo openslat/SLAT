@@ -23,9 +23,18 @@
 
 namespace SLAT {
     namespace Caching {
-        void Init_Caching(void);
-        void Add_Cache(void *cache, std::function<void (void)> clear_func);
-        void Remove_Cache(void *cache);
+        namespace Private {
+            /*
+             * Don't use anything from this namespace directly from outside this module:
+             */
+            void Init_Caching(void);
+            void Add_Cache(void *cache, std::function<void (void)> clear_func);
+            void Remove_Cache(void *cache);
+        };
+
+        /*
+         * This can be used safely anwywhere, to clear all caches:
+         */
         void Clear_Caches(void);
             
         template <class T, class V> class CachedFunction {
@@ -34,30 +43,26 @@ namespace SLAT {
             std::unordered_map<V, T> cache;
             bool cache_active;
         public:
-        CachedFunction()  {
-            Caching::Init_Caching();
+            CachedFunction()  {
+                Caching::Private::Init_Caching();
                 name = "Anonymous";
                 hits = 0;
                 total_calls = 0;
                 omp_init_lock(&lock);
             };
             CachedFunction(std::function<T (V)> base_func, std::string name="Anonymous", bool activate_cache=true) { 
-                Caching::Init_Caching();
+                Caching::Private::Init_Caching();
                 omp_init_lock(&lock);
                 this->name = name;
                 cache_active = activate_cache;
                 hits = 0;
                 total_calls = 0;
                 func = base_func; 
-                Add_Cache(this, [this] (void) { 
+                Caching::Private::Add_Cache(this, [this] (void) { 
                         this->ClearCache(); });
             };
             ~CachedFunction() {
-                /* std::cout << std::setw(50) << name */
-                /*           << std::setw(10) << hits */
-                /*           << std::setw(10) << total_calls  */
-                /*           << std::endl; */
-                Remove_Cache(this);
+                Caching::Private::Remove_Cache(this);
             }
             T operator()(V v) { 
                 omp_set_lock(&lock);
@@ -138,7 +143,7 @@ namespace SLAT {
             std::string name;
         public:
         CachedValue() : cache_valid(false) { 
-                Caching::Init_Caching();
+                Caching::Private::Init_Caching();
                 name = "Anonymous";
                 total_calls = 0;
                 hits = 0;
@@ -148,7 +153,7 @@ namespace SLAT {
                 in_process = false;
             };
             CachedValue(std::function<T (void)> base_func, std::string name = "Anonymous") { 
-                Caching::Init_Caching();
+                Caching::Private::Init_Caching();
                 omp_init_lock(&lock);
                 omp_init_lock(&waiting_lock);
                 omp_set_lock(&waiting_lock);
@@ -158,14 +163,11 @@ namespace SLAT {
                 total_calls = 0;
                 hits = 0;
                 func = base_func; 
-                Add_Cache(this, [this] (void) { 
+                Caching::Private::Add_Cache(this, [this] (void) { 
                         this->ClearCache(); });
             };
             ~CachedValue() {
-                /* std::cout << std::setw(50) << name */
-                /*           << std::setw(10) << hits */
-                /*           << std::setw(10) << total_calls  */
-                /*           << std::endl; */
+                Caching::Private::Remove_Cache(this);
             };
             T operator()(void) { 
                 omp_set_lock(&lock);

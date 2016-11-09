@@ -14,7 +14,8 @@
 
 namespace SLAT {
     namespace Caching {
-        omp_lock_t lock;
+        namespace Private {
+            omp_lock_t lock;
 
         void Init_Caching(void)
         {
@@ -49,16 +50,16 @@ namespace SLAT {
             caches.erase(cache);
             omp_unset_lock(&lock);
         }
-
+        }
         /**
          * Clear all (registered) function caches.
          */
         void Clear_Caches(void) {
-            omp_set_lock(&lock);
-            for (auto it=caches.begin(); it != caches.end(); it++) {
+            omp_set_lock(&Private::lock);
+            for (auto it=Private::caches.begin(); it != Private::caches.end(); it++) {
                 it->second();
             }
-            omp_unset_lock(&lock);
+            omp_unset_lock(&Private::lock);
         }
     };
 }
