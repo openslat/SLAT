@@ -5,6 +5,8 @@ PYDIR=~/swig-test/python-amd64
 
 rm -rf $DEST
 mkdir $DEST
+mkdir --parents $DEST/parser/example2
+cp ../parser/example2/example2.slat ../parser/example2/example2.py $DEST/parser/example2
 cp bin/* lib/* scripts/* $DEST
 
 old_libs=""
