@@ -49,6 +49,10 @@ namespace SLAT {
                 hits = 0;
                 total_calls = 0;
                 omp_init_lock(&lock);
+                func = [this] (V v) {
+                    throw std::runtime_error("Cached function not provided");
+                    return T();
+                };
             };
             CachedFunction(std::function<T (V)> base_func, std::string name="Anonymous", bool activate_cache=true) { 
                 Caching::Private::Init_Caching();
@@ -151,6 +155,10 @@ namespace SLAT {
                 omp_init_lock(&waiting_lock);
                 omp_set_lock(&waiting_lock);
                 in_process = false;
+                func = [this] (void) {
+                    throw std::runtime_error("Function for CachedValue not provided");
+                    return T();
+                };
             };
             CachedValue(std::function<T (void)> base_func, std::string name = "Anonymous") { 
                 Caching::Private::Init_Caching();
