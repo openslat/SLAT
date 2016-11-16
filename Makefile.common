@@ -23,7 +23,7 @@ LIBOBJS=$(addprefix $(OBJDIR)/,$(LIBSRCS:.cpp=.o))
 
 UNIT_SRCS = unit_test.cpp functions_test.cpp relationships_test.cpp maq_test.cpp \
 	fragility_test.cpp lognormaldist_test.cpp comp_group_test.cpp structure_test.cpp \
-	caching_test.cpp
+	caching_test.cpp replaceable_test.cpp
 UNIT_OBJS = $(addprefix $(OBJDIR)/,$(UNIT_SRCS:.cpp=.o))
 
 all: $(OBJDIR) $(BINDIR) $(LIBDIR) $(SCRIPTDIR) \
@@ -77,6 +77,7 @@ $(OBJDIR)/fragility_test.o: $(SRCDIR)/fragility_test.cpp $(SRCDIR)/fragility.h
 $(OBJDIR)/comp_group_test.o: $(SRCDIR)/comp_group_test.cpp $(SRCDIR)/comp_group.h 
 $(OBJDIR)/structure_test.o: $(SRCDIR)/structure_test.cpp $(SRCDIR)/structure.h
 $(OBJDIR)/caching_test.o: $(SRCDIR)/caching_test.cpp $(SRCDIR)/caching.h
+$(OBJDIR)/replaceable_test.o: $(SRCDIR)/replaceable_test.cpp $(SRCDIR)/replaceable.h
 $(OBJDIR)/unit_test.o: $(SRCDIR)/unit_test.cpp
 
 $(BINDIR)/unit_tests$(EXECEXT): $(OBJDIR)/unit_test.o $(UNIT_OBJS) $(LIBDIR)/libslat$(LIBEXT)
