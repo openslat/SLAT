@@ -64,9 +64,11 @@ namespace SLAT {
         std::shared_ptr<IM> getIM(void) { return edp->Base_Rate(); };
         std::shared_ptr<EDP> get_EDP(void) { return edp; };
         std::shared_ptr<FragilityFn> get_Fragility(void) { return frag_fn; };
-        std::string get_Name(void) { return name; };
+        std::string get_Name(void) const { return name; };
         Caching::CachedValue<std::vector<double>> Rate; 
         std::vector<double> pDS_IM(double im);
+        friend std::ostream& operator<<(std::ostream& out, const CompGroup& o);
+
     private:
         std::string name;
         std::shared_ptr<EDP> edp;
@@ -74,7 +76,7 @@ namespace SLAT {
         std::shared_ptr<LossFn> cost_fn;
         std::shared_ptr<LossFn> delay_fn;
         int count;
-
+        int edp_callback_id;
         double E_cost_IM_calc(double im);
         double SD_ln_cost_IM_calc(double im);
 

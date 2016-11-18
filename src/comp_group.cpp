@@ -69,6 +69,30 @@ namespace SLAT {
          count(count)
     {
         this->name = name;
+        edp_callback_id = edp->add_callbacks(
+            [this] (void) {
+                this->E_cost_IM.ClearCache();
+                this->SD_ln_cost_IM.ClearCache();
+                this->E_delay_IM.ClearCache();
+                this->SD_ln_delay_IM.ClearCache();
+                this->E_annual_cost.ClearCache();
+                this->lambda_cost.ClearCache();
+                this->cost_EDP_dist.ClearCache();
+                this->delay_EDP_dist.ClearCache();
+                this->Rate.ClearCache();
+            },
+            [this] (std::shared_ptr<EDP> new_edp) {
+                this->E_cost_IM.ClearCache();
+                this->SD_ln_cost_IM.ClearCache();
+                this->E_delay_IM.ClearCache();
+                this->SD_ln_delay_IM.ClearCache();
+                this->E_annual_cost.ClearCache();
+                this->lambda_cost.ClearCache();
+                this->cost_EDP_dist.ClearCache();
+                this->delay_EDP_dist.ClearCache();
+                this->Rate.ClearCache();
+                this->edp = new_edp;
+            });
     };
 
     double CompGroup::E_cost_EDP(double edp)
@@ -414,6 +438,18 @@ namespace SLAT {
             };
         }
         return results;
+    }
+
+    std::ostream& operator<<(std::ostream& out, const CompGroup& o)
+    {
+        out << "CompGroup " << o.get_Name() 
+            << ": " << o.count 
+            << ", " << o.edp
+            << ", " << o.frag_fn
+            << ", " << o.cost_fn
+            << ", " << o.delay_fn
+            << std::endl;
+        return out;
     }
 
 }
