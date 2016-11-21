@@ -4,7 +4,14 @@
  * @date   Mon Nov 16 15:29:29 2015
  * 
  * @brief  Facilitates for caching function results.
- * 
+ *
+ * This module provides template classes for functions and values. When a
+ * function or value is expensive to calculate, caching it can reduce the
+ * overall amount of computational effort required by the program. 
+ *
+ * When a template is instantiated, it is given a std::function<> object,
+ * which will calculate the cached function or value.
+ *
  * This file part of SLAT (the Seismic Loss Assessment Tool).
  *
  * ©2015 Canterbury University
@@ -22,38 +29,63 @@
 #include <cmath>
 
 namespace SLAT {
+    /**
+     * Functions for managing the cache.
+     */
     namespace Caching {
+        /**
+         * Caching-related functions, which should only be used from within the
+         * Caching module.
+         */
         namespace Private {
             /*
              * Don't use anything from this namespace directly from outside this module:
              */
-            void Init_Caching(void);
-            void Add_Cache(void *cache, std::function<void (void)> clear_func);
-            void Remove_Cache(void *cache);
-        };
 
-        /*
+            /**
+             * Initialise the caching module. This should be called from
+             * constructors for any Caching class. Calling it more than once
+             * will do no harm.
+            */
+            void Init_Caching(void); 
+
+            /**
+             * Record a cache instantiation. This should be called from the
+             * constructor of any Caching class. This allows
+             * Caching::Clear_Caches() to clear all the function/value caches.
+             */
+            void Add_Cache(void *cache, std::function<void (void)> clear_func); 
+
+            /**
+             * Tell the Caching module to forget about an instantiation. This
+             * should be called form the destructor; it will prevent
+             * Caching::Clear_Caches() from referring to caches which are no
+             * longer valid.
+             */
+            void Remove_Cache(void *cache); };
+
+        /**
          * This can be used safely anwywhere, to clear all caches:
          */
         void Clear_Caches(void);
-            
+
+        /**
+         * Template for cached functions which accept an argument of class V,
+         * and return a value of class T. The template is instantiated with a
+         * std::function<T (V)>, which is called to evaluate the function on a
+         * cache miss.  The construct can also be given a name string, which
+         * will be included in debug and error messages, and a flag. The flag
+         * defaults to true, but can be explicitly set to false to disable
+         * caching for an instance. This is intended to allow developers to
+         * assess the impact of caching on their code. To further assist
+         * developers, the template also records the number of times the
+         * function is called, and the number of cache hits.
+         *
+         * This class supports parallel processing by using OpenMP mechanisms to
+         * protect the cache from competing threads.
+         */
         template <class T, class V> class CachedFunction {
         public:
-            std::function<T (V)> func;
-            std::unordered_map<V, T> cache;
-            bool cache_active;
-        public:
-            CachedFunction()  {
-                Caching::Private::Init_Caching();
-                name = "Anonymous";
-                hits = 0;
-                total_calls = 0;
-                omp_init_lock(&lock);
-                func = [this] (V v) {
-                    throw std::runtime_error("Cached function not provided");
-                    return T();
-                };
-            };
             CachedFunction(std::function<T (V)> base_func, std::string name="Anonymous", bool activate_cache=true) { 
                 Caching::Private::Init_Caching();
                 omp_init_lock(&lock);
@@ -127,6 +159,9 @@ namespace SLAT {
                 cache.clear(); 
             };
         private:
+            std::function<T (V)> func;
+            std::unordered_map<V, T> cache;
+            bool cache_active;
             struct WAITING {omp_lock_t lock; int count; };
             std::unordered_map<V, struct WAITING> in_process;
             omp_lock_t lock;

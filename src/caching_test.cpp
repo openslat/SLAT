@@ -19,18 +19,6 @@ using namespace std;
 using namespace SLAT;
 
 /*
- * Invoking a CachedFunction created by the default constructor throws an exception:
- */
-BOOST_AUTO_TEST_CASE(Cached_Function_Undefined)
-{
-    Caching::CachedFunction<int, double> f;
-    BOOST_CHECK_THROW(
-        {
-            f(1.0);
-        }, std::runtime_error);
-}
-
-/*
  * Check that function values are actually cached.
  */
 BOOST_AUTO_TEST_CASE(Cached_Function_Caching)
