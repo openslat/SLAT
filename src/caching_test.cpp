@@ -134,18 +134,6 @@ BOOST_AUTO_TEST_CASE(Cached_Function_Delete_Function)
     }
 }
 
-/*
- * Invoking a CachedValue created by the default constructor throws an exception:
- */
-BOOST_AUTO_TEST_CASE(Cached_Value_Undefined)
-{
-    Caching::CachedValue<int> v;
-    BOOST_CHECK_THROW(
-        {
-            v();
-        }, std::runtime_error);
-}
-
 
 /*
  * Check that values are actually cached (computed only once).
