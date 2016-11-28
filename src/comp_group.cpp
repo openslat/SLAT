@@ -18,6 +18,10 @@
 using namespace std;
 
 namespace SLAT {
+    /*
+     * Constructor--initialise all members, including CachedFunctions and
+     * CachedValues, then install callbacks for EDP changes.
+     */
     CompGroup::CompGroup(std::shared_ptr<EDP> edp,
                          std::shared_ptr<FragilityFn> frag_fn, 
                          std::shared_ptr<LossFn> cost_fn,
@@ -62,13 +66,16 @@ namespace SLAT {
          Rate([this] (void) {
                  return this->calc_Rate();
              }, name + std::string("::Rate")),
+         name(name),
          edp(edp),
          frag_fn(frag_fn),
          cost_fn(cost_fn),
          delay_fn(delay_fn),
          count(count)
     {
-        this->name = name;
+        /*
+         * When the EDP changes or is replaced, clear the cached values.
+         */
         edp_callback_id = edp->add_callbacks(
             [this] (void) {
                 this->E_cost_IM.ClearCache();
@@ -129,12 +136,20 @@ namespace SLAT {
     {
         return delay_EDP_dist(edp).get_sigma_X();
     }
-    
+
+    /*
+     * This function is used to wrap lambdas so they can be passed to gsl
+     * functions.
+     */
     static double wrapper(double x,  std::function<double (double)> *f)
     {
         return (*f)(x);
     }
 
+    /*
+     * Calculate the distribution of the cost given IM. The mean and standard
+     * deviation can be computed in parallel.
+     */
     LogNormalDist CompGroup::CostDist_IM(double im) {
         double E = NAN, sd_ln = NAN;
 #pragma omp parallel sections
