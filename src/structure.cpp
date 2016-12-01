@@ -134,6 +134,7 @@ namespace SLAT {
                         return cost * deriv;
                     });
                 if (result.successful) {
+                    std::cout << "calc_AnnualCost() mu = " << result.integral << std::endl;
                     mu = result.integral;
                 } 
             }
@@ -149,11 +150,13 @@ namespace SLAT {
                         return (cost * cost + sd * sd) * deriv ;
                     });
                 if (result.successful) {
+                    std::cout << "calc_AnnualCost() beta = " << result.integral << std::endl;
                     beta = result.integral;
                 } 
             }
         }
         beta = sqrt(std::abs(beta - mu * mu));        
+        std::cout << "calc_AnnualCost: " << mu << ", " << beta << std::endl;
         return LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(mu, beta);
     }
 }

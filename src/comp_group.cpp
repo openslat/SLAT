@@ -245,6 +245,15 @@ namespace SLAT {
             double sigma_x = sqrt(result.integral  - mean_x * mean_x);
             double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
             if (mean_x == 0) sigma_lnx = 0; //sigma_x;
+            if (std::abs(mean_x) < 1E-16 && std::isnan(sigma_lnx)) sigma_lnx = 0; ///@todo Awkward workaround
+            if (std::isnan(sigma_lnx)) {
+                std::cout << "SD_ln_cost_IM_calc() NAN: " 
+                          << mean_x << ", " 
+                          << result.integral << ", " 
+                          << sigma_x << ", " 
+                          << sigma_lnx
+                          << std::endl;
+            }
             return sigma_lnx;
         } else {
             return 0; //NAN;;
@@ -370,6 +379,13 @@ namespace SLAT {
             double sigma_x = sqrt(result.integral  - mean_x * mean_x);
             double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
             if (mean_x == 0) sigma_lnx = 0; //sigma_x;
+            if (std::isnan(sigma_lnx)) {
+                std::cout << "SD_ln_delay_IM_calc() NAN: " 
+                          << mean_x << ", " 
+                          << sigma_x << ", " 
+                          << sigma_lnx
+                          << std::endl;
+            }
             return sigma_lnx;
         } else {
             return 0; //NAN;;

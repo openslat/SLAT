@@ -200,6 +200,10 @@ namespace SLAT {
             double a, b;
             {
                 search_result_t r = binary_subdivision(integrand, maxeval);
+                if (std::isnan(r.a)) {
+                    std::cout << "binary_subdivision failed" << std::endl;
+                    return {0, true, (unsigned int)r.evaluations}; 
+                }
                 a = r.a;
                 b = r.b;
                 counter = r.evaluations;
@@ -208,8 +212,23 @@ namespace SLAT {
             double fa = integrand(x_from_t(a))/(a == 0 ? 1 : a*a);
             double fb = integrand(x_from_t(b))/(b*b);
 
+            if (std::isnan(fa)) {
+                std::cout << "fa is NAN" << std::endl;
+                return {0, false /*true*/, counter};
+            }
+
+            if (std::isnan(fb)) {
+                std::cout << "fb is NAN" << std::endl;
+                return {0, false/*true*/, counter};
+            }
+            
             double c = (a + b)/2.0;
             double fc = integrand(x_from_t(c))/(c*c);
+            if (std::isnan(fc)) {
+                std::cout << "fc is NAN" << std::endl;
+                return {0, false/*true*/, counter};
+            }
+            
             counter += 3;
 
             double r1 = quad(a, b, c, fa, fb, fc);
@@ -219,7 +238,11 @@ namespace SLAT {
                 counter++;
                 if (counter > maxeval) {
                     success = false;
-                    break;
+                    // break;
+                    maq_todo todo = region_stack.top();
+                    region_stack.pop();
+                    integral += todo.r;
+                    continue;
                 }
         
                 maq_todo todo = region_stack.top();
@@ -243,6 +266,16 @@ namespace SLAT {
         
                 double fd = integrand(x_from_t(d))/(d*d);
                 double fe = integrand(x_from_t(e))/(e*e);
+
+                if (std::isnan(fd)) {
+                    std::cout << "fd is NAN" << std::endl;
+                    return {0, false/*true*/, counter};
+                }
+            
+                if (std::isnan(fe)) {
+                    std::cout << "fe is NAN" << std::endl;
+                    return {0, false/*true*/, counter};
+                }
 
                 double r2 = quad(a, c, d, fa, fc, fd);
                 double r3 = quad(c, b, e, fc, fb, fe);
@@ -273,7 +306,9 @@ namespace SLAT {
                     //      << endl;
                 }
             }
-            //std::cout << integral << "   " << success << "  " << counter << std::endl;
+            // if (!success || std::isnan(integral)) {
+            //     std::cout << integral << "   " << success << "  " << counter << std::endl;
+            // }
             return {integral, success, counter};
         }
 
