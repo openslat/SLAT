@@ -214,19 +214,19 @@ namespace SLAT {
 
             if (std::isnan(fa)) {
                 std::cout << "fa is NAN" << std::endl;
-                return {0, false /*true*/, counter};
+                return {0, true, counter};
             }
 
             if (std::isnan(fb)) {
                 std::cout << "fb is NAN" << std::endl;
-                return {0, false/*true*/, counter};
+                return {0, true, counter};
             }
             
             double c = (a + b)/2.0;
             double fc = integrand(x_from_t(c))/(c*c);
             if (std::isnan(fc)) {
                 std::cout << "fc is NAN" << std::endl;
-                return {0, false/*true*/, counter};
+                return {0, true, counter};
             }
             
             counter += 3;
@@ -269,12 +269,12 @@ namespace SLAT {
 
                 if (std::isnan(fd)) {
                     std::cout << "fd is NAN" << std::endl;
-                    return {0, false/*true*/, counter};
+                    return {0, true, counter};
                 }
             
                 if (std::isnan(fe)) {
                     std::cout << "fe is NAN" << std::endl;
-                    return {0, false/*true*/, counter};
+                    return {0, true, counter};
                 }
 
                 double r2 = quad(a, c, d, fa, fc, fd);
