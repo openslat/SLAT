@@ -266,7 +266,7 @@ namespace SLAT {
                     success = true;
                     integral = 0;
                     break;
-#elseif false
+#elif false
                     /*
                      * This branch generates an error, by returning NAN.
                      */
