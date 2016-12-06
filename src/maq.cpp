@@ -136,7 +136,7 @@ namespace SLAT {
                 fc <= std::numeric_limits<double>::epsilon()) 
             {
                 long int intervals = 4;
-                while (evaluations <= max_evals && fc <= std::numeric_limits<double>::epsilon()) {
+                while (evaluations < max_evals && fc <= std::numeric_limits<double>::epsilon()) {
                     for (int i=1; i < intervals; i += 2) {
                         c = float(i)/intervals;
                         fc = f(x_from_t(c));
@@ -152,7 +152,7 @@ namespace SLAT {
                 }
 
                 if (fc <= std::numeric_limits<double>::epsilon()) {
-                    //std::cout << fc << ", " << std::numeric_limits<double>::epsilon() << std::endl;
+                    //std::cout << fc << ", " << std::numeric_limits<double>::epsilon() << ", " << evaluations << std::endl;
                     return {NAN, NAN, evaluations};
                 }
             }
@@ -174,6 +174,19 @@ namespace SLAT {
             return MAQ(integrand, *IntegrationSettings::Get_Global_Settings());
         }
 
+
+
+        /**
+         * @todo Determine how many of the allowed evaluations to use
+         * for finding something interesting (and whether it is constant, or
+         * programmer-controlled).
+         * @todo If binary_subdivision() fails to find something
+         * interesting, the programmer should be able to control
+         * what happens (treat it as zero, issue a warning and treat
+         * it as zero, or fail).
+         * @todo Allow programmer to control what happens when number of
+         * evaluations is exceeded (warn and use latest approximation, abort).
+         */
         MAQ_RESULT MAQ(std::function<double (double)> integrand,
                        const IntegrationSettings &settings)
         {
@@ -199,34 +212,39 @@ namespace SLAT {
              */
             double a, b;
             {
-                search_result_t r = binary_subdivision(integrand, maxeval);
+                /**
+                 * Use no more than 1/4 of the allowed evaluations to find something
+                 * interesting.
+                 */
+                search_result_t r = binary_subdivision(integrand, maxeval/4);
                 if (std::isnan(r.a)) {
-                    std::cout << "binary_subdivision failed" << std::endl;
+                    //std::cout << "binary_subdivision failed" << std::endl;
                     return {0, true, (unsigned int)r.evaluations}; 
                 }
                 a = r.a;
                 b = r.b;
                 counter = r.evaluations;
             }
+            //int temp_count = counter;
    
             double fa = integrand(x_from_t(a))/(a == 0 ? 1 : a*a);
             double fb = integrand(x_from_t(b))/(b*b);
 
             if (std::isnan(fa)) {
-                std::cout << "fa is NAN" << std::endl;
-                return {0, true, counter};
+                //std::cout << "fa is NAN" << std::endl;
+                return {NAN, false, counter};
             }
 
             if (std::isnan(fb)) {
-                std::cout << "fb is NAN" << std::endl;
-                return {0, true, counter};
+                //std::cout << "fb is NAN" << std::endl;
+                return {NAN, false, counter};
             }
             
             double c = (a + b)/2.0;
             double fc = integrand(x_from_t(c))/(c*c);
             if (std::isnan(fc)) {
-                std::cout << "fc is NAN" << std::endl;
-                return {0, true, counter};
+                //std::cout << "fc is NAN" << std::endl;
+                return {NAN, false, counter};
             }
             
             counter += 3;
@@ -237,12 +255,36 @@ namespace SLAT {
             while (!region_stack.empty()) {
                 counter++;
                 if (counter > maxeval) {
+                    /*
+                     * What happens when the number of evaluations is exceeded
+                     * without achieving the required accuracy?
+                     */
+#if false
+                    /*
+                     * This branch ignores the error, and returns 0
+                     */
+                    success = true;
+                    integral = 0;
+                    break;
+#elseif false
+                    /*
+                     * This branch generates an error, by returning NAN.
+                     */
                     success = false;
-                    // break;
+                    integral = NAN;
+                    break;
+#else
+                    /*
+                     * This branch returns the current approximation, even
+                     * though it isn't as good as requested. We should also
+                     * generate a warning when this occurs.
+                     */
+                    success = true;
                     maq_todo todo = region_stack.top();
                     region_stack.pop();
                     integral += todo.r;
                     continue;
+#endif
                 }
         
                 maq_todo todo = region_stack.top();
@@ -268,13 +310,13 @@ namespace SLAT {
                 double fe = integrand(x_from_t(e))/(e*e);
 
                 if (std::isnan(fd)) {
-                    std::cout << "fd is NAN" << std::endl;
-                    return {0, true, counter};
+                    //std::cout << "fd is NAN" << std::endl;
+                    return {NAN, false, counter};
                 }
             
                 if (std::isnan(fe)) {
-                    std::cout << "fe is NAN" << std::endl;
-                    return {0, true, counter};
+                    //std::cout << "fe is NAN" << std::endl;
+                    return {NAN, false, counter};
                 }
 
                 double r2 = quad(a, c, d, fa, fc, fd);
@@ -306,9 +348,9 @@ namespace SLAT {
                     //      << endl;
                 }
             }
-            // if (!success || std::isnan(integral)) {
-            //     std::cout << integral << "   " << success << "  " << counter << std::endl;
-            // }
+            if (!success || std::isnan(integral)) {
+                //std::cout << integral << "   " << success << "  " << counter << "   " << temp_count << maxeval << std::endl;
+            }
             return {integral, success, counter};
         }
 

@@ -119,7 +119,6 @@ namespace SLAT {
 
         double pDemolition(double im) {
             if (demolition) {
-                // @TODO Make sure this is at least zero!
                 return demolition->p_at_most(im) - pCollapse(im);
             } else {
                 return 0;

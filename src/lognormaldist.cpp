@@ -81,7 +81,15 @@ namespace SLAT {
 
     double LogNormalDist::p_at_least(double x) const
     {
-        return gsl_cdf_lognormal_Q(x, mu_lnX, sigma_lnX);
+        /*
+         * If mu_lnX is NAN, we'll assume it's because mean(x) is 0, and return
+         * 0 for the rate of exceedence. 
+         */
+        if (std::isnan(mu_lnX)) {
+            return 0;
+        } else {
+            return gsl_cdf_lognormal_Q(x, mu_lnX, sigma_lnX);
+        }
     }
 
     double LogNormalDist::p_at_most(double x) const

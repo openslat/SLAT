@@ -198,7 +198,7 @@ namespace SLAT {
         if (result.successful) {
             return result.integral;
         } else {
-            return 0; //NAN;;
+            return NAN;
         };
     }
 
@@ -243,20 +243,15 @@ namespace SLAT {
             double mean_x = E_cost_IM(im) / this->count;
 
             double sigma_x = sqrt(result.integral  - mean_x * mean_x);
-            double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
-            if (mean_x == 0) sigma_lnx = 0; //sigma_x;
-            if (std::abs(mean_x) < 1E-16 && std::isnan(sigma_lnx)) sigma_lnx = 0; ///@todo Awkward workaround
-            if (std::isnan(sigma_lnx)) {
-                std::cout << "SD_ln_cost_IM_calc() NAN: " 
-                          << mean_x << ", " 
-                          << result.integral << ", " 
-                          << sigma_x << ", " 
-                          << sigma_lnx
-                          << std::endl;
+            ///@todo What happens if sigma_x is NAN?
+            if (std::isnan(sigma_x)) {
+                sigma_x = 0;
             }
+            double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
+            if (mean_x == 0) sigma_lnx = 0; ///@todo What should sigma_lnx be if mean_x is zero?
             return sigma_lnx;
         } else {
-            return 0; //NAN;;
+            return NAN;;
         };
     }
 
@@ -272,7 +267,7 @@ namespace SLAT {
         if (result.successful) {
             return result.integral;
         } else {
-            return 0; //NAN;;
+            return NAN;;
         }
     }
     double CompGroup::E_cost(int years, double discount_rate)
@@ -297,7 +292,7 @@ namespace SLAT {
         if (result.successful) {
             return result.integral;
         } else {
-            return 0; //NAN;
+            return NAN;
         }
     }
 
@@ -332,7 +327,7 @@ namespace SLAT {
         if (result.successful) {
             return result.integral;
         } else {
-            return 0; //NAN;;
+            return NAN;;
         };
     }
 
@@ -388,7 +383,7 @@ namespace SLAT {
             }
             return sigma_lnx;
         } else {
-            return 0; //NAN;;
+            return NAN;;
         };
     }
 
@@ -465,7 +460,7 @@ namespace SLAT {
             if (result.successful) {
                 results[i] = result.integral;
             } else {
-                results[i] = 0; //NAN;;
+                results[i] = NAN;;
             };
         }
         return results;

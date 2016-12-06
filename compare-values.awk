@@ -52,7 +52,7 @@ FNR==NR {
             if (error > 1E-3) {
                 error_count = error_count + 1
                 if (error_count <= MAX_ERRORS) {
-                    print("Data mismatch on line", FNR, ", field", i, ", Error: ", error)
+                    print("Data mismatch on line", FNR, ", field", i, ", Error: ", error, "; ", data[FNR][i], ", ", $i)
                 }
                 return_value = 1;
             }

@@ -685,7 +685,7 @@ BOOST_AUTO_TEST_CASE(comp_group_misc_tests)
     /*
      * Test the annual loss and yearly loss 
      */
-    //@TODO: Test with different discount rate:
+    ///@todo Test with different discount rate.
     for (size_t i=0; i < sizeof(annual_loss_test_data)/sizeof(annual_loss_test_data[0]); i++) {
         double years = annual_loss_test_data[i].t;
         double annual_loss = component_group.E_cost(years, 0.06);
