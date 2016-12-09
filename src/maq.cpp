@@ -15,6 +15,24 @@
 #include <limits>
 #include "maq.h"
 
+unsigned int max_count = 0;
+size_t calls = 0;
+size_t successes = 0;
+size_t fails = 0;
+size_t nans = 0;
+size_t bin_fails = 0;
+
+void DumpIntegrationStats()
+{
+#pragma omp critical
+    std::cout << "Max Count: " << max_count << std::endl
+              << "Calls: " << calls << std::endl
+              << "Successes: " << successes << std::endl
+              << "Fails: " << fails << std::endl
+              << "NANs: " << nans << std::endl
+              << "Bin_Fails: " << bin_fails << std::endl;
+}
+
 namespace SLAT {
     namespace Integration {
 
@@ -28,6 +46,7 @@ namespace SLAT {
         }
 
         IntegrationSettings::IntegrationSettings(void)
+            : warning_label("<unalbelled>")
         {
             tolerance = TOLERANCE_DEFAULT;
             max_evals = EVALUATIONS_DEFAULT;
@@ -35,6 +54,7 @@ namespace SLAT {
         }
 
         IntegrationSettings::IntegrationSettings(const IntegrationSettings *other)
+            : warning_label("child of ??")
 
         {
             tolerance = TOLERANCE_UNSPECIFIED;
@@ -121,7 +141,7 @@ namespace SLAT {
 /*
  * Try to divide the range [0, ∞) to bracket something interesting for integration.
  */
-        search_result_t binary_subdivision(std::function<double (double)> f, int max_evals)
+        search_result_t binary_subdivision(std::function<double (double)> f, int max_evals, src::logger_mt logger)
         {
             double a=0; // Maps to x=∞
             double b=1.0; // Maps to x=0
@@ -155,8 +175,11 @@ namespace SLAT {
                     //std::cout << fc << ", " << std::numeric_limits<double>::epsilon() << ", " << evaluations << std::endl;
                     return {NAN, NAN, evaluations};
                 }
+
             }
     
+            // std::cout << "Found something after " << evaluations << " evaluations." << std::endl
+            //           << &logger << std::endl;
             return {a, b, evaluations};
         }
 
@@ -190,9 +213,22 @@ namespace SLAT {
         MAQ_RESULT MAQ(std::function<double (double)> integrand,
                        const IntegrationSettings &settings)
         {
+#pragma omp critical
+            calls++;
+
+            if (calls == 3) {
+                std::cout << "BREAK HERE" << std::endl;
+            }
+            
             double tol = settings.Get_Effective_Tolerance();
             unsigned int maxeval = settings.Get_Effective_Max_Evals();
 
+            // BOOST_LOG(IntegrationSettings::settings_logger) << "MAX_EVALS: " << maxeval;
+            // if (maxeval < 2048) {
+            //     std::cout << "MAX_EVALS IS " << maxeval << std::endl;
+            // }
+                
+            
             bool success = true;
             // Initialisation
             unsigned int counter;
@@ -212,18 +248,26 @@ namespace SLAT {
              */
             double a, b;
             {
-                /**
-                 * Use no more than 1/4 of the allowed evaluations to find something
-                 * interesting.
-                 */
-                search_result_t r = binary_subdivision(integrand, maxeval/4);
+                search_result_t r = binary_subdivision(integrand, maxeval, IntegrationSettings::settings_logger );
                 if (std::isnan(r.a)) {
                     //std::cout << "binary_subdivision failed" << std::endl;
+                    BOOST_LOG(IntegrationSettings::settings_logger) << "binary_subdivision failed to find anything for " << settings.warning_label
+                                                                    << " [" << r.evaluations << " evaluations]";
+#pragma omp critical
+                    bin_fails++;
+                    //DumpIntegrationStats();
                     return {0, true, (unsigned int)r.evaluations}; 
+                } else {
+                    BOOST_LOG(IntegrationSettings::settings_logger) << "binary_subdivision succeeded  for " << settings.warning_label << " after " << r.evaluations << " evaluations.";
                 }
                 a = r.a;
                 b = r.b;
                 counter = r.evaluations;
+            }
+            
+            if (counter + 4 >= maxeval) {
+                std::cout << "no evals left after binary_subdivision()" << std::endl;
+                counter = maxeval - 32;
             }
             //int temp_count = counter;
    
@@ -232,11 +276,19 @@ namespace SLAT {
 
             if (std::isnan(fa)) {
                 //std::cout << "fa is NAN" << std::endl;
+                BOOST_LOG(IntegrationSettings::settings_logger) << "fa is NAN;  " << settings.warning_label;
+#pragma omp critical
+                nans++;
+                //DumpIntegrationStats();
                 return {NAN, false, counter};
             }
 
             if (std::isnan(fb)) {
                 //std::cout << "fb is NAN" << std::endl;
+                BOOST_LOG(IntegrationSettings::settings_logger) << "fb is NAN;  " << settings.warning_label;
+#pragma omp critical
+                nans++;
+                //DumpIntegrationStats();
                 return {NAN, false, counter};
             }
             
@@ -244,6 +296,10 @@ namespace SLAT {
             double fc = integrand(x_from_t(c))/(c*c);
             if (std::isnan(fc)) {
                 //std::cout << "fc is NAN" << std::endl;
+                BOOST_LOG(IntegrationSettings::settings_logger) << "fc is NAN;  " << settings.warning_label;
+#pragma omp critical
+                nans++;
+                //DumpIntegrationStats();
                 return {NAN, false, counter};
             }
             
@@ -252,6 +308,7 @@ namespace SLAT {
             double r1 = quad(a, b, c, fa, fb, fc);
             region_stack.push({a, b, c, fa, fb, fc, r1});
 
+            double abserr = NAN;
             while (!region_stack.empty()) {
                 counter++;
                 if (counter > maxeval) {
@@ -266,12 +323,15 @@ namespace SLAT {
                     success = true;
                     integral = 0;
                     break;
-#elif false
+#elif true
                     /*
                      * This branch generates an error, by returning NAN.
                      */
                     success = false;
                     integral = NAN;
+                    if (!std::isnan(abserr)) {
+                        std::cout << abserr << std::endl;
+                    }
                     break;
 #else
                     /*
@@ -279,6 +339,8 @@ namespace SLAT {
                      * though it isn't as good as requested. We should also
                      * generate a warning when this occurs.
                      */
+                    BOOST_LOG(IntegrationSettings::settings_logger) << "failed to reach precision;  " << settings.warning_label
+                                                                    << " [" << counter << " evaluations]";
                     success = true;
                     maq_todo todo = region_stack.top();
                     region_stack.pop();
@@ -311,11 +373,19 @@ namespace SLAT {
 
                 if (std::isnan(fd)) {
                     //std::cout << "fd is NAN" << std::endl;
+                    BOOST_LOG(IntegrationSettings::settings_logger) << "fd is NAN;  " << settings.warning_label;
+#pragma omp critical
+                    nans++;
+                    //DumpIntegrationStats();
                     return {NAN, false, counter};
                 }
             
                 if (std::isnan(fe)) {
                     //std::cout << "fe is NAN" << std::endl;
+                    BOOST_LOG(IntegrationSettings::settings_logger) << "fe is NAN;  " << settings.warning_label;
+#pragma omp critical
+                    nans++;
+                    //DumpIntegrationStats();
                     return {NAN, false, counter};
                 }
 
@@ -325,7 +395,7 @@ namespace SLAT {
                 double q1 = r1;
                 double q2 = r2 + r3;
 
-                double abserr = std::abs(q2 - q1);
+                abserr = std::abs(q2 - q1);
                 if (abserr <= std::abs(tol * q2) || abserr <= std::abs(tol * integral)) {
                     integral = integral + q2 + (q2 - q1)/15;
                 } else if (std::abs(r2) > std::abs(r3)) {
@@ -351,8 +421,21 @@ namespace SLAT {
             if (!success || std::isnan(integral)) {
                 //std::cout << integral << "   " << success << "  " << counter << "   " << temp_count << maxeval << std::endl;
             }
+            // BOOST_LOG(IntegrationSettings::settings_logger) << "MAQ done;  " << settings.warning_label
+            //                                                 << " [" << counter << " evaluations]";
+            if (counter > max_count) {
+                max_count = counter;
+            }
+            if (success) {
+#pragma omp critical
+                successes++;
+            } else {
+#pragma omp critical
+                fails++;
+            
+            }
             return {integral, success, counter};
-        }
+            }
 
     }
 }

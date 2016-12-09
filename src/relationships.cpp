@@ -63,6 +63,7 @@ namespace SLAT {
     }
 
     IM::IM( std::shared_ptr<DeterministicFn> func, std::string name) :
+        local_settings(&class_settings),
         CollapseRate([this] (void) {
                 return this->CollapseRate_calc();
             }, name + std::string("::CollapseRate")),
@@ -71,6 +72,10 @@ namespace SLAT {
             }, name + std::string("::DemolitionRate"))
     {
         this->name = name;
+        std::cout << "IM: " << name << " " << local_settings.Get_Effective_Max_Evals() << "; "
+                  << Get_Class_Integration_Settings().Get_Effective_Max_Evals() << "; "
+                  << Integration::IntegrationSettings::Get_Global_Settings()->Get_Effective_Max_Evals() << std::endl;
+        
         f = func;
         callback_id = f->add_callbacks(
             [this] (void) {
@@ -136,6 +141,10 @@ namespace SLAT {
     double IM::CollapseRate_calc(void)
     {
         if (collapse) {
+            std::cout << "IM::CollapseRate_calc " << name << " " << local_settings.Get_Effective_Max_Evals() << "; "
+                      << Get_Class_Integration_Settings().Get_Effective_Max_Evals() << "; "
+                      << Integration::IntegrationSettings::Get_Global_Settings()->Get_Effective_Max_Evals() << std::endl;
+
             Integration::MAQ_RESULT result;
             result =  Integration::MAQ(
                 [this] (double im) -> double {
@@ -144,6 +153,7 @@ namespace SLAT {
                     double result = fabs(d) * p;
                     return result;
                 }, local_settings); 
+            std::cout << "...." << std::endl;
             if (result.successful) {
                 return result.integral;
             } else {

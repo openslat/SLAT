@@ -25,6 +25,8 @@ using namespace SLAT;
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
 #include <boost/log/sinks/text_ostream_backend.hpp>
+#include <boost/log/trivial.hpp>
+#include <boost/log/expressions.hpp>
 
 namespace logging = boost::log;
 namespace src = boost::log::sources;
@@ -72,6 +74,26 @@ vector<double> frange(double min, double max, double step)
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(main_logger, src::logger_mt)
 int main(int argc, char **argv)
 {
+    // {
+    // logging::add_file_log("example2.log");
+    // logging::add_common_attributes();
+    //     logging::core::get()->set_filter
+    //         (
+    //             {
+    //                 logging::trivial::severity >= logging::trivial::trace
+    //                     }
+    //             );
+    //     BOOST_LOG_SEV(main_logger::get(), logging::trivial::debug) << "A generic message";
+    //     BOOST_LOG_TRIVIAL(trace) << "A trace severity message";
+    //     BOOST_LOG_TRIVIAL(debug) << "A debug severity message";
+    //     BOOST_LOG_TRIVIAL(info) << "An informational severity message";
+    //     BOOST_LOG_TRIVIAL(warning) << "A warning severity message";
+    //     BOOST_LOG_TRIVIAL(error) << "An error severity message";
+    //     BOOST_LOG_TRIVIAL(fatal) << "A fatal severity message";
+        
+    //     return 0;
+    // }
+    
     double start_time = omp_get_wtime();
 
     signal(SIGSEGV, catch_signal);
@@ -85,8 +107,9 @@ int main(int argc, char **argv)
 
         
     // Set up Integration parameters:
-    Integration::IntegrationSettings::Set_Tolerance(1E-6);
-    Integration::IntegrationSettings::Set_Max_Evals(1024);
+    Integration::IntegrationSettings::Set_Tolerance(1E-2);
+    Integration::IntegrationSettings::Set_Max_Evals(16 * 1024);
+    
     
     // Read IM data
     shared_ptr<IM> im_rel;
@@ -926,10 +949,40 @@ int main(int argc, char **argv)
         }
 
     }
+
+    // BOOST_LOG(logger) << "------ INTEGRATION TESTS ------" << endl;
+    // Caching::Clear_Caches();
+    // double temp;
+    // temp = compgroups[87]->E_cost_IM(0);
+    // BOOST_LOG(logger) << temp;
+    // temp = compgroups[87]->E_cost_IM(0.0001);
+    // BOOST_LOG(logger) << temp;
+    // temp = compgroups[87]->E_cost_IM(0.001);
+    // BOOST_LOG(logger) << temp;
+    // temp = compgroups[87]->E_cost_IM(0.01);
+    // BOOST_LOG(logger) << temp;
+    // temp = compgroups[87]->E_cost_IM(0.02);
+    // BOOST_LOG(logger) << temp;
+    // temp = compgroups[87]->E_cost_IM(0.03);
+    // BOOST_LOG(logger) << temp;
+    // temp = compgroups[87]->E_cost_IM(0.05);
+    // BOOST_LOG(logger) << temp;
+    // temp = compgroups[87]->E_cost_IM(0.09);
+    // BOOST_LOG(logger) << temp;
+    // temp = compgroups[87]->E_cost_IM(0.1);
+    // BOOST_LOG(logger) << temp;
+
+    // BOOST_LOG(logger) << "-------------------------------" << endl;
     
-    cout << "Done" << endl;
+    
+    BOOST_LOG(logger) << "Done" << endl;
     double end_time = omp_get_wtime();
 
-    cout << "Elapsed time: " << end_time - start_time << endl;
+    BOOST_LOG(logger) << "Elapsed time: " << end_time - start_time << endl;
+
+    {
+        extern void DumpIntegrationStats();
+        DumpIntegrationStats();
+    }
     return 0;
 }

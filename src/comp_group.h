@@ -80,6 +80,9 @@ namespace SLAT {
          */
         Integration::IntegrationSettings local_settings;
 
+        Integration::IntegrationSettings &Get_Class_Integration_Settings(void);
+        Integration::IntegrationSettings &Get_Integration_Settings(void);
+
         /*
          * Relationships between EDP, and cost and delay. Since these are simple
          * calculations, they are not cached.

@@ -18,6 +18,19 @@
 using namespace std;
 
 namespace SLAT {
+    Integration::IntegrationSettings CompGroup::class_settings(
+        Integration::IntegrationSettings::Get_Global_Settings());
+
+    Integration::IntegrationSettings &CompGroup::Get_Class_Integration_Settings(void)
+    {
+        return class_settings;
+    }
+
+    Integration::IntegrationSettings &CompGroup::Get_Integration_Settings(void)
+    {
+        return local_settings;
+    }
+    
     /*
      * Constructor--initialise all members, including CachedFunctions and
      * CachedValues, then install callbacks for EDP changes.
@@ -28,7 +41,8 @@ namespace SLAT {
                          std::shared_ptr<LossFn> delay_fn,
                          int count,
                          std::string name)
-        :E_cost_IM([this] (double im) {
+        :local_settings(&class_settings),
+        E_cost_IM([this] (double im) {
                 return this->E_cost_IM_calc(im);
             }, name + std::string("::E_cost_IM")),
          SD_ln_cost_IM([this] (double im) {
@@ -170,6 +184,14 @@ namespace SLAT {
     double CompGroup::E_cost_IM_calc(double im)
     {
         Integration::MAQ_RESULT result;
+
+        Integration::IntegrationSettings temp_settings(&local_settings);
+        {
+            std::stringstream s;
+            s << get_Name() << "::E_cost_IM_calc(" << im << ")";
+            temp_settings.warning_label = s.str();
+        }
+
         result =  Integration::MAQ(
             [this, im] (double edp) -> double {
                 double result;
@@ -194,7 +216,7 @@ namespace SLAT {
                     result = p * std::abs(d);
                 }
                 return result;
-            }, local_settings); 
+            }, temp_settings); 
         if (result.successful) {
             return result.integral;
         } else {
@@ -205,6 +227,12 @@ namespace SLAT {
     double CompGroup::SD_ln_cost_IM_calc(double im)
     {
         Integration::MAQ_RESULT result;
+        Integration::IntegrationSettings temp_settings(&local_settings);
+        {
+            std::stringstream s;
+            s << get_Name() << "::SD_ln_cost_IM_calc(" << im << ")";
+            temp_settings.warning_label = s.str();
+        }
         result =  Integration::MAQ(
             [this, im] (double edp) -> double {
                 double result;
@@ -238,7 +266,7 @@ namespace SLAT {
                     result = (e * e + sd * sd) * std::abs(d);
                 }
                 return result;
-            }, local_settings); 
+            }, temp_settings); 
         if (result.successful) {
             double mean_x = E_cost_IM(im) / this->count;
 
@@ -257,13 +285,20 @@ namespace SLAT {
 
     double CompGroup::E_annual_cost_calc(void)
     {
+        Integration::IntegrationSettings temp_settings(&local_settings);
+        {
+            std::stringstream s;
+            s << get_Name() << "::E_annual_cost_calc()";
+            temp_settings.warning_label = s.str();
+        }
+        
         Integration::MAQ_RESULT result;
         result = Integration::MAQ(
             [this] (double im) -> double {
                 double expected_cost = E_cost_IM(im);
                 double deriv = std::abs(edp->Base_Rate()->DerivativeAt(im));
                 return expected_cost * deriv;
-            }, local_settings);
+            }, temp_settings);
         if (result.successful) {
             return result.integral;
         } else {
@@ -278,6 +313,12 @@ namespace SLAT {
 
     double CompGroup::lambda_cost_calc(double cost) 
     {
+        Integration::IntegrationSettings temp_settings(&local_settings);
+        {
+            std::stringstream s;
+            s << get_Name() << "::lambda_cost_calc(" << cost << ")";
+            temp_settings.warning_label = s.str();
+        }
         Integration::MAQ_RESULT result;
         result = Integration::MAQ(
             [this, cost] (double im) -> double {
@@ -288,7 +329,7 @@ namespace SLAT {
                 LogNormalDist ln_fn = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mean_x, sd_ln_x);
                 
                 return ln_fn.p_at_least(cost) * std::abs(edp->Base_Rate()->DerivativeAt(im));
-            }, local_settings);
+            }, temp_settings);
         if (result.successful) {
             return result.integral;
         } else {
@@ -298,6 +339,12 @@ namespace SLAT {
 
     double CompGroup::E_delay_IM_calc(double im)
     {
+        Integration::IntegrationSettings temp_settings(&local_settings);
+        {
+            std::stringstream s;
+            s << get_Name() << "::E_delay_IM_calc(" << im << ")";
+            temp_settings.warning_label = s.str();
+        }
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
             [this, im] (double edp) -> double {
@@ -323,7 +370,7 @@ namespace SLAT {
                     result = p * std::abs(d);
                 }
                 return result;
-            }, local_settings); 
+            }, temp_settings); 
         if (result.successful) {
             return result.integral;
         } else {
@@ -333,6 +380,12 @@ namespace SLAT {
 
     double CompGroup::SD_ln_delay_IM_calc(double im)
     {
+        Integration::IntegrationSettings temp_settings(&local_settings);
+        {
+            std::stringstream s;
+            s << get_Name() << "::SD_ln_delay_IM_calc(" << im << ")";
+            temp_settings.warning_label = s.str();
+        }
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
             [this, im] (double edp) -> double {
@@ -367,7 +420,7 @@ namespace SLAT {
                     result = (e * e + sd * sd) * std::abs(d);
                 }
                 return result;
-            }, local_settings); 
+            }, temp_settings); 
         if (result.successful) {
             double mean_x = E_delay_IM(im) / this->count;
 
@@ -398,6 +451,12 @@ namespace SLAT {
         double im = params.second;
         LogNormalDist dist = FragFn()->DamageStates()[i];
 
+        Integration::IntegrationSettings temp_settings(&local_settings);
+        {
+            std::stringstream s;
+            s << get_Name() << "::pDS_IM_calc(" << im << ")";
+            temp_settings.warning_label = s.str();
+        }
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
             [this, im, dist] (double edp) -> double {
@@ -421,7 +480,7 @@ namespace SLAT {
                     result = p * std::abs(deriv);
                 }
                 return result;
-            }, local_settings); 
+            }, temp_settings); 
         
         if (result.successful) {
             return result.integral;
@@ -444,6 +503,12 @@ namespace SLAT {
         vector<double> results(FragFn()->n_states());
         for (size_t i=0; i < results.size(); i++) {
             // Integrate p(DS|IM) * dlambdaIM/dIM * dIM
+            Integration::IntegrationSettings temp_settings(&local_settings);
+            {
+                std::stringstream s;
+                s << get_Name() << "::calc_Rate()";
+                temp_settings.warning_label = s.str();
+            }
             Integration::MAQ_RESULT result;
             result =  Integration::MAQ(
                 [this, i] (double im) -> double {
@@ -456,7 +521,7 @@ namespace SLAT {
                         result = p * std::abs(deriv);
                     }
                     return result;
-                }, local_settings); 
+                }, temp_settings); 
             if (result.successful) {
                 results[i] = result.integral;
             } else {

@@ -38,6 +38,7 @@ namespace SLAT {
         {
             return components;
         };
+        std::string get_Name(void) const { return name; };
     private:
         std::string name;
         LogNormalDist calc_AnnualCost(void);
