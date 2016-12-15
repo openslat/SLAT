@@ -60,13 +60,14 @@ namespace SLAT {
             static const unsigned int EVALUATIONS_DEFAULT = 1024;
             static constexpr double TOLERANCE_DEFAULT = 1E-6;
             const IntegrationSettings *parent;
-            
+
             unsigned int max_evals;
             double tolerance;
 
             static IntegrationSettings default_settings;
         protected:
         public: 
+            static unsigned int bin_evals;
             static src::logger_mt settings_logger;
         };
         

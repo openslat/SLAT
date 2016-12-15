@@ -72,9 +72,9 @@ namespace SLAT {
             }, name + std::string("::DemolitionRate"))
     {
         this->name = name;
-        std::cout << "IM: " << name << " " << local_settings.Get_Effective_Max_Evals() << "; "
-                  << Get_Class_Integration_Settings().Get_Effective_Max_Evals() << "; "
-                  << Integration::IntegrationSettings::Get_Global_Settings()->Get_Effective_Max_Evals() << std::endl;
+        // std::cout << "IM: " << name << " " << local_settings.Get_Effective_Max_Evals() << "; "
+        //           << Get_Class_Integration_Settings().Get_Effective_Max_Evals() << "; "
+        //           << Integration::IntegrationSettings::Get_Global_Settings()->Get_Effective_Max_Evals() << std::endl;
         
         f = func;
         callback_id = f->add_callbacks(
@@ -141,9 +141,9 @@ namespace SLAT {
     double IM::CollapseRate_calc(void)
     {
         if (collapse) {
-            std::cout << "IM::CollapseRate_calc " << name << " " << local_settings.Get_Effective_Max_Evals() << "; "
-                      << Get_Class_Integration_Settings().Get_Effective_Max_Evals() << "; "
-                      << Integration::IntegrationSettings::Get_Global_Settings()->Get_Effective_Max_Evals() << std::endl;
+            // std::cout << "IM::CollapseRate_calc " << name << " " << local_settings.Get_Effective_Max_Evals() << "; "
+            //           << Get_Class_Integration_Settings().Get_Effective_Max_Evals() << "; "
+            //           << Integration::IntegrationSettings::Get_Global_Settings()->Get_Effective_Max_Evals() << std::endl;
 
             Integration::MAQ_RESULT result;
             result =  Integration::MAQ(
@@ -153,7 +153,7 @@ namespace SLAT {
                     double result = fabs(d) * p;
                     return result;
                 }, local_settings); 
-            std::cout << "...." << std::endl;
+            //std::cout << "...." << std::endl;
             if (result.successful) {
                 return result.integral;
             } else {

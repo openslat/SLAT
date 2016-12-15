@@ -1,0 +1,667 @@
+#+Title:     Integration Statistics
+#+AUTHOR:    Michael Gauland
+#+EMAIL:     michael.gauland@canterbury.ac.nz
+#+DATE:      {{{time(%Y-%m-%d %H:%M)}}}
+#+DESCRIPTION: 
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:6 num:t toc:nil \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
+#+OPTIONS:   TeX:dvipng LaTeX:dvipng skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+OPTIONS:   timestamp:t email:t
+#+OPTIONS:   ':t
+#+INFOJS_OPT: view:nil toc:t ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [a4paper]
+#+LATEX_HEADER: \usepackage{unicode-math}
+#+LaTex_header: \usepackage{epstopdf}
+#+LATEX_HEADER: \usepackage{register}
+#+LATEX_HEADER: \usepackage{bytefield}
+#+LATEX_HEADER: \usepackage{parskip}
+#+LATEX_HEADER: \usepackage{tabulary}
+#+LATEX_HEADER: \usepackage[section]{placeins}
+#+LATEX_HEADER: \usepackage[htt]{hyphenat}
+#+LATEX_HEADER: \setlength{\parindent}{0pt}
+#+LATEX_HEADER: \lstset{keywordstyle=\color{blue}\bfseries}
+#+LATEX_HEADER: \lstset{frame=shadowbox}
+#+LATEX_HEADER: \lstset{basicstyle=\ttfamily}
+#+LATEX_HEADER: \definecolor{mygray}{gray}{0.8}
+#+LATEX_HEADER: \lstset{rulesepcolor=\color{mygray}}
+#+LATEX_HEADER: \lstdefinelanguage{sh}{rulecolor=\color{green},rulesepcolor=\color{mygray},frameround=ffff,backgroundcolor=\color{white}}
+#+LATEX_HEADER: \lstdefinelanguage{fundamental}{basicstyle=\ttfamily\scriptsize,rulesepcolor=\color{cyan},frameround=tttt,backgroundcolor=\color{white},breaklines=true}
+#+LATEX_HEADER: \usepackage{pst-circ}
+#+LATEX_HEADER: \usepackage[hang,small,bf]{caption}
+#+LATEX_HEADER: \setlength{\captionmargin}{20pt}
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+#+STARTUP: overview
+#+STARTUP: align
+#+STARTUP: noinlineimages
+#+PROPERTY: header-args :exports both
+#+PROPERTY: header-args:fundamental :eval never :exports code
+
+I've instrumented the integration code to record information about the
+calculations is performs, and I've modified ~example2.cpp~ to run report this
+information using different values for the integration settings.
+
+I've also provided separate evaluation limits for the 'binary subdivision' and
+'MAQ' stages of the calculation.
+
+This document presents the results of that testing.
+
+* Raw Data                                                           :export:
+  The program prints its records to the console. These are captured to a file, and look like this:
+  #+BEGIN_SRC sh :results output raw :wrap src fundamental :exports results
+  head -18 integration-statistics-binary_subdivision
+  echo .
+  echo .
+  echo .
+  #+END_SRC
+
+  #+RESULTS:
+  #+BEGIN_src fundamental
+  ----------------------------
+  Tolerance: 0.1; Evals: 1024; Bin Evals: 1024
+  Max Count: 22
+  Max Bin: 1024
+  Bin Evals: 2767482
+  MAQ Evals: 1894332
+  Total Count: 4661814
+  Calls: 150100
+  Successes: 149255
+  Fails: 0
+  NANs: 0
+  Bin_Fails: 845
+  Bins: 0  0  0  0  0  0  0  0  106582  0  0  0  7121  0  18450  15362  
+  Elapsed time: 9.03713
+  ----------------------------
+  Tolerance: 0.1; Evals: 4096; Bin Evals: 1024
+  Max Count: 22
+  Max Bin: 1024
+  .
+  .
+  .
+  #+END_src
+  
+  Each record includes:
+  + /~Tolerance~/ is the required precision passed to the MAQ algorithm.
+  + /~Evals~/ is the maximum number of evaluations allowed for the integration
+    computation.
+  + /~Bin Evals~/ is the maximum number of evaluations allowed for ~binary_subdivision()~.
+  + /~Max Count~/ is the maximum number of evaluations actually performed during
+    integration (excluding those used by ~binary_subdivision()~).
+  + /~Max Bin~/ is the maximum number of evaluations used by ~binary_subdivision()~.
+  + /~Bin Evals~/ is the total number of evaluations performed by ~binary_subdivision()~.
+  + /~MAQ Evals~/ is the total number of evaluations performed during
+    integration (excluding those used by ~binary_subdivision()~).
+  + /~Total Count~/ is the total number of evaluations (/~Bin Evals~/ + ~/MAQ
+    Evals/~).
+  + /~Calls~/ is the number of calls to ~MAQ()~.
+  + /~Successes~/ is the number of times ~MAQ()~ completed successfully.
+  + /~Fails~/ is the number of times ~MAQ()~ failed to reach the required
+    precision within the allowed number of evaluations.
+  + /~NANs~/ is the number of times ~MAQ()~ failed because the integrand
+    evaluated to ~NAN~.
+  + /~Bin_Fails~/ is the number of times ~MAQ()~ failed because
+    ~binary_subdivision()~ failed to find anything of interest.
+  + /~Bins~/ provides a histogram of the values returned by
+    ~binary_subdivision()~. The actual values range from 0 to 1, with 0
+    corresponding to infinity and 1 to zero.
+  + /~Elapsed time~/ is the time, in seconds, it took to run the simulation.
+
+* Import Data                                                        :export:
+   Run the [[awk-stats-munge][~awk~ script]] on the input file, to convert the data to CSV, producing the file
+   call_awk-stats-munge[:in-file integration-statistics-binary_subdivision :file integration-statistics-binary_subdivision.csv]() and
+   call_awk-stats-munge[:in-file integration-statistics-alternate_binary_subdivision :file integration-statistics-alternate_binary_subdivision.csv]().
+
+   Set up an ~sqlite~ database, and import the CSV data:
+   #+BEGIN_SRC sqlite :db integration-statistics.sql
+   DROP TABLE IF EXISTS stats;
+   CREATE TABLE stats (
+       tolerance NUMBER,
+       maq_limit INTEGER,
+       bin_limit INTEGER,
+       maq_max INTEGER,
+       bin_max INTEGER,
+       bin_evals INTEGER,
+       maq_evals INTEGER,
+       calls INTEGER,
+       successes INTEGER,
+       failures INTEGER,
+       NANs INTEGER,
+       bin_fails INTEGER,
+       runtime NUMBER
+   );
+   .import integration-statistics-binary_subdivision.csv stats
+   #+END_SRC
+* Overview of Data                                                   :export:
+   There are
+   src_sqlite[:exports results :db integration-statistics.sql]{SELECT COUNT(*) FROM stats;} {{{results(=147=)}}}
+   runs in the table, covering
+   src_sqlite[:exports results :db integration-statistics.sql]{SELECT COUNT(*) FROM (SELECT COUNT(*) FROM stats GROUP BY tolerance);} {{{results(=7=)}}}
+   tolerances:
+   
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT tolerance as 'Tolerance' FROM stats GROUP BY tolerance;
+  #+END_SRC
+
+   #+RESULTS:
+   | Tolerance |
+   |     0.001 |
+   |     0.002 |
+   |     0.005 |
+   |      0.01 |
+   |      0.02 |
+   |      0.05 |
+   |       0.1 |
+
+   Each tolerance is used in combination with MAQ limits ranging from 1,024 to
+   1,048,576, and ~binary_subdivision()~ limits from 1,024 to MAQ limit:
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT maq_limit as 'MAQ Limit',
+   	 bin_limit as 'Bin Limit'
+     FROM stats GROUP BY maq_limit, bin_limit;
+   #+END_SRC
+
+   #+RESULTS:
+   | MAQ Limit | Bin Limit |
+   |      1024 |      1024 |
+   |      4096 |      1024 |
+   |      4096 |      4096 |
+   |     16384 |      1024 |
+   |     16384 |      4096 |
+   |     16384 |     16384 |
+   |     65536 |      1024 |
+   |     65536 |      4096 |
+   |     65536 |     16384 |
+   |     65536 |     65536 |
+   |    262144 |      1024 |
+   |    262144 |      4096 |
+   |    262144 |     16384 |
+   |    262144 |     65536 |
+   |    262144 |    262144 |
+   |   1048576 |      1024 |
+   |   1048576 |      4096 |
+   |   1048576 |     16384 |
+   |   1048576 |     65536 |
+   |   1048576 |    262144 |
+   |   1048576 |   1048576 |
+
+** Cost of Calculations
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats LIMIT 5;
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   |       0.1 |      1024 |      1024 |      22 |    1024 |   2767482 |   1894332 | 150100 |    149255 |        0 |    0 |       845 | 9.03713 |
+   |       0.1 |      4096 |      1024 |      22 |    1024 |   2768778 |   1894352 | 150100 |    149255 |        0 |    0 |       845 | 8.91648 |
+   |       0.1 |      4096 |      4096 |      22 |    4096 |   5135561 |   1895956 | 150100 |    149420 |        0 |    0 |       680 | 12.4455 |
+   |       0.1 |     16384 |      1024 |      22 |    1024 |   2766548 |   1894426 | 150100 |    149255 |        0 |    0 |       845 | 9.09502 |
+   |       0.1 |     16384 |      4096 |      22 |    4096 |   5132429 |   1895956 | 150100 |    149420 |        0 |    0 |       680 | 12.5911 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT tolerance, MAX(bin_evals), MAX(maq_evals)  FROM stats GROUP BY tolerance;
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | MAX(bin_evals) | MAX(maq_evals) |
+   |     0.001 |      604699129 |        6695764 |
+   |     0.002 |      587909359 |        5269398 |
+   |     0.005 |      580111620 |        3922596 |
+   |      0.01 |      570864190 |        3240446 |
+   |      0.02 |      568095000 |        2712304 |
+   |      0.05 |      553689504 |        2136498 |
+   |       0.1 |      531990072 |        1898420 |
+
+   #+ATTR_LaTeX: :placement [!h]
+   #+HEADER: :results graphics
+   #+HEADER: :width 6 :height 4
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+HEADER: :session munge-stats
+   #+HEADER: :exports both
+   #+BEGIN_SRC R
+     library(DBI)
+     library(RSQLite)
+     con <- dbConnect(SQLite(), dbname="integration-statistics.sql")
+     df <-  dbGetQuery(con,
+     "SELECT bin_limit, bin_evals, maq_evals
+     FROM stats WHERE tolerance=0.1 AND maq_limit=256*1024 ORDER BY bin_limit ASC")
+     names(df) <- c("bin_limit", "bin_evals", "maq_evals")
+     barplot(t(as.matrix(df[,2:3])), beside=TRUE,
+             names.arg=df$bin_limit, legend.text=c("bin", "maq"))
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:/tmp/babel-1810sNb/figure-1810m4v.pdf]]
+
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql
+   DROP TABLE IF EXISTS stats_alternate;
+   CREATE TABLE stats_alternate AS SELECT * FROM stats;
+   DELETE FROM stats_alternate;
+   .import integration-statistics-alternate_binary_subdivision.csv stats_alternate
+   #+END_SRC
+
+   #+RESULTS:
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT * 
+         FROM stats_alternate
+         WHERE tolerance=0.1 AND maq_limit=256*1024
+          ORDER BY bin_limit ASC;
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   |       0.1 |    262144 |      1024 |      22 |    1024 |   2767354 |   1894384 | 150100 |    149255 |        0 |    0 |       845 | 9.04095 |
+   |       0.1 |    262144 |      4096 |      22 |    4096 |   5135369 |   1896082 | 150100 |    149420 |        0 |    0 |       680 | 12.4811 |
+   |       0.1 |    262144 |     16384 |      22 |   16384 |  13449458 |   1896044 | 150100 |    149433 |        0 |    0 |       667 | 24.5009 |
+   |       0.1 |    262144 |     65536 |      26 |   65536 |  44466440 |   1896948 | 150100 |    149539 |        0 |    0 |       561 | 70.3335 |
+   |       0.1 |    262144 |    262144 |      26 |  262144 | 152143734 |   1897016 | 150100 |    149559 |        0 |    0 |       541 | 250.391 |
+
+   #+ATTR_LaTeX: :placement [!h]
+   #+HEADER: :results graphics
+   #+HEADER: :width 6 :height 4
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+HEADER: :session munge-stats
+   #+HEADER: :exports both
+   #+BEGIN_SRC R
+     library(DBI)
+     library(RSQLite)
+     con <- dbConnect(SQLite(),
+                      dbname="integration-statistics.sql")
+     df <-  dbGetQuery(con,
+                       "SELECT bin_limit, bin_evals, maq_evals
+       FROM stats_alternate WHERE tolerance=0.1 AND maq_limit=256*1024 ORDER BY bin_limit ASC")
+     names(df) <- c("bin_limit", "bin_evals", "maq_evals")
+     barplot(t(as.matrix(df[,2:3])), beside=TRUE,
+             names.arg=df$bin_limit, legend.text=c("bin", "maq"))
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:/tmp/babel-1810sNb/figure-1810-fK.pdf]]
+
+** Binary Subdivision Failures
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT tolerance, maq_limit, bin_limit, bin_fails FROM stats ORDER BY bin_limit;
+
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | bin_fails |
+   |       0.1 |      1024 |      1024 |       845 |
+   |       0.1 |      4096 |      1024 |       845 |
+   |       0.1 |     16384 |      1024 |       845 |
+   |       0.1 |     65536 |      1024 |       845 |
+   |       0.1 |    262144 |      1024 |       845 |
+   |       0.1 |   1048576 |      1024 |       845 |
+   |      0.05 |      1024 |      1024 |       886 |
+   |      0.05 |      4096 |      1024 |       886 |
+   |      0.05 |     16384 |      1024 |       886 |
+   |      0.05 |     65536 |      1024 |       886 |
+   |      0.05 |    262144 |      1024 |       886 |
+   |      0.05 |   1048576 |      1024 |       886 |
+   |      0.02 |      1024 |      1024 |       925 |
+   |      0.02 |      4096 |      1024 |       925 |
+   |      0.02 |     16384 |      1024 |       925 |
+   |      0.02 |     65536 |      1024 |       925 |
+   |      0.02 |    262144 |      1024 |       925 |
+   |      0.02 |   1048576 |      1024 |       925 |
+   |      0.01 |      1024 |      1024 |       945 |
+   |      0.01 |      4096 |      1024 |       945 |
+   |      0.01 |     16384 |      1024 |       945 |
+   |      0.01 |     65536 |      1024 |       945 |
+   |      0.01 |    262144 |      1024 |       945 |
+   |      0.01 |   1048576 |      1024 |       945 |
+   |     0.005 |      1024 |      1024 |       985 |
+   |     0.005 |      4096 |      1024 |       985 |
+   |     0.005 |     16384 |      1024 |       985 |
+   |     0.005 |     65536 |      1024 |       985 |
+   |     0.005 |    262144 |      1024 |       985 |
+   |     0.005 |   1048576 |      1024 |       985 |
+   |     0.002 |      1024 |      1024 |      1042 |
+   |     0.002 |      4096 |      1024 |      1042 |
+   |     0.002 |     16384 |      1024 |      1042 |
+   |     0.002 |     65536 |      1024 |      1042 |
+   |     0.002 |    262144 |      1024 |      1042 |
+   |     0.002 |   1048576 |      1024 |      1042 |
+   |     0.001 |      1024 |      1024 |      1099 |
+   |     0.001 |      4096 |      1024 |      1099 |
+   |     0.001 |     16384 |      1024 |      1099 |
+   |     0.001 |     65536 |      1024 |      1099 |
+   |     0.001 |    262144 |      1024 |      1099 |
+   |     0.001 |   1048576 |      1024 |      1099 |
+   |       0.1 |      4096 |      4096 |       680 |
+   |       0.1 |     16384 |      4096 |       680 |
+   |       0.1 |     65536 |      4096 |       680 |
+   |       0.1 |    262144 |      4096 |       680 |
+   |       0.1 |   1048576 |      4096 |       680 |
+   |      0.05 |      4096 |      4096 |       714 |
+   |      0.05 |     16384 |      4096 |       714 |
+   |      0.05 |     65536 |      4096 |       714 |
+   |      0.05 |    262144 |      4096 |       714 |
+   |      0.05 |   1048576 |      4096 |       714 |
+   |      0.02 |      4096 |      4096 |       738 |
+   |      0.02 |     16384 |      4096 |       738 |
+   |      0.02 |     65536 |      4096 |       738 |
+   |      0.02 |    262144 |      4096 |       738 |
+   |      0.02 |   1048576 |      4096 |       738 |
+   |      0.01 |      4096 |      4096 |       752 |
+   |      0.01 |     16384 |      4096 |       752 |
+   |      0.01 |     65536 |      4096 |       752 |
+   |      0.01 |    262144 |      4096 |       752 |
+   |      0.01 |   1048576 |      4096 |       752 |
+   |     0.005 |      4096 |      4096 |       771 |
+   |     0.005 |     16384 |      4096 |       771 |
+   |     0.005 |     65536 |      4096 |       771 |
+   |     0.005 |    262144 |      4096 |       771 |
+   |     0.005 |   1048576 |      4096 |       771 |
+   |     0.002 |      4096 |      4096 |       801 |
+   |     0.002 |     16384 |      4096 |       801 |
+   |     0.002 |     65536 |      4096 |       801 |
+   |     0.002 |    262144 |      4096 |       801 |
+   |     0.002 |   1048576 |      4096 |       801 |
+   |     0.001 |      4096 |      4096 |       832 |
+   |     0.001 |     16384 |      4096 |       832 |
+   |     0.001 |     65536 |      4096 |       832 |
+   |     0.001 |    262144 |      4096 |       832 |
+   |     0.001 |   1048576 |      4096 |       832 |
+   |       0.1 |     16384 |     16384 |       667 |
+   |       0.1 |     65536 |     16384 |       667 |
+   |       0.1 |    262144 |     16384 |       667 |
+   |       0.1 |   1048576 |     16384 |       667 |
+   |      0.05 |     16384 |     16384 |       699 |
+   |      0.05 |     65536 |     16384 |       699 |
+   |      0.05 |    262144 |     16384 |       699 |
+   |      0.05 |   1048576 |     16384 |       699 |
+   |      0.02 |     16384 |     16384 |       722 |
+   |      0.02 |     65536 |     16384 |       722 |
+   |      0.02 |    262144 |     16384 |       722 |
+   |      0.02 |   1048576 |     16384 |       722 |
+   |      0.01 |     16384 |     16384 |       728 |
+   |      0.01 |     65536 |     16384 |       728 |
+   |      0.01 |    262144 |     16384 |       728 |
+   |      0.01 |   1048576 |     16384 |       728 |
+   |     0.005 |     16384 |     16384 |       743 |
+   |     0.005 |     65536 |     16384 |       743 |
+   |     0.005 |    262144 |     16384 |       743 |
+   |     0.005 |   1048576 |     16384 |       743 |
+   |     0.002 |     16384 |     16384 |       765 |
+   |     0.002 |     65536 |     16384 |       765 |
+   |     0.002 |    262144 |     16384 |       765 |
+   |     0.002 |   1048576 |     16384 |       765 |
+   |     0.001 |     16384 |     16384 |       793 |
+   |     0.001 |     65536 |     16384 |       793 |
+   |     0.001 |    262144 |     16384 |       793 |
+   |     0.001 |   1048576 |     16384 |       793 |
+   |       0.1 |     65536 |     65536 |       561 |
+   |       0.1 |    262144 |     65536 |       561 |
+   |       0.1 |   1048576 |     65536 |       561 |
+   |      0.05 |     65536 |     65536 |       581 |
+   |      0.05 |    262144 |     65536 |       581 |
+   |      0.05 |   1048576 |     65536 |       581 |
+   |      0.02 |     65536 |     65536 |       596 |
+   |      0.02 |    262144 |     65536 |       596 |
+   |      0.02 |   1048576 |     65536 |       596 |
+   |      0.01 |     65536 |     65536 |       602 |
+   |      0.01 |    262144 |     65536 |       602 |
+   |      0.01 |   1048576 |     65536 |       602 |
+   |     0.005 |     65536 |     65536 |       613 |
+   |     0.005 |    262144 |     65536 |       613 |
+   |     0.005 |   1048576 |     65536 |       613 |
+   |     0.002 |     65536 |     65536 |       621 |
+   |     0.002 |    262144 |     65536 |       621 |
+   |     0.002 |   1048576 |     65536 |       621 |
+   |     0.001 |     65536 |     65536 |       649 |
+   |     0.001 |    262144 |     65536 |       649 |
+   |     0.001 |   1048576 |     65536 |       649 |
+   |       0.1 |    262144 |    262144 |       541 |
+   |       0.1 |   1048576 |    262144 |       541 |
+   |      0.05 |    262144 |    262144 |       561 |
+   |      0.05 |   1048576 |    262144 |       561 |
+   |      0.02 |    262144 |    262144 |       576 |
+   |      0.02 |   1048576 |    262144 |       576 |
+   |      0.01 |    262144 |    262144 |       579 |
+   |      0.01 |   1048576 |    262144 |       579 |
+   |     0.005 |    262144 |    262144 |       588 |
+   |     0.005 |   1048576 |    262144 |       588 |
+   |     0.002 |    262144 |    262144 |       595 |
+   |     0.002 |   1048576 |    262144 |       595 |
+   |     0.001 |    262144 |    262144 |       619 |
+   |     0.001 |   1048576 |    262144 |       619 |
+   |       0.1 |   1048576 |   1048576 |       452 |
+   |      0.05 |   1048576 |   1048576 |       472 |
+   |      0.02 |   1048576 |   1048576 |       483 |
+   |      0.01 |   1048576 |   1048576 |       484 |
+   |     0.005 |   1048576 |   1048576 |       491 |
+   |     0.002 |   1048576 |   1048576 |       496 |
+   |     0.001 |   1048576 |   1048576 |       502 |
+
+** MAQ_Limit==1M, Tolerance==0.001
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats WHERE maq_limit IS 1024 * 1024 AND tolerance IS 0.001;
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   |     0.001 |   1048576 |      1024 |      92 |    1024 |   4957471 |   6684620 | 236524 |    235425 |        0 |    0 |      1099 | 20.7677 |
+   |     0.001 |   1048576 |      4096 |      92 |    4096 |   7934961 |   6689872 | 236500 |    235668 |        0 |    0 |       832 | 25.5023 |
+   |     0.001 |   1048576 |     16384 |      92 |   16384 |  17936199 |   6690570 | 236500 |    235707 |        0 |    0 |       793 | 41.1214 |
+   |     0.001 |   1048576 |     65536 |      92 |   65536 |  54521703 |   6692530 | 236500 |    235851 |        0 |    0 |       649 | 95.3631 |
+   |     0.001 |   1048576 |    262144 |      92 |  262144 | 178189803 |   6693012 | 236500 |    235881 |        0 |    0 |       619 | 286.768 |
+   |     0.001 |   1048576 |   1048576 |      92 | 1048576 | 604699129 |   6695764 | 236500 |    235998 |        0 |    0 |       502 | 942.418 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT bin_limit, bin_evals, maq_evals, failures, NANs, bin_fails FROM stats WHERE maq_limit IS 1024 * 1024 AND tolerance IS 0.001;
+   #+END_SRC
+
+   
+   #+RESULTS:
+   | bin_limit | bin_evals | maq_evals | failures | NANs | bin_fails |
+   |      1024 |   4957471 |   6684620 |        0 |    0 |      1099 |
+   |      4096 |   7934961 |   6689872 |        0 |    0 |       832 |
+   |     16384 |  17936199 |   6690570 |        0 |    0 |       793 |
+   |     65536 |  54521703 |   6692530 |        0 |    0 |       649 |
+   |    262144 | 178189803 |   6693012 |        0 |    0 |       619 |
+   |   1048576 | 604699129 |   6695764 |        0 |    0 |       502 |
+
+* Overview of Database
+** Number of Samples
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT 'stats' as 'Version', COUNT(*) FROM stats;
+   .header off
+   SELECT 'stats_alternate', COUNT(*) FROM stats_alternate;
+   #+END_SRC
+
+   #+RESULTS:
+   | Version         | COUNT(*) |
+   | stats           |       20 |
+   | stats_alternate |      147 |
+
+** Number of Samples by Tolerance
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT tolerance, COUNT(*) FROM stats GROUP BY tolerance ORDER BY tolerance DESC;
+   #+END_SRC
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT tolerance, COUNT(*) FROM stats_alternate GROUP BY tolerance ORDER BY tolerance DESC;
+   #+END_SRC
+
+** Tolerance == 0.002
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats WHERE tolerance IS 0.002;
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   |     0.002 |      1024 |      1024 |      72 |    1024 |   4421934 |   5259686 | 213896 |    212854 |        0 |    0 |      1042 | 17.3563 |
+   |     0.002 |      4096 |      1024 |      72 |    1024 |   4419556 |   5259610 | 213896 |    212854 |        0 |    0 |      1042 |  17.283 |
+   |     0.002 |      4096 |      4096 |      72 |    4096 |   7309942 |   5264436 | 213896 |    213095 |        0 |    0 |       801 | 21.9187 |
+   |     0.002 |     16384 |      1024 |      72 |    1024 |   4420582 |   5259616 | 213896 |    212854 |        0 |    0 |      1042 | 17.7819 |
+   |     0.002 |     16384 |      4096 |      72 |    4096 |   7310788 |   5264340 | 213896 |    213095 |        0 |    0 |       801 | 21.7158 |
+   |     0.002 |     16384 |     16384 |      72 |   16384 |  16948485 |   5264922 | 213896 |    213131 |        0 |    0 |       765 | 36.6247 |
+   |     0.002 |     65536 |      1024 |      72 |    1024 |   4420490 |   5259714 | 213896 |    212854 |        0 |    0 |      1042 |  17.306 |
+   |     0.002 |     65536 |      4096 |      72 |    4096 |   7309614 |   5264306 | 213896 |    213095 |        0 |    0 |       801 | 21.8652 |
+   |     0.002 |     65536 |     16384 |      72 |   16384 |  16946865 |   5264782 | 213896 |    213131 |        0 |    0 |       765 | 37.0094 |
+   |     0.002 |     65536 |     65536 |      72 |   65536 |  52156711 |   5266946 | 213896 |    213275 |        0 |    0 |       621 | 89.8009 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats_alternate WHERE tolerance IS 0.002;
+   #+END_SRC
+
+** Bin_Limit==1024, Tolerance==0.01
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats WHERE bin_limit IS 1024 AND tolerance IS 0.01;
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   |      0.01 |      1024 |      1024 |      44 |    1024 |   3504030 |   3233744 | 179288 |    178343 |        0 |    0 |       945 | 12.2624 |
+   |      0.01 |      2048 |      1024 |      44 |    1024 |   3504074 |   3233702 | 179288 |    178343 |        0 |    0 |       945 | 12.1877 |
+   |      0.01 |      4096 |      1024 |      44 |    1024 |   3502912 |   3233716 | 179288 |    178343 |        0 |    0 |       945 | 12.1599 |
+   |      0.01 |      8192 |      1024 |      44 |    1024 |   3503568 |   3233802 | 179288 |    178343 |        0 |    0 |       945 | 12.1644 |
+   |      0.01 |     16384 |      1024 |      44 |    1024 |   3503880 |   3233828 | 179288 |    178343 |        0 |    0 |       945 | 12.1839 |
+   |      0.01 |     32768 |      1024 |      44 |    1024 |   3503394 |   3233958 | 179288 |    178343 |        0 |    0 |       945 | 12.1862 |
+   |      0.01 |     65536 |      1024 |      44 |    1024 |   3503256 |   3233846 | 179288 |    178343 |        0 |    0 |       945 | 12.3976 |
+   |      0.01 |    131072 |      1024 |      44 |    1024 |   3501848 |   3233836 | 179288 |    178343 |        0 |    0 |       945 | 12.1997 |
+   |      0.01 |    262144 |      1024 |      44 |    1024 |   3503580 |   3233896 | 179288 |    178343 |        0 |    0 |       945 | 12.2208 |
+   |      0.01 |    524288 |      1024 |      44 |    1024 |   3502548 |   3233804 | 179288 |    178343 |        0 |    0 |       945 | 12.1504 |
+   |      0.01 |   1048576 |      1024 |      44 |    1024 |   3503512 |   3233792 | 179288 |    178343 |        0 |    0 |       945 | 12.2528 |
+   |      0.01 |   2097152 |      1024 |      44 |    1024 |   3503126 |   3233908 | 179288 |    178343 |        0 |    0 |       945 | 12.2615 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats_alternate WHERE bin_limit IS 1024 AND tolerance IS 0.01;
+   #+END_SRC
+** MAQ_Limit==2097152, Tolerance==0.001
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats WHERE maq_limit IS 1024 * 1024 AND tolerance IS 0.001;
+   #+END_SRC
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats_alternate WHERE maq_limit IS 1024 * 1024 AND tolerance IS 0.001;
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   |     0.001 |   1048576 |      1024 |      92 |    1024 |   1640323 |   6693484 | 236500 |    235858 |        0 |    0 |       642 | 16.0141 |
+   |     0.001 |   1048576 |      4096 |      92 |    1596 |   2094038 |   6705864 | 236500 |    236500 |        0 |    0 |         0 | 16.0979 |
+   |     0.001 |   1048576 |     16384 |      92 |    1596 |   2093238 |   6705762 | 236500 |    236500 |        0 |    0 |         0 | 15.9401 |
+   |     0.001 |   1048576 |     65536 |      92 |    1596 |   2094584 |   6705812 | 236500 |    236500 |        0 |    0 |         0 | 18.0637 |
+   |     0.001 |   1048576 |    262144 |      92 |    1596 |   2095230 |   6705896 | 236500 |    236500 |        0 |    0 |         0 | 17.2184 |
+   |     0.001 |   1048576 |   1048576 |      92 |    1596 |   2093656 |   6705828 | 236500 |    236500 |        0 |    0 |         0 | 15.9887 |
+
+** BIN_LIMIT == 65536
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats where bin_limit is 65536;
+   #+END_SRC
+
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   |       0.1 |     65536 |     65536 |      26 |   65536 |  44469676 |   1896860 | 150100 |    149539 |        0 |    0 |       561 | 72.0229 |
+   |       0.1 |    262144 |     65536 |      26 |   65536 |  44467564 |   1896968 | 150100 |    149539 |        0 |    0 |       561 | 75.6938 |
+   |       0.1 |   1048576 |     65536 |      26 |   65536 |  44467578 |   1896986 | 150100 |    149539 |        0 |    0 |       561 | 72.8688 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats_alternate where bin_limit is 65536;
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   |       0.1 |     65536 |     65536 |      30 |    1596 |   1564578 |   1904756 | 150100 |    150100 |        0 |    0 |         0 | 6.68434 |
+   |       0.1 |    262144 |     65536 |      30 |    1596 |   1564532 |   1904782 | 150100 |    150100 |        0 |    0 |         0 | 6.68423 |
+   |       0.1 |   1048576 |     65536 |      30 |    1596 |   1565789 |   1904746 | 150100 |    150100 |        0 |    0 |         0 | 6.60414 |
+   |      0.05 |     65536 |     65536 |      32 |    1596 |   1632370 |   2143660 | 153248 |    153248 |        0 |    0 |         0 | 10.3916 |
+   |      0.05 |    262144 |     65536 |      32 |    1596 |   1633352 |   2143586 | 153248 |    153248 |        0 |    0 |         0 | 7.32455 |
+   |      0.05 |   1048576 |     65536 |      32 |    1596 |   1631849 |   2143648 | 153248 |    153248 |        0 |    0 |         0 | 7.33137 |
+   |      0.02 |     65536 |     65536 |      34 |    1596 |   1725027 |   2720144 | 168000 |    168000 |        0 |    0 |         0 | 8.63187 |
+   |      0.02 |    262144 |     65536 |      34 |    1596 |   1724453 |   2720030 | 168000 |    168000 |        0 |    0 |         0 | 8.70644 |
+   |      0.02 |   1048576 |     65536 |      34 |    1596 |   1725885 |   2719972 | 168000 |    168000 |        0 |    0 |         0 | 8.46617 |
+   |      0.01 |     65536 |     65536 |      44 |    1596 |   1772881 |   3248486 | 179288 |    179288 |        0 |    0 |         0 | 9.58372 |
+   |      0.01 |    262144 |     65536 |      44 |    1596 |   1773601 |   3248492 | 179288 |    179288 |        0 |    0 |         0 | 10.7433 |
+   |      0.01 |   1048576 |     65536 |      44 |    1596 |   1774082 |   3248590 | 179288 |    179288 |        0 |    0 |         0 | 9.23688 |
+   |     0.005 |     65536 |     65536 |      56 |    1596 |   1852940 |   3931320 | 192040 |    192040 |        0 |    0 |         0 | 10.7944 |
+   |     0.005 |    262144 |     65536 |      56 |    1596 |   1853420 |   3931364 | 192040 |    192040 |        0 |    0 |         0 | 10.8943 |
+   |     0.005 |   1048576 |     65536 |      56 |    1596 |   1853652 |   3931256 | 192040 |    192040 |        0 |    0 |         0 | 15.2724 |
+   |     0.002 |     65536 |     65536 |      72 |    1596 |   1969331 |   5278904 | 213896 |    213896 |        0 |    0 |         0 |  13.208 |
+   |     0.002 |    262144 |     65536 |      72 |    1596 |   1969462 |   5278890 | 213896 |    213896 |        0 |    0 |         0 | 13.5893 |
+   |     0.002 |   1048576 |     65536 |      72 |    1596 |   1968964 |   5278886 | 213896 |    213896 |        0 |    0 |         0 |  13.195 |
+   |     0.001 |     65536 |     65536 |      92 |    1596 |   2094168 |   6705736 | 236500 |    236500 |        0 |    0 |         0 | 16.0328 |
+   |     0.001 |    262144 |     65536 |      92 |    1596 |   2094917 |   6705832 | 236500 |    236500 |        0 |    0 |         0 |  16.031 |
+   |     0.001 |   1048576 |     65536 |      92 |    1596 |   2094584 |   6705812 | 236500 |    236500 |        0 |    0 |         0 | 18.0637 |
+** All Data                                                        :noexport:
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats;
+   #+END_SRC
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats_alternate;
+   #+END_SRC
+
+* Scripts                                                            :export:
+** Pre-process
+   This ~awk~ script converts the statistics reported to the console by ~example2.cpp~ into a CSV file.
+   #+NAME: awk-stats-munge
+   #+BEGIN_SRC awk :results none :exports code
+     BEGIN {
+         #print "   Tolerance, MAQ Limit, Bin Limit,   MAQ Max,   Bin Max, Bin Evals, MAQ Evals,  Calls, Successes, Failures, NANs, Bin Fails, Elapsed Time"
+     }
+     /Tolerance/ { 
+         tolerance = gensub(";", "", "g", $2) 
+         maq_limit = gensub(";", "", "g", $4)
+	 bin_limit = $7
+     }
+     /Max Count/ {
+         max_count = $3
+     }
+     /Max Bin/ {
+         max_bin = $3
+     }
+     /Bin Evals/ {
+         bin_evals = $3
+     }
+     /MAQ Evals/ {
+         maq_evals = $3
+     }
+     /Calls/ {
+         calls = $2
+     }
+     /Successes/ {
+         successes = $2
+     }
+     /^Fails/ {
+         failures = $2
+     }
+     /NANs/ {
+         nans = $2
+     }
+     /Bin_Fails/ {
+         bin_fails = $2
+     }
+     /Elapsed time/ {
+         elapsed_time = $3
+
+         printf "%12.8f", tolerance
+         printf ", %9d", maq_limit
+	 printf ", %9d", bin_limit
+         printf ", %9d", max_count
+         printf ", %9d", max_bin
+         printf ", %9d", bin_evals
+         printf ", %9d", maq_evals
+         printf ",% 6d", calls
+         printf ",%10d", successes
+         printf ", %8d", failures
+         printf ",%5d", nans
+         printf ",%10d", bin_fails
+         printf ",%13.6f", elapsed_time
+         printf "\n"
+     }
+   #+END_SRC 
+
+** Set Up Database
+
+   #+RESULTS:
+

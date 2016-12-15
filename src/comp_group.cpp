@@ -425,6 +425,10 @@ namespace SLAT {
             double mean_x = E_delay_IM(im) / this->count;
 
             double sigma_x = sqrt(result.integral  - mean_x * mean_x);
+            ///@todo What happens if sigma_x is NAN?
+            if (std::isnan(sigma_x)) {
+                sigma_x = 0;
+            }
             double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
             if (mean_x == 0) sigma_lnx = 0; //sigma_x;
             if (std::isnan(sigma_lnx)) {
