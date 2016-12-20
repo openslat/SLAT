@@ -162,7 +162,7 @@
         names(paleo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
         neo.loss.im[[i]] <- read.csv(
-            sprintf("results/loss_%d_im.txt", i),
+            sprintf("results/cost_%d_im.txt", i),
             header=TRUE, sep="")
         names(neo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
@@ -183,7 +183,7 @@
         names(paleo.loss.edp[[i]])=c("EDP","mean.x","sd.lnx")
 
         neo.loss.edp[[i]] <- read.csv(
-            sprintf("results/loss_%d_edp.txt", i),
+            sprintf("results/cost_%d_edp.txt", i),
             header=TRUE, sep="")
         names(neo.loss.edp[[i]]) = c("EDP","mean.x","sd.lnx")
 
@@ -218,6 +218,18 @@
   #+END_SRC
 
   #+RESULTS:
+  #+begin_example
+  Error in file(file, "rt") (from #2) : cannot open the connection
+  In addition: Warning message:
+  In file(file, "rt") :
+    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/cost_1_im.txt': No such file or directory
+  Error in file(file, "rt") : cannot open the connection
+  In addition: Warning message:
+  In file(file, "rt") :
+    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/cost_nc_total': No such file or directory
+  Error in names(paleo.structloss.nc) = c("IM", "mean.x", "sd.lnx") : 
+    object 'paleo.structloss.nc' not found
+#+end_example
 
 
 \clearpage
@@ -252,7 +264,7 @@
   <<code:im-rate-plot>>
   #+NAME: im-rate
   #+HEADER: :results graphics 
-  #+HEADER: :file (org-babel-temp-file "./figure-" ".eps")
+  #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
   #+BEGIN_SRC R
      palette(c("red", "blue"))
      plot(paleo.im$lambda ~ paleo.im$IM, log="xy", 
@@ -268,14 +280,11 @@
   	 fill=palette())
   #+END_SRC
 
-  #+RESULTS:
-  [[file:/tmp/babel-1782NP6/figure-1782asb.pdf]]
-
   #+CAPTION: IM rate comparison ([[code:im-rate-plot][code]]).
   #+ATTR_LaTeX: :width \textwidth*4/4 :placement [h!bt]
   #+NAME: fig:im-rate
   #+RESULTS: im-rate
-  [[file:/tmp/babel-1786g10/figure-17869EV.eps]]
+  [[file:/tmp/babel-1768XAu/figure-1768WYV.eps]]
 
 \clearpage
 * EDP
@@ -2302,7 +2311,7 @@
     #+HEADER: :results graphics
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
     #+BEGIN_SRC R :session *R-2*
-      loss.by.fate <- read.csv("results/loss_by_fate", header=TRUE, sep="")
+      loss.by.fate <- read.csv("results/cost_by_fate", header=TRUE, sep="")
       fate.names = names(loss.by.fate)
       fate.im.name = fate.names[1]
       fate.names = fate.names[2:length(fate.names)]
@@ -2329,7 +2338,7 @@
     #+HEADER: :results graphics
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
     #+BEGIN_SRC R :session *R-2*
-      loss.by.fate.summed <- read.csv("results/loss_by_fate", header=TRUE, sep="")
+      loss.by.fate.summed <- read.csv("results/cost_by_fate", header=TRUE, sep="")
       names(loss.by.fate.summed) = c("IM", "Repair", "Demolition", "Collapse")
       fate.names = names(loss.by.fate.summed)
       fate.im.name = fate.names[1]
@@ -2372,7 +2381,7 @@
     #+HEADER: :results graphics
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
     #+BEGIN_SRC R :session *R-2*
-      loss.by.fate.normalised <- read.csv("results/loss_by_fate", header=TRUE, sep="")
+      loss.by.fate.normalised <- read.csv("results/cost_by_fate", header=TRUE, sep="")
       names(loss.by.fate.normalised) = c("IM", "Repair", "Demolition", "Collapse")
       fate.names = names(loss.by.fate.normalised)
       fate.im.name = fate.names[1]
@@ -2400,7 +2409,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.edp <- read.csv("results/loss_by_edp", header=TRUE, sep="")
+     loss.by.edp <- read.csv("results/cost_by_edp", header=TRUE, sep="")
      edp.names = names(loss.by.edp)
      edp.im.name = edp.names[1]
      edp.names = edp.names[2:length(edp.names)]
@@ -2425,7 +2434,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.edp <- read.csv("results/loss_by_edp", header=TRUE, sep="")
+     loss.by.edp <- read.csv("results/cost_by_edp", header=TRUE, sep="")
      edp.table = data.frame(c("Accel", "Drift"))
 
      for (i in seq(1:11)) {
@@ -2462,7 +2471,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.edp <- read.csv("results/loss_by_edp", header=TRUE, sep="")
+     loss.by.edp <- read.csv("results/cost_by_edp", header=TRUE, sep="")
      edp.table = data.frame(c("Accel", "Drift"))
 
      for (i in seq(1:11)) {
@@ -2500,7 +2509,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.comp <- read.csv("results/loss_by_frag", 
+     loss.by.comp <- read.csv("results/cost_by_frag", 
                               header=TRUE, sep="")
      comp.names = names(loss.by.comp)
      comp.im.name = comp.names[1]
@@ -2544,7 +2553,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.comp <- read.csv("results/loss_by_frag", header=TRUE, sep="")
+     loss.by.comp <- read.csv("results/cost_by_frag", header=TRUE, sep="")
      palette(rainbow(length(comp.names)))
      pie(as.vector(loss.by.comp[20,2:length(comp.names)], mode="numeric"),
          label=lapply(comp.names, function(s) sprintf("#%s", strsplit(s, "\\.")[[1]][[2]])),
@@ -2561,7 +2570,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.comp <- read.csv("results/loss_by_frag", header=TRUE, sep="")
+     loss.by.comp <- read.csv("results/cost_by_frag", header=TRUE, sep="")
      palette(rainbow(length(comp.names)))
      pie(as.vector(loss.by.comp[67,2:length(comp.names)], mode="numeric"),
          label=lapply(comp.names, function(s) sprintf("#%s", strsplit(s, "\\.")[[1]][[2]])),
@@ -2577,9 +2586,9 @@
 * Annual Loss
   The annual loss for the entire structure
   #+BEGIN_SRC R  :results value 
-    paleo.ann.loss <- scan(paste(results.dir, "ann_loss", 
+    paleo.ann.loss <- scan(paste(results.dir, "ann_cost", 
                              sep=""), skip=3)
-    neo.ann.loss <- as.numeric(scan("results/ann_loss",
+    neo.ann.loss <- as.numeric(scan("results/ann_cost",
                                     skip=1))
 
     paste(
@@ -2699,7 +2708,7 @@
    Loss-edp
    #+BEGIN_SRC sh :results output
    for i in $(seq 115); do    
-      f=example1a_loss_${i}_edp.txt
+      f=example1a_cost_${i}_edp.txt
       min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
       max_n=$(tail -1 $f | awk -e '{print $1}')
       count_n=$(wc -l $f | awk -e '{print $1 - 1}')
@@ -2954,7 +2963,7 @@
    Loss-im
    #+BEGIN_SRC sh :results output
    for i in $(seq 115); do    
-      f=example1a_loss_${i}_im.txt
+      f=example1a_cost_${i}_im.txt
       min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
       max_n=$(tail -1 $f | awk -e '{print $1}')
       count_n=$(wc -l $f | awk -e '{print $1 - 1}')
@@ -3196,6 +3205,7 @@
    #+RESULTS:
 
    #+NAME: p.ds.im-1
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3209,6 +3219,7 @@
    [[file:/tmp/babel-1786g10/figure-1786sjA.pdf]]
 
    #+NAME: p.ds.im-2
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3222,6 +3233,7 @@
    [[file:/tmp/babel-1786g10/figure-1786dCQ.pdf]]
 
    #+NAME: p.ds.im-3
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3235,6 +3247,7 @@
    [[file:/tmp/babel-1786g10/figure-1786Ehi.pdf]]
 
    #+NAME: p.ds.im-4
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3248,6 +3261,7 @@
    [[file:/tmp/babel-1786g10/figure-1786r_0.pdf]]
 
    #+NAME: p.ds.im-5
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3261,6 +3275,7 @@
    [[file:/tmp/babel-1786g10/figure-17863dQ.pdf]]
 
    #+NAME: p.ds.im-6
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3274,6 +3289,7 @@
    [[file:/tmp/babel-1786g10/figure-1786e8i.pdf]]
 
    #+NAME: p.ds.im-7
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3287,6 +3303,7 @@
    [[file:/tmp/babel-1786g10/figure-1786Fb1.pdf]]
 
    #+NAME: p.ds.im-8
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3300,6 +3317,7 @@
    [[file:/tmp/babel-1786g10/figure-1786R5Q.pdf]]
 
    #+NAME: p.ds.im-9
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3313,6 +3331,7 @@
    [[file:/tmp/babel-1786g10/figure-17864Xj.pdf]]
 
    #+NAME: p.ds.im-10
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3326,6 +3345,7 @@
    [[file:/tmp/babel-1786g10/figure-1786f21.pdf]]
 
    #+NAME: p.ds.im-11
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3339,6 +3359,7 @@
    [[file:/tmp/babel-1786g10/figure-1786rUR.pdf]]
 
    #+NAME: p.ds.im-12
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3352,6 +3373,7 @@
    [[file:/tmp/babel-1786g10/figure-1786Szj.pdf]]
 
    #+NAME: p.ds.im-13
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3365,6 +3387,7 @@
    [[file:/tmp/babel-1786g10/figure-17865R2.pdf]]
 
    #+NAME: p.ds.im-14
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3378,6 +3401,7 @@
    [[file:/tmp/babel-1786g10/figure-1786FwR.pdf]]
 
    #+NAME: p.ds.im-15
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3391,6 +3415,7 @@
    [[file:/tmp/babel-1786g10/figure-1786sOk.pdf]]
 
    #+NAME: p.ds.im-16
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3404,6 +3429,7 @@
    [[file:/tmp/babel-1786g10/figure-1786Tt2.pdf]]
 
    #+NAME: p.ds.im-17
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3417,6 +3443,7 @@
    [[file:/tmp/babel-1786g10/figure-1786fLS.pdf]]
 
    #+NAME: p.ds.im-18
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3430,6 +3457,7 @@
    [[file:/tmp/babel-1786g10/figure-1786Gqk.pdf]]
 
    #+NAME: p.ds.im-19
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3443,6 +3471,7 @@
    [[file:/tmp/babel-1786g10/figure-1786SIA.pdf]]
 
    #+NAME: p.ds.im-20
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
@@ -3456,6 +3485,7 @@
    [[file:/tmp/babel-1786g10/figure-17865mS.pdf]]
 
    #+NAME: p.ds.im-21
+   #+HEADER: :exports results
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
