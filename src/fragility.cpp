@@ -65,6 +65,9 @@ namespace SLAT {
         std::vector<double> result = pExceeded(edp);
         for (size_t i=1; i < n_states(); i++) {
             result[i-1] -= result[i];
+            if (result[i-1] < 0) {
+                result[i-1] = 0;
+            }
         }
         return result;
     }

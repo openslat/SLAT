@@ -103,22 +103,44 @@ int main(int argc, char **argv)
 
     src::logger_mt& logger = main_logger::get();
     BOOST_LOG(logger) << "Starting main().";
-#if false
+#if true
     double tolerances[] = { 0.1,
                             0.05, 0.02, 0.01,
                             0.005, 0.002, 0.001 };
 
     for (size_t tol_i = 0; tol_i < sizeof(tolerances)/sizeof(tolerances[0]); tol_i++) {
         double tolerance = tolerances[tol_i];
-        for (unsigned int eval_mult= 1; eval_mult <= 2048; eval_mult *= 4) {
+#if false
+        for (unsigned int eval_mult= 1; eval_mult < 1; eval_mult *= 4) {
             {for (unsigned int bin_eval_mult = 1; bin_eval_mult <= eval_mult; bin_eval_mult *= 4) {
-                    unsigned int bin_evals = bin_eval_mult * 1024;
+                    unsigned int bin_evals = bin_eval_mult * 64; // * 1024;
                     unsigned int evals = eval_mult * 1024;
 #else
-                    {{{{
-                                double tolerance = 1E-3;
-                                unsigned int evals = 1024 * 1024;
-                                unsigned int bin_evals = evals;
+                    {
+                        unsigned int evals = 1024;
+                        {
+                            for (unsigned int bin_evals = 256; bin_evals <= 2024 * 1024; bin_evals *= 16) {
+#endif
+                    for (int method=0; method < 4; method++) {
+                        switch (method) {
+                        case 0:
+                            Integration::IntegrationSettings::method = Integration::IntegrationSettings::OLD;
+                                break;
+                        case 1:
+                            Integration::IntegrationSettings::method = Integration::IntegrationSettings::REV;
+                                break;
+                        case 2:
+                            Integration::IntegrationSettings::method = Integration::IntegrationSettings::REV2;
+                                break;
+                        case 3:
+                            Integration::IntegrationSettings::method = Integration::IntegrationSettings::NEW;
+                                break;
+                        }
+#else
+                        {{{{{
+                                    double tolerance = 1E-3;
+                                    unsigned int evals = 256; //1024 * 1024;
+                                    unsigned int bin_evals = evals;
 #endif
                                 double start_time = omp_get_wtime();
 
@@ -131,6 +153,22 @@ int main(int argc, char **argv)
                                     Integration::IntegrationSettings settings = Integration::IntegrationSettings::Get_Global_Settings();
                 
                                     std::cout << "----------------------------" << std::endl
+                                              << "Method: ";
+                                    switch (Integration::IntegrationSettings::method) {
+                                    case Integration::IntegrationSettings::OLD:
+                                        std::cout << " OLD";
+                                        break;
+                                    case Integration::IntegrationSettings::REV:
+                                        std::cout << " REV";
+                                        break;
+                                    case Integration::IntegrationSettings::REV2:
+                                        std::cout << "REV2";
+                                        break;
+                                    case Integration::IntegrationSettings::NEW:
+                                        std::cout << " NEW";
+                                        break;
+                                    }
+                                    std::cout << std::endl
                                               << "Tolerance: " << settings.Get_Effective_Tolerance()
                                               << "; Evals: " << settings.Get_Effective_Max_Evals()
                                               << "; Bin Evals: " << bin_evals
@@ -1017,10 +1055,11 @@ int main(int argc, char **argv)
                                 std::cout << "Elapsed time: " << end_time - start_time << endl;
                                 //BOOST_LOG(logger) << "Elapsed time: " << end_time - start_time << endl;
                 
+                                        }
+                                    }
+                                }
                             }
                         }
-                    }
-                }
                 return 0;
             }
 

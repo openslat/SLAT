@@ -19,7 +19,7 @@
 #+LATEX_HEADER: \usepackage{register}
 #+LATEX_HEADER: \usepackage{bytefield}
 #+LATEX_HEADER: \usepackage{parskip}
-#+LATEX_HEADER: \usepackage{tabulary}
+#+LATEX_HEADER: \usepackage{tabulary}  
 #+LATEX_HEADER: \usepackage[section]{placeins}
 #+LATEX_HEADER: \usepackage[htt]{hyphenat}
 #+LATEX_HEADER: \setlength{\parindent}{0pt}
@@ -54,7 +54,7 @@ This document presents the results of that testing.
 * Raw Data                                                           :export:
   The program prints its records to the console. These are captured to a file, and look like this:
   #+BEGIN_SRC sh :results output raw :wrap src fundamental :exports results
-  head -18 integration-statistics-binary_subdivision
+  head -18 integration-statistics
   echo .
   echo .
   echo .
@@ -63,29 +63,36 @@ This document presents the results of that testing.
   #+RESULTS:
   #+BEGIN_src fundamental
   ----------------------------
-  Tolerance: 0.1; Evals: 1024; Bin Evals: 1024
+  Method:  OLD
+  Tolerance: 0.1; Evals: 256; Bin Evals: 64
   Max Count: 22
-  Max Bin: 1024
-  Bin Evals: 2767482
-  MAQ Evals: 1894332
-  Total Count: 4661814
-  Calls: 150100
-  Successes: 149255
+  Max Bin: 64
+  Max Successful Bin: 63
+  Bin Evals: 1046023
+  MAQ Evals: 1896080
+  Total Count: 2942103
+  Calls: 150576
+  Successes: 146099
   Fails: 0
   NANs: 0
-  Bin_Fails: 845
-  Bins: 0  0  0  0  0  0  0  0  106582  0  0  0  7121  0  18450  15362  
-  Elapsed time: 9.03713
+  Bin_Fails: 4477
+  Bins: 0  0  0  0  0  0  0  0  106395  0  0  0  7130  0  18148  12027  
+  Elapsed time: 5.90776
   ----------------------------
-  Tolerance: 0.1; Evals: 4096; Bin Evals: 1024
-  Max Count: 22
-  Max Bin: 1024
+  Method:  REV
   .
   .
   .
   #+END_src
   
   Each record includes:
+  + /~Method~/ indicates the binary search algorithm, which may be:
+    + ~OLD~ :: The original binary search algorithm
+    + ~REV~ :: A modified binary search algorithm, but running in the other
+         direction, so that more likely values are checked first.
+    + ~REV2~ :: Similar to ~REV~, but looks at all the /x/ values from 0
+         to 1 before values from 1 to infinity.
+    + ~NEW~ :: A different algorithm. 
   + /~Tolerance~/ is the required precision passed to the MAQ algorithm.
   + /~Evals~/ is the maximum number of evaluations allowed for the integration
     computation.
@@ -93,6 +100,8 @@ This document presents the results of that testing.
   + /~Max Count~/ is the maximum number of evaluations actually performed during
     integration (excluding those used by ~binary_subdivision()~).
   + /~Max Bin~/ is the maximum number of evaluations used by ~binary_subdivision()~.
+  + /~Max Successful Bin~/ is the maximum number of evaluations used by
+    ~binary_subdivision()~ which actually found something of interest.
   + /~Bin Evals~/ is the total number of evaluations performed by ~binary_subdivision()~.
   + /~MAQ Evals~/ is the total number of evaluations performed during
     integration (excluding those used by ~binary_subdivision()~).
@@ -113,18 +122,19 @@ This document presents the results of that testing.
 
 * Import Data                                                        :export:
    Run the [[awk-stats-munge][~awk~ script]] on the input file, to convert the data to CSV, producing the file
-   call_awk-stats-munge[:in-file integration-statistics-binary_subdivision :file integration-statistics-binary_subdivision.csv]() and
-   call_awk-stats-munge[:in-file integration-statistics-alternate_binary_subdivision :file integration-statistics-alternate_binary_subdivision.csv]().
+   call_awk-stats-munge[:in-file integration-statistics :file integration-statistics.csv]().
 
    Set up an ~sqlite~ database, and import the CSV data:
    #+BEGIN_SRC sqlite :db integration-statistics.sql
    DROP TABLE IF EXISTS stats;
    CREATE TABLE stats (
+       method VARCHAR,
        tolerance NUMBER,
        maq_limit INTEGER,
        bin_limit INTEGER,
        maq_max INTEGER,
        bin_max INTEGER,
+       bin_max_successful INTEGER,
        bin_evals INTEGER,
        maq_evals INTEGER,
        calls INTEGER,
@@ -134,8 +144,464 @@ This document presents the results of that testing.
        bin_fails INTEGER,
        runtime NUMBER
    );
-   .import integration-statistics-binary_subdivision.csv stats
+   .import integration-statistics.csv stats
    #+END_SRC
+
+   #+RESULTS:
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT * FROM stats LIMIT 5;
+   #+END_SRC
+
+   #+RESULTS:
+   | method | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_max_successful | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   | OLD    |       0.1 |       256 |        64 |      22 |      64 |                 63 |   1046023 |   1896080 | 150576 |    146099 |        0 |    0 |      4477 | 5.90776 |
+   | REV    |       0.1 |       256 |        64 |      22 |      64 |                 34 |    814071 |   1896082 | 150576 |    146099 |        0 |    0 |      4477 | 5.56051 |
+   | REV2   |       0.1 |       256 |        64 |      22 |      64 |                 19 |    714044 |   1896058 | 150576 |    146099 |        0 |    0 |      4477 | 5.38523 |
+   | NEW    |       0.1 |       256 |        64 |      22 |      64 |                 62 |    535548 |   1896010 | 150092 |    149409 |        0 |    0 |       683 | 5.01911 |
+   | OLD    |       0.1 |       256 |       256 |      22 |     256 |                128 |   1773999 |   1887116 | 150256 |    148427 |        0 |    0 |      1829 | 7.77381 |
+
+   Total runtime for all tests (in minutes):
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT SUM(runtime)/60 FROM stats;
+   #+END_SRC
+
+   #+RESULTS:
+   |  SUM(runtime)/60 |
+   | 740.552314666667 |
+
+   How do the algorithms compare, in terms of run time?
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT method, MIN(runtime) AS 'MIN', AVG(runtime) AS 'AVG', MAX(runtime) AS 'MAX' FROM stats GROUP by method;
+   #+END_SRC
+
+   #+RESULTS:
+   | method |     MIN |              AVG |     MAX |
+   | NEW    | 5.01911 | 188.953251587302 |  1688.7 |
+   | OLD    | 5.90776 | 173.490618730159 | 1513.01 |
+   | REV    | 5.56051 | 173.881405396825 | 1508.17 |
+   | REV2   | 5.38523 | 168.962643015873 | 1503.13 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT *
+   	 FROM (SELECT * from stats WHERE method='NEW') AS N JOIN
+                 (SELECT * from stats WHERE method='OLD') AS O JOIN
+                 (SELECT * from stats WHERE method='REV') AS R JOIN
+                 (SELECT * from stats WHERE method='REV2') AS R2
+             WHERE N.tolerance = O.tolerance AND 
+   		N.maq_limit = O.maq_limit AND
+   		N.bin_limit = O.bin_limit AND
+   		N.tolerance = R.tolerance AND
+   		N.maq_limit = R.maq_limit AND
+   		N.bin_limit = R.bin_limit AND
+   		N.tolerance = R2.tolerance AND
+   		N.maq_limit = R2.maq_limit AND
+   		N.bin_limit = R2.bin_limit AND
+		(N.bin_fails != O.bin_fails OR
+		 N.bin_fails != R.bin_fails OR
+		 N.bin_fails != R2.bin_fails)
+	 LIMIT 5;
+   #+END_SRC
+
+   #+RESULTS:
+   | method | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_max_successful | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime | method | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_max_successful | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime | method | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_max_successful | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime | method | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_max_successful | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   | NEW    |       0.1 |       256 |        64 |      22 |      64 |                 62 |    535548 |   1896010 | 150092 |    149409 |        0 |    0 |       683 | 5.01911 | OLD    |       0.1 |       256 |        64 |      22 |      64 |                 63 |   1046023 |   1896080 | 150576 |    146099 |        0 |    0 |      4477 | 5.90776 | REV    |       0.1 |       256 |        64 |      22 |      64 |                 34 |    814071 |   1896082 | 150576 |    146099 |        0 |    0 |      4477 | 5.56051 | REV2   |       0.1 |       256 |        64 |      22 |      64 |                 19 |    714044 |   1896058 | 150576 |    146099 |        0 |    0 |      4477 | 5.38523 |
+   | NEW    |       0.1 |       256 |       256 |      22 |     256 |                225 |    667802 |   1896072 | 150092 |    149423 |        0 |    0 |       669 | 5.36179 | OLD    |       0.1 |       256 |       256 |      22 |     256 |                128 |   1773999 |   1887116 | 150256 |    148427 |        0 |    0 |      1829 | 7.77381 | REV    |       0.1 |       256 |       256 |      22 |     256 |                129 |   1267708 |   1887130 | 150256 |    148427 |        0 |    0 |      1829 | 6.62852 | REV2   |       0.1 |       256 |       256 |      22 |     256 |                 66 |   1034001 |   1887088 | 150256 |    148427 |        0 |    0 |      1829 | 6.17681 |
+   | NEW    |       0.1 |      1024 |        64 |      22 |      64 |                 62 |    536404 |   1896032 | 150092 |    149409 |        0 |    0 |       683 | 5.07561 | OLD    |       0.1 |      1024 |        64 |      22 |      64 |                 63 |   1056183 |   1896110 | 150576 |    146099 |        0 |    0 |      4477 | 6.12659 | REV    |       0.1 |      1024 |        64 |      22 |      64 |                 34 |    815337 |   1896084 | 150576 |    146099 |        0 |    0 |      4477 |  5.7254 | REV2   |       0.1 |      1024 |        64 |      22 |      64 |                 19 |    714336 |   1896090 | 150576 |    146099 |        0 |    0 |      4477 | 5.40639 |
+   | NEW    |       0.1 |      1024 |       256 |      22 |     256 |                225 |    667271 |   1896084 | 150092 |    149423 |        0 |    0 |       669 | 7.35473 | OLD    |       0.1 |      1024 |       256 |      22 |     256 |                128 |   1774271 |   1887056 | 150256 |    148427 |        0 |    0 |      1829 | 8.62532 | REV    |       0.1 |      1024 |       256 |      22 |     256 |                129 |   1267147 |   1887106 | 150256 |    148427 |        0 |    0 |      1829 | 8.06835 | REV2   |       0.1 |      1024 |       256 |      22 |     256 |                 66 |   1033700 |   1887104 | 150256 |    148427 |        0 |    0 |      1829 | 6.71785 |
+   | NEW    |       0.1 |      1024 |       256 |      22 |     256 |                225 |    667271 |   1896084 | 150092 |    149423 |        0 |    0 |       669 | 7.35473 | OLD    |       0.1 |      1024 |       256 |      22 |     256 |                128 |   1774271 |   1887056 | 150256 |    148427 |        0 |    0 |      1829 | 8.62532 | REV    |       0.1 |      1024 |       256 |      22 |     256 |                129 |   1267147 |   1887106 | 150256 |    148427 |        0 |    0 |      1829 | 8.06835 | REV2   |       0.1 |      1024 |       256 |      22 |     256 |                 66 |   1033893 |   1887116 | 150256 |    148427 |        0 |    0 |      1829 | 7.62606 |
+
+
+   Compare the number times the binary search failed to find anything for each algorithm:
+   #+NAME: failure_table
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header :exports code
+   SELECT N.tolerance AS 'TOL', N.maq_limit AS 'MAQ', N.bin_limit AS 'BIN', N.bin_fails AS 'New', O.bin_fails AS 'Old', R.bin_fails AS 'Rev', R2.bin_fails AS 'Rev2'
+   	 FROM (SELECT * from stats WHERE method='NEW') AS N JOIN
+                 (SELECT * from stats WHERE method='OLD') AS O JOIN
+                 (SELECT * from stats WHERE method='REV') AS R JOIN
+                 (SELECT * from stats WHERE method='REV2') AS R2
+             WHERE N.tolerance = O.tolerance AND 
+   		N.maq_limit = O.maq_limit AND
+   		N.bin_limit = O.bin_limit AND
+   		N.tolerance = R.tolerance AND
+   		N.maq_limit = R.maq_limit AND
+   		N.bin_limit = R.bin_limit AND
+   		N.tolerance = R2.tolerance AND
+   		N.maq_limit = R2.maq_limit AND
+   		N.bin_limit = R2.bin_limit
+		ORDER BY N.bin_limit DESC;
+	    
+   #+END_SRC
+
+   Plot the data, introducing a slight offset for clarity:
+   #+HEADER: :exports none :results none
+   #+HEADER: :colnames y
+   #+HEADER: :var data=failure_table
+   #+BEGIN_SRC R :session integration-stats
+   #+END_SRC
+
+
+   #+HEADER: :results graphics :exports both
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session integration-stats
+     palette(rainbow(4))
+     plot(data$New ~ data$TOL, col=1,
+          ylim=c(0, max(data$New, data$Old, data$Rev, data$Rev2)),
+          main='Binary Search Failures',
+          ylab="Failures",
+          xlab="Tolerance")
+     points(data$Old ~ data$TOL, col=2)
+     points(data$Rev + 100 ~ data$TOL, col=3)
+     points(data$Rev2 + 200 ~ data$TOL, col=4)
+     legend('right', legend=c("New", "Old", "Rev", "Rev2"), fill=palette())
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:/tmp/babel-11969LLf/figure-11969ynO.pdf]]
+
+   #+NAME: bin_max_table
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header :exports code
+     SELECT N.tolerance AS 'TOL', N.maq_limit AS 'MAQ', N.bin_limit AS 'BIN',
+             N.bin_max_successful AS 'New', 
+   	  O.bin_max_successful AS 'Old',
+             R.bin_max_successful AS 'Rev',
+   	  R2.bin_max_successful AS 'Rev2'
+   	FROM (SELECT * from stats WHERE method='NEW') AS N JOIN
+   		(SELECT * from stats WHERE method='OLD') AS O JOIN
+   		(SELECT * from stats WHERE method='REV') AS R JOIN
+   		(SELECT * from stats WHERE method='REV2') AS R2
+               WHERE N.tolerance = O.tolerance AND 
+      	       N.maq_limit = O.maq_limit AND
+      	       N.bin_limit = O.bin_limit AND
+      	       N.tolerance = R.tolerance AND
+      	       N.maq_limit = R.maq_limit AND
+      	       N.bin_limit = R.bin_limit AND
+      	       N.tolerance = R2.tolerance AND
+      	       N.maq_limit = R2.maq_limit AND
+      	       N.bin_limit = R2.bin_limit
+   	       ORDER BY N.bin_limit DESC;
+   #+END_SRC
+
+
+   #+HEADER: :exports none :results none
+   #+HEADER: :colnames y
+   #+HEADER: :var data=bin_max_table
+   #+BEGIN_SRC R :session integration-stats
+   #+END_SRC
+
+
+   Plot the data, introducing a slight offset for clarity:
+   #+HEADER: :results graphics :exports both
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session integration-stats
+   palette(rainbow(4))
+   plot(data$New ~ data$TOL, col=1,
+       ylim=c(0, max(data$New, data$Old, data$R, data$R2)),
+       main="Longest Successful Binary Search",
+       ylab="N", xlab="Tolerance")
+   points(data$Old ~ data$TOL, col=2)
+   points(data$Rev ~ data$TOL, col=3)
+   points(data$Rev2 ~ data$TOL, col=4)
+   legend('right', legend=c("New", "Old", "Rev", "Rev2"), fill=palette())
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:/tmp/babel-11969LLf/figure-11969YMO.pdf]]
+
+   Plot the data, introducing a slight offset for clarity:
+   #+HEADER: :results graphics :exports both
+   #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
+   #+BEGIN_SRC R :session integration-stats
+   palette(rainbow(4))
+   plot(data$New ~ data$BIN, col=1, log='x',
+       ylim=c(0, max(data$New, data$Old, data$R, data$R2)),
+       main="Longest Successful Binary Search",
+       ylab="N", xlab="Tolerance")
+   points(data$Old ~ data$BIN, col=2)
+   points(data$Rev ~ data$BIN, col=3)
+   points(data$Rev2 ~ data$BIN, col=4)
+   legend('right', legend=c("New", "Old", "Rev", "Rev2"), fill=palette())
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:/tmp/babel-11969LLf/figure-11969N9h.pdf]]
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT *
+   	 FROM (SELECT * from stats WHERE method='NEW') AS N JOIN
+                 (SELECT * from stats WHERE method='OLD') AS O JOIN
+                 (SELECT * from stats WHERE method='REV') AS R JOIN
+                 (SELECT * from stats WHERE method='REV2') AS R2
+             WHERE N.tolerance = O.tolerance AND 
+   		N.maq_limit = O.maq_limit AND
+   		N.bin_limit = O.bin_limit AND
+   		N.tolerance = R.tolerance AND
+   		N.maq_limit = R.maq_limit AND
+   		N.bin_limit = R.bin_limit AND
+   		N.tolerance = R2.tolerance AND
+   		N.maq_limit = R2.maq_limit AND
+   		N.bin_limit = R2.bin_limit AND
+		(N.bin_fails = O.bin_fails AND
+		 N.bin_fails = R.bin_fails AND
+		 N.bin_fails = R2.bin_fails);
+	    
+   #+END_SRC
+
+   #+RESULTS:
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT N.method, O.method, R.method, R2.method, N.tolerance, N.maq_limit, N.bin_limit, N.bin_fails, N.runtime, O.runtime, R.runtime, R2.runtime
+   	 FROM (SELECT * from stats WHERE method='NEW') AS N JOIN
+                 (SELECT * from stats WHERE method='OLD') AS O JOIN
+                 (SELECT * from stats WHERE method='REV') AS R JOIN
+                 (SELECT * from stats WHERE method='REV2') AS R2
+             WHERE N.tolerance = O.tolerance AND 
+   		N.maq_limit = O.maq_limit AND
+   		N.bin_limit = O.bin_limit AND
+   		N.tolerance = R.tolerance AND
+   		N.maq_limit = R.maq_limit AND
+   		N.bin_limit = R.bin_limit AND
+   		N.tolerance = R2.tolerance AND
+   		N.maq_limit = R2.maq_limit AND
+   		N.bin_limit = R2.bin_limit AND
+		N.bin_limit = 1024;
+	    
+   #+END_SRC
+
+   #+RESULTS:
+   | N.method | O.method | R.method | R2.method | N.tolerance | N.maq_limit | N.bin_limit | N.bin_fails | N.runtime | O.runtime | R.runtime | R2.runtime |
+   | NEW      | OLD      | REV      | REV2      |         0.1 |        1024 |        1024 |         669 |   6.31473 |   11.2217 |   8.54228 |    7.26711 |
+   | NEW      | OLD      | REV      | REV2      |        0.05 |        1024 |        1024 |         701 |    6.8113 |   10.4681 |   8.61396 |    7.71936 |
+   | NEW      | OLD      | REV      | REV2      |        0.02 |        1024 |        1024 |         724 |     8.231 |   12.8051 |   10.1984 |    9.44611 |
+   | NEW      | OLD      | REV      | REV2      |        0.01 |        1024 |        1024 |         730 |   9.09042 |   13.7719 |    11.225 |    10.2286 |
+   | NEW      | OLD      | REV      | REV2      |       0.005 |        1024 |        1024 |         745 |   10.5662 |   15.8613 |   13.2137 |    11.9608 |
+   | NEW      | OLD      | REV      | REV2      |       0.002 |        1024 |        1024 |         767 |    13.464 |   19.7179 |   16.8393 |    15.1881 |
+   | NEW      | OLD      | REV      | REV2      |       0.001 |        1024 |        1024 |         795 |   21.5808 |   23.2054 |   20.1008 |    18.1386 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT N.tolerance, N.maq_limit, N.bin_limit, N.bin_fails, O.bin_fails, R.bin_fails, R2.bin_fails,
+         N.runtime, O.runtime, R.runtime, R2.runtime
+   	 FROM (SELECT * from stats WHERE method='NEW') AS N JOIN
+                 (SELECT * from stats WHERE method='OLD') AS O JOIN
+                 (SELECT * from stats WHERE method='REV') AS R JOIN
+                 (SELECT * from stats WHERE method='REV2') AS R2
+             WHERE N.tolerance = O.tolerance AND 
+   		N.maq_limit = O.maq_limit AND
+   		N.bin_limit = O.bin_limit AND
+   		N.tolerance = R.tolerance AND
+   		N.maq_limit = R.maq_limit AND
+   		N.bin_limit = R.bin_limit AND
+   		N.tolerance = R2.tolerance AND
+   		N.maq_limit = R2.maq_limit AND
+   		N.bin_limit = R2.bin_limit AND
+		(N.bin_fails != O.bin_fails OR
+		 N.bin_fails != R.bin_fails OR
+		 N.bin_fails != R2.bin_fails);
+	    
+   #+END_SRC
+
+   #+RESULTS:
+   | N.tolerance | N.maq_limit | N.bin_limit | N.bin_fails | O.bin_fails | R.bin_fails | R2.bin_fails | N.runtime | O.runtime | R.runtime | R2.runtime |
+   |         0.1 |         256 |          64 |         683 |        4477 |        4477 |         4477 |   5.11614 |   6.47702 |   5.68301 |    5.48814 |
+   |         0.1 |         256 |         256 |         669 |        1829 |        1829 |         1829 |     5.726 |   7.89127 |   7.64633 |    7.82507 |
+   |         0.1 |         256 |        1024 |         669 |         845 |         845 |          845 |   7.14197 |   11.1712 |   8.45365 |    7.64078 |
+   |         0.1 |         256 |        4096 |         669 |         680 |         680 |          680 |   20.0397 |   15.6615 |   12.2313 |    19.2082 |
+   |         0.1 |        1024 |          64 |         683 |        4477 |        4477 |         4477 |   7.48911 |   6.95764 |   7.08569 |    11.9302 |
+   |         0.1 |        1024 |         256 |         669 |        1829 |        1829 |         1829 |   7.50599 |   11.5736 |   9.54195 |    6.34004 |
+   |         0.1 |        1024 |        1024 |         669 |         845 |         845 |          845 |   8.49651 |   11.9723 |   9.80748 |    7.40965 |
+   |         0.1 |        1024 |        4096 |         669 |         680 |         680 |          680 |   10.5166 |   14.0123 |   11.9424 |    12.6224 |
+   |        0.05 |         256 |          64 |         715 |        4826 |        4826 |         4826 |   5.64575 |   6.53246 |   8.39461 |    7.82968 |
+   |        0.05 |         256 |         256 |         701 |        1958 |        1958 |         1958 |    10.725 |   8.72075 |   9.27255 |    11.5949 |
+   |        0.05 |         256 |        1024 |         701 |         888 |         888 |          888 |   7.55304 |   15.5542 |   10.7703 |    8.19502 |
+   |        0.05 |         256 |        4096 |         701 |         714 |         714 |          714 |   11.4594 |      24.6 |   38.1405 |    13.2481 |
+   |        0.05 |        1024 |          64 |         715 |        4826 |        4826 |         4826 |   5.78693 |   7.78722 |   6.68344 |    6.44781 |
+   |        0.05 |        1024 |         256 |         701 |        1958 |        1958 |         1958 |   6.41195 |   8.95788 |   8.60109 |     15.521 |
+   |        0.05 |        1024 |        1024 |         701 |         888 |         888 |          888 |   6.97563 |   11.4311 |   9.16303 |    7.97365 |
+   |        0.05 |        1024 |        4096 |         701 |         714 |         714 |          714 |   19.6537 |   16.2702 |   18.2163 |    19.5461 |
+   |        0.02 |         256 |          64 |         738 |        5318 |        5318 |         5318 |   7.50303 |   8.07385 |   7.52522 |    7.97918 |
+   |        0.02 |         256 |         256 |         724 |        2126 |        2126 |         2126 |   36.4596 |   10.9905 |    9.0823 |    9.30467 |
+   |        0.02 |         256 |        1024 |         724 |         925 |         925 |          925 |   8.52764 |   19.5052 |   10.4964 |    9.45099 |
+   |        0.02 |         256 |        4096 |         724 |         738 |         738 |          738 |   13.9062 |   17.0501 |   15.3151 |    21.2024 |
+   |        0.02 |        1024 |          64 |         738 |        5318 |        5318 |         5318 |   6.99556 |   8.61442 |   7.54956 |    7.27708 |
+   |        0.02 |        1024 |         256 |         724 |        2126 |        2126 |         2126 |   7.27281 |   10.4641 |   9.03839 |    8.59909 |
+   |        0.02 |        1024 |        1024 |         724 |         925 |         925 |          925 |   8.30653 |   12.4641 |   10.3895 |    9.65285 |
+   |        0.02 |        1024 |        4096 |         724 |         738 |         738 |          738 |   13.5197 |   25.4484 |   37.6546 |    14.9029 |
+   |        0.01 |         256 |          64 |         744 |        5824 |        5824 |         5824 |   7.90348 |   9.40702 |   8.71183 |    8.73197 |
+   |        0.01 |         256 |         256 |         730 |        2239 |        2239 |         2239 |   8.04601 |   11.8671 |   10.1742 |    9.54228 |
+   |        0.01 |         256 |        1024 |         730 |         942 |         942 |          942 |    9.2005 |   13.9492 |   11.9157 |    10.3482 |
+   |        0.01 |         256 |        4096 |         730 |         751 |         751 |          751 |   14.2679 |   18.3911 |   15.8769 |    14.8345 |
+   |        0.01 |        1024 |          64 |         744 |        5824 |        5824 |         5824 |   8.11418 |   9.24823 |   8.79663 |    8.47195 |
+   |        0.01 |        1024 |         256 |         730 |        2239 |        2239 |         2239 |   8.07086 |   12.9155 |   9.96587 |    9.51216 |
+   |        0.01 |        1024 |        1024 |         730 |         942 |         942 |          942 |   22.4798 |   14.3336 |   14.5776 |    24.4794 |
+   |        0.01 |        1024 |        4096 |         730 |         751 |         751 |          751 |    14.102 |   19.8634 |   15.9234 |    15.0267 |
+   |       0.005 |         256 |          64 |         759 |        6357 |        6357 |         6357 |   10.6063 |   10.9979 |   10.4724 |    12.4039 |
+   |       0.005 |         256 |         256 |         745 |        2355 |        2355 |         2355 |   16.4563 |   14.4409 |   11.8197 |    45.2843 |
+   |       0.005 |         256 |        1024 |         745 |         985 |         985 |          985 |   11.2895 |   16.0303 |     15.09 |    14.2188 |
+   |       0.005 |         256 |        4096 |         745 |         771 |         771 |          771 |   15.3295 |    20.981 |   17.8447 |    16.2159 |
+   |       0.005 |        1024 |          64 |         759 |        6357 |        6357 |         6357 |   9.60595 |   10.8926 |   10.1524 |    10.0768 |
+   |       0.005 |        1024 |         256 |         745 |        2355 |        2355 |         2355 |   9.75321 |   13.8068 |   11.7775 |    10.8833 |
+   |       0.005 |        1024 |        1024 |         745 |         985 |         985 |          985 |   10.9231 |   16.5269 |   14.1295 |    12.6826 |
+   |       0.005 |        1024 |        4096 |         745 |         771 |         771 |          771 |   15.5352 |   21.1306 |   18.1116 |    16.7957 |
+   |       0.002 |         256 |          64 |         781 |        7765 |        7765 |         7765 |   12.0033 |   14.0635 |   19.0048 |    13.1106 |
+   |       0.002 |         256 |         256 |         767 |        2551 |        2551 |         2551 |   12.3225 |   17.1145 |   15.2661 |    13.7319 |
+   |       0.002 |         256 |        1024 |         767 |        1042 |        1042 |         1042 |   14.5037 |   19.3075 |   16.3759 |    15.6773 |
+   |       0.002 |         256 |        4096 |         767 |         801 |         801 |          801 |   25.8957 |   24.7664 |   21.6087 |    19.3251 |
+   |       0.002 |        1024 |          64 |         781 |        7765 |        7765 |         7765 |   21.9448 |   21.0238 |   16.1153 |    14.9224 |
+   |       0.002 |        1024 |         256 |         767 |        2551 |        2551 |         2551 |   17.5348 |   20.8119 |   17.9842 |    32.4508 |
+   |       0.002 |        1024 |        1024 |         767 |        1042 |        1042 |         1042 |   13.4952 |   28.0557 |   17.8277 |    15.6325 |
+   |       0.002 |        1024 |        4096 |         767 |         801 |         801 |          801 |   20.7729 |   25.4982 |   21.2804 |    33.0377 |
+   |       0.001 |         256 |          64 |         811 |        8951 |        8951 |         8951 |      15.4 |   17.7124 |   16.6465 |    16.3003 |
+   |       0.001 |         256 |         256 |         795 |        2717 |        2717 |         2717 |   15.4639 |   20.9099 |   18.2318 |    17.5634 |
+   |       0.001 |         256 |        1024 |         795 |        1099 |        1099 |         1099 |   36.0082 |   23.4366 |   19.7919 |    31.4011 |
+   |       0.001 |         256 |        4096 |         795 |         832 |         832 |          832 |   21.5034 |   62.9156 |   33.1903 |    23.8052 |
+   |       0.001 |        1024 |          64 |         811 |        8951 |        8951 |         8951 |   17.8182 |   17.6901 |   16.7114 |    16.9237 |
+   |       0.001 |        1024 |         256 |         795 |        2717 |        2717 |         2717 |   15.8056 |   21.0017 |   18.3226 |    17.2254 |
+   |       0.001 |        1024 |        1024 |         795 |        1099 |        1099 |         1099 |   16.7573 |   23.4891 |   19.9314 |    18.9984 |
+   |       0.001 |        1024 |        4096 |         795 |         832 |         832 |          832 |   21.4729 |    28.459 |   24.6036 |    22.8956 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT * FROM stats WHERE bin_fails=(SELECT MIN(bin_fails) from stats);
+   #+END_SRC
+
+   #+RESULTS:
+   | method | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_max_successful | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   | NEW    |       0.1 |       256 |       256 |      22 |     256 |                225 |    667588 |   1896090 | 150092 |    149423 |        0 |    0 |       669 |   5.726 |
+   | NEW    |       0.1 |       256 |      1024 |      22 |    1024 |                225 |   1183748 |   1896080 | 150092 |    149423 |        0 |    0 |       669 | 7.14197 |
+   | NEW    |       0.1 |       256 |      4096 |      22 |    4096 |                225 |   3237357 |   1896074 | 150092 |    149423 |        0 |    0 |       669 | 20.0397 |
+   | NEW    |       0.1 |      1024 |       256 |      22 |     256 |                225 |    669542 |   1896082 | 150092 |    149423 |        0 |    0 |       669 | 7.50599 |
+   | NEW    |       0.1 |      1024 |      1024 |      22 |    1024 |                225 |   1183781 |   1896088 | 150092 |    149423 |        0 |    0 |       669 | 8.49651 |
+   | NEW    |       0.1 |      1024 |      4096 |      22 |    4096 |                225 |   3238085 |   1896096 | 150092 |    149423 |        0 |    0 |       669 | 10.5166 |
+   | OLD    |       0.1 |      1024 |     16384 |      22 |   16384 |              16383 |  13442138 |   1896084 | 150092 |    149423 |        0 |    0 |       669 |  29.495 |
+   | REV    |       0.1 |      1024 |     16384 |      22 |   16384 |               8206 |  12351402 |   1896108 | 150092 |    149423 |        0 |    0 |       669 | 25.6212 |
+   | REV2   |       0.1 |      1024 |     16384 |      22 |   16385 |               4111 |  11825643 |   1896088 | 150092 |    149423 |        0 |    0 |       669 | 26.1518 |
+   | NEW    |       0.1 |      1024 |     16384 |      22 |   16384 |                225 |  11459232 |   1896100 | 150092 |    149423 |        0 |    0 |       669 | 25.7221 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT tolerance, maq_limit, bin_limit, bin_fails FROM stats
+     WHERE method='NEW';
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | bin_fails |
+   |       0.1 |       256 |        64 |       683 |
+   |       0.1 |       256 |       256 |       669 |
+   |       0.1 |       256 |      1024 |       669 |
+   |       0.1 |       256 |      4096 |       669 |
+   |       0.1 |      1024 |        64 |       683 |
+   |       0.1 |      1024 |       256 |       669 |
+   |       0.1 |      1024 |      1024 |       669 |
+   |       0.1 |      1024 |      4096 |       669 |
+   |       0.1 |      1024 |     16384 |       669 |
+   |      0.05 |       256 |        64 |       715 |
+   |      0.05 |       256 |       256 |       701 |
+   |      0.05 |       256 |      1024 |       701 |
+   |      0.05 |       256 |      4096 |       701 |
+   |      0.05 |      1024 |        64 |       715 |
+   |      0.05 |      1024 |       256 |       701 |
+   |      0.05 |      1024 |      1024 |       701 |
+   |      0.05 |      1024 |      4096 |       701 |
+   |      0.05 |      1024 |     16384 |       701 |
+   |      0.02 |       256 |        64 |       738 |
+   |      0.02 |       256 |       256 |       724 |
+   |      0.02 |       256 |      1024 |       724 |
+   |      0.02 |       256 |      4096 |       724 |
+   |      0.02 |      1024 |        64 |       738 |
+   |      0.02 |      1024 |       256 |       724 |
+   |      0.02 |      1024 |      1024 |       724 |
+   |      0.02 |      1024 |      4096 |       724 |
+   |      0.02 |      1024 |     16384 |       724 |
+   |      0.01 |       256 |        64 |       744 |
+   |      0.01 |       256 |       256 |       730 |
+   |      0.01 |       256 |      1024 |       730 |
+   |      0.01 |       256 |      4096 |       730 |
+   |      0.01 |      1024 |        64 |       744 |
+   |      0.01 |      1024 |       256 |       730 |
+   |      0.01 |      1024 |      1024 |       730 |
+   |      0.01 |      1024 |      4096 |       730 |
+   |      0.01 |      1024 |     16384 |       730 |
+   |     0.005 |       256 |        64 |       759 |
+   |     0.005 |       256 |       256 |       745 |
+   |     0.005 |       256 |      1024 |       745 |
+   |     0.005 |       256 |      4096 |       745 |
+   |     0.005 |      1024 |        64 |       759 |
+   |     0.005 |      1024 |       256 |       745 |
+   |     0.005 |      1024 |      1024 |       745 |
+   |     0.005 |      1024 |      4096 |       745 |
+   |     0.005 |      1024 |     16384 |       745 |
+   |     0.002 |       256 |        64 |       781 |
+   |     0.002 |       256 |       256 |       767 |
+   |     0.002 |       256 |      1024 |       767 |
+   |     0.002 |       256 |      4096 |       767 |
+   |     0.002 |      1024 |        64 |       781 |
+   |     0.002 |      1024 |       256 |       767 |
+   |     0.002 |      1024 |      1024 |       767 |
+   |     0.002 |      1024 |      4096 |       767 |
+   |     0.002 |      1024 |     16384 |       767 |
+   |     0.001 |       256 |        64 |       811 |
+   |     0.001 |       256 |       256 |       795 |
+   |     0.001 |       256 |      1024 |       795 |
+   |     0.001 |       256 |      4096 |       795 |
+   |     0.001 |      1024 |        64 |       811 |
+   |     0.001 |      1024 |       256 |       795 |
+   |     0.001 |      1024 |      1024 |       795 |
+   |     0.001 |      1024 |      4096 |       795 |
+   |     0.001 |      1024 |     16384 |       795 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT tolerance, maq_limit, bin_limit, runtime, bin_fails, maq_max, bin_max_successful 
+   	 FROM stats where method=='OLD' AND maq_limit=1024 AND bin_limit=1024;
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | runtime | bin_fails | maq_max | bin_max_successful |
+   |       0.1 |      1024 |      1024 | 11.9723 |       845 |      22 |               1023 |
+   |      0.05 |      1024 |      1024 | 11.4311 |       888 |      24 |               1023 |
+   |      0.02 |      1024 |      1024 | 12.4641 |       925 |      34 |               1023 |
+   |      0.01 |      1024 |      1024 | 14.3336 |       942 |      44 |               1023 |
+   |     0.005 |      1024 |      1024 | 16.5269 |       985 |      56 |               1023 |
+   |     0.002 |      1024 |      1024 | 28.0557 |      1042 |      72 |               1023 |
+   |     0.001 |      1024 |      1024 | 23.4891 |      1099 |      92 |               1023 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT method, MAX(runtime), MIN(runtime), MAX(bin_fails), MIN(bin_fails), MIN(bin_max_successful), MAX(bin_max_successful) FROM stats GROUP BY method;
+   #+END_SRC
+
+   #+RESULTS:
+   | method | MAX(runtime) | MIN(runtime) | MAX(bin_fails) | MIN(bin_fails) | MIN(bin_max_successful) | MAX(bin_max_successful) |
+   | NEW    |      41.1873 |      5.11614 |            811 |            669 |                      62 |                     228 |
+   | OLD    |      62.9156 |      6.47702 |           8951 |            669 |                      63 |                   16383 |
+   | REV    |      41.8891 |      5.68301 |           8951 |            669 |                      34 |                    8206 |
+   | REV2   |      55.1321 |      5.48814 |           8951 |            669 |                      19 |                    4111 |
+    
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT method, runtime, maq_limit, bin_limit
+             FROM stats
+	  WHERE method LIKE 'REV%'
+   	  GROUP BY method, maq_limit, bin_limit
+   	  ORDER BY maq_limit, bin_limit, method;
+   #+END_SRC
+
+   #+RESULTS:
+   | method | runtime | maq_limit | bin_limit |
+   | REV    | 16.6465 |       256 |        64 |
+   | REV2   | 16.3003 |       256 |        64 |
+   | REV    | 18.2318 |       256 |       256 |
+   | REV2   | 17.5634 |       256 |       256 |
+   | REV    | 19.7919 |       256 |      1024 |
+   | REV2   | 31.4011 |       256 |      1024 |
+   | REV    | 33.1903 |       256 |      4096 |
+   | REV2   | 23.8052 |       256 |      4096 |
+   | REV    | 16.7114 |      1024 |        64 |
+   | REV2   | 16.9237 |      1024 |        64 |
+   | REV    | 18.3226 |      1024 |       256 |
+   | REV2   | 17.2254 |      1024 |       256 |
+   | REV    | 19.9314 |      1024 |      1024 |
+   | REV2   | 18.9984 |      1024 |      1024 |
+   | REV    | 24.6036 |      1024 |      4096 |
+   | REV2   | 22.8956 |      1024 |      4096 |
+   | REV    | 41.8891 |      1024 |     16384 |
+   | REV2   | 39.7639 |      1024 |     16384 |
+  
 * Overview of Data                                                   :export:
    There are
    src_sqlite[:exports results :db integration-statistics.sql]{SELECT COUNT(*) FROM stats;} {{{results(=147=)}}}
@@ -157,8 +623,13 @@ This document presents the results of that testing.
    |      0.05 |
    |       0.1 |
 
-   Each tolerance is used in combination with MAQ limits ranging from 1,024 to
-   1,048,576, and ~binary_subdivision()~ limits from 1,024 to MAQ limit:
+   Each tolerance is used in combination with MAQ limits ranging from
+   src_sqlite[:exports results :db integration-statistics.sql]{SELECT MIN(maq_limit) FROM stats;}
+   to
+   src_sqlite[:exports results :db integration-statistics.sql]{SELECT MAX(maq_limit) FROM stats;}
+   and ~binary_subdivision()~ limits from
+   src_sqlite[:exports results :db integration-statistics.sql]{SELECT MAX(bin_limit) FROM stats;}
+   to MAQ limit:
    #+BEGIN_SRC sqlite :db integration-statistics.sql :header
      SELECT maq_limit as 'MAQ Limit',
    	 bin_limit as 'Bin Limit'
@@ -167,27 +638,100 @@ This document presents the results of that testing.
 
    #+RESULTS:
    | MAQ Limit | Bin Limit |
+   |       256 |        64 |
+   |       256 |       256 |
+   |      1024 |        64 |
+   |      1024 |       256 |
    |      1024 |      1024 |
-   |      4096 |      1024 |
-   |      4096 |      4096 |
-   |     16384 |      1024 |
-   |     16384 |      4096 |
-   |     16384 |     16384 |
-   |     65536 |      1024 |
-   |     65536 |      4096 |
-   |     65536 |     16384 |
-   |     65536 |     65536 |
-   |    262144 |      1024 |
-   |    262144 |      4096 |
-   |    262144 |     16384 |
-   |    262144 |     65536 |
-   |    262144 |    262144 |
-   |   1048576 |      1024 |
-   |   1048576 |      4096 |
-   |   1048576 |     16384 |
-   |   1048576 |     65536 |
-   |   1048576 |    262144 |
-   |   1048576 |   1048576 |
+   |      1024 |      4096 |
+   |      1024 |     65536 |
+   |      1024 |   1048576 |
+
+** Cost of Calculations
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT method AS 'Method',
+         bin_limit AS 'Limit',
+	 bin_fails AS 'Failures',
+         bin_evals - bin_fails * bin_limit AS 'Non-Fail',
+         bin_fails * bin_limit AS 'Fails',
+         bin_evals as 'Bin Total', 
+         maq_evals as 'MAQ', 
+         bin_evals + maq_evals AS 'Total',
+	 printf("%.2f", (1.0 * bin_fails * bin_limit) / (bin_evals + maq_evals)) AS 'Fail Fraction'
+         FROM stats WHERE tolerance =  0.01 AND maq_limit = 1024
+         ORDER BY bin_limit, method;
+   #+END_SRC
+
+   #+RESULTS:
+   | Method |   Limit | Failures | Non-Fail |     Fails | Bin Total |     MAQ |     Total | Fail Fraction |
+   | NEW    |      64 |      744 |   606624 |     47616 |    654240 | 3237004 |   3891244 |          0.01 |
+   | OLD    |      64 |     5824 |   981673 |    372736 |   1354409 | 3318652 |   4673061 |          0.08 |
+   | REV    |      64 |     5824 |   662630 |    372736 |   1035366 | 3318674 |   4354040 |          0.09 |
+   | REV2   |      64 |     5824 |   525494 |    372736 |    898230 | 3318654 |   4216884 |          0.09 |
+   | NEW    |     256 |      730 |   606556 |    186880 |    793436 | 3237064 |   4030500 |          0.05 |
+   | NEW    |     256 |      730 |   605093 |    186880 |    791973 | 3236986 |   4028959 |          0.05 |
+   | OLD    |     256 |     2239 |  1842387 |    573184 |   2415571 | 3232504 |   5648075 |           0.1 |
+   | OLD    |     256 |     2239 |  1848111 |    573184 |   2421295 | 3232516 |   5653811 |           0.1 |
+   | REV    |     256 |     2239 |  1098246 |    573184 |   1671430 | 3232550 |   4903980 |          0.12 |
+   | REV    |     256 |     2239 |  1096398 |    573184 |   1669582 | 3232514 |   4902096 |          0.12 |
+   | REV2   |     256 |     2239 |   747501 |    573184 |   1320685 | 3232524 |   4553209 |          0.13 |
+   | REV2   |     256 |     2239 |   748219 |    573184 |   1321403 | 3232534 |   4553937 |          0.13 |
+   | NEW    |    1024 |      730 |   604752 |    747520 |   1352272 | 3237058 |   4589330 |          0.16 |
+   | OLD    |    1024 |      942 |  2521588 |    964608 |   3486196 | 3234188 |   6720384 |          0.14 |
+   | REV    |    1024 |      942 |  1433184 |    964608 |   2397792 | 3234206 |   5631998 |          0.17 |
+   | REV2   |    1024 |      942 |   919256 |    964608 |   1883864 | 3234206 |   5118070 |          0.19 |
+   | NEW    |    4096 |      730 |   605495 |   2990080 |   3595575 | 3237044 |   6832619 |          0.44 |
+   | OLD    |    4096 |      751 |  3041727 |   3076096 |   6117823 | 3236936 |   9354759 |          0.33 |
+   | REV    |    4096 |      751 |  1697233 |   3076096 |   4773329 | 3236890 |   8010219 |          0.38 |
+   | REV2   |    4096 |      751 |  1050274 |   3076096 |   4126370 | 3236936 |   7363306 |          0.42 |
+   | NEW    |   65536 |      730 |   605585 |  47841280 |  48446865 | 3237048 |  51683913 |          0.93 |
+   | OLD    |   65536 |      730 |  3270574 |  47841280 |  51111854 | 3237104 |  54348958 |          0.88 |
+   | REV    |   65536 |      730 |  1810066 |  47841280 |  49651346 | 3237166 |  52888512 |           0.9 |
+   | REV2   |   65536 |      730 |  1104867 |  47841280 |  48946147 | 3237132 |  52183279 |          0.92 |
+   | NEW    | 1048576 |      730 |   605592 | 765460480 | 766066072 | 3237044 | 769303116 |           1.0 |
+   | OLD    | 1048576 |      730 |  3265902 | 765460480 | 768726382 | 3237120 | 771963502 |          0.99 |
+   | REV    | 1048576 |      730 |  1809565 | 765460480 | 767270045 | 3237166 | 770507211 |          0.99 |
+   | REV2   | 1048576 |      730 |  1105310 | 765460480 | 766565790 | 3237132 | 769802922 |          0.99 |
+
+   
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT stats.tolerance, MAX(stats.bin_evals), MAX(stats_alternate.bin_evals),
+         MAX(stats.maq_evals), MAX(stats_alternate.maq_evals)
+         FROM stats JOIN stats_alternate WHERE stats.tolerance = stats_alternate.tolerance 
+      	     AND stats.maq_limit = stats_alternate.maq_limit 
+      	     AND stats.bin_limit = stats_alternate.bin_limit 
+         GROUP BY stats.tolerance 
+         ORDER BY stats.tolerance DESC;
+   #+END_SRC
+
+   #+RESULTS:
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT stats.tolerance AS 'Tolerance',
+             MAX(stats.bin_fails) as 'Max Bin Fails',
+             MAX(stats_alternate.bin_fails),
+         MAX(stats.runtime), MAX(stats_alternate.runtime)
+         FROM stats JOIN stats_alternate
+   	  WHERE stats.maq_limit = stats_alternate.maq_limit 
+             AND stats.bin_limit = stats_alternate.bin_limit 
+         GROUP BY stats.maq_limit, stats.bin_limit;
+   #+END_SRC
+
+   #+RESULTS:
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+   SELECT tolerance, MAX(bin_evals), MAX(maq_evals)  FROM stats_alternate GROUP BY tolerance;
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | MAX(bin_evals) | MAX(maq_evals) |
+   |     0.001 |       13851017 |        6691432 |
+   |     0.002 |       13311384 |        5266906 |
+   |     0.005 |       12871044 |        3917546 |
+   |      0.01 |       12571081 |        3237036 |
+   |      0.02 |       12432706 |        2709440 |
+   |      0.05 |       12001240 |        2134358 |
+   |       0.1 |       11459735 |        1896034 |
 
 ** Cost of Calculations
    #+BEGIN_SRC sqlite :db integration-statistics.sql :header
@@ -248,6 +792,76 @@ This document presents the results of that testing.
    #+RESULTS:
 
    #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT * FROM stats_alternate;
+   #+END_SRC
+
+   #+RESULTS:
+   | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_max_successful | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
+   |       0.1 |       256 |        64 |      22 |      64 |                  0 |    540372 |   1895834 | 150092 |    149409 |        0 |    0 |       683 |  8.1161 |
+   |       0.1 |       256 |       256 |      22 |     256 |                  0 |    670412 |   1896002 | 150092 |    149423 |        0 |    0 |       669 | 6.09628 |
+   |       0.1 |       256 |      1024 |      22 |    1024 |                  0 |   1183807 |   1896034 | 150092 |    149423 |        0 |    0 |       669 | 6.78923 |
+   |       0.1 |       256 |      4096 |      22 |    4096 |                  0 |   3239609 |   1895838 | 150092 |    149423 |        0 |    0 |       669 | 9.96949 |
+   |       0.1 |      1024 |        64 |      22 |      64 |                  0 |    540688 |   1895920 | 150092 |    149409 |        0 |    0 |       683 | 5.25982 |
+   |       0.1 |      1024 |       256 |      22 |     256 |                  0 |    669956 |   1896018 | 150092 |    149423 |        0 |    0 |       669 | 12.6902 |
+   |       0.1 |      1024 |      1024 |      22 |    1024 |                  0 |   1183781 |   1896020 | 150092 |    149423 |        0 |    0 |       669 | 14.0229 |
+   |       0.1 |      1024 |      4096 |      22 |    4096 |                  0 |   3239563 |   1895968 | 150092 |    149423 |        0 |    0 |       669 | 17.0454 |
+   |       0.1 |      1024 |     16384 |      22 |   16384 |                  0 |  11459735 |   1896030 | 150092 |    149423 |        0 |    0 |       669 | 52.8649 |
+   |      0.05 |       256 |        64 |      24 |      64 |                  0 |    559911 |   2134260 | 153272 |    152557 |        0 |    0 |       715 | 21.9111 |
+   |      0.05 |       256 |       256 |      24 |     256 |                  0 |    694633 |   2134306 | 153272 |    152571 |        0 |    0 |       701 | 6.64909 |
+   |      0.05 |       256 |      1024 |      24 |    1024 |                  0 |   1233296 |   2134286 | 153272 |    152571 |        0 |    0 |       701 | 33.4847 |
+   |      0.05 |       256 |      4096 |      24 |    4096 |                  0 |   3387533 |   2134324 | 153272 |    152571 |        0 |    0 |       701 | 55.0065 |
+   |      0.05 |      1024 |        64 |      24 |      64 |                  0 |    559909 |   2134272 | 153272 |    152557 |        0 |    0 |       715 | 16.1523 |
+   |      0.05 |      1024 |       256 |      24 |     256 |                  0 |    695154 |   2134354 | 153272 |    152571 |        0 |    0 |       701 | 15.9935 |
+   |      0.05 |      1024 |      1024 |      24 |    1024 |                  0 |   1232550 |   2134358 | 153272 |    152571 |        0 |    0 |       701 | 8.21529 |
+   |      0.05 |      1024 |      4096 |      24 |    4096 |                  0 |   3386844 |   2134310 | 153272 |    152571 |        0 |    0 |       701 | 18.7123 |
+   |      0.05 |      1024 |     16384 |      24 |   16384 |                  0 |  12001240 |   2134242 | 153272 |    152571 |        0 |    0 |       701 | 55.6608 |
+   |      0.02 |       256 |        64 |      34 |      64 |                  0 |    616294 |   2709350 | 168008 |    167270 |        0 |    0 |       738 | 7.57898 |
+   |      0.02 |       256 |       256 |      34 |     256 |                  0 |    756202 |   2709440 | 168008 |    167284 |        0 |    0 |       724 | 8.89149 |
+   |      0.02 |       256 |      1024 |      34 |    1024 |                  0 |   1312747 |   2709438 | 168008 |    167284 |        0 |    0 |       724 | 8.21886 |
+   |      0.02 |       256 |      4096 |      34 |    4096 |                  0 |   3536273 |   2709336 | 168008 |    167284 |        0 |    0 |       724 | 13.3817 |
+   |      0.02 |      1024 |        64 |      34 |      64 |                  0 |    615491 |   2709362 | 168008 |    167270 |        0 |    0 |       738 | 7.34317 |
+   |      0.02 |      1024 |       256 |      34 |     256 |                  0 |    756216 |   2709414 | 168008 |    167284 |        0 |    0 |       724 | 7.76874 |
+   |      0.02 |      1024 |      1024 |      34 |    1024 |                  0 |   1311459 |   2709310 | 168008 |    167284 |        0 |    0 |       724 | 8.04541 |
+   |      0.02 |      1024 |      4096 |      34 |    4096 |                  0 |   3535989 |   2709412 | 168008 |    167284 |        0 |    0 |       724 | 13.2603 |
+   |      0.02 |      1024 |     16384 |      34 |   16384 |                  0 |  12432706 |   2709340 | 168008 |    167284 |        0 |    0 |       724 | 28.5315 |
+   |      0.01 |       256 |        64 |      44 |      64 |                  0 |    656341 |   3236934 | 179284 |    178540 |        0 |    0 |       744 | 7.78219 |
+   |      0.01 |       256 |       256 |      44 |     256 |                  0 |    796731 |   3236972 | 179284 |    178554 |        0 |    0 |       730 |  26.846 |
+   |      0.01 |       256 |      1024 |      44 |    1024 |                  0 |   1356886 |   3236986 | 179284 |    178554 |        0 |    0 |       730 |  10.052 |
+   |      0.01 |       256 |      4096 |      44 |    4096 |                  0 |   3600753 |   3236874 | 179284 |    178554 |        0 |    0 |       730 | 16.5062 |
+   |      0.01 |      1024 |        64 |      44 |      64 |                  0 |    656346 |   3236916 | 179284 |    178540 |        0 |    0 |       744 | 13.3263 |
+   |      0.01 |      1024 |       256 |      44 |     256 |                  0 |    796824 |   3236940 | 179284 |    178554 |        0 |    0 |       730 | 12.1411 |
+   |      0.01 |      1024 |      1024 |      44 |    1024 |                  0 |   1357837 |   3236970 | 179284 |    178554 |        0 |    0 |       730 | 11.2421 |
+   |      0.01 |      1024 |      4096 |      44 |    4096 |                  0 |   3600696 |   3237036 | 179284 |    178554 |        0 |    0 |       730 | 27.8508 |
+   |      0.01 |      1024 |     16384 |      44 |   16384 |                  0 |  12571081 |   3236998 | 179284 |    178554 |        0 |    0 |       730 | 41.8377 |
+   |     0.005 |       256 |        64 |      56 |      64 |                  0 |    710823 |   3917382 | 192012 |    191253 |        0 |    0 |       759 | 9.03347 |
+   |     0.005 |       256 |       256 |      56 |     256 |                  0 |    854653 |   3917416 | 192012 |    191267 |        0 |    0 |       745 | 9.09517 |
+   |     0.005 |       256 |      1024 |      56 |    1024 |                  0 |   1427070 |   3917398 | 192012 |    191267 |        0 |    0 |       745 | 10.0405 |
+   |     0.005 |       256 |      4096 |      56 |    4096 |                  0 |   3716451 |   3917408 | 192012 |    191267 |        0 |    0 |       745 | 14.2977 |
+   |     0.005 |      1024 |        64 |      56 |      64 |                  0 |    711658 |   3917262 | 192012 |    191253 |        0 |    0 |       759 | 8.65459 |
+   |     0.005 |      1024 |       256 |      56 |     256 |                  0 |    855326 |   3917322 | 192012 |    191267 |        0 |    0 |       745 | 8.98601 |
+   |     0.005 |      1024 |      1024 |      56 |    1024 |                  0 |   1427624 |   3917474 | 192012 |    191267 |        0 |    0 |       745 | 10.0157 |
+   |     0.005 |      1024 |      4096 |      56 |    4096 |                  0 |   3716184 |   3917546 | 192012 |    191267 |        0 |    0 |       745 | 14.1065 |
+   |     0.005 |      1024 |     16384 |      56 |   16384 |                  0 |  12871044 |   3917392 | 192012 |    191267 |        0 |    0 |       745 | 29.7392 |
+   |     0.002 |       256 |        64 |      72 |      64 |                  0 |    792208 |   5266836 | 213872 |    213091 |        0 |    0 |       781 | 11.4257 |
+   |     0.002 |       256 |       256 |      72 |     256 |                  0 |    940695 |   5266820 | 213872 |    213105 |        0 |    0 |       767 | 11.4399 |
+   |     0.002 |       256 |      1024 |      72 |    1024 |                  0 |   1529909 |   5266818 | 213872 |    213105 |        0 |    0 |       767 | 12.9936 |
+   |     0.002 |       256 |      4096 |      72 |    4096 |                  0 |   3882454 |   5266794 | 213872 |    213105 |        0 |    0 |       767 | 18.3553 |
+   |     0.002 |      1024 |        64 |      72 |      64 |                  0 |    793606 |   5266752 | 213872 |    213091 |        0 |    0 |       781 |  11.499 |
+   |     0.002 |      1024 |       256 |      72 |     256 |                  0 |    940985 |   5266882 | 213872 |    213105 |        0 |    0 |       767 | 11.5252 |
+   |     0.002 |      1024 |      1024 |      72 |    1024 |                  0 |   1531053 |   5266870 | 213872 |    213105 |        0 |    0 |       767 | 12.3492 |
+   |     0.002 |      1024 |      4096 |      72 |    4096 |                  0 |   3885658 |   5266836 | 213872 |    213105 |        0 |    0 |       767 | 16.4271 |
+   |     0.002 |      1024 |     16384 |      72 |   16384 |                  0 |  13311384 |   5266906 | 213872 |    213105 |        0 |    0 |       767 | 32.8921 |
+   |     0.001 |       256 |        64 |      92 |      64 |                  0 |    875423 |   6691368 | 236432 |    235621 |        0 |    0 |       811 | 14.0198 |
+   |     0.001 |       256 |       256 |      92 |     256 |                  0 |   1029970 |   6691432 | 236432 |    235637 |        0 |    0 |       795 | 14.3502 |
+   |     0.001 |       256 |      1024 |      92 |    1024 |                  0 |   1639192 |   6691254 | 236432 |    235637 |        0 |    0 |       795 | 15.5384 |
+   |     0.001 |       256 |      4096 |      92 |    4096 |                  0 |   4082638 |   6691354 | 236432 |    235637 |        0 |    0 |       795 | 19.5615 |
+   |     0.001 |      1024 |        64 |      92 |      64 |                  0 |    875901 |   6691266 | 236432 |    235621 |        0 |    0 |       811 | 13.7424 |
+   |     0.001 |      1024 |       256 |      92 |     256 |                  0 |   1029688 |   6691342 | 236432 |    235637 |        0 |    0 |       795 | 14.0661 |
+   |     0.001 |      1024 |      1024 |      92 |    1024 |                  0 |   1638508 |   6691266 | 236432 |    235637 |        0 |    0 |       795 | 15.0807 |
+   |     0.001 |      1024 |      4096 |      92 |    4096 |                  0 |   4082406 |   6691358 | 236432 |    235637 |        0 |    0 |       795 | 19.3041 |
+   |     0.001 |      1024 |     16384 |      92 |   16384 |                  0 |  13851017 |   6691356 | 236432 |    235637 |        0 |    0 |       795 |  36.223 |
+
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
      SELECT * 
          FROM stats_alternate
          WHERE tolerance=0.1 AND maq_limit=256*1024
@@ -255,12 +869,6 @@ This document presents the results of that testing.
    #+END_SRC
 
    #+RESULTS:
-   | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
-   |       0.1 |    262144 |      1024 |      22 |    1024 |   2767354 |   1894384 | 150100 |    149255 |        0 |    0 |       845 | 9.04095 |
-   |       0.1 |    262144 |      4096 |      22 |    4096 |   5135369 |   1896082 | 150100 |    149420 |        0 |    0 |       680 | 12.4811 |
-   |       0.1 |    262144 |     16384 |      22 |   16384 |  13449458 |   1896044 | 150100 |    149433 |        0 |    0 |       667 | 24.5009 |
-   |       0.1 |    262144 |     65536 |      26 |   65536 |  44466440 |   1896948 | 150100 |    149539 |        0 |    0 |       561 | 70.3335 |
-   |       0.1 |    262144 |    262144 |      26 |  262144 | 152143734 |   1897016 | 150100 |    149559 |        0 |    0 |       541 | 250.391 |
 
    #+ATTR_LaTeX: :placement [!h]
    #+HEADER: :results graphics
@@ -570,28 +1178,6 @@ This document presents the results of that testing.
    #+END_SRC
 
    #+RESULTS:
-   | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
-   |       0.1 |     65536 |     65536 |      30 |    1596 |   1564578 |   1904756 | 150100 |    150100 |        0 |    0 |         0 | 6.68434 |
-   |       0.1 |    262144 |     65536 |      30 |    1596 |   1564532 |   1904782 | 150100 |    150100 |        0 |    0 |         0 | 6.68423 |
-   |       0.1 |   1048576 |     65536 |      30 |    1596 |   1565789 |   1904746 | 150100 |    150100 |        0 |    0 |         0 | 6.60414 |
-   |      0.05 |     65536 |     65536 |      32 |    1596 |   1632370 |   2143660 | 153248 |    153248 |        0 |    0 |         0 | 10.3916 |
-   |      0.05 |    262144 |     65536 |      32 |    1596 |   1633352 |   2143586 | 153248 |    153248 |        0 |    0 |         0 | 7.32455 |
-   |      0.05 |   1048576 |     65536 |      32 |    1596 |   1631849 |   2143648 | 153248 |    153248 |        0 |    0 |         0 | 7.33137 |
-   |      0.02 |     65536 |     65536 |      34 |    1596 |   1725027 |   2720144 | 168000 |    168000 |        0 |    0 |         0 | 8.63187 |
-   |      0.02 |    262144 |     65536 |      34 |    1596 |   1724453 |   2720030 | 168000 |    168000 |        0 |    0 |         0 | 8.70644 |
-   |      0.02 |   1048576 |     65536 |      34 |    1596 |   1725885 |   2719972 | 168000 |    168000 |        0 |    0 |         0 | 8.46617 |
-   |      0.01 |     65536 |     65536 |      44 |    1596 |   1772881 |   3248486 | 179288 |    179288 |        0 |    0 |         0 | 9.58372 |
-   |      0.01 |    262144 |     65536 |      44 |    1596 |   1773601 |   3248492 | 179288 |    179288 |        0 |    0 |         0 | 10.7433 |
-   |      0.01 |   1048576 |     65536 |      44 |    1596 |   1774082 |   3248590 | 179288 |    179288 |        0 |    0 |         0 | 9.23688 |
-   |     0.005 |     65536 |     65536 |      56 |    1596 |   1852940 |   3931320 | 192040 |    192040 |        0 |    0 |         0 | 10.7944 |
-   |     0.005 |    262144 |     65536 |      56 |    1596 |   1853420 |   3931364 | 192040 |    192040 |        0 |    0 |         0 | 10.8943 |
-   |     0.005 |   1048576 |     65536 |      56 |    1596 |   1853652 |   3931256 | 192040 |    192040 |        0 |    0 |         0 | 15.2724 |
-   |     0.002 |     65536 |     65536 |      72 |    1596 |   1969331 |   5278904 | 213896 |    213896 |        0 |    0 |         0 |  13.208 |
-   |     0.002 |    262144 |     65536 |      72 |    1596 |   1969462 |   5278890 | 213896 |    213896 |        0 |    0 |         0 | 13.5893 |
-   |     0.002 |   1048576 |     65536 |      72 |    1596 |   1968964 |   5278886 | 213896 |    213896 |        0 |    0 |         0 |  13.195 |
-   |     0.001 |     65536 |     65536 |      92 |    1596 |   2094168 |   6705736 | 236500 |    236500 |        0 |    0 |         0 | 16.0328 |
-   |     0.001 |    262144 |     65536 |      92 |    1596 |   2094917 |   6705832 | 236500 |    236500 |        0 |    0 |         0 |  16.031 |
-   |     0.001 |   1048576 |     65536 |      92 |    1596 |   2094584 |   6705812 | 236500 |    236500 |        0 |    0 |         0 | 18.0637 |
 ** All Data                                                        :noexport:
    #+BEGIN_SRC sqlite :db integration-statistics.sql :header
    SELECT * FROM stats;
@@ -609,6 +1195,9 @@ This document presents the results of that testing.
      BEGIN {
          #print "   Tolerance, MAQ Limit, Bin Limit,   MAQ Max,   Bin Max, Bin Evals, MAQ Evals,  Calls, Successes, Failures, NANs, Bin Fails, Elapsed Time"
      }
+     /Method:/ {
+         method = $2
+     }
      /Tolerance/ { 
          tolerance = gensub(";", "", "g", $2) 
          maq_limit = gensub(";", "", "g", $4)
@@ -619,6 +1208,9 @@ This document presents the results of that testing.
      }
      /Max Bin/ {
          max_bin = $3
+     }
+     /Max Successful Bin/ {
+         max_successful_bin = $4
      }
      /Bin Evals/ {
          bin_evals = $3
@@ -644,11 +1236,13 @@ This document presents the results of that testing.
      /Elapsed time/ {
          elapsed_time = $3
 
-         printf "%12.8f", tolerance
+	 printf "%3s", method
+         printf ", %12.8f", tolerance
          printf ", %9d", maq_limit
 	 printf ", %9d", bin_limit
          printf ", %9d", max_count
          printf ", %9d", max_bin
+	 printf ", %9d", max_successful_bin
          printf ", %9d", bin_evals
          printf ", %9d", maq_evals
          printf ",% 6d", calls

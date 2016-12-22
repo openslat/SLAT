@@ -88,18 +88,34 @@ namespace SLAT {
         if (std::isnan(mu_lnX)) {
             return 0;
         } else {
-            return gsl_cdf_lognormal_Q(x, mu_lnX, sigma_lnX);
+            double result = gsl_cdf_lognormal_Q(x, mu_lnX, sigma_lnX);
+            if (result < 0) {
+                return 0.0;
+            } else {
+                return result;
+            }
         }
     }
 
     double LogNormalDist::p_at_most(double x) const
     {
-        return gsl_cdf_lognormal_P(x, mu_lnX, sigma_lnX);
+        double result = gsl_cdf_lognormal_P(x, mu_lnX, sigma_lnX);
+        if (result < 0) {
+            //std::cout << "CLIPPING p_at_most" << std::endl;
+            return 0.0;
+        } else {
+            return result;
+        }
     }
 
     double LogNormalDist::x_at_p(double p) const
     {
-        return gsl_cdf_lognormal_Pinv(p, mu_lnX, sigma_lnX);
+        double result = gsl_cdf_lognormal_Pinv(p, mu_lnX, sigma_lnX);
+        if (result < 0.0) {
+            return 0.0;
+        } else {
+            return result;
+        }
     }
 
 
@@ -115,6 +131,10 @@ namespace SLAT {
 
     double LogNormalDist::get_mean_X(void) const
     {
+        if (mu_lnX == -INFINITY) {
+            //std::cout << "MINUS INFINITY" << std::endl;
+            return 0;
+        }
         return exp(mu_lnX + sigma_lnX * sigma_lnX /2);
     }
 
@@ -125,7 +145,12 @@ namespace SLAT {
 
     double LogNormalDist::get_sigma_X(void) const
     {
-        return  get_mean_X() * sqrt(exp(get_sigma_lnX() * get_sigma_lnX()) - 1);
+        if (mu_lnX == -INFINITY) {
+            return 0;
+        } else {
+            double result = get_mean_X() * sqrt(exp(get_sigma_lnX() * get_sigma_lnX()) - 1);
+            return result;
+        }
     }
 
     LogNormalDist LogNormalDist::AddWeightedDistributions(

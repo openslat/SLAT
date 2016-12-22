@@ -332,7 +332,7 @@ demolitioncost BUILDING 14E6, 0.35  --mu mean_x --sd sd_ln_x;
 
 # Set up integration parameters:
 integration maq 1E-6 1024;
-integration maq 1E-2 4096;
+integration maq 1E-3 4096;
 
 # Set up recorders:
 set imvalues $(pyslat.logrange(0.01, 3.0, 199));

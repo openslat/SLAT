@@ -17,6 +17,7 @@
 
 unsigned int max_count = 0;
 unsigned int max_bin = 0;
+unsigned int max_successful_bin = 0;
 unsigned long bin_evals = 0;
 unsigned long maq_evals = 0;
 size_t calls = 0;
@@ -32,6 +33,7 @@ void ResetIntegrationStats()
 {
     max_count = 0;
     max_bin = 0;
+    max_successful_bin = 0;
     maq_evals = 0;
     bin_evals = 0;
     calls = 0;
@@ -50,6 +52,7 @@ void DumpIntegrationStats()
 #pragma omp critical
     std::cout << "Max Count: " << max_count << std::endl
               << "Max Bin: " << max_bin << std::endl
+              << "Max Successful Bin: " << max_successful_bin << std::endl
               << "Bin Evals: " << bin_evals << std::endl
               << "MAQ Evals: " << maq_evals << std::endl
               << "Total Count: " << (bin_evals + maq_evals) << std::endl
@@ -72,6 +75,8 @@ namespace SLAT {
     namespace Integration {
 
         unsigned int IntegrationSettings::bin_evals = 0;
+        IntegrationSettings::METHOD_TYPE  IntegrationSettings::method = OLD;
+
         
         src::logger_mt IntegrationSettings::settings_logger;
         IntegrationSettings IntegrationSettings::default_settings;
@@ -180,7 +185,6 @@ namespace SLAT {
  */
         search_result_t binary_subdivision(std::function<double (double)> f, unsigned int max_evals, src::logger_mt logger)
         {
-            //std::cout << "> binary_subdivision()" << std::endl;
             double a=0; // Maps to x=∞
             double b=1.0; // Maps to x=0
             double c = (a + b)/2.0;
@@ -198,7 +202,6 @@ namespace SLAT {
                     for (int i=1; i < intervals; i += 2) {
                         c = float(i)/intervals;
                         fc = f(x_from_t(c));
-                        //std::cout << i << "/" << intervals << " [" << x_from_t(c) << "] --> " << fc << std::endl;
                         
                         evaluations++;
 
@@ -212,16 +215,112 @@ namespace SLAT {
                 }
 
                 if (fc <= std::numeric_limits<double>::epsilon()) {
-                    //std::cout << fc << ", " << std::numeric_limits<double>::epsilon() << ", " << evaluations << std::endl;
-                    //std::cout << "< binary_subdivision(): NAN, NAN, " << evaluations << std::endl;
+                    return {NAN, NAN, evaluations};
+                }
+
+            }
+            return {a, b, evaluations};
+        }
+
+/*
+ * Try to divide the range [0, ∞) to bracket something interesting for integration, searching in the reverse direction.
+ */
+        search_result_t binary_subdivision_rev(std::function<double (double)> f, unsigned int max_evals, src::logger_mt logger)
+        {
+            double a=0; // Maps to x=∞
+            double b=1.0; // Maps to x=0
+            double c = 1.0 - (a + b)/2.0;
+
+            double fb = f(x_from_t(b));
+            double fc = f(x_from_t(c));
+    
+            unsigned int evaluations = 2;
+
+            if (fb <= std::numeric_limits<double>::epsilon() && 
+                fc <= std::numeric_limits<double>::epsilon()) 
+            {
+                long int intervals = 4;
+                while (evaluations < max_evals && fc <= std::numeric_limits<double>::epsilon()) {
+                    for (int i=1; i < intervals; i += 2) {
+                        c = 1.0 - float(i)/intervals;
+                        fc = f(x_from_t(c));
+                        
+                        evaluations++;
+
+                        if (fc > std::numeric_limits<double>::epsilon()) {
+                            a = 1.0 - (float(i) + 1.0) / intervals;
+                            b = 1.0 - (float(i) - 1.0) / intervals;
+                            break;
+                        }
+                    }
+                    intervals *= 2;
+                }
+
+                if (fc <= std::numeric_limits<double>::epsilon()) {
                     return {NAN, NAN, evaluations};
                 }
 
             }
     
-            // std::cout << "Found something after " << evaluations << " evaluations." << std::endl
-            //           << &logger << std::endl;
-            //std::cout << "< binary_subdivision(): " << a << ", " << b << ", " << evaluations << std::endl;
+            return {a, b, evaluations};
+        }
+
+/*
+ * Try to divide the range [0, ∞) to bracket something interesting for integration, searching in the reverse direction.
+ */
+        search_result_t binary_subdivision_rev2(std::function<double (double)> f, unsigned int max_evals, src::logger_mt logger)
+        {
+            double a=0; // Maps to x=∞
+            double b=1.0; // Maps to x=0
+            double c = 1.0 - (a + b)/2.0;
+
+            double fb = f(x_from_t(b));
+            double fc = f(x_from_t(c));
+    
+            unsigned int evaluations = 2;
+
+            if (fb <= std::numeric_limits<double>::epsilon() && 
+                fc <= std::numeric_limits<double>::epsilon()) 
+            {
+                long int intervals = 4;
+                while (evaluations < max_evals/2 && fc <= std::numeric_limits<double>::epsilon()) {
+                    for (int i=1; i < intervals/2; i += 2) {
+                        c = 1.0 - float(i)/intervals;
+                        fc = f(x_from_t(c));
+                        
+                        evaluations++;
+
+                        if (fc > std::numeric_limits<double>::epsilon()) {
+                            a = 1.0 - (float(i) + 1.0) / intervals;
+                            b = 1.0 - (float(i) - 1.0) / intervals;
+                            break;
+                        }
+                    }
+                    intervals *= 2;
+                }
+
+                intervals = 4;
+                while (evaluations < max_evals && fc <= std::numeric_limits<double>::epsilon()) {
+                    for (int i=1 + intervals/2; i < intervals; i += 2) {
+                        c = 1.0 - float(i)/intervals;
+                        fc = f(x_from_t(c));
+                        
+                        evaluations++;
+
+                        if (fc > std::numeric_limits<double>::epsilon()) {
+                            a = 1.0 - (float(i) + 1.0) / intervals;
+                            b = 1.0 - (float(i) - 1.0) / intervals;
+                            break;
+                        }
+                    }
+                    intervals *= 2;
+                }
+                if (fc <= std::numeric_limits<double>::epsilon()) {
+                    return {NAN, NAN, evaluations};
+                }
+
+            }
+    
             return {a, b, evaluations};
         }
 
@@ -243,10 +342,12 @@ namespace SLAT {
             if (fb <= std::numeric_limits<double>::epsilon() && 
                 fc <= std::numeric_limits<double>::epsilon()) 
             {
-                long int intervals = 4;
+                unsigned int init_intervals = 4;
+                unsigned long long int intervals = init_intervals;
                 long int k = 0;
+                unsigned int init_i = 1;
                 while (evaluations < max_evals && fc <= std::numeric_limits<double>::epsilon()) {
-                    long int i = 1;
+                    unsigned long long int i = init_i;
                     c = 1.0 - float(i)/intervals;
                     fc = f(x_from_t(c));
                     evaluations++;
@@ -254,14 +355,12 @@ namespace SLAT {
                     //std::cout << i << "/" << intervals << " [" << x_from_t(c) << "] --> " << fc << std::endl;
 
                     if (fc > std::numeric_limits<double>::epsilon()) {
-                        a = (float(i) - 1.0) / intervals;
-                        b = (float(i) + 1.0) / intervals;
-
-                        {
-                            double temp = a;
-                            a = 1.0 - b;
-                            b = 1.0 - temp;
+                        a = 1.0 - (float(i) + 1.0) / intervals;
+                        b = 1.0 - (float(i) - 1.0) / intervals;
+                        if (a == 0.0 && b == 1.0 && evaluations > 2) {
+                            //std::cout << "[1] " << i << " / " << intervals << "; " << evaluations << std::endl;
                         }
+                        //std::cout << "(1) " << c << " " << intervals << std::endl;
                         break;
                     }
                     long int p = 2 + 2 * k;
@@ -274,20 +373,34 @@ namespace SLAT {
                         //std::cout << i << "/" << intervals << " [" << x_from_t(c) << "] --> " << fc << std::endl;
 
                         if (fc > std::numeric_limits<double>::epsilon()) {
-                            a = (float(i) - 1.0) / intervals;
-                            b = (float(i) + 1.0) / intervals;
-
-                            {
-                                double temp = a;
-                                a = 1.0 - b;
-                                b = 1.0 - temp;
+                            a = 1.0 - (float(i) + 1.0) / intervals;
+                            b = 1.0 - (float(i) - 1.0) / intervals;
+                            if (a == 0.0 && b == 1.0 && evaluations > 2) {
+                                //std::cout << "[2] " << i << " / " << intervals << "; " << evaluations << std::endl;
                             }
+                            //std::cout << "(2) " << c << " " << intervals << std::endl;
                             break;
                         }
                         p = p * 2;
                         i = i + p;
                     }
                     intervals *= 2;
+
+                    if (intervals * 2 == 0) {
+                        //std::cout << "........." << std::endl;
+                        if (init_i == 0) {
+                            init_i +=  2;
+                            if (init_i > init_intervals) {
+                                init_intervals *= 2;
+                            }
+                        }
+                        intervals = init_intervals;;
+                    }
+                }
+
+                if (std::isnan(fc)) {
+                    std::cout << "BREAK HERE" << std::endl;
+                    std::cout << c << std::endl;
                 }
 
                 if (fc <= std::numeric_limits<double>::epsilon()) {
@@ -297,10 +410,6 @@ namespace SLAT {
                 }
 
             }
-    
-            // std::cout << "Found something after " << evaluations << " evaluations." << std::endl
-            //           << &logger << std::endl;
-            //std::cout << "< alternate_binary_subdivision(): " << a << ", " << b << ", " << evaluations << std::endl;
             return {a, b, evaluations};
         }
 /*
@@ -366,8 +475,22 @@ namespace SLAT {
              */
             double a, b;
             {
-#if false
-                search_result_t r = binary_subdivision(integrand, bineval, IntegrationSettings::settings_logger );
+#if true
+                search_result_t r = {0, 0, 0};
+                switch (IntegrationSettings::method) {
+                case IntegrationSettings::OLD:
+                    r = binary_subdivision(integrand, bineval, IntegrationSettings::settings_logger );
+                    break;
+                case IntegrationSettings::REV:
+                    r = binary_subdivision_rev(integrand, bineval, IntegrationSettings::settings_logger );
+                    break;
+                case IntegrationSettings::REV2:
+                    r = binary_subdivision_rev2(integrand, bineval, IntegrationSettings::settings_logger );
+                    break;
+                case IntegrationSettings::NEW:
+                    r = alternate_binary_subdivision(integrand, bineval, IntegrationSettings::settings_logger );
+                    break;
+                }
 #else
                 search_result_t r = alternate_binary_subdivision(integrand, bineval, IntegrationSettings::settings_logger );
                 // if (!isnan(r.a) && r.evaluations > 100) {
@@ -376,6 +499,7 @@ namespace SLAT {
 #endif
                 bin_evals += r.evaluations;
                 if (max_bin < r.evaluations) max_bin = r.evaluations;
+                if (max_successful_bin < r.evaluations && r.evaluations < bineval) max_successful_bin = r.evaluations;
                 if (std::isnan(r.a)) {
                     //std::cout << "binary_subdivision failed" << std::endl;
                     // BOOST_LOG(IntegrationSettings::settings_logger) << "binary_subdivision failed to find anything for " << settings.

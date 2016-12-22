@@ -1,0 +1,4032 @@
+----------------------------
+Method:  OLD
+Tolerance: 0.1; Evals: 256; Bin Evals: 64
+Max Count: 22
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1046023
+MAQ Evals: 1896080
+Total Count: 2942103
+Calls: 150576
+Successes: 146099
+Fails: 0
+NANs: 0
+Bin_Fails: 4477
+Bins: 0  0  0  0  0  0  0  0  106395  0  0  0  7130  0  18148  12027  
+Elapsed time: 5.90776
+----------------------------
+Method:  REV
+Tolerance: 0.1; Evals: 256; Bin Evals: 64
+Max Count: 22
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 814071
+MAQ Evals: 1896082
+Total Count: 2710153
+Calls: 150576
+Successes: 146099
+Fails: 0
+NANs: 0
+Bin_Fails: 4477
+Bins: 0  0  0  0  0  0  0  0  106457  0  0  0  7135  0  18375  12163  
+Elapsed time: 5.56051
+----------------------------
+Method: REV2
+Tolerance: 0.1; Evals: 256; Bin Evals: 64
+Max Count: 22
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 714044
+MAQ Evals: 1896058
+Total Count: 2610102
+Calls: 150576
+Successes: 146099
+Fails: 0
+NANs: 0
+Bin_Fails: 4477
+Bins: 0  0  0  0  0  0  0  0  106837  0  0  0  7138  0  18550  12153  
+Elapsed time: 5.38523
+----------------------------
+Method:  NEW
+Tolerance: 0.1; Evals: 256; Bin Evals: 64
+Max Count: 22
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 535548
+MAQ Evals: 1896010
+Total Count: 2431558
+Calls: 150092
+Successes: 149409
+Fails: 0
+NANs: 0
+Bin_Fails: 683
+Bins: 0  0  0  0  0  0  0  0  106593  0  0  0  7120  0  18359  15490  
+Elapsed time: 5.01911
+----------------------------
+Method:  OLD
+Tolerance: 0.1; Evals: 256; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 1773999
+MAQ Evals: 1887116
+Total Count: 3661115
+Calls: 150256
+Successes: 148427
+Fails: 0
+NANs: 0
+Bin_Fails: 1829
+Bins: 0  0  0  0  0  0  0  0  106611  0  0  0  7121  0  18499  14539  
+Elapsed time: 7.77381
+----------------------------
+Method:  REV
+Tolerance: 0.1; Evals: 256; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1267708
+MAQ Evals: 1887130
+Total Count: 3154838
+Calls: 150256
+Successes: 148427
+Fails: 0
+NANs: 0
+Bin_Fails: 1829
+Bins: 0  0  0  0  0  0  0  0  106597  0  0  0  7119  0  18482  14564  
+Elapsed time: 6.62852
+----------------------------
+Method: REV2
+Tolerance: 0.1; Evals: 256; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1034001
+MAQ Evals: 1887088
+Total Count: 2921089
+Calls: 150256
+Successes: 148427
+Fails: 0
+NANs: 0
+Bin_Fails: 1829
+Bins: 0  0  0  0  0  0  0  0  106737  0  0  0  7121  0  18445  14562  
+Elapsed time: 6.17681
+----------------------------
+Method:  NEW
+Tolerance: 0.1; Evals: 256; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 667802
+MAQ Evals: 1896072
+Total Count: 2563874
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106558  0  0  0  7120  0  18532  15567  
+Elapsed time: 5.36179
+----------------------------
+Method:  OLD
+Tolerance: 0.1; Evals: 1024; Bin Evals: 64
+Max Count: 22
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1056183
+MAQ Evals: 1896110
+Total Count: 2952293
+Calls: 150576
+Successes: 146099
+Fails: 0
+NANs: 0
+Bin_Fails: 4477
+Bins: 0  0  0  0  0  0  0  0  106582  0  0  0  7134  0  18497  12134  
+Elapsed time: 6.12659
+----------------------------
+Method:  REV
+Tolerance: 0.1; Evals: 1024; Bin Evals: 64
+Max Count: 22
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 815337
+MAQ Evals: 1896084
+Total Count: 2711421
+Calls: 150576
+Successes: 146099
+Fails: 0
+NANs: 0
+Bin_Fails: 4477
+Bins: 0  0  0  0  0  0  0  0  106747  0  0  0  7135  0  18517  12143  
+Elapsed time: 5.7254
+----------------------------
+Method: REV2
+Tolerance: 0.1; Evals: 1024; Bin Evals: 64
+Max Count: 22
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 714336
+MAQ Evals: 1896090
+Total Count: 2610426
+Calls: 150576
+Successes: 146099
+Fails: 0
+NANs: 0
+Bin_Fails: 4477
+Bins: 0  0  0  0  0  0  0  0  106818  0  0  0  7135  0  18552  12177  
+Elapsed time: 5.40639
+----------------------------
+Method:  NEW
+Tolerance: 0.1; Evals: 1024; Bin Evals: 64
+Max Count: 22
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 536404
+MAQ Evals: 1896032
+Total Count: 2432436
+Calls: 150092
+Successes: 149409
+Fails: 0
+NANs: 0
+Bin_Fails: 683
+Bins: 0  0  0  0  0  0  0  0  106401  0  0  0  7122  0  18525  15466  
+Elapsed time: 5.07561
+----------------------------
+Method:  OLD
+Tolerance: 0.1; Evals: 1024; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 1775935
+MAQ Evals: 1887118
+Total Count: 3663053
+Calls: 150256
+Successes: 148427
+Fails: 0
+NANs: 0
+Bin_Fails: 1829
+Bins: 0  0  0  0  0  0  0  0  106459  0  0  0  7117  0  18497  14582  
+Elapsed time: 7.70491
+----------------------------
+Method:  REV
+Tolerance: 0.1; Evals: 1024; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1267181
+MAQ Evals: 1887094
+Total Count: 3154275
+Calls: 150256
+Successes: 148427
+Fails: 0
+NANs: 0
+Bin_Fails: 1829
+Bins: 0  0  0  0  0  0  0  0  106687  0  0  0  7120  0  18437  14542  
+Elapsed time: 6.64933
+----------------------------
+Method: REV2
+Tolerance: 0.1; Evals: 1024; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1033893
+MAQ Evals: 1887116
+Total Count: 2921009
+Calls: 150256
+Successes: 148427
+Fails: 0
+NANs: 0
+Bin_Fails: 1829
+Bins: 0  0  0  0  0  0  0  0  106800  0  0  0  7119  0  18374  14593  
+Elapsed time: 7.62606
+----------------------------
+Method:  NEW
+Tolerance: 0.1; Evals: 1024; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 667271
+MAQ Evals: 1896084
+Total Count: 2563355
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106708  0  0  0  7122  0  18454  15582  
+Elapsed time: 7.35473
+----------------------------
+Method:  OLD
+Tolerance: 0.1; Evals: 1024; Bin Evals: 1024
+Max Count: 22
+Max Bin: 1024
+Max Successful Bin: 1023
+Bin Evals: 2765996
+MAQ Evals: 1894466
+Total Count: 4660462
+Calls: 150092
+Successes: 149247
+Fails: 0
+NANs: 0
+Bin_Fails: 845
+Bins: 0  0  0  0  0  0  0  0  106616  0  0  0  7119  0  18513  15385  
+Elapsed time: 11.2217
+----------------------------
+Method:  REV
+Tolerance: 0.1; Evals: 1024; Bin Evals: 1024
+Max Count: 22
+Max Bin: 1024
+Max Successful Bin: 514
+Bin Evals: 1961737
+MAQ Evals: 1894484
+Total Count: 3856221
+Calls: 150092
+Successes: 149247
+Fails: 0
+NANs: 0
+Bin_Fails: 845
+Bins: 0  0  0  0  0  0  0  0  106606  0  0  0  7121  0  18456  15373  
+Elapsed time: 8.54228
+----------------------------
+Method: REV2
+Tolerance: 0.1; Evals: 1024; Bin Evals: 1024
+Max Count: 22
+Max Bin: 1024
+Max Successful Bin: 259
+Bin Evals: 1578611
+MAQ Evals: 1894484
+Total Count: 3473095
+Calls: 150092
+Successes: 149247
+Fails: 0
+NANs: 0
+Bin_Fails: 845
+Bins: 0  0  0  0  0  0  0  0  106300  0  0  0  7120  0  18352  15341  
+Elapsed time: 7.26711
+----------------------------
+Method:  NEW
+Tolerance: 0.1; Evals: 1024; Bin Evals: 1024
+Max Count: 22
+Max Bin: 1024
+Max Successful Bin: 225
+Bin Evals: 1180911
+MAQ Evals: 1896086
+Total Count: 3076997
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106625  0  0  0  7123  0  18539  15522  
+Elapsed time: 6.31473
+----------------------------
+Method:  OLD
+Tolerance: 0.05; Evals: 256; Bin Evals: 64
+Max Count: 26
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1121661
+MAQ Evals: 2159646
+Total Count: 3281307
+Calls: 153876
+Successes: 149050
+Fails: 0
+NANs: 0
+Bin_Fails: 4826
+Bins: 0  0  0  0  0  0  0  0  108776  0  0  0  7341  0  18669  12891  
+Elapsed time: 6.40716
+----------------------------
+Method:  REV
+Tolerance: 0.05; Evals: 256; Bin Evals: 64
+Max Count: 26
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 859787
+MAQ Evals: 2159668
+Total Count: 3019455
+Calls: 153876
+Successes: 149050
+Fails: 0
+NANs: 0
+Bin_Fails: 4826
+Bins: 0  0  0  0  0  0  0  0  108513  0  0  0  7340  0  18628  12863  
+Elapsed time: 6.05363
+----------------------------
+Method: REV2
+Tolerance: 0.05; Evals: 256; Bin Evals: 64
+Max Count: 26
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 749368
+MAQ Evals: 2159688
+Total Count: 2909056
+Calls: 153876
+Successes: 149050
+Fails: 0
+NANs: 0
+Bin_Fails: 4826
+Bins: 0  0  0  0  0  0  0  0  108528  0  0  0  7343  0  18522  12864  
+Elapsed time: 5.86704
+----------------------------
+Method:  NEW
+Tolerance: 0.05; Evals: 256; Bin Evals: 64
+Max Count: 24
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 554512
+MAQ Evals: 2134360
+Total Count: 2688872
+Calls: 153272
+Successes: 152557
+Fails: 0
+NANs: 0
+Bin_Fails: 715
+Bins: 0  0  0  0  0  0  0  0  108715  0  0  0  7326  0  18559  16400  
+Elapsed time: 5.47117
+----------------------------
+Method:  OLD
+Tolerance: 0.05; Evals: 256; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 1911703
+MAQ Evals: 2125636
+Total Count: 4037339
+Calls: 153552
+Successes: 151594
+Fails: 0
+NANs: 0
+Bin_Fails: 1958
+Bins: 0  0  0  0  0  0  0  0  108386  0  0  0  7326  0  18635  15521  
+Elapsed time: 8.40011
+----------------------------
+Method:  REV
+Tolerance: 0.05; Evals: 256; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1355093
+MAQ Evals: 2125636
+Total Count: 3480729
+Calls: 153552
+Successes: 151594
+Fails: 0
+NANs: 0
+Bin_Fails: 1958
+Bins: 0  0  0  0  0  0  0  0  108413  0  0  0  7327  0  18670  15498  
+Elapsed time: 7.42215
+----------------------------
+Method: REV2
+Tolerance: 0.05; Evals: 256; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1096556
+MAQ Evals: 2125650
+Total Count: 3222206
+Calls: 153552
+Successes: 151594
+Fails: 0
+NANs: 0
+Bin_Fails: 1958
+Bins: 0  0  0  0  0  0  0  0  108360  0  0  0  7327  0  18570  15462  
+Elapsed time: 6.76302
+----------------------------
+Method:  NEW
+Tolerance: 0.05; Evals: 256; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 691506
+MAQ Evals: 2134356
+Total Count: 2825862
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108617  0  0  0  7326  0  18612  16481  
+Elapsed time: 5.7227
+----------------------------
+Method:  OLD
+Tolerance: 0.05; Evals: 1024; Bin Evals: 64
+Max Count: 26
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1118815
+MAQ Evals: 2159666
+Total Count: 3278481
+Calls: 153876
+Successes: 149050
+Fails: 0
+NANs: 0
+Bin_Fails: 4826
+Bins: 0  0  0  0  0  0  0  0  108653  0  0  0  7339  0  18661  12853  
+Elapsed time: 6.57552
+----------------------------
+Method:  REV
+Tolerance: 0.05; Evals: 1024; Bin Evals: 64
+Max Count: 26
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 857237
+MAQ Evals: 2159662
+Total Count: 3016899
+Calls: 153876
+Successes: 149050
+Fails: 0
+NANs: 0
+Bin_Fails: 4826
+Bins: 0  0  0  0  0  0  0  0  108324  0  0  0  7340  0  18542  12803  
+Elapsed time: 6.03828
+----------------------------
+Method: REV2
+Tolerance: 0.05; Evals: 1024; Bin Evals: 64
+Max Count: 26
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 749420
+MAQ Evals: 2159688
+Total Count: 2909108
+Calls: 153876
+Successes: 149050
+Fails: 0
+NANs: 0
+Bin_Fails: 4826
+Bins: 0  0  0  0  0  0  0  0  108597  0  0  0  7340  0  18516  12865  
+Elapsed time: 5.87403
+----------------------------
+Method:  NEW
+Tolerance: 0.05; Evals: 1024; Bin Evals: 64
+Max Count: 24
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 555596
+MAQ Evals: 2134364
+Total Count: 2689960
+Calls: 153272
+Successes: 152557
+Fails: 0
+NANs: 0
+Bin_Fails: 715
+Bins: 0  0  0  0  0  0  0  0  108473  0  0  0  7328  0  18600  16451  
+Elapsed time: 5.44513
+----------------------------
+Method:  OLD
+Tolerance: 0.05; Evals: 1024; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 1913281
+MAQ Evals: 2125640
+Total Count: 4038921
+Calls: 153552
+Successes: 151594
+Fails: 0
+NANs: 0
+Bin_Fails: 1958
+Bins: 0  0  0  0  0  0  0  0  108751  0  0  0  7325  0  18688  15520  
+Elapsed time: 8.69835
+----------------------------
+Method:  REV
+Tolerance: 0.05; Evals: 1024; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1356582
+MAQ Evals: 2125636
+Total Count: 3482218
+Calls: 153552
+Successes: 151594
+Fails: 0
+NANs: 0
+Bin_Fails: 1958
+Bins: 0  0  0  0  0  0  0  0  108516  0  0  0  7330  0  18696  15551  
+Elapsed time: 7.16814
+----------------------------
+Method: REV2
+Tolerance: 0.05; Evals: 1024; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1097666
+MAQ Evals: 2125634
+Total Count: 3223300
+Calls: 153552
+Successes: 151594
+Fails: 0
+NANs: 0
+Bin_Fails: 1958
+Bins: 0  0  0  0  0  0  0  0  108732  0  0  0  7325  0  18524  15495  
+Elapsed time: 6.91645
+----------------------------
+Method:  NEW
+Tolerance: 0.05; Evals: 1024; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 691188
+MAQ Evals: 2134430
+Total Count: 2825618
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108599  0  0  0  7325  0  18606  16483  
+Elapsed time: 5.84264
+----------------------------
+Method:  OLD
+Tolerance: 0.05; Evals: 1024; Bin Evals: 1024
+Max Count: 24
+Max Bin: 1024
+Max Successful Bin: 1023
+Bin Evals: 2927066
+MAQ Evals: 2132452
+Total Count: 5059518
+Calls: 153272
+Successes: 152384
+Fails: 0
+NANs: 0
+Bin_Fails: 888
+Bins: 0  0  0  0  0  0  0  0  108479  0  0  0  7326  0  18611  16296  
+Elapsed time: 10.4681
+----------------------------
+Method:  REV
+Tolerance: 0.05; Evals: 1024; Bin Evals: 1024
+Max Count: 24
+Max Bin: 1024
+Max Successful Bin: 514
+Bin Evals: 2067171
+MAQ Evals: 2132430
+Total Count: 4199601
+Calls: 153272
+Successes: 152384
+Fails: 0
+NANs: 0
+Bin_Fails: 888
+Bins: 0  0  0  0  0  0  0  0  108598  0  0  0  7324  0  18473  16295  
+Elapsed time: 8.61396
+----------------------------
+Method: REV2
+Tolerance: 0.05; Evals: 1024; Bin Evals: 1024
+Max Count: 24
+Max Bin: 1024
+Max Successful Bin: 259
+Bin Evals: 1660281
+MAQ Evals: 2132470
+Total Count: 3792751
+Calls: 153272
+Successes: 152384
+Fails: 0
+NANs: 0
+Bin_Fails: 888
+Bins: 0  0  0  0  0  0  0  0  108514  0  0  0  7325  0  18636  16320  
+Elapsed time: 7.71936
+----------------------------
+Method:  NEW
+Tolerance: 0.05; Evals: 1024; Bin Evals: 1024
+Max Count: 24
+Max Bin: 1024
+Max Successful Bin: 225
+Bin Evals: 1231719
+MAQ Evals: 2134420
+Total Count: 3366139
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108697  0  0  0  7328  0  18730  16476  
+Elapsed time: 6.8113
+----------------------------
+Method:  OLD
+Tolerance: 0.02; Evals: 256; Bin Evals: 64
+Max Count: 36
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1241029
+MAQ Evals: 2752578
+Total Count: 3993607
+Calls: 168352
+Successes: 163034
+Fails: 0
+NANs: 0
+Bin_Fails: 5318
+Bins: 0  0  0  0  0  0  0  0  119591  0  0  0  8316  0  19141  14339  
+Elapsed time: 8.01472
+----------------------------
+Method:  REV
+Tolerance: 0.02; Evals: 256; Bin Evals: 64
+Max Count: 36
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 952330
+MAQ Evals: 2752562
+Total Count: 3704892
+Calls: 168352
+Successes: 163034
+Fails: 0
+NANs: 0
+Bin_Fails: 5318
+Bins: 0  0  0  0  0  0  0  0  119565  0  0  0  8317  0  19185  14387  
+Elapsed time: 7.58443
+----------------------------
+Method: REV2
+Tolerance: 0.02; Evals: 256; Bin Evals: 64
+Max Count: 36
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 826371
+MAQ Evals: 2752546
+Total Count: 3578917
+Calls: 168352
+Successes: 163034
+Fails: 0
+NANs: 0
+Bin_Fails: 5318
+Bins: 0  0  0  0  0  0  0  0  119663  0  0  0  8311  0  19011  14370  
+Elapsed time: 7.50987
+----------------------------
+Method:  NEW
+Tolerance: 0.02; Evals: 256; Bin Evals: 64
+Max Count: 34
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 614062
+MAQ Evals: 2709452
+Total Count: 3323514
+Calls: 168008
+Successes: 167270
+Fails: 0
+NANs: 0
+Bin_Fails: 738
+Bins: 0  0  0  0  0  0  0  0  119826  0  0  0  8303  0  19129  18694  
+Elapsed time: 6.81435
+----------------------------
+Method:  OLD
+Tolerance: 0.02; Evals: 256; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 2238667
+MAQ Evals: 2702742
+Total Count: 4941409
+Calls: 168428
+Successes: 166302
+Fails: 0
+NANs: 0
+Bin_Fails: 2126
+Bins: 0  0  0  0  0  0  0  0  119747  0  0  0  8306  0  19316  17772  
+Elapsed time: 10.5622
+----------------------------
+Method:  REV
+Tolerance: 0.02; Evals: 256; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1553581
+MAQ Evals: 2702732
+Total Count: 4256313
+Calls: 168428
+Successes: 166302
+Fails: 0
+NANs: 0
+Bin_Fails: 2126
+Bins: 0  0  0  0  0  0  0  0  119195  0  0  0  8306  0  19218  17770  
+Elapsed time: 9.13077
+----------------------------
+Method: REV2
+Tolerance: 0.02; Evals: 256; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1233974
+MAQ Evals: 2702742
+Total Count: 3936716
+Calls: 168428
+Successes: 166302
+Fails: 0
+NANs: 0
+Bin_Fails: 2126
+Bins: 0  0  0  0  0  0  0  0  119464  0  0  0  8308  0  19069  17720  
+Elapsed time: 8.54318
+----------------------------
+Method:  NEW
+Tolerance: 0.02; Evals: 256; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 751349
+MAQ Evals: 2709492
+Total Count: 3460841
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119635  0  0  0  8304  0  19053  18674  
+Elapsed time: 7.17713
+----------------------------
+Method:  OLD
+Tolerance: 0.02; Evals: 1024; Bin Evals: 64
+Max Count: 36
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1246487
+MAQ Evals: 2752580
+Total Count: 3999067
+Calls: 168352
+Successes: 163034
+Fails: 0
+NANs: 0
+Bin_Fails: 5318
+Bins: 0  0  0  0  0  0  0  0  119599  0  0  0  8318  0  19275  14415  
+Elapsed time: 8.01185
+----------------------------
+Method:  REV
+Tolerance: 0.02; Evals: 1024; Bin Evals: 64
+Max Count: 36
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 952467
+MAQ Evals: 2752592
+Total Count: 3705059
+Calls: 168352
+Successes: 163034
+Fails: 0
+NANs: 0
+Bin_Fails: 5318
+Bins: 0  0  0  0  0  0  0  0  119768  0  0  0  8311  0  19197  14365  
+Elapsed time: 7.79069
+----------------------------
+Method: REV2
+Tolerance: 0.02; Evals: 1024; Bin Evals: 64
+Max Count: 36
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 826741
+MAQ Evals: 2752556
+Total Count: 3579297
+Calls: 168352
+Successes: 163034
+Fails: 0
+NANs: 0
+Bin_Fails: 5318
+Bins: 0  0  0  0  0  0  0  0  119657  0  0  0  8316  0  19066  14354  
+Elapsed time: 7.44482
+----------------------------
+Method:  NEW
+Tolerance: 0.02; Evals: 1024; Bin Evals: 64
+Max Count: 34
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 610270
+MAQ Evals: 2709452
+Total Count: 3319722
+Calls: 168008
+Successes: 167270
+Fails: 0
+NANs: 0
+Bin_Fails: 738
+Bins: 0  0  0  0  0  0  0  0  119155  0  0  0  8307  0  19048  18663  
+Elapsed time: 6.93849
+----------------------------
+Method:  OLD
+Tolerance: 0.02; Evals: 1024; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 2236023
+MAQ Evals: 2702724
+Total Count: 4938747
+Calls: 168428
+Successes: 166302
+Fails: 0
+NANs: 0
+Bin_Fails: 2126
+Bins: 0  0  0  0  0  0  0  0  119683  0  0  0  8303  0  19224  17749  
+Elapsed time: 10.6965
+----------------------------
+Method:  REV
+Tolerance: 0.02; Evals: 1024; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1551824
+MAQ Evals: 2702712
+Total Count: 4254536
+Calls: 168428
+Successes: 166302
+Fails: 0
+NANs: 0
+Bin_Fails: 2126
+Bins: 0  0  0  0  0  0  0  0  119299  0  0  0  8304  0  19087  17748  
+Elapsed time: 8.86872
+----------------------------
+Method: REV2
+Tolerance: 0.02; Evals: 1024; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1235668
+MAQ Evals: 2702730
+Total Count: 3938398
+Calls: 168428
+Successes: 166302
+Fails: 0
+NANs: 0
+Bin_Fails: 2126
+Bins: 0  0  0  0  0  0  0  0  119517  0  0  0  8308  0  19214  17733  
+Elapsed time: 8.26079
+----------------------------
+Method:  NEW
+Tolerance: 0.02; Evals: 1024; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 752224
+MAQ Evals: 2709490
+Total Count: 3461714
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119552  0  0  0  8306  0  19039  18714  
+Elapsed time: 7.18623
+----------------------------
+Method:  OLD
+Tolerance: 0.02; Evals: 1024; Bin Evals: 1024
+Max Count: 34
+Max Bin: 1024
+Max Successful Bin: 1023
+Bin Evals: 3281944
+MAQ Evals: 2706956
+Total Count: 5988900
+Calls: 168008
+Successes: 167083
+Fails: 0
+NANs: 0
+Bin_Fails: 925
+Bins: 0  0  0  0  0  0  0  0  119558  0  0  0  8307  0  19240  18529  
+Elapsed time: 12.8051
+----------------------------
+Method:  REV
+Tolerance: 0.02; Evals: 1024; Bin Evals: 1024
+Max Count: 34
+Max Bin: 1024
+Max Successful Bin: 514
+Bin Evals: 2275825
+MAQ Evals: 2706994
+Total Count: 4982819
+Calls: 168008
+Successes: 167083
+Fails: 0
+NANs: 0
+Bin_Fails: 925
+Bins: 0  0  0  0  0  0  0  0  119536  0  0  0  8310  0  19144  18453  
+Elapsed time: 10.1984
+----------------------------
+Method: REV2
+Tolerance: 0.02; Evals: 1024; Bin Evals: 1024
+Max Count: 34
+Max Bin: 1024
+Max Successful Bin: 259
+Bin Evals: 1796906
+MAQ Evals: 2706968
+Total Count: 4503874
+Calls: 168008
+Successes: 167083
+Fails: 0
+NANs: 0
+Bin_Fails: 925
+Bins: 0  0  0  0  0  0  0  0  119423  0  0  0  8307  0  18822  18465  
+Elapsed time: 9.44611
+----------------------------
+Method:  NEW
+Tolerance: 0.02; Evals: 1024; Bin Evals: 1024
+Max Count: 34
+Max Bin: 1024
+Max Successful Bin: 225
+Bin Evals: 1305269
+MAQ Evals: 2709458
+Total Count: 4014727
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119318  0  0  0  8305  0  18914  18673  
+Elapsed time: 8.231
+----------------------------
+Method:  OLD
+Tolerance: 0.01; Evals: 256; Bin Evals: 64
+Max Count: 44
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1361313
+MAQ Evals: 3318622
+Total Count: 4679935
+Calls: 180220
+Successes: 174396
+Fails: 0
+NANs: 0
+Bin_Fails: 5824
+Bins: 0  0  0  0  0  0  0  0  128003  0  0  0  9397  0  19921  15664  
+Elapsed time: 9.15078
+----------------------------
+Method:  REV
+Tolerance: 0.01; Evals: 256; Bin Evals: 64
+Max Count: 44
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 1036666
+MAQ Evals: 3318674
+Total Count: 4355340
+Calls: 180220
+Successes: 174396
+Fails: 0
+NANs: 0
+Bin_Fails: 5824
+Bins: 0  0  0  0  0  0  0  0  127901  0  0  0  9394  0  19863  15607  
+Elapsed time: 8.64913
+----------------------------
+Method: REV2
+Tolerance: 0.01; Evals: 256; Bin Evals: 64
+Max Count: 44
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 897305
+MAQ Evals: 3318636
+Total Count: 4215941
+Calls: 180220
+Successes: 174396
+Fails: 0
+NANs: 0
+Bin_Fails: 5824
+Bins: 0  0  0  0  0  0  0  0  127892  0  0  0  9392  0  19764  15572  
+Elapsed time: 8.47982
+----------------------------
+Method:  NEW
+Tolerance: 0.01; Evals: 256; Bin Evals: 64
+Max Count: 44
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 654138
+MAQ Evals: 3237002
+Total Count: 3891140
+Calls: 179284
+Successes: 178540
+Fails: 0
+NANs: 0
+Bin_Fails: 744
+Bins: 0  0  0  0  0  0  0  0  127910  0  0  0  9352  0  19990  20034  
+Elapsed time: 7.65932
+----------------------------
+Method:  OLD
+Tolerance: 0.01; Evals: 256; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 2417541
+MAQ Evals: 3232550
+Total Count: 5650091
+Calls: 179796
+Successes: 177557
+Fails: 0
+NANs: 0
+Bin_Fails: 2239
+Bins: 0  0  0  0  0  0  0  0  127836  0  0  0  9351  0  19735  19023  
+Elapsed time: 11.5576
+----------------------------
+Method:  REV
+Tolerance: 0.01; Evals: 256; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1672513
+MAQ Evals: 3232550
+Total Count: 4905063
+Calls: 179796
+Successes: 177557
+Fails: 0
+NANs: 0
+Bin_Fails: 2239
+Bins: 0  0  0  0  0  0  0  0  127986  0  0  0  9352  0  19832  19046  
+Elapsed time: 9.82627
+----------------------------
+Method: REV2
+Tolerance: 0.01; Evals: 256; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1322020
+MAQ Evals: 3232512
+Total Count: 4554532
+Calls: 179796
+Successes: 177557
+Fails: 0
+NANs: 0
+Bin_Fails: 2239
+Bins: 0  0  0  0  0  0  0  0  128031  0  0  0  9354  0  19837  19029  
+Elapsed time: 9.15938
+----------------------------
+Method:  NEW
+Tolerance: 0.01; Evals: 256; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 791595
+MAQ Evals: 3237058
+Total Count: 4028653
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127815  0  0  0  9355  0  19763  19968  
+Elapsed time: 8.11495
+----------------------------
+Method:  OLD
+Tolerance: 0.01; Evals: 1024; Bin Evals: 64
+Max Count: 44
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1354409
+MAQ Evals: 3318652
+Total Count: 4673061
+Calls: 180220
+Successes: 174396
+Fails: 0
+NANs: 0
+Bin_Fails: 5824
+Bins: 0  0  0  0  0  0  0  0  128037  0  0  0  9390  0  19796  15571  
+Elapsed time: 9.12211
+----------------------------
+Method:  REV
+Tolerance: 0.01; Evals: 1024; Bin Evals: 64
+Max Count: 44
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 1035366
+MAQ Evals: 3318674
+Total Count: 4354040
+Calls: 180220
+Successes: 174396
+Fails: 0
+NANs: 0
+Bin_Fails: 5824
+Bins: 0  0  0  0  0  0  0  0  127735  0  0  0  9397  0  19790  15587  
+Elapsed time: 8.79203
+----------------------------
+Method: REV2
+Tolerance: 0.01; Evals: 1024; Bin Evals: 64
+Max Count: 44
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 898230
+MAQ Evals: 3318654
+Total Count: 4216884
+Calls: 180220
+Successes: 174396
+Fails: 0
+NANs: 0
+Bin_Fails: 5824
+Bins: 0  0  0  0  0  0  0  0  127838  0  0  0  9393  0  19780  15601  
+Elapsed time: 8.46199
+----------------------------
+Method:  NEW
+Tolerance: 0.01; Evals: 1024; Bin Evals: 64
+Max Count: 44
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 654240
+MAQ Evals: 3237004
+Total Count: 3891244
+Calls: 179284
+Successes: 178540
+Fails: 0
+NANs: 0
+Bin_Fails: 744
+Bins: 0  0  0  0  0  0  0  0  127922  0  0  0  9356  0  20014  20004  
+Elapsed time: 7.64668
+----------------------------
+Method:  OLD
+Tolerance: 0.01; Evals: 1024; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 2415571
+MAQ Evals: 3232504
+Total Count: 5648075
+Calls: 179796
+Successes: 177557
+Fails: 0
+NANs: 0
+Bin_Fails: 2239
+Bins: 0  0  0  0  0  0  0  0  127709  0  0  0  9353  0  19793  18969  
+Elapsed time: 11.4164
+----------------------------
+Method:  REV
+Tolerance: 0.01; Evals: 1024; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1671430
+MAQ Evals: 3232550
+Total Count: 4903980
+Calls: 179796
+Successes: 177557
+Fails: 0
+NANs: 0
+Bin_Fails: 2239
+Bins: 0  0  0  0  0  0  0  0  127854  0  0  0  9353  0  19911  18999  
+Elapsed time: 9.9721
+----------------------------
+Method: REV2
+Tolerance: 0.01; Evals: 1024; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1320685
+MAQ Evals: 3232524
+Total Count: 4553209
+Calls: 179796
+Successes: 177557
+Fails: 0
+NANs: 0
+Bin_Fails: 2239
+Bins: 0  0  0  0  0  0  0  0  127780  0  0  0  9352  0  19768  18990  
+Elapsed time: 11.9321
+----------------------------
+Method:  NEW
+Tolerance: 0.01; Evals: 1024; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 793436
+MAQ Evals: 3237064
+Total Count: 4030500
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127963  0  0  0  9352  0  19794  19998  
+Elapsed time: 8.59298
+----------------------------
+Method:  OLD
+Tolerance: 0.01; Evals: 1024; Bin Evals: 1024
+Max Count: 44
+Max Bin: 1024
+Max Successful Bin: 1023
+Bin Evals: 3486196
+MAQ Evals: 3234188
+Total Count: 6720384
+Calls: 179284
+Successes: 178342
+Fails: 0
+NANs: 0
+Bin_Fails: 942
+Bins: 0  0  0  0  0  0  0  0  127753  0  0  0  9345  0  19881  19715  
+Elapsed time: 13.7719
+----------------------------
+Method:  REV
+Tolerance: 0.01; Evals: 1024; Bin Evals: 1024
+Max Count: 44
+Max Bin: 1024
+Max Successful Bin: 514
+Bin Evals: 2397792
+MAQ Evals: 3234206
+Total Count: 5631998
+Calls: 179284
+Successes: 178342
+Fails: 0
+NANs: 0
+Bin_Fails: 942
+Bins: 0  0  0  0  0  0  0  0  127551  0  0  0  9342  0  19660  19720  
+Elapsed time: 11.225
+----------------------------
+Method: REV2
+Tolerance: 0.01; Evals: 1024; Bin Evals: 1024
+Max Count: 44
+Max Bin: 1024
+Max Successful Bin: 259
+Bin Evals: 1883864
+MAQ Evals: 3234206
+Total Count: 5118070
+Calls: 179284
+Successes: 178342
+Fails: 0
+NANs: 0
+Bin_Fails: 942
+Bins: 0  0  0  0  0  0  0  0  128111  0  0  0  9351  0  19709  19757  
+Elapsed time: 10.2286
+----------------------------
+Method:  NEW
+Tolerance: 0.01; Evals: 1024; Bin Evals: 1024
+Max Count: 44
+Max Bin: 1024
+Max Successful Bin: 225
+Bin Evals: 1352272
+MAQ Evals: 3237058
+Total Count: 4589330
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127835  0  0  0  9355  0  19744  19929  
+Elapsed time: 9.09042
+----------------------------
+Method:  OLD
+Tolerance: 0.005; Evals: 256; Bin Evals: 64
+Max Count: 58
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1476633
+MAQ Evals: 4003212
+Total Count: 5479845
+Calls: 192388
+Successes: 186031
+Fails: 0
+NANs: 0
+Bin_Fails: 6357
+Bins: 0  0  0  0  0  0  0  0  136412  0  0  0  10452  0  20478  16953  
+Elapsed time: 10.9505
+----------------------------
+Method:  REV
+Tolerance: 0.005; Evals: 256; Bin Evals: 64
+Max Count: 58
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 1126585
+MAQ Evals: 4003194
+Total Count: 5129779
+Calls: 192388
+Successes: 186031
+Fails: 0
+NANs: 0
+Bin_Fails: 6357
+Bins: 0  0  0  0  0  0  0  0  136394  0  0  0  10453  0  20496  17012  
+Elapsed time: 10.2695
+----------------------------
+Method: REV2
+Tolerance: 0.005; Evals: 256; Bin Evals: 64
+Max Count: 58
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 974553
+MAQ Evals: 4003212
+Total Count: 4977765
+Calls: 192388
+Successes: 186031
+Fails: 0
+NANs: 0
+Bin_Fails: 6357
+Bins: 0  0  0  0  0  0  0  0  136628  0  0  0  10452  0  20524  17012  
+Elapsed time: 9.90165
+----------------------------
+Method:  NEW
+Tolerance: 0.005; Evals: 256; Bin Evals: 64
+Max Count: 56
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 704722
+MAQ Evals: 3917410
+Total Count: 4622132
+Calls: 192012
+Successes: 191253
+Fails: 0
+NANs: 0
+Bin_Fails: 759
+Bins: 0  0  0  0  0  0  0  0  136227  0  0  0  10407  0  20459  22327  
+Elapsed time: 9.58421
+----------------------------
+Method:  OLD
+Tolerance: 0.005; Evals: 256; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 2692279
+MAQ Evals: 3913936
+Total Count: 6606215
+Calls: 192500
+Successes: 190145
+Fails: 0
+NANs: 0
+Bin_Fails: 2355
+Bins: 0  0  0  0  0  0  0  0  136682  0  0  0  10414  0  20670  21304  
+Elapsed time: 13.5388
+----------------------------
+Method:  REV
+Tolerance: 0.005; Evals: 256; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1832066
+MAQ Evals: 3913958
+Total Count: 5746024
+Calls: 192500
+Successes: 190145
+Fails: 0
+NANs: 0
+Bin_Fails: 2355
+Bins: 0  0  0  0  0  0  0  0  136380  0  0  0  10408  0  20435  21293  
+Elapsed time: 11.6925
+----------------------------
+Method: REV2
+Tolerance: 0.005; Evals: 256; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1432645
+MAQ Evals: 3913924
+Total Count: 5346569
+Calls: 192500
+Successes: 190145
+Fails: 0
+NANs: 0
+Bin_Fails: 2355
+Bins: 0  0  0  0  0  0  0  0  136266  0  0  0  10412  0  20642  21327  
+Elapsed time: 11.1088
+----------------------------
+Method:  NEW
+Tolerance: 0.005; Evals: 256; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 850343
+MAQ Evals: 3917528
+Total Count: 4767871
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136357  0  0  0  10411  0  20525  22402  
+Elapsed time: 9.63766
+----------------------------
+Method:  OLD
+Tolerance: 0.005; Evals: 1024; Bin Evals: 64
+Max Count: 58
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1477085
+MAQ Evals: 4003176
+Total Count: 5480261
+Calls: 192388
+Successes: 186031
+Fails: 0
+NANs: 0
+Bin_Fails: 6357
+Bins: 0  0  0  0  0  0  0  0  136382  0  0  0  10454  0  20596  16931  
+Elapsed time: 10.9014
+----------------------------
+Method:  REV
+Tolerance: 0.005; Evals: 1024; Bin Evals: 64
+Max Count: 58
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 1123251
+MAQ Evals: 4003192
+Total Count: 5126443
+Calls: 192388
+Successes: 186031
+Fails: 0
+NANs: 0
+Bin_Fails: 6357
+Bins: 0  0  0  0  0  0  0  0  136253  0  0  0  10451  0  20530  16910  
+Elapsed time: 10.1249
+----------------------------
+Method: REV2
+Tolerance: 0.005; Evals: 1024; Bin Evals: 64
+Max Count: 58
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 974631
+MAQ Evals: 4003174
+Total Count: 4977805
+Calls: 192388
+Successes: 186031
+Fails: 0
+NANs: 0
+Bin_Fails: 6357
+Bins: 0  0  0  0  0  0  0  0  136628  0  0  0  10454  0  20594  16974  
+Elapsed time: 9.93538
+----------------------------
+Method:  NEW
+Tolerance: 0.005; Evals: 1024; Bin Evals: 64
+Max Count: 56
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 707569
+MAQ Evals: 3917434
+Total Count: 4625003
+Calls: 192012
+Successes: 191253
+Fails: 0
+NANs: 0
+Bin_Fails: 759
+Bins: 0  0  0  0  0  0  0  0  136423  0  0  0  10408  0  20467  22473  
+Elapsed time: 9.22779
+----------------------------
+Method:  OLD
+Tolerance: 0.005; Evals: 1024; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 2687623
+MAQ Evals: 3913958
+Total Count: 6601581
+Calls: 192500
+Successes: 190145
+Fails: 0
+NANs: 0
+Bin_Fails: 2355
+Bins: 0  0  0  0  0  0  0  0  136396  0  0  0  10405  0  20406  21297  
+Elapsed time: 13.6034
+----------------------------
+Method:  REV
+Tolerance: 0.005; Evals: 1024; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1830688
+MAQ Evals: 3913958
+Total Count: 5744646
+Calls: 192500
+Successes: 190145
+Fails: 0
+NANs: 0
+Bin_Fails: 2355
+Bins: 0  0  0  0  0  0  0  0  136026  0  0  0  10409  0  20413  21279  
+Elapsed time: 11.7475
+----------------------------
+Method: REV2
+Tolerance: 0.005; Evals: 1024; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1432257
+MAQ Evals: 3913940
+Total Count: 5346197
+Calls: 192500
+Successes: 190145
+Fails: 0
+NANs: 0
+Bin_Fails: 2355
+Bins: 0  0  0  0  0  0  0  0  136157  0  0  0  10407  0  20444  21390  
+Elapsed time: 10.7974
+----------------------------
+Method:  NEW
+Tolerance: 0.005; Evals: 1024; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 851617
+MAQ Evals: 3917506
+Total Count: 4769123
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136378  0  0  0  10411  0  20524  22481  
+Elapsed time: 9.6296
+----------------------------
+Method:  OLD
+Tolerance: 0.005; Evals: 1024; Bin Evals: 1024
+Max Count: 56
+Max Bin: 1024
+Max Successful Bin: 1023
+Bin Evals: 3884154
+MAQ Evals: 3914076
+Total Count: 7798230
+Calls: 192028
+Successes: 191043
+Fails: 0
+NANs: 0
+Bin_Fails: 985
+Bins: 0  0  0  0  0  0  0  0  136314  0  0  0  10411  0  20531  22272  
+Elapsed time: 15.8613
+----------------------------
+Method:  REV
+Tolerance: 0.005; Evals: 1024; Bin Evals: 1024
+Max Count: 56
+Max Bin: 1024
+Max Successful Bin: 514
+Bin Evals: 2629748
+MAQ Evals: 3914094
+Total Count: 6543842
+Calls: 192028
+Successes: 191043
+Fails: 0
+NANs: 0
+Bin_Fails: 985
+Bins: 0  0  0  0  0  0  0  0  136126  0  0  0  10409  0  20394  22148  
+Elapsed time: 13.2137
+----------------------------
+Method: REV2
+Tolerance: 0.005; Evals: 1024; Bin Evals: 1024
+Max Count: 56
+Max Bin: 1024
+Max Successful Bin: 259
+Bin Evals: 2039334
+MAQ Evals: 3914056
+Total Count: 5953390
+Calls: 192028
+Successes: 191043
+Fails: 0
+NANs: 0
+Bin_Fails: 985
+Bins: 0  0  0  0  0  0  0  0  136710  0  0  0  10410  0  20656  22261  
+Elapsed time: 11.9608
+----------------------------
+Method:  NEW
+Tolerance: 0.005; Evals: 1024; Bin Evals: 1024
+Max Count: 56
+Max Bin: 1024
+Max Successful Bin: 225
+Bin Evals: 1423899
+MAQ Evals: 3917528
+Total Count: 5341427
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136580  0  0  0  10413  0  20395  22495  
+Elapsed time: 10.5662
+----------------------------
+Method:  OLD
+Tolerance: 0.002; Evals: 256; Bin Evals: 64
+Max Count: 72
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1748225
+MAQ Evals: 5361576
+Total Count: 7109801
+Calls: 215324
+Successes: 207559
+Fails: 0
+NANs: 0
+Bin_Fails: 7765
+Bins: 0  0  0  0  0  0  0  0  153126  0  0  0  12197  0  21578  19651  
+Elapsed time: 14.0589
+----------------------------
+Method:  REV
+Tolerance: 0.002; Evals: 256; Bin Evals: 64
+Max Count: 72
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 1326361
+MAQ Evals: 5361578
+Total Count: 6687939
+Calls: 215324
+Successes: 207559
+Fails: 0
+NANs: 0
+Bin_Fails: 7765
+Bins: 0  0  0  0  0  0  0  0  152962  0  0  0  12195  0  21489  19608  
+Elapsed time: 13.0605
+----------------------------
+Method: REV2
+Tolerance: 0.002; Evals: 256; Bin Evals: 64
+Max Count: 72
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 1143073
+MAQ Evals: 5361596
+Total Count: 6504669
+Calls: 215324
+Successes: 207559
+Fails: 0
+NANs: 0
+Bin_Fails: 7765
+Bins: 0  0  0  0  0  0  0  0  152927  0  0  0  12195  0  21507  19570  
+Elapsed time: 13.234
+----------------------------
+Method:  NEW
+Tolerance: 0.002; Evals: 256; Bin Evals: 64
+Max Count: 72
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 789188
+MAQ Evals: 5266896
+Total Count: 6056084
+Calls: 213872
+Successes: 213091
+Fails: 0
+NANs: 0
+Bin_Fails: 781
+Bins: 0  0  0  0  0  0  0  0  152955  0  0  0  12179  0  21393  25284  
+Elapsed time: 12.031
+----------------------------
+Method:  OLD
+Tolerance: 0.002; Evals: 256; Bin Evals: 256
+Max Count: 74
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 3067053
+MAQ Evals: 5262858
+Total Count: 8329911
+Calls: 214316
+Successes: 211765
+Fails: 0
+NANs: 0
+Bin_Fails: 2551
+Bins: 0  0  0  0  0  0  0  0  152610  0  0  0  12177  0  21503  23967  
+Elapsed time: 16.6886
+----------------------------
+Method:  REV
+Tolerance: 0.002; Evals: 256; Bin Evals: 256
+Max Count: 74
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 2068211
+MAQ Evals: 5262838
+Total Count: 7331049
+Calls: 214316
+Successes: 211765
+Fails: 0
+NANs: 0
+Bin_Fails: 2551
+Bins: 0  0  0  0  0  0  0  0  152727  0  0  0  12179  0  21414  23934  
+Elapsed time: 14.8767
+----------------------------
+Method: REV2
+Tolerance: 0.002; Evals: 256; Bin Evals: 256
+Max Count: 74
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1599167
+MAQ Evals: 5262842
+Total Count: 6862009
+Calls: 214316
+Successes: 211765
+Fails: 0
+NANs: 0
+Bin_Fails: 2551
+Bins: 0  0  0  0  0  0  0  0  152721  0  0  0  12179  0  21390  23973  
+Elapsed time: 13.8029
+----------------------------
+Method:  NEW
+Tolerance: 0.002; Evals: 256; Bin Evals: 256
+Max Count: 72
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 936587
+MAQ Evals: 5266952
+Total Count: 6203539
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152861  0  0  0  12177  0  21289  25268  
+Elapsed time: 12.1921
+----------------------------
+Method:  OLD
+Tolerance: 0.002; Evals: 1024; Bin Evals: 64
+Max Count: 72
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1746253
+MAQ Evals: 5361596
+Total Count: 7107849
+Calls: 215324
+Successes: 207559
+Fails: 0
+NANs: 0
+Bin_Fails: 7765
+Bins: 0  0  0  0  0  0  0  0  152938  0  0  0  12197  0  21538  19641  
+Elapsed time: 13.8721
+----------------------------
+Method:  REV
+Tolerance: 0.002; Evals: 1024; Bin Evals: 64
+Max Count: 72
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 1325236
+MAQ Evals: 5361570
+Total Count: 6686806
+Calls: 215324
+Successes: 207559
+Fails: 0
+NANs: 0
+Bin_Fails: 7765
+Bins: 0  0  0  0  0  0  0  0  153006  0  0  0  12194  0  21443  19593  
+Elapsed time: 13.2665
+----------------------------
+Method: REV2
+Tolerance: 0.002; Evals: 1024; Bin Evals: 64
+Max Count: 72
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 1143697
+MAQ Evals: 5361596
+Total Count: 6505293
+Calls: 215324
+Successes: 207559
+Fails: 0
+NANs: 0
+Bin_Fails: 7765
+Bins: 0  0  0  0  0  0  0  0  152926  0  0  0  12196  0  21542  19587  
+Elapsed time: 12.8916
+----------------------------
+Method:  NEW
+Tolerance: 0.002; Evals: 1024; Bin Evals: 64
+Max Count: 72
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 789637
+MAQ Evals: 5266874
+Total Count: 6056511
+Calls: 213872
+Successes: 213091
+Fails: 0
+NANs: 0
+Bin_Fails: 781
+Bins: 0  0  0  0  0  0  0  0  152913  0  0  0  12180  0  21379  25293  
+Elapsed time: 12.7526
+----------------------------
+Method:  OLD
+Tolerance: 0.002; Evals: 1024; Bin Evals: 256
+Max Count: 74
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 3065763
+MAQ Evals: 5262840
+Total Count: 8328603
+Calls: 214316
+Successes: 211765
+Fails: 0
+NANs: 0
+Bin_Fails: 2551
+Bins: 0  0  0  0  0  0  0  0  152542  0  0  0  12175  0  21438  23966  
+Elapsed time: 17.424
+----------------------------
+Method:  REV
+Tolerance: 0.002; Evals: 1024; Bin Evals: 256
+Max Count: 74
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 2068158
+MAQ Evals: 5262858
+Total Count: 7331016
+Calls: 214316
+Successes: 211765
+Fails: 0
+NANs: 0
+Bin_Fails: 2551
+Bins: 0  0  0  0  0  0  0  0  152766  0  0  0  12177  0  21398  23963  
+Elapsed time: 14.6554
+----------------------------
+Method: REV2
+Tolerance: 0.002; Evals: 1024; Bin Evals: 256
+Max Count: 74
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1599557
+MAQ Evals: 5262836
+Total Count: 6862393
+Calls: 214316
+Successes: 211765
+Fails: 0
+NANs: 0
+Bin_Fails: 2551
+Bins: 0  0  0  0  0  0  0  0  152893  0  0  0  12178  0  21384  23954  
+Elapsed time: 13.7734
+----------------------------
+Method:  NEW
+Tolerance: 0.002; Evals: 1024; Bin Evals: 256
+Max Count: 72
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 938351
+MAQ Evals: 5266928
+Total Count: 6205279
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152879  0  0  0  12176  0  21440  25336  
+Elapsed time: 12.5501
+----------------------------
+Method:  OLD
+Tolerance: 0.002; Evals: 1024; Bin Evals: 1024
+Max Count: 72
+Max Bin: 1024
+Max Successful Bin: 1023
+Bin Evals: 4415348
+MAQ Evals: 5261854
+Total Count: 9677202
+Calls: 213872
+Successes: 212830
+Fails: 0
+NANs: 0
+Bin_Fails: 1042
+Bins: 0  0  0  0  0  0  0  0  152616  0  0  0  12176  0  21437  25019  
+Elapsed time: 19.7179
+----------------------------
+Method:  REV
+Tolerance: 0.002; Evals: 1024; Bin Evals: 1024
+Max Count: 72
+Max Bin: 1024
+Max Successful Bin: 514
+Bin Evals: 2952523
+MAQ Evals: 5261854
+Total Count: 8214377
+Calls: 213872
+Successes: 212830
+Fails: 0
+NANs: 0
+Bin_Fails: 1042
+Bins: 0  0  0  0  0  0  0  0  152724  0  0  0  12172  0  21434  25040  
+Elapsed time: 16.8393
+----------------------------
+Method: REV2
+Tolerance: 0.002; Evals: 1024; Bin Evals: 1024
+Max Count: 72
+Max Bin: 1024
+Max Successful Bin: 259
+Bin Evals: 2247523
+MAQ Evals: 5261812
+Total Count: 7509335
+Calls: 213872
+Successes: 212830
+Fails: 0
+NANs: 0
+Bin_Fails: 1042
+Bins: 0  0  0  0  0  0  0  0  152636  0  0  0  12178  0  21317  24965  
+Elapsed time: 15.1881
+----------------------------
+Method:  NEW
+Tolerance: 0.002; Evals: 1024; Bin Evals: 1024
+Max Count: 72
+Max Bin: 1024
+Max Successful Bin: 225
+Bin Evals: 1526205
+MAQ Evals: 5266952
+Total Count: 6793157
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152870  0  0  0  12180  0  21430  25253  
+Elapsed time: 13.464
+----------------------------
+Method:  OLD
+Tolerance: 0.001; Evals: 256; Bin Evals: 64
+Max Count: 96
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1989229
+MAQ Evals: 6815108
+Total Count: 8804337
+Calls: 238672
+Successes: 229721
+Fails: 0
+NANs: 0
+Bin_Fails: 8951
+Bins: 0  0  0  0  0  0  0  0  169908  0  0  0  13640  0  22741  22019  
+Elapsed time: 18.0908
+----------------------------
+Method:  REV
+Tolerance: 0.001; Evals: 256; Bin Evals: 64
+Max Count: 96
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 1509630
+MAQ Evals: 6815030
+Total Count: 8324660
+Calls: 238672
+Successes: 229721
+Fails: 0
+NANs: 0
+Bin_Fails: 8951
+Bins: 0  0  0  0  0  0  0  0  170328  0  0  0  13634  0  22657  22050  
+Elapsed time: 17.8246
+----------------------------
+Method: REV2
+Tolerance: 0.001; Evals: 256; Bin Evals: 64
+Max Count: 96
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 1297620
+MAQ Evals: 6815134
+Total Count: 8112754
+Calls: 238672
+Successes: 229721
+Fails: 0
+NANs: 0
+Bin_Fails: 8951
+Bins: 0  0  0  0  0  0  0  0  170162  0  0  0  13639  0  22500  22039  
+Elapsed time: 16.9819
+----------------------------
+Method:  NEW
+Tolerance: 0.001; Evals: 256; Bin Evals: 64
+Max Count: 92
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 871113
+MAQ Evals: 6691368
+Total Count: 7562481
+Calls: 236432
+Successes: 235621
+Fails: 0
+NANs: 0
+Bin_Fails: 811
+Bins: 0  0  0  0  0  0  0  0  169927  0  0  0  13613  0  22468  28125  
+Elapsed time: 15.013
+----------------------------
+Method:  OLD
+Tolerance: 0.001; Evals: 256; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 3474003
+MAQ Evals: 6686256
+Total Count: 10160259
+Calls: 236872
+Successes: 234155
+Fails: 0
+NANs: 0
+Bin_Fails: 2717
+Bins: 0  0  0  0  0  0  0  0  170071  0  0  0  13607  0  22645  26719  
+Elapsed time: 21.3322
+----------------------------
+Method:  REV
+Tolerance: 0.001; Evals: 256; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 2313713
+MAQ Evals: 6686282
+Total Count: 8999995
+Calls: 236872
+Successes: 234155
+Fails: 0
+NANs: 0
+Bin_Fails: 2717
+Bins: 0  0  0  0  0  0  0  0  170063  0  0  0  13608  0  22462  26650  
+Elapsed time: 18.8724
+----------------------------
+Method: REV2
+Tolerance: 0.001; Evals: 256; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1769150
+MAQ Evals: 6686282
+Total Count: 8455432
+Calls: 236872
+Successes: 234155
+Fails: 0
+NANs: 0
+Bin_Fails: 2717
+Bins: 0  0  0  0  0  0  0  0  169999  0  0  0  13608  0  22514  26668  
+Elapsed time: 16.9611
+----------------------------
+Method:  NEW
+Tolerance: 0.001; Evals: 256; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 228
+Bin Evals: 1025735
+MAQ Evals: 6691432
+Total Count: 7717167
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  169935  0  0  0  13612  0  22573  28135  
+Elapsed time: 16.504
+----------------------------
+Method:  OLD
+Tolerance: 0.001; Evals: 1024; Bin Evals: 64
+Max Count: 96
+Max Bin: 64
+Max Successful Bin: 63
+Bin Evals: 1989269
+MAQ Evals: 6815134
+Total Count: 8804403
+Calls: 238672
+Successes: 229721
+Fails: 0
+NANs: 0
+Bin_Fails: 8951
+Bins: 0  0  0  0  0  0  0  0  170197  0  0  0  13635  0  22613  22018  
+Elapsed time: 18.9907
+----------------------------
+Method:  REV
+Tolerance: 0.001; Evals: 1024; Bin Evals: 64
+Max Count: 96
+Max Bin: 64
+Max Successful Bin: 34
+Bin Evals: 1509145
+MAQ Evals: 6815110
+Total Count: 8324255
+Calls: 238672
+Successes: 229721
+Fails: 0
+NANs: 0
+Bin_Fails: 8951
+Bins: 0  0  0  0  0  0  0  0  170107  0  0  0  13639  0  22652  22043  
+Elapsed time: 16.9248
+----------------------------
+Method: REV2
+Tolerance: 0.001; Evals: 1024; Bin Evals: 64
+Max Count: 96
+Max Bin: 64
+Max Successful Bin: 19
+Bin Evals: 1297431
+MAQ Evals: 6815134
+Total Count: 8112565
+Calls: 238672
+Successes: 229721
+Fails: 0
+NANs: 0
+Bin_Fails: 8951
+Bins: 0  0  0  0  0  0  0  0  170027  0  0  0  13638  0  22658  22017  
+Elapsed time: 16.2916
+----------------------------
+Method:  NEW
+Tolerance: 0.001; Evals: 1024; Bin Evals: 64
+Max Count: 92
+Max Bin: 64
+Max Successful Bin: 62
+Bin Evals: 872088
+MAQ Evals: 6691368
+Total Count: 7563456
+Calls: 236432
+Successes: 235621
+Fails: 0
+NANs: 0
+Bin_Fails: 811
+Bins: 0  0  0  0  0  0  0  0  170079  0  0  0  13612  0  22439  28181  
+Elapsed time: 16.6613
+----------------------------
+Method:  OLD
+Tolerance: 0.001; Evals: 1024; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 3474683
+MAQ Evals: 6686282
+Total Count: 10160965
+Calls: 236872
+Successes: 234155
+Fails: 0
+NANs: 0
+Bin_Fails: 2717
+Bins: 0  0  0  0  0  0  0  0  170016  0  0  0  13612  0  22635  26733  
+Elapsed time: 59.1517
+----------------------------
+Method:  REV
+Tolerance: 0.001; Evals: 1024; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 2313234
+MAQ Evals: 6686256
+Total Count: 8999490
+Calls: 236872
+Successes: 234155
+Fails: 0
+NANs: 0
+Bin_Fails: 2717
+Bins: 0  0  0  0  0  0  0  0  169657  0  0  0  13612  0  22552  26642  
+Elapsed time: 19.194
+----------------------------
+Method: REV2
+Tolerance: 0.001; Evals: 1024; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1771699
+MAQ Evals: 6686264
+Total Count: 8457963
+Calls: 236872
+Successes: 234155
+Fails: 0
+NANs: 0
+Bin_Fails: 2717
+Bins: 0  0  0  0  0  0  0  0  170203  0  0  0  13613  0  22666  26761  
+Elapsed time: 17.4492
+----------------------------
+Method:  NEW
+Tolerance: 0.001; Evals: 1024; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 228
+Bin Evals: 1024492
+MAQ Evals: 6691432
+Total Count: 7715924
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  169917  0  0  0  13612  0  22502  28059  
+Elapsed time: 15.3079
+----------------------------
+Method:  OLD
+Tolerance: 0.001; Evals: 1024; Bin Evals: 1024
+Max Count: 92
+Max Bin: 1024
+Max Successful Bin: 1023
+Bin Evals: 4954339
+MAQ Evals: 6685718
+Total Count: 11640057
+Calls: 236456
+Successes: 235357
+Fails: 0
+NANs: 0
+Bin_Fails: 1099
+Bins: 0  0  0  0  0  0  0  0  170051  0  0  0  13611  0  22556  27958  
+Elapsed time: 23.2054
+----------------------------
+Method:  REV
+Tolerance: 0.001; Evals: 1024; Bin Evals: 1024
+Max Count: 92
+Max Bin: 1024
+Max Successful Bin: 514
+Bin Evals: 3271808
+MAQ Evals: 6685716
+Total Count: 9957524
+Calls: 236456
+Successes: 235357
+Fails: 0
+NANs: 0
+Bin_Fails: 1099
+Bins: 0  0  0  0  0  0  0  0  169917  0  0  0  13611  0  22550  27917  
+Elapsed time: 20.1008
+----------------------------
+Method: REV2
+Tolerance: 0.001; Evals: 1024; Bin Evals: 1024
+Max Count: 92
+Max Bin: 1024
+Max Successful Bin: 259
+Bin Evals: 2462519
+MAQ Evals: 6685692
+Total Count: 9148211
+Calls: 236456
+Successes: 235357
+Fails: 0
+NANs: 0
+Bin_Fails: 1099
+Bins: 0  0  0  0  0  0  0  0  170039  0  0  0  13609  0  22291  27875  
+Elapsed time: 18.1386
+----------------------------
+Method:  NEW
+Tolerance: 0.001; Evals: 1024; Bin Evals: 1024
+Max Count: 92
+Max Bin: 1024
+Max Successful Bin: 228
+Bin Evals: 1635914
+MAQ Evals: 6691382
+Total Count: 8327296
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  169845  0  0  0  13614  0  22510  28156  
+Elapsed time: 21.5808
+----------------------------
+Method:  OLD
+Tolerance: 0.1; Evals: 1024; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 1774271
+MAQ Evals: 1887056
+Total Count: 3661327
+Calls: 150256
+Successes: 148427
+Fails: 0
+NANs: 0
+Bin_Fails: 1829
+Bins: 0  0  0  0  0  0  0  0  106817  0  0  0  7119  0  18439  14524  
+Elapsed time: 8.62532
+----------------------------
+Method:  REV
+Tolerance: 0.1; Evals: 1024; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1267147
+MAQ Evals: 1887106
+Total Count: 3154253
+Calls: 150256
+Successes: 148427
+Fails: 0
+NANs: 0
+Bin_Fails: 1829
+Bins: 0  0  0  0  0  0  0  0  106512  0  0  0  7121  0  18474  14549  
+Elapsed time: 8.06835
+----------------------------
+Method: REV2
+Tolerance: 0.1; Evals: 1024; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1033700
+MAQ Evals: 1887104
+Total Count: 2920804
+Calls: 150256
+Successes: 148427
+Fails: 0
+NANs: 0
+Bin_Fails: 1829
+Bins: 0  0  0  0  0  0  0  0  106774  0  0  0  7121  0  18390  14561  
+Elapsed time: 6.71785
+----------------------------
+Method:  NEW
+Tolerance: 0.1; Evals: 1024; Bin Evals: 256
+Max Count: 22
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 667138
+MAQ Evals: 1896100
+Total Count: 2563238
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106704  0  0  0  7123  0  18515  15501  
+Elapsed time: 64.0638
+----------------------------
+Method:  OLD
+Tolerance: 0.1; Evals: 1024; Bin Evals: 4096
+Max Count: 22
+Max Bin: 4096
+Max Successful Bin: 4094
+Bin Evals: 5135973
+MAQ Evals: 1896068
+Total Count: 7032041
+Calls: 150092
+Successes: 149412
+Fails: 0
+NANs: 0
+Bin_Fails: 680
+Bins: 0  0  0  0  0  0  0  0  106651  0  0  0  7118  0  18479  15564  
+Elapsed time: 63.5847
+----------------------------
+Method:  REV
+Tolerance: 0.1; Evals: 1024; Bin Evals: 4096
+Max Count: 22
+Max Bin: 4096
+Max Successful Bin: 2051
+Bin Evals: 4106554
+MAQ Evals: 1896056
+Total Count: 6002610
+Calls: 150092
+Successes: 149412
+Fails: 0
+NANs: 0
+Bin_Fails: 680
+Bins: 0  0  0  0  0  0  0  0  106649  0  0  0  7118  0  18395  15533  
+Elapsed time: 17.2544
+----------------------------
+Method: REV2
+Tolerance: 0.1; Evals: 1024; Bin Evals: 4096
+Max Count: 22
+Max Bin: 4096
+Max Successful Bin: 1028
+Bin Evals: 3611798
+MAQ Evals: 1896052
+Total Count: 5507850
+Calls: 150092
+Successes: 149412
+Fails: 0
+NANs: 0
+Bin_Fails: 680
+Bins: 0  0  0  0  0  0  0  0  106844  0  0  0  7122  0  18363  15478  
+Elapsed time: 14.9924
+----------------------------
+Method:  NEW
+Tolerance: 0.1; Evals: 1024; Bin Evals: 4096
+Max Count: 22
+Max Bin: 4096
+Max Successful Bin: 225
+Bin Evals: 3235301
+MAQ Evals: 1896056
+Total Count: 5131357
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106575  0  0  0  7123  0  18469  15553  
+Elapsed time: 17.8667
+----------------------------
+Method:  OLD
+Tolerance: 0.1; Evals: 1024; Bin Evals: 65536
+Max Count: 22
+Max Bin: 65536
+Max Successful Bin: 16383
+Bin Evals: 46334684
+MAQ Evals: 1896104
+Total Count: 48230788
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106808  0  0  0  7120  0  18544  15587  
+Elapsed time: 96.8301
+----------------------------
+Method:  REV
+Tolerance: 0.1; Evals: 1024; Bin Evals: 65536
+Max Count: 22
+Max Bin: 65536
+Max Successful Bin: 8206
+Bin Evals: 45233814
+MAQ Evals: 1896132
+Total Count: 47129946
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106522  0  0  0  7116  0  18449  15520  
+Elapsed time: 82.3719
+----------------------------
+Method: REV2
+Tolerance: 0.1; Evals: 1024; Bin Evals: 65536
+Max Count: 22
+Max Bin: 65536
+Max Successful Bin: 4111
+Bin Evals: 44705531
+MAQ Evals: 1896112
+Total Count: 46601643
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  107016  0  0  0  7117  0  18386  15492  
+Elapsed time: 78.219
+----------------------------
+Method:  NEW
+Tolerance: 0.1; Evals: 1024; Bin Evals: 65536
+Max Count: 22
+Max Bin: 65536
+Max Successful Bin: 225
+Bin Evals: 44339371
+MAQ Evals: 1896062
+Total Count: 46235433
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106876  0  0  0  7124  0  18456  15514  
+Elapsed time: 87.2301
+----------------------------
+Method:  OLD
+Tolerance: 0.1; Evals: 1024; Bin Evals: 1048576
+Max Count: 22
+Max Bin: 1048576
+Max Successful Bin: 16383
+Bin Evals: 703980782
+MAQ Evals: 1896132
+Total Count: 705876914
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106465  0  0  0  7117  0  18357  15483  
+Elapsed time: 1205.92
+----------------------------
+Method:  REV
+Tolerance: 0.1; Evals: 1024; Bin Evals: 1048576
+Max Count: 22
+Max Bin: 1048576
+Max Successful Bin: 8206
+Bin Evals: 702888423
+MAQ Evals: 1896122
+Total Count: 704784545
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106577  0  0  0  7120  0  18348  15555  
+Elapsed time: 1453.08
+----------------------------
+Method: REV2
+Tolerance: 0.1; Evals: 1024; Bin Evals: 1048576
+Max Count: 22
+Max Bin: 1048576
+Max Successful Bin: 4111
+Bin Evals: 702359706
+MAQ Evals: 1896132
+Total Count: 704255838
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106583  0  0  0  7123  0  18435  15538  
+Elapsed time: 1216.57
+----------------------------
+Method:  NEW
+Tolerance: 0.1; Evals: 1024; Bin Evals: 1048576
+Max Count: 22
+Max Bin: 1048576
+Max Successful Bin: 225
+Bin Evals: 701991157
+MAQ Evals: 1896070
+Total Count: 703887227
+Calls: 150092
+Successes: 149423
+Fails: 0
+NANs: 0
+Bin_Fails: 669
+Bins: 0  0  0  0  0  0  0  0  106657  0  0  0  7122  0  18352  15494  
+Elapsed time: 1362.18
+----------------------------
+Method:  OLD
+Tolerance: 0.05; Evals: 1024; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 1911313
+MAQ Evals: 2125662
+Total Count: 4036975
+Calls: 153552
+Successes: 151594
+Fails: 0
+NANs: 0
+Bin_Fails: 1958
+Bins: 0  0  0  0  0  0  0  0  108636  0  0  0  7328  0  18677  15489  
+Elapsed time: 8.77369
+----------------------------
+Method:  REV
+Tolerance: 0.05; Evals: 1024; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1353335
+MAQ Evals: 2125642
+Total Count: 3478977
+Calls: 153552
+Successes: 151594
+Fails: 0
+NANs: 0
+Bin_Fails: 1958
+Bins: 0  0  0  0  0  0  0  0  108627  0  0  0  7321  0  18449  15476  
+Elapsed time: 7.36225
+----------------------------
+Method: REV2
+Tolerance: 0.05; Evals: 1024; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1098551
+MAQ Evals: 2125648
+Total Count: 3224199
+Calls: 153552
+Successes: 151594
+Fails: 0
+NANs: 0
+Bin_Fails: 1958
+Bins: 0  0  0  0  0  0  0  0  108713  0  0  0  7329  0  18637  15501  
+Elapsed time: 6.76205
+----------------------------
+Method:  NEW
+Tolerance: 0.05; Evals: 1024; Bin Evals: 256
+Max Count: 24
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 689175
+MAQ Evals: 2134418
+Total Count: 2823593
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108451  0  0  0  7324  0  18481  16414  
+Elapsed time: 5.80101
+----------------------------
+Method:  OLD
+Tolerance: 0.05; Evals: 1024; Bin Evals: 4096
+Max Count: 24
+Max Bin: 4096
+Max Successful Bin: 4094
+Bin Evals: 5416569
+MAQ Evals: 2134362
+Total Count: 7550931
+Calls: 153272
+Successes: 152558
+Fails: 0
+NANs: 0
+Bin_Fails: 714
+Bins: 0  0  0  0  0  0  0  0  108456  0  0  0  7325  0  18544  16417  
+Elapsed time: 15.5404
+----------------------------
+Method:  REV
+Tolerance: 0.05; Evals: 1024; Bin Evals: 4096
+Max Count: 24
+Max Bin: 4096
+Max Successful Bin: 2051
+Bin Evals: 4320648
+MAQ Evals: 2134374
+Total Count: 6455022
+Calls: 153272
+Successes: 152558
+Fails: 0
+NANs: 0
+Bin_Fails: 714
+Bins: 0  0  0  0  0  0  0  0  108452  0  0  0  7323  0  18411  16469  
+Elapsed time: 12.7655
+----------------------------
+Method: REV2
+Tolerance: 0.05; Evals: 1024; Bin Evals: 4096
+Max Count: 24
+Max Bin: 4096
+Max Successful Bin: 1028
+Bin Evals: 3792365
+MAQ Evals: 2134326
+Total Count: 5926691
+Calls: 153272
+Successes: 152558
+Fails: 0
+NANs: 0
+Bin_Fails: 714
+Bins: 0  0  0  0  0  0  0  0  108745  0  0  0  7324  0  18347  16425  
+Elapsed time: 11.5638
+----------------------------
+Method:  NEW
+Tolerance: 0.05; Evals: 1024; Bin Evals: 4096
+Max Count: 24
+Max Bin: 4096
+Max Successful Bin: 225
+Bin Evals: 3382875
+MAQ Evals: 2134414
+Total Count: 5517289
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108590  0  0  0  7326  0  18583  16468  
+Elapsed time: 11.3119
+----------------------------
+Method:  OLD
+Tolerance: 0.05; Evals: 1024; Bin Evals: 65536
+Max Count: 24
+Max Bin: 65536
+Max Successful Bin: 16383
+Bin Evals: 48590024
+MAQ Evals: 2134450
+Total Count: 50724474
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108638  0  0  0  7314  0  18471  16477  
+Elapsed time: 86.7898
+----------------------------
+Method:  REV
+Tolerance: 0.05; Evals: 1024; Bin Evals: 65536
+Max Count: 24
+Max Bin: 65536
+Max Successful Bin: 8206
+Bin Evals: 47414726
+MAQ Evals: 2134464
+Total Count: 49549190
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108731  0  0  0  7312  0  18445  16468  
+Elapsed time: 84.0246
+----------------------------
+Method: REV2
+Tolerance: 0.05; Evals: 1024; Bin Evals: 65536
+Max Count: 24
+Max Bin: 65536
+Max Successful Bin: 4111
+Bin Evals: 46848858
+MAQ Evals: 2134462
+Total Count: 48983320
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108670  0  0  0  7322  0  18362  16496  
+Elapsed time: 83.3089
+----------------------------
+Method:  NEW
+Tolerance: 0.05; Evals: 1024; Bin Evals: 65536
+Max Count: 24
+Max Bin: 65536
+Max Successful Bin: 225
+Bin Evals: 46452164
+MAQ Evals: 2134390
+Total Count: 48586554
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108584  0  0  0  7329  0  18520  16487  
+Elapsed time: 92.4967
+----------------------------
+Method:  OLD
+Tolerance: 0.05; Evals: 1024; Bin Evals: 1048576
+Max Count: 24
+Max Bin: 1048576
+Max Successful Bin: 16383
+Bin Evals: 737696844
+MAQ Evals: 2134460
+Total Count: 739831304
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108087  0  0  0  7324  0  18505  16399  
+Elapsed time: 1260.97
+----------------------------
+Method:  REV
+Tolerance: 0.05; Evals: 1024; Bin Evals: 1048576
+Max Count: 24
+Max Bin: 1048576
+Max Successful Bin: 8206
+Bin Evals: 736524971
+MAQ Evals: 2134474
+Total Count: 738659445
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108175  0  0  0  7325  0  18556  16439  
+Elapsed time: 1255.05
+----------------------------
+Method: REV2
+Tolerance: 0.05; Evals: 1024; Bin Evals: 1048576
+Max Count: 24
+Max Bin: 1048576
+Max Successful Bin: 4111
+Bin Evals: 735960338
+MAQ Evals: 2134448
+Total Count: 738094786
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108431  0  0  0  7328  0  18500  16496  
+Elapsed time: 1254.57
+----------------------------
+Method:  NEW
+Tolerance: 0.05; Evals: 1024; Bin Evals: 1048576
+Max Count: 24
+Max Bin: 1048576
+Max Successful Bin: 225
+Bin Evals: 735564525
+MAQ Evals: 2134390
+Total Count: 737698915
+Calls: 153272
+Successes: 152571
+Fails: 0
+NANs: 0
+Bin_Fails: 701
+Bins: 0  0  0  0  0  0  0  0  108442  0  0  0  7328  0  18627  16495  
+Elapsed time: 1424.86
+----------------------------
+Method:  OLD
+Tolerance: 0.02; Evals: 1024; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 2235911
+MAQ Evals: 2702714
+Total Count: 4938625
+Calls: 168428
+Successes: 166302
+Fails: 0
+NANs: 0
+Bin_Fails: 2126
+Bins: 0  0  0  0  0  0  0  0  119793  0  0  0  8305  0  19132  17762  
+Elapsed time: 10.8799
+----------------------------
+Method:  REV
+Tolerance: 0.02; Evals: 1024; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1552598
+MAQ Evals: 2702692
+Total Count: 4255290
+Calls: 168428
+Successes: 166302
+Fails: 0
+NANs: 0
+Bin_Fails: 2126
+Bins: 0  0  0  0  0  0  0  0  119740  0  0  0  8309  0  19106  17704  
+Elapsed time: 9.1482
+----------------------------
+Method: REV2
+Tolerance: 0.02; Evals: 1024; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1232083
+MAQ Evals: 2702728
+Total Count: 3934811
+Calls: 168428
+Successes: 166302
+Fails: 0
+NANs: 0
+Bin_Fails: 2126
+Bins: 0  0  0  0  0  0  0  0  119390  0  0  0  8304  0  19048  17642  
+Elapsed time: 8.85208
+----------------------------
+Method:  NEW
+Tolerance: 0.02; Evals: 1024; Bin Evals: 256
+Max Count: 34
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 752782
+MAQ Evals: 2709482
+Total Count: 3462264
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119603  0  0  0  8309  0  19115  18708  
+Elapsed time: 7.21201
+----------------------------
+Method:  OLD
+Tolerance: 0.02; Evals: 1024; Bin Evals: 4096
+Max Count: 34
+Max Bin: 4096
+Max Successful Bin: 4094
+Bin Evals: 5865079
+MAQ Evals: 2709418
+Total Count: 8574497
+Calls: 168008
+Successes: 167270
+Fails: 0
+NANs: 0
+Bin_Fails: 738
+Bins: 0  0  0  0  0  0  0  0  119690  0  0  0  8308  0  19176  18682  
+Elapsed time: 16.8722
+----------------------------
+Method:  REV
+Tolerance: 0.02; Evals: 1024; Bin Evals: 4096
+Max Count: 34
+Max Bin: 4096
+Max Successful Bin: 2051
+Bin Evals: 4606888
+MAQ Evals: 2709448
+Total Count: 7316336
+Calls: 168008
+Successes: 167270
+Fails: 0
+NANs: 0
+Bin_Fails: 738
+Bins: 0  0  0  0  0  0  0  0  119340  0  0  0  8307  0  19035  18700  
+Elapsed time: 14.3481
+----------------------------
+Method: REV2
+Tolerance: 0.02; Evals: 1024; Bin Evals: 4096
+Max Count: 34
+Max Bin: 4096
+Max Successful Bin: 1028
+Bin Evals: 4002689
+MAQ Evals: 2709432
+Total Count: 6712121
+Calls: 168008
+Successes: 167270
+Fails: 0
+NANs: 0
+Bin_Fails: 738
+Bins: 0  0  0  0  0  0  0  0  119479  0  0  0  8305  0  19095  18681  
+Elapsed time: 13.3275
+----------------------------
+Method:  NEW
+Tolerance: 0.02; Evals: 1024; Bin Evals: 4096
+Max Count: 34
+Max Bin: 4096
+Max Successful Bin: 225
+Bin Evals: 3532162
+MAQ Evals: 2709480
+Total Count: 6241642
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119454  0  0  0  8307  0  19081  18707  
+Elapsed time: 12.7217
+----------------------------
+Method:  OLD
+Tolerance: 0.02; Evals: 1024; Bin Evals: 65536
+Max Count: 34
+Max Bin: 65536
+Max Successful Bin: 16383
+Bin Evals: 50454288
+MAQ Evals: 2709576
+Total Count: 53163864
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119831  0  0  0  8305  0  19175  18704  
+Elapsed time: 91.8632
+----------------------------
+Method:  REV
+Tolerance: 0.02; Evals: 1024; Bin Evals: 65536
+Max Count: 34
+Max Bin: 65536
+Max Successful Bin: 8206
+Bin Evals: 49115173
+MAQ Evals: 2709576
+Total Count: 51824749
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119872  0  0  0  8300  0  19046  18687  
+Elapsed time: 89.3343
+----------------------------
+Method: REV2
+Tolerance: 0.02; Evals: 1024; Bin Evals: 65536
+Max Count: 34
+Max Bin: 65536
+Max Successful Bin: 4111
+Bin Evals: 48469339
+MAQ Evals: 2709558
+Total Count: 51178897
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119435  0  0  0  8308  0  19143  18710  
+Elapsed time: 88.24
+----------------------------
+Method:  NEW
+Tolerance: 0.02; Evals: 1024; Bin Evals: 65536
+Max Count: 34
+Max Bin: 65536
+Max Successful Bin: 225
+Bin Evals: 48016742
+MAQ Evals: 2709496
+Total Count: 50726238
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119549  0  0  0  8312  0  19257  18668  
+Elapsed time: 97.8532
+----------------------------
+Method:  OLD
+Tolerance: 0.02; Evals: 1024; Bin Evals: 1048576
+Max Count: 34
+Max Bin: 1048576
+Max Successful Bin: 16383
+Bin Evals: 762176186
+MAQ Evals: 2709530
+Total Count: 764885716
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119365  0  0  0  8304  0  19115  18766  
+Elapsed time: 1325.63
+----------------------------
+Method:  REV
+Tolerance: 0.02; Evals: 1024; Bin Evals: 1048576
+Max Count: 34
+Max Bin: 1048576
+Max Successful Bin: 8206
+Bin Evals: 760836132
+MAQ Evals: 2709554
+Total Count: 763545686
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119379  0  0  0  8307  0  19136  18689  
+Elapsed time: 1322.11
+----------------------------
+Method: REV2
+Tolerance: 0.02; Evals: 1024; Bin Evals: 1048576
+Max Count: 34
+Max Bin: 1048576
+Max Successful Bin: 4111
+Bin Evals: 760187466
+MAQ Evals: 2709532
+Total Count: 762896998
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119243  0  0  0  8308  0  18972  18620  
+Elapsed time: 1320.16
+----------------------------
+Method:  NEW
+Tolerance: 0.02; Evals: 1024; Bin Evals: 1048576
+Max Count: 34
+Max Bin: 1048576
+Max Successful Bin: 225
+Bin Evals: 759735812
+MAQ Evals: 2709468
+Total Count: 762445280
+Calls: 168008
+Successes: 167284
+Fails: 0
+NANs: 0
+Bin_Fails: 724
+Bins: 0  0  0  0  0  0  0  0  119368  0  0  0  8311  0  19097  18669  
+Elapsed time: 1489.82
+----------------------------
+Method:  OLD
+Tolerance: 0.01; Evals: 1024; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 2421295
+MAQ Evals: 3232516
+Total Count: 5653811
+Calls: 179796
+Successes: 177557
+Fails: 0
+NANs: 0
+Bin_Fails: 2239
+Bins: 0  0  0  0  0  0  0  0  127983  0  0  0  9350  0  19952  19035  
+Elapsed time: 11.884
+----------------------------
+Method:  REV
+Tolerance: 0.01; Evals: 1024; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1669582
+MAQ Evals: 3232514
+Total Count: 4902096
+Calls: 179796
+Successes: 177557
+Fails: 0
+NANs: 0
+Bin_Fails: 2239
+Bins: 0  0  0  0  0  0  0  0  127568  0  0  0  9353  0  19809  18997  
+Elapsed time: 12.1011
+----------------------------
+Method: REV2
+Tolerance: 0.01; Evals: 1024; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1321403
+MAQ Evals: 3232534
+Total Count: 4553937
+Calls: 179796
+Successes: 177557
+Fails: 0
+NANs: 0
+Bin_Fails: 2239
+Bins: 0  0  0  0  0  0  0  0  127842  0  0  0  9353  0  19854  19006  
+Elapsed time: 9.91434
+----------------------------
+Method:  NEW
+Tolerance: 0.01; Evals: 1024; Bin Evals: 256
+Max Count: 44
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 791973
+MAQ Evals: 3236986
+Total Count: 4028959
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127583  0  0  0  9354  0  19786  19990  
+Elapsed time: 8.36377
+----------------------------
+Method:  OLD
+Tolerance: 0.01; Evals: 1024; Bin Evals: 4096
+Max Count: 44
+Max Bin: 4096
+Max Successful Bin: 4094
+Bin Evals: 6117823
+MAQ Evals: 3236936
+Total Count: 9354759
+Calls: 179284
+Successes: 178533
+Fails: 0
+NANs: 0
+Bin_Fails: 751
+Bins: 0  0  0  0  0  0  0  0  127668  0  0  0  9350  0  19823  19969  
+Elapsed time: 18.1164
+----------------------------
+Method:  REV
+Tolerance: 0.01; Evals: 1024; Bin Evals: 4096
+Max Count: 44
+Max Bin: 4096
+Max Successful Bin: 2051
+Bin Evals: 4773329
+MAQ Evals: 3236890
+Total Count: 8010219
+Calls: 179284
+Successes: 178533
+Fails: 0
+NANs: 0
+Bin_Fails: 751
+Bins: 0  0  0  0  0  0  0  0  127902  0  0  0  9353  0  19774  19968  
+Elapsed time: 15.6276
+----------------------------
+Method: REV2
+Tolerance: 0.01; Evals: 1024; Bin Evals: 4096
+Max Count: 44
+Max Bin: 4096
+Max Successful Bin: 1028
+Bin Evals: 4126370
+MAQ Evals: 3236936
+Total Count: 7363306
+Calls: 179284
+Successes: 178533
+Fails: 0
+NANs: 0
+Bin_Fails: 751
+Bins: 0  0  0  0  0  0  0  0  128101  0  0  0  9352  0  19762  19980  
+Elapsed time: 14.5828
+----------------------------
+Method:  NEW
+Tolerance: 0.01; Evals: 1024; Bin Evals: 4096
+Max Count: 44
+Max Bin: 4096
+Max Successful Bin: 225
+Bin Evals: 3595575
+MAQ Evals: 3237044
+Total Count: 6832619
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127973  0  0  0  9353  0  19665  19991  
+Elapsed time: 13.7078
+----------------------------
+Method:  OLD
+Tolerance: 0.01; Evals: 1024; Bin Evals: 65536
+Max Count: 44
+Max Bin: 65536
+Max Successful Bin: 16383
+Bin Evals: 51111854
+MAQ Evals: 3237104
+Total Count: 54348958
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127988  0  0  0  9354  0  20041  20030  
+Elapsed time: 94.994
+----------------------------
+Method:  REV
+Tolerance: 0.01; Evals: 1024; Bin Evals: 65536
+Max Count: 44
+Max Bin: 65536
+Max Successful Bin: 8206
+Bin Evals: 49651346
+MAQ Evals: 3237166
+Total Count: 52888512
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127916  0  0  0  9354  0  19785  20011  
+Elapsed time: 91.7942
+----------------------------
+Method: REV2
+Tolerance: 0.01; Evals: 1024; Bin Evals: 65536
+Max Count: 44
+Max Bin: 65536
+Max Successful Bin: 4111
+Bin Evals: 48946147
+MAQ Evals: 3237132
+Total Count: 52183279
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  128038  0  0  0  9349  0  19688  19997  
+Elapsed time: 90.3045
+----------------------------
+Method:  NEW
+Tolerance: 0.01; Evals: 1024; Bin Evals: 65536
+Max Count: 44
+Max Bin: 65536
+Max Successful Bin: 225
+Bin Evals: 48446865
+MAQ Evals: 3237048
+Total Count: 51683913
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127730  0  0  0  9352  0  19806  19979  
+Elapsed time: 100.204
+----------------------------
+Method:  OLD
+Tolerance: 0.01; Evals: 1024; Bin Evals: 1048576
+Max Count: 44
+Max Bin: 1048576
+Max Successful Bin: 16383
+Bin Evals: 768726382
+MAQ Evals: 3237120
+Total Count: 771963502
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127816  0  0  0  9350  0  19886  19990  
+Elapsed time: 1350.5
+----------------------------
+Method:  REV
+Tolerance: 0.01; Evals: 1024; Bin Evals: 1048576
+Max Count: 44
+Max Bin: 1048576
+Max Successful Bin: 8206
+Bin Evals: 767270045
+MAQ Evals: 3237166
+Total Count: 770507211
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127693  0  0  0  9355  0  19831  20032  
+Elapsed time: 1346.96
+----------------------------
+Method: REV2
+Tolerance: 0.01; Evals: 1024; Bin Evals: 1048576
+Max Count: 44
+Max Bin: 1048576
+Max Successful Bin: 4111
+Bin Evals: 766565790
+MAQ Evals: 3237132
+Total Count: 769802922
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127794  0  0  0  9351  0  19782  20004  
+Elapsed time: 1340.53
+----------------------------
+Method:  NEW
+Tolerance: 0.01; Evals: 1024; Bin Evals: 1048576
+Max Count: 44
+Max Bin: 1048576
+Max Successful Bin: 225
+Bin Evals: 766066072
+MAQ Evals: 3237044
+Total Count: 769303116
+Calls: 179284
+Successes: 178554
+Fails: 0
+NANs: 0
+Bin_Fails: 730
+Bins: 0  0  0  0  0  0  0  0  127693  0  0  0  9356  0  19769  20015  
+Elapsed time: 1507.4
+----------------------------
+Method:  OLD
+Tolerance: 0.005; Evals: 1024; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 2693267
+MAQ Evals: 3913958
+Total Count: 6607225
+Calls: 192500
+Successes: 190145
+Fails: 0
+NANs: 0
+Bin_Fails: 2355
+Bins: 0  0  0  0  0  0  0  0  136440  0  0  0  10412  0  20674  21336  
+Elapsed time: 13.7019
+----------------------------
+Method:  REV
+Tolerance: 0.005; Evals: 1024; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 1834874
+MAQ Evals: 3913940
+Total Count: 5748814
+Calls: 192500
+Successes: 190145
+Fails: 0
+NANs: 0
+Bin_Fails: 2355
+Bins: 0  0  0  0  0  0  0  0  136328  0  0  0  10408  0  20534  21347  
+Elapsed time: 11.861
+----------------------------
+Method: REV2
+Tolerance: 0.005; Evals: 1024; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1433509
+MAQ Evals: 3913924
+Total Count: 5347433
+Calls: 192500
+Successes: 190145
+Fails: 0
+NANs: 0
+Bin_Fails: 2355
+Bins: 0  0  0  0  0  0  0  0  136450  0  0  0  10409  0  20562  21370  
+Elapsed time: 11.0751
+----------------------------
+Method:  NEW
+Tolerance: 0.005; Evals: 1024; Bin Evals: 256
+Max Count: 56
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 852612
+MAQ Evals: 3917546
+Total Count: 4770158
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136499  0  0  0  10409  0  20566  22504  
+Elapsed time: 9.73324
+----------------------------
+Method:  OLD
+Tolerance: 0.005; Evals: 1024; Bin Evals: 4096
+Max Count: 56
+Max Bin: 4096
+Max Successful Bin: 4094
+Bin Evals: 6583457
+MAQ Evals: 3917220
+Total Count: 10500677
+Calls: 192012
+Successes: 191241
+Fails: 0
+NANs: 0
+Bin_Fails: 771
+Bins: 0  0  0  0  0  0  0  0  136312  0  0  0  10408  0  20593  22424  
+Elapsed time: 20.7562
+----------------------------
+Method:  REV
+Tolerance: 0.005; Evals: 1024; Bin Evals: 4096
+Max Count: 56
+Max Bin: 4096
+Max Successful Bin: 2051
+Bin Evals: 5059639
+MAQ Evals: 3917296
+Total Count: 8976935
+Calls: 192012
+Successes: 191241
+Fails: 0
+NANs: 0
+Bin_Fails: 771
+Bins: 0  0  0  0  0  0  0  0  136415  0  0  0  10410  0  20649  22377  
+Elapsed time: 17.4058
+----------------------------
+Method: REV2
+Tolerance: 0.005; Evals: 1024; Bin Evals: 4096
+Max Count: 56
+Max Bin: 4096
+Max Successful Bin: 1028
+Bin Evals: 4324915
+MAQ Evals: 3917262
+Total Count: 8242177
+Calls: 192012
+Successes: 191241
+Fails: 0
+NANs: 0
+Bin_Fails: 771
+Bins: 0  0  0  0  0  0  0  0  136279  0  0  0  10412  0  20602  22450  
+Elapsed time: 16.1944
+----------------------------
+Method:  NEW
+Tolerance: 0.005; Evals: 1024; Bin Evals: 4096
+Max Count: 56
+Max Bin: 4096
+Max Successful Bin: 225
+Bin Evals: 3711841
+MAQ Evals: 3917546
+Total Count: 7629387
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136046  0  0  0  10410  0  20603  22456  
+Elapsed time: 15.5109
+----------------------------
+Method:  OLD
+Tolerance: 0.005; Evals: 1024; Bin Evals: 65536
+Max Count: 56
+Max Bin: 65536
+Max Successful Bin: 16383
+Bin Evals: 52513360
+MAQ Evals: 3917632
+Total Count: 56430992
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136402  0  0  0  10410  0  20579  22485  
+Elapsed time: 99.0884
+----------------------------
+Method:  REV
+Tolerance: 0.005; Evals: 1024; Bin Evals: 65536
+Max Count: 56
+Max Bin: 65536
+Max Successful Bin: 8206
+Bin Evals: 50859032
+MAQ Evals: 3917584
+Total Count: 54776616
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136420  0  0  0  10404  0  20522  22517  
+Elapsed time: 96.0994
+----------------------------
+Method: REV2
+Tolerance: 0.005; Evals: 1024; Bin Evals: 65536
+Max Count: 56
+Max Bin: 65536
+Max Successful Bin: 4111
+Bin Evals: 50055911
+MAQ Evals: 3917652
+Total Count: 53973563
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136269  0  0  0  10410  0  20545  22432  
+Elapsed time: 94.9993
+----------------------------
+Method:  NEW
+Tolerance: 0.005; Evals: 1024; Bin Evals: 65536
+Max Count: 56
+Max Bin: 65536
+Max Successful Bin: 225
+Bin Evals: 49484901
+MAQ Evals: 3917530
+Total Count: 53402431
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136211  0  0  0  10414  0  20564  22471  
+Elapsed time: 103.505
+----------------------------
+Method:  OLD
+Tolerance: 0.005; Evals: 1024; Bin Evals: 1048576
+Max Count: 56
+Max Bin: 1048576
+Max Successful Bin: 16383
+Bin Evals: 784879722
+MAQ Evals: 3917598
+Total Count: 788797320
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136227  0  0  0  10409  0  20707  22479  
+Elapsed time: 1388.24
+----------------------------
+Method:  REV
+Tolerance: 0.005; Evals: 1024; Bin Evals: 1048576
+Max Count: 56
+Max Bin: 1048576
+Max Successful Bin: 8206
+Bin Evals: 783219767
+MAQ Evals: 3917624
+Total Count: 787137391
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136184  0  0  0  10408  0  20423  22419  
+Elapsed time: 1384.79
+----------------------------
+Method: REV2
+Tolerance: 0.005; Evals: 1024; Bin Evals: 1048576
+Max Count: 56
+Max Bin: 1048576
+Max Successful Bin: 4111
+Bin Evals: 782420393
+MAQ Evals: 3917634
+Total Count: 786338027
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136229  0  0  0  10411  0  20489  22438  
+Elapsed time: 1381.79
+----------------------------
+Method:  NEW
+Tolerance: 0.005; Evals: 1024; Bin Evals: 1048576
+Max Count: 56
+Max Bin: 1048576
+Max Successful Bin: 225
+Bin Evals: 781851985
+MAQ Evals: 3917526
+Total Count: 785769511
+Calls: 192012
+Successes: 191267
+Fails: 0
+NANs: 0
+Bin_Fails: 745
+Bins: 0  0  0  0  0  0  0  0  136507  0  0  0  10413  0  20688  22461  
+Elapsed time: 1549.12
+----------------------------
+Method:  OLD
+Tolerance: 0.002; Evals: 1024; Bin Evals: 256
+Max Count: 74
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 3069955
+MAQ Evals: 5262858
+Total Count: 8332813
+Calls: 214316
+Successes: 211765
+Fails: 0
+NANs: 0
+Bin_Fails: 2551
+Bins: 0  0  0  0  0  0  0  0  152797  0  0  0  12177  0  21600  23983  
+Elapsed time: 17.1474
+----------------------------
+Method:  REV
+Tolerance: 0.002; Evals: 1024; Bin Evals: 256
+Max Count: 74
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 2068532
+MAQ Evals: 5262832
+Total Count: 7331364
+Calls: 214316
+Successes: 211765
+Fails: 0
+NANs: 0
+Bin_Fails: 2551
+Bins: 0  0  0  0  0  0  0  0  152701  0  0  0  12177  0  21370  23951  
+Elapsed time: 14.6895
+----------------------------
+Method: REV2
+Tolerance: 0.002; Evals: 1024; Bin Evals: 256
+Max Count: 74
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1599639
+MAQ Evals: 5262858
+Total Count: 6862497
+Calls: 214316
+Successes: 211765
+Fails: 0
+NANs: 0
+Bin_Fails: 2551
+Bins: 0  0  0  0  0  0  0  0  152747  0  0  0  12177  0  21368  23981  
+Elapsed time: 13.8347
+----------------------------
+Method:  NEW
+Tolerance: 0.002; Evals: 1024; Bin Evals: 256
+Max Count: 72
+Max Bin: 256
+Max Successful Bin: 225
+Bin Evals: 938785
+MAQ Evals: 5266952
+Total Count: 6205737
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152892  0  0  0  12177  0  21501  25313  
+Elapsed time: 12.3112
+----------------------------
+Method:  OLD
+Tolerance: 0.002; Evals: 1024; Bin Evals: 4096
+Max Count: 72
+Max Bin: 4096
+Max Successful Bin: 4094
+Bin Evals: 7303216
+MAQ Evals: 5266536
+Total Count: 12569752
+Calls: 213872
+Successes: 213071
+Fails: 0
+NANs: 0
+Bin_Fails: 801
+Bins: 0  0  0  0  0  0  0  0  152566  0  0  0  12177  0  21494  25241  
+Elapsed time: 24.429
+----------------------------
+Method:  REV
+Tolerance: 0.002; Evals: 1024; Bin Evals: 4096
+Max Count: 72
+Max Bin: 4096
+Max Successful Bin: 2051
+Bin Evals: 5505611
+MAQ Evals: 5266544
+Total Count: 10772155
+Calls: 213872
+Successes: 213071
+Fails: 0
+NANs: 0
+Bin_Fails: 801
+Bins: 0  0  0  0  0  0  0  0  152636  0  0  0  12177  0  21521  25330  
+Elapsed time: 20.7094
+----------------------------
+Method: REV2
+Tolerance: 0.002; Evals: 1024; Bin Evals: 4096
+Max Count: 72
+Max Bin: 4096
+Max Successful Bin: 1028
+Bin Evals: 4633978
+MAQ Evals: 5266494
+Total Count: 9900472
+Calls: 213872
+Successes: 213071
+Fails: 0
+NANs: 0
+Bin_Fails: 801
+Bins: 0  0  0  0  0  0  0  0  152970  0  0  0  12179  0  21417  25321  
+Elapsed time: 19.3006
+----------------------------
+Method:  NEW
+Tolerance: 0.002; Evals: 1024; Bin Evals: 4096
+Max Count: 72
+Max Bin: 4096
+Max Successful Bin: 225
+Bin Evals: 3885282
+MAQ Evals: 5266930
+Total Count: 9152212
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152964  0  0  0  12179  0  21512  25363  
+Elapsed time: 18.3531
+----------------------------
+Method:  OLD
+Tolerance: 0.002; Evals: 1024; Bin Evals: 65536
+Max Count: 72
+Max Bin: 65536
+Max Successful Bin: 16384
+Bin Evals: 54644899
+MAQ Evals: 5267052
+Total Count: 59911951
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152876  0  0  0  12177  0  21530  25333  
+Elapsed time: 106.24
+----------------------------
+Method:  REV
+Tolerance: 0.002; Evals: 1024; Bin Evals: 65536
+Max Count: 72
+Max Bin: 65536
+Max Successful Bin: 8206
+Bin Evals: 52666152
+MAQ Evals: 5267102
+Total Count: 57933254
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152675  0  0  0  12174  0  21471  25355  
+Elapsed time: 102.434
+----------------------------
+Method: REV2
+Tolerance: 0.002; Evals: 1024; Bin Evals: 65536
+Max Count: 72
+Max Bin: 65536
+Max Successful Bin: 4111
+Bin Evals: 51706583
+MAQ Evals: 5267082
+Total Count: 56973665
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152799  0  0  0  12177  0  21445  25326  
+Elapsed time: 100.34
+----------------------------
+Method:  NEW
+Tolerance: 0.002; Evals: 1024; Bin Evals: 65536
+Max Count: 72
+Max Bin: 65536
+Max Successful Bin: 225
+Bin Evals: 51007534
+MAQ Evals: 5266932
+Total Count: 56274466
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152776  0  0  0  12179  0  21432  25309  
+Elapsed time: 110.051
+----------------------------
+Method:  OLD
+Tolerance: 0.002; Evals: 1024; Bin Evals: 1048576
+Max Count: 72
+Max Bin: 1048576
+Max Successful Bin: 16384
+Bin Evals: 808634511
+MAQ Evals: 5267102
+Total Count: 813901613
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152501  0  0  0  12175  0  21411  25345  
+Elapsed time: 1445.09
+----------------------------
+Method:  REV
+Tolerance: 0.002; Evals: 1024; Bin Evals: 1048576
+Max Count: 72
+Max Bin: 1048576
+Max Successful Bin: 8206
+Bin Evals: 806654063
+MAQ Evals: 5267084
+Total Count: 811921147
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152208  0  0  0  12179  0  21338  25266  
+Elapsed time: 1441.75
+----------------------------
+Method: REV2
+Tolerance: 0.002; Evals: 1024; Bin Evals: 1048576
+Max Count: 72
+Max Bin: 1048576
+Max Successful Bin: 4111
+Bin Evals: 805698056
+MAQ Evals: 5267076
+Total Count: 810965132
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152623  0  0  0  12179  0  21457  25328  
+Elapsed time: 1436.1
+----------------------------
+Method:  NEW
+Tolerance: 0.002; Evals: 1024; Bin Evals: 1048576
+Max Count: 72
+Max Bin: 1048576
+Max Successful Bin: 225
+Bin Evals: 804998000
+MAQ Evals: 5266898
+Total Count: 810264898
+Calls: 213872
+Successes: 213105
+Fails: 0
+NANs: 0
+Bin_Fails: 767
+Bins: 0  0  0  0  0  0  0  0  152563  0  0  0  12177  0  21328  25325  
+Elapsed time: 1607.79
+----------------------------
+Method:  OLD
+Tolerance: 0.001; Evals: 1024; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 128
+Bin Evals: 3474717
+MAQ Evals: 6686282
+Total Count: 10160999
+Calls: 236872
+Successes: 234155
+Fails: 0
+NANs: 0
+Bin_Fails: 2717
+Bins: 0  0  0  0  0  0  0  0  170139  0  0  0  13613  0  22634  26720  
+Elapsed time: 20.7369
+----------------------------
+Method:  REV
+Tolerance: 0.001; Evals: 1024; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 129
+Bin Evals: 2317002
+MAQ Evals: 6686282
+Total Count: 9003284
+Calls: 236872
+Successes: 234155
+Fails: 0
+NANs: 0
+Bin_Fails: 2717
+Bins: 0  0  0  0  0  0  0  0  169882  0  0  0  13612  0  22559  26747  
+Elapsed time: 18.3981
+----------------------------
+Method: REV2
+Tolerance: 0.001; Evals: 1024; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 66
+Bin Evals: 1768566
+MAQ Evals: 6686184
+Total Count: 8454750
+Calls: 236872
+Successes: 234155
+Fails: 0
+NANs: 0
+Bin_Fails: 2717
+Bins: 0  0  0  0  0  0  0  0  169923  0  0  0  13611  0  22535  26670  
+Elapsed time: 17.1658
+----------------------------
+Method:  NEW
+Tolerance: 0.001; Evals: 1024; Bin Evals: 256
+Max Count: 92
+Max Bin: 256
+Max Successful Bin: 228
+Bin Evals: 1025630
+MAQ Evals: 6691386
+Total Count: 7717016
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  169781  0  0  0  13610  0  22559  28148  
+Elapsed time: 15.5723
+----------------------------
+Method:  OLD
+Tolerance: 0.001; Evals: 1024; Bin Evals: 4096
+Max Count: 92
+Max Bin: 4096
+Max Successful Bin: 4094
+Bin Evals: 7931541
+MAQ Evals: 6690974
+Total Count: 14622515
+Calls: 236432
+Successes: 235600
+Fails: 0
+NANs: 0
+Bin_Fails: 832
+Bins: 0  0  0  0  0  0  0  0  169924  0  0  0  13609  0  22659  28209  
+Elapsed time: 28.4906
+----------------------------
+Method:  REV
+Tolerance: 0.001; Evals: 1024; Bin Evals: 4096
+Max Count: 92
+Max Bin: 4096
+Max Successful Bin: 2051
+Bin Evals: 5901322
+MAQ Evals: 6690866
+Total Count: 12592188
+Calls: 236432
+Successes: 235600
+Fails: 0
+NANs: 0
+Bin_Fails: 832
+Bins: 0  0  0  0  0  0  0  0  170038  0  0  0  13612  0  22519  28133  
+Elapsed time: 24.421
+----------------------------
+Method: REV2
+Tolerance: 0.001; Evals: 1024; Bin Evals: 4096
+Max Count: 92
+Max Bin: 4096
+Max Successful Bin: 1028
+Bin Evals: 4919632
+MAQ Evals: 6690974
+Total Count: 11610606
+Calls: 236432
+Successes: 235600
+Fails: 0
+NANs: 0
+Bin_Fails: 832
+Bins: 0  0  0  0  0  0  0  0  169948  0  0  0  13611  0  22428  28111  
+Elapsed time: 22.5458
+----------------------------
+Method:  NEW
+Tolerance: 0.001; Evals: 1024; Bin Evals: 4096
+Max Count: 92
+Max Bin: 4096
+Max Successful Bin: 228
+Bin Evals: 4078747
+MAQ Evals: 6691432
+Total Count: 10770179
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  169954  0  0  0  13614  0  22406  28199  
+Elapsed time: 21.3767
+----------------------------
+Method:  OLD
+Tolerance: 0.001; Evals: 1024; Bin Evals: 65536
+Max Count: 92
+Max Bin: 65536
+Max Successful Bin: 16384
+Bin Evals: 57007903
+MAQ Evals: 6691632
+Total Count: 63699535
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  169956  0  0  0  13604  0  22665  28205  
+Elapsed time: 113.424
+----------------------------
+Method:  REV
+Tolerance: 0.001; Evals: 1024; Bin Evals: 65536
+Max Count: 92
+Max Bin: 65536
+Max Successful Bin: 8206
+Bin Evals: 54789005
+MAQ Evals: 6691632
+Total Count: 61480637
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  170194  0  0  0  13607  0  22555  28221  
+Elapsed time: 109.297
+----------------------------
+Method: REV2
+Tolerance: 0.001; Evals: 1024; Bin Evals: 65536
+Max Count: 92
+Max Bin: 65536
+Max Successful Bin: 4111
+Bin Evals: 53710669
+MAQ Evals: 6691582
+Total Count: 60402251
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  170131  0  0  0  13608  0  22505  28191  
+Elapsed time: 106.671
+----------------------------
+Method:  NEW
+Tolerance: 0.001; Evals: 1024; Bin Evals: 65536
+Max Count: 92
+Max Bin: 65536
+Max Successful Bin: 228
+Bin Evals: 52926846
+MAQ Evals: 6691432
+Total Count: 59618278
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  170034  0  0  0  13615  0  22746  28228  
+Elapsed time: 116.366
+----------------------------
+Method:  OLD
+Tolerance: 0.001; Evals: 1024; Bin Evals: 1048576
+Max Count: 92
+Max Bin: 1048576
+Max Successful Bin: 16384
+Bin Evals: 838520163
+MAQ Evals: 6691584
+Total Count: 845211747
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  169676  0  0  0  13606  0  22481  28178  
+Elapsed time: 1513.01
+----------------------------
+Method:  REV
+Tolerance: 0.001; Evals: 1024; Bin Evals: 1048576
+Max Count: 92
+Max Bin: 1048576
+Max Successful Bin: 8206
+Bin Evals: 836303010
+MAQ Evals: 6691602
+Total Count: 842994612
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  169944  0  0  0  13613  0  22379  28192  
+Elapsed time: 1508.17
+----------------------------
+Method: REV2
+Tolerance: 0.001; Evals: 1024; Bin Evals: 1048576
+Max Count: 92
+Max Bin: 1048576
+Max Successful Bin: 4111
+Bin Evals: 835226173
+MAQ Evals: 6691574
+Total Count: 841917747
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  169824  0  0  0  13611  0  22458  28183  
+Elapsed time: 1503.13
+----------------------------
+Method:  NEW
+Tolerance: 0.001; Evals: 1024; Bin Evals: 1048576
+Max Count: 92
+Max Bin: 1048576
+Max Successful Bin: 228
+Bin Evals: 834438097
+MAQ Evals: 6691432
+Total Count: 841129529
+Calls: 236432
+Successes: 235637
+Fails: 0
+NANs: 0
+Bin_Fails: 795
+Bins: 0  0  0  0  0  0  0  0  169667  0  0  0  13608  0  22390  28085  
+Elapsed time: 1688.7

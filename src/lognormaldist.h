@@ -47,6 +47,7 @@ namespace SLAT {
 
         friend std::ostream &operator<<(std::ostream &, const LogNormalDist &);
     private:
+    public:
         double mu_lnX;
         double sigma_lnX;
     };

@@ -68,6 +68,8 @@ namespace SLAT {
         protected:
         public: 
             static unsigned int bin_evals;
+            typedef enum { OLD, REV, REV2, NEW } METHOD_TYPE;
+            static METHOD_TYPE method;
             static src::logger_mt settings_logger;
         };
         
