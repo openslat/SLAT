@@ -74,6 +74,7 @@ vector<double> frange(double min, double max, double step)
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(main_logger, src::logger_mt)
 int main(int argc, char **argv)
 {
+    Context::Initialise();
     // {
     // logging::add_file_log("example2.log");
     // logging::add_common_attributes();
@@ -103,7 +104,7 @@ int main(int argc, char **argv)
 
     src::logger_mt& logger = main_logger::get();
     BOOST_LOG(logger) << "Starting main().";
-#if true
+#if false
     double tolerances[] = { 0.1,
                             0.05, 0.02, 0.01,
                             0.005, 0.002, 0.001 };
@@ -139,7 +140,7 @@ int main(int argc, char **argv)
 #else
                         {{{{{
                                     double tolerance = 1E-3;
-                                    unsigned int evals = 256; //1024 * 1024;
+                                    unsigned int evals = 256; //256; //1024 * 1024;
                                     unsigned int bin_evals = evals;
 #endif
                                 double start_time = omp_get_wtime();

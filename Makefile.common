@@ -17,7 +17,7 @@ TEMP:=-Wl,--dll -Wl,--export-all-symbols -Wl,--out-implib,$(LIBDIR)/libslat.a
 endif
 
 LIBSRCS=functions.cpp relationships.cpp maq.cpp fragility.cpp lognormaldist.cpp loss_functions.cpp \
-	comp_group.cpp caching.cpp structure.cpp
+	comp_group.cpp caching.cpp structure.cpp context.cpp
 LIBHDRS=$(addprefix $(SRCDIR)/,$(LIBSRCS:.cpp=.h))
 LIBOBJS=$(addprefix $(OBJDIR)/,$(LIBSRCS:.cpp=.o))
 

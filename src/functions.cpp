@@ -14,8 +14,11 @@
 #include <vector>
 #include <functional>
 #include <gsl/gsl_deriv.h>
+#include <omp.h>
+#include <boost/log/trivial.hpp>
 #include "functions.h"
 #include "lognormaldist.h"
+#include "context.h"
 
 namespace SLAT {
     std::string DeterministicFn::ToString(void) const 
@@ -71,7 +74,14 @@ namespace SLAT {
     
     double DeterministicFn::ValueAt(double x) const
     {
-        return this->Evaluate(x);
+        // std::stringstream s;
+        // s << "DeterministicFn::ValueAt(" << x << ")";
+        //Context::PushText(s.str());
+        Context::PushText("ValueAt()");
+        //BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
+        double result = this->Evaluate(x);
+        Context::PopText();
+        return result;
     }
 
 

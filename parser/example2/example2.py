@@ -377,7 +377,7 @@ pyslat.MakeRecorder("TOTALCOST_COMP_REC",
                 None, 
                 linvalues)
 
-pyslat.IntegrationSettings(1.0E-3, 1024)
+pyslat.IntegrationSettings(1.0E-3, 256)
 for r in pyslat.recorder.all():
     r.run()
     

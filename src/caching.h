@@ -27,6 +27,9 @@
 #include <omp.h>
 #include <signal.h>
 #include <cmath>
+#include <boost/log/trivial.hpp>
+#include <sstream>
+#include "context.h"
 
 namespace SLAT {
     /**
@@ -139,6 +142,12 @@ namespace SLAT {
              * is added to the cache before being returned.
              */
             T operator()(V v) { 
+                //std::stringstream s;
+                //s << "CachedFunction[" << this->name << "](" << v << ")";
+                //Context::PushText(s.str());
+                Context::PushText("CachedFunction()");
+                //BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
+
                 /*
                  * Lock to prevent conflicts if different threads try to use
                  * this cache at the same time.
@@ -259,6 +268,7 @@ namespace SLAT {
                      */
                     T result = cache[v];
                     omp_unset_lock(&lock);
+                    Context::PopText();
                     return result;
                 } else {
                     /*
@@ -266,6 +276,7 @@ namespace SLAT {
                      *  function.
                      */
                     omp_unset_lock(&lock);
+                    Context::PopText();
                     return func(v);
                 }
             }
@@ -402,6 +413,12 @@ namespace SLAT {
              * returned.
              */
             T operator()(void) { 
+                // std::stringstream s;
+                // s << "CachedValue[" << this->name << "]";
+                // Context::PushText(s.str());
+                Context::PushText("CachedValue()");
+                //BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
+
                 /*
                  * Lock to prevent conflicts if different threads try to use
                  * this cache at the same time.
@@ -461,6 +478,7 @@ namespace SLAT {
                  */
                 T result = cached_value;
                 omp_unset_lock(&lock);
+                    Context::PopText();
                 return result;
             }
 
