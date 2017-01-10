@@ -460,7 +460,9 @@ namespace SLAT {
         MAQ_RESULT MAQ(std::function<double (double)> integrand,
                        const IntegrationSettings &settings)
         {
-            Context::PushText("MAQ()");
+            Context::PushText([] (std::ostream &o) {
+                    o << "MAQ()";
+                });
 //            BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
 //            BOOST_LOG(IntegrationSettings::settings_logger) << "> MAQ()";
 #pragma omp critical

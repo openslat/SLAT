@@ -13,6 +13,7 @@ namespace SLAT {
         static void Initialise();
         static std::string GetText();
         static void PushText(std::string text);
+        static void PushText(std::function<void (std::ostream &)>);;
         static void PopText(void);
         static void DumpContext(void);
     private:
@@ -20,10 +21,25 @@ namespace SLAT {
         static std::shared_ptr<Context> GetContext();
         static std::shared_ptr<Context> LockContext();
         static std::shared_ptr<Context> GetInstance();
-        std::list<std::string> text_stack;
+        std::list<std::function<void (std::ostream &)>> text_stack;
         std::vector<std::shared_ptr<Context>> threads;
         static std::shared_ptr<Context> instance;
         static omp_lock_t lock;
+    };
+
+    class TempContext {
+    public:
+        TempContext(std::string text) {
+            Context::PushText(text);
+        };
+
+        TempContext(std::function<void (std::ostream &)>f) {
+            Context::PushText(f);
+        };
+
+        ~TempContext() {
+            Context::PopText();
+        };
     };
 }
 #endif

@@ -52,11 +52,12 @@ namespace SLAT {
         prefix = prefix + "    ";
         msg << prefix;
 
-        for (std::list<std::string>::iterator i=this->text_stack.begin();
+        for (std::list<std::function<void (std::ostream &)>>::iterator i=this->text_stack.begin();
              i != this->text_stack.end();
              i++)
         {
-            msg << *i << " + ";
+            (*i)(msg);
+            msg << " + ";
         }
         msg << std::endl;
         
@@ -77,11 +78,11 @@ namespace SLAT {
          return instance;
     }
 
-    void Context::PushText(std::string text)
+    void Context::PushText(std::function<void (std::ostream &)>f)
     {
         std::shared_ptr<Context> instance = LockContext();        
         //DumpContext();
-        instance->text_stack.push_back(text);
+        instance->text_stack.push_back(f);
         instance->threads.resize(0);
         // {
         //     instance = Context::GetInstance();
@@ -96,6 +97,13 @@ namespace SLAT {
         //     std::cerr << msg.str() << std::endl;
         // }
         omp_unset_lock(&Context::lock);
+    }
+    
+    void Context::PushText(std::string text)
+    {
+        PushText([text] (std::ostream &o) {
+                o << text;
+            });
     }
     
     void Context::PopText(void)
@@ -132,23 +140,24 @@ namespace SLAT {
         omp_set_lock(&Context::lock);
         std::stringstream result;
         
-        for (std::list<std::string>::iterator i=instance->text_stack.begin();
+        for (std::list<std::function<void (std::ostream &)>>::iterator i=instance->text_stack.begin();
              i != instance->text_stack.end();
              i++)
         {
-            result << *i << "#";
+            (*i)(result);
+            result << " + ";
         }
-
 
         for (int i=0; i <= omp_get_active_level(); i++) {
             instance = instance->threads[i];
             if (instance == NULL) break;
             
-            for (std::list<std::string>::iterator j=instance->text_stack.begin();
+            for (std::list<std::function<void (std::ostream &)>>::iterator j=instance->text_stack.begin();
                  j != instance->text_stack.end();
                  j++)
             {
-                result << *j << "#";
+                (*j)(result);
+                result << " + ";
             }
         }
         omp_unset_lock(&Context::lock);

@@ -238,22 +238,26 @@ int main(int argc, char **argv)
                                     // Calculate the data:
                                     double results[im_vals.size()];
         
-#pragma omp parallel for
-                                    for (size_t i=0; i < im_vals.size(); i++) {
-                                        results[i] = im_rel->lambda(im_vals[i]);
-                                    }
-
-                                    ofstream ofile("c-results/im_rate_lin");
-                                    ofile << setw(15) << "IM.1" << setw(15) << "lambda" << endl;
-
-                                    for (size_t i=0; i < im_vals.size(); i++) 
                                     {
-                                        ofile << setw(15) << im_vals[i] << setw(15) << results[i] << endl;
+                                        TempContext context("IM-Rate");
+#pragma omp parallel for
+                                        for (size_t i=0; i < im_vals.size(); i++) {
+                                            results[i] = im_rel->lambda(im_vals[i]);
+                                        }
+
+                                        ofstream ofile("c-results/im_rate_lin");
+                                        ofile << setw(15) << "IM.1" << setw(15) << "lambda" << endl;
+
+                                        for (size_t i=0; i < im_vals.size(); i++) 
+                                        {
+                                            ofile << setw(15) << im_vals[i] << setw(15) << results[i] << endl;
+                                        }
                                     }
                                 }
     
                                 // Write the Collapse data:
                                 {
+                                    TempContext context("Collapse Rate");
                                     vector<double> im_vals = linrange(0.01, 3.0, 199);
                                     double collapse[im_vals.size()], demolition[im_vals.size()];
 #pragma omp parallel for
@@ -361,6 +365,9 @@ int main(int argc, char **argv)
 
                                 // Dump EDP-IM relationship:
                                 for (int i=0; i < N_EDPS; i++) {
+                                    TempContext context([i] (std::ostream &o) {
+                                            o << "EDP #" << i << "-IM";
+                                        });
                                     int n = i + 1;
                                     {
                                         vector<double> im_vals = linrange(0.01, 3.0, 199);
@@ -403,6 +410,10 @@ int main(int argc, char **argv)
                                             edp_vals = logrange(0.001, 0.1, 199);
                                         }
                                         double results[edp_vals.size()];
+
+                                        TempContext context([i] (std::ostream &o) {
+                                                o << "EDP #" << i << " lambda";
+                                            });
 #pragma omp parallel for
                                         for (size_t i=0; i < edp_vals.size(); i++) {
                                             results[i] = edp_rels[n]->lambda(edp_vals[i]);
@@ -552,8 +563,10 @@ int main(int argc, char **argv)
                                             {112, 13, 214, 10}, {113, 15, 214, 10}, {114, 17, 214, 10},
                                             {115, 19, 214, 10}};
 
+
 #pragma omp parallel for
                                     for (size_t i=0; i < data.size(); i++) {
+                                        BOOST_LOG_TRIVIAL(fatal) << "COMPONENT GROUP #" << i;
                                         stringstream name;
                                         name << "Component Group #" << i;
                                         shared_ptr<CompGroup> cg = make_shared<CompGroup>(
@@ -566,11 +579,13 @@ int main(int argc, char **argv)
 #pragma omp critical
                                         compgroups[data[i].id] = cg;
 
+                                        TempContext context([i] (std::ostream &o) {
+                                                o << "E_annual_cost (component group #" << i << ")";
+                                            });
                                         (void)cg->E_annual_cost();
                                     }
             
                                     //cout << "post-compgroups " << omp_get_wtime() << endl;
-            
                                     for (map<int, shared_ptr<CompGroup>>::const_iterator i = compgroups.cbegin();
                                          i != compgroups.cend();
                                          i++)
@@ -598,6 +613,10 @@ int main(int argc, char **argv)
 
                                             //cout << "BEFORE COST-EDP " << omp_get_wtime() << endl;
                                             {
+                                                TempContext context([n] (std::ostream &o) {
+                                                        o << "COST " << n << " EDP";
+                                                    });
+
                                                 stringstream path;
                                                 path << "c-results/cost_" << n << "_edp.txt";
                     
@@ -626,6 +645,10 @@ int main(int argc, char **argv)
 
                                             //cout << "BEFORE DELAY-EDP " << omp_get_wtime() << endl;
                                             if (n == 1) {
+                                                TempContext context([n] (std::ostream &o) {
+                                                        o << "Delay " << n << " EDP";
+                                                    });
+
                                                 stringstream path;
                                                 path << "c-results/delay_" << n << "_edp.txt";
                     
@@ -654,6 +677,10 @@ int main(int argc, char **argv)
                                         }
 
                                         {
+                                            TempContext context([n] (std::ostream &o) {
+                                                    o << "COST " << n << " IM";
+                                                });
+
                                             // Record COST-IM relationship
                                             stringstream path;
                                             path << "c-results/cost_" << n << "_im.txt";
@@ -682,6 +709,10 @@ int main(int argc, char **argv)
                                         }
 
                                         if (n == 1) {
+                                            TempContext context([n] (std::ostream &o) {
+                                                    o << "DELAY " << n << " IM";
+                                                });
+
                                             // Record DELAY-IM relationship
                                             stringstream path;
                                             path << "c-results/delay_" << n << "_im.txt";
@@ -710,6 +741,10 @@ int main(int argc, char **argv)
                                         }
             
                                         {
+                                            TempContext context([n] (std::ostream &o) {
+                                                    o << "DS " << n << " EDP";
+                                                });
+
                                             // Record DS-EDP relationship
                                             stringstream path;
                                             path << "c-results/ds_edp_" << n << ".txt";
@@ -768,6 +803,9 @@ int main(int argc, char **argv)
                                             vector<double> im_vals = linrange(0.01, 3.0, 199);
                                             vector<double> results[im_vals.size()];
                 
+                                            TempContext context([n] (std::ostream &o) {
+                                                    o << "DS #" << n << " IM";
+                                                });
 #pragma omp parallel for
                                             for (size_t i=0; i < im_vals.size(); i++) {
                                                 vector<double> temp = cg->pDS_IM(im_vals[i]);
@@ -791,6 +829,9 @@ int main(int argc, char **argv)
 
                                         // DS-Rate
                                         if (true) {
+                                            TempContext context([n] (std::ostream &o) {
+                                                    o << "DS #" << n << " RATE";
+                                                });
                                             stringstream path;
                                             path << "c-results/ds_rate_" << setw(3) << setfill('0')  << n << ".txt";
                                             ofstream outfile(path.str());
@@ -811,6 +852,10 @@ int main(int argc, char **argv)
                                         }
 
                                         {
+                                            TempContext context([n] (std::ostream &o) {
+                                                    o << "COST #" << n << " RATE";
+                                                });
+
                                             // Record COST-RATE relationship
                                             stringstream path;
                                             path << "c-results/cost_rate_" << n << ".txt";
@@ -834,6 +879,9 @@ int main(int argc, char **argv)
                                         }
 
                                         {
+                                            TempContext context([n] (std::ostream &o) {
+                                                    o << "ANNUAL COST" << n;
+                                                });
                                             // Record Annual Cost relationship
                                             stringstream path;
                                             path << "c-results/annual_cost_" << n << ".txt";
@@ -857,7 +905,7 @@ int main(int argc, char **argv)
                                         }
                                     }
                                 }
-
+                                
                                 shared_ptr<Structure> building = make_shared<Structure>("building");
                                 {
                                     for (map<int, shared_ptr<CompGroup>>::const_iterator i = compgroups.cbegin();
@@ -871,6 +919,10 @@ int main(int argc, char **argv)
                                 building->setDemolitionCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(14E6, 0.35));
                 
                                 {
+                                    TempContext context([] (std::ostream &o) {
+                                            o << "TOTAL COST";
+                                        });
+
                                     // Record the total Cost|IM relationship:
                                     ofstream outfile("c-results/total_cost");
                                     outfile << setw(15) << "IM.1" 
@@ -894,6 +946,9 @@ int main(int argc, char **argv)
                                 }
 
                                 {
+                                    TempContext context([] (std::ostream &o) {
+                                            o << "COST BY FATE";
+                                        });
                                     // Record the deaggregated cost for the structure:
                                     ofstream outfile("c-results/cost_by_fate");
                                     outfile << setw(15) << "IM.1" 
@@ -919,6 +974,10 @@ int main(int argc, char **argv)
                                 }
 
                                 {
+                                    TempContext context([] (std::ostream &o) {
+                                            o << "ANN COST";
+                                        });
+                                    
                                     // Record the expected cost for the structure:
                                     ofstream outfile("c-results/ann_cost");
                                     outfile << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;

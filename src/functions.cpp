@@ -77,7 +77,9 @@ namespace SLAT {
         // std::stringstream s;
         // s << "DeterministicFn::ValueAt(" << x << ")";
         //Context::PushText(s.str());
-        Context::PushText("ValueAt()");
+        Context::PushText([] (std::ostream &o) {
+                o << "ValueAt()";
+            });
         //BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
         double result = this->Evaluate(x);
         Context::PopText();

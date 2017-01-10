@@ -145,7 +145,9 @@ namespace SLAT {
                 //std::stringstream s;
                 //s << "CachedFunction[" << this->name << "](" << v << ")";
                 //Context::PushText(s.str());
-                Context::PushText("CachedFunction()");
+                Context::PushText([this] (std::ostream &o) {
+                        o << "CachedFunction(): " << this->name;
+                    });
                 //BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
 
                 /*
@@ -416,7 +418,9 @@ namespace SLAT {
                 // std::stringstream s;
                 // s << "CachedValue[" << this->name << "]";
                 // Context::PushText(s.str());
-                Context::PushText("CachedValue()");
+                Context::PushText([this] (std::ostream &o) {
+                        o << "CachedValue(): " << this->name;
+                    });
                 //BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
 
                 /*
