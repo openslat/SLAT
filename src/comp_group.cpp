@@ -285,6 +285,10 @@ namespace SLAT {
 
     double CompGroup::E_annual_cost_calc(void)
     {
+        TempContext context([this] (std::ostream &o) {
+                o << "CompGroup::E_annual_cost_calc() [" << this->name << "]";
+            });
+        
         Integration::IntegrationSettings temp_settings(&local_settings);
         {
             std::stringstream s;

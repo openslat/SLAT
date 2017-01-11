@@ -74,7 +74,26 @@ vector<double> frange(double min, double max, double step)
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(main_logger, src::logger_mt)
 int main(int argc, char **argv)
 {
-    Context::Initialise();
+     Context::Initialise();
+// //    std::cerr << omp_get_active_level() << ", " << omp_get_thread_num() << std::endl;
+//     // std::cerr << "Initial Context:" << std::endl;
+//     // std::cerr << Context::GetText() << std::endl;
+//     TempContext one("ONE");
+//     // std::cerr << "Context after pushing ONE:" << std::endl;
+//     // std::cerr << Context::GetText() << std::endl;
+//     TempContext two("TWO");
+//     // std::cerr << "Context after pushing TWO:" << std::endl;
+//     std::cerr << Context::GetText() << std::endl;
+// #pragma omp parallel for
+//     for (size_t i=0; i < 10; i++) {
+//         std::stringstream msg;
+//         msg << omp_get_active_level() << ", " << omp_get_thread_num() << ": ";
+//         TempContext x([i] (std::ostream &o) { o << i; });
+//         msg << "Thread: " << omp_get_thread_num() << ": " << Context::GetText() << std::endl;
+//         std::cerr << msg.str() << std::endl;
+//         for (int i=0; i < 1E20; i++) ;
+//     }
+//     return 0;
     // {
     // logging::add_file_log("example2.log");
     // logging::add_common_attributes();
@@ -566,7 +585,6 @@ int main(int argc, char **argv)
 
 #pragma omp parallel for
                                     for (size_t i=0; i < data.size(); i++) {
-                                        BOOST_LOG_TRIVIAL(fatal) << "COMPONENT GROUP #" << i;
                                         stringstream name;
                                         name << "Component Group #" << i;
                                         shared_ptr<CompGroup> cg = make_shared<CompGroup>(
@@ -583,6 +601,9 @@ int main(int argc, char **argv)
                                                 o << "E_annual_cost (component group #" << i << ")";
                                             });
                                         (void)cg->E_annual_cost();
+                                        TempContext context2([i] (std::ostream &o) {
+                                                o << "<another level>";
+                                            });
                                     }
             
                                     //cout << "post-compgroups " << omp_get_wtime() << endl;

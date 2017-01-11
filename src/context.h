@@ -16,6 +16,9 @@ namespace SLAT {
         static void PushText(std::function<void (std::ostream &)>);;
         static void PopText(void);
         static void DumpContext(void);
+        Context(void) {
+            //std::cerr << "Context()" << std::endl;
+        };
     private:
         std::string Dump(std::string prefix);
         static std::shared_ptr<Context> GetContext();
@@ -39,7 +42,7 @@ namespace SLAT {
 
         ~TempContext() {
             Context::PopText();
-        };
+        }
     };
 }
 #endif

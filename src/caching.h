@@ -145,9 +145,9 @@ namespace SLAT {
                 //std::stringstream s;
                 //s << "CachedFunction[" << this->name << "](" << v << ")";
                 //Context::PushText(s.str());
-                Context::PushText([this] (std::ostream &o) {
-                        o << "CachedFunction(): " << this->name;
-                    });
+                // TempContext context([this] (std::ostream &o) {
+                //         o << "CachedFunction(): " << this->name;
+                //     });
                 //BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
 
                 /*
@@ -270,7 +270,7 @@ namespace SLAT {
                      */
                     T result = cache[v];
                     omp_unset_lock(&lock);
-                    Context::PopText();
+                    //Context::PopText();
                     return result;
                 } else {
                     /*
@@ -278,7 +278,7 @@ namespace SLAT {
                      *  function.
                      */
                     omp_unset_lock(&lock);
-                    Context::PopText();
+                    //Context::PopText();
                     return func(v);
                 }
             }
@@ -418,9 +418,9 @@ namespace SLAT {
                 // std::stringstream s;
                 // s << "CachedValue[" << this->name << "]";
                 // Context::PushText(s.str());
-                Context::PushText([this] (std::ostream &o) {
-                        o << "CachedValue(): " << this->name;
-                    });
+                // TempContext context([this] (std::ostream &o) {
+                //         o << "CachedValue(): " << this->name;
+                //     });
                 //BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
 
                 /*
@@ -482,7 +482,7 @@ namespace SLAT {
                  */
                 T result = cached_value;
                 omp_unset_lock(&lock);
-                    Context::PopText();
+                //Context::PopText();
                 return result;
             }
 

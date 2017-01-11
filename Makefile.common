@@ -49,15 +49,16 @@ clean:
 $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
 	$(CC) -c $(CFLAGS) $< -o $@
 
-$(OBJDIR)/caching.o: $(SRCDIR)/caching.cpp $(SRCDIR)/caching.h 
-$(OBJDIR)/functions.o: $(SRCDIR)/functions.cpp $(SRCDIR)/functions.h $(SRCDIR)/replaceable.h
-$(OBJDIR)/relationships.o: $(SRCDIR)/relationships.cpp $(SRCDIR)/relationships.h $(SRCDIR)/functions.h $(SRCDIR)/maq.h $(SRCDIR)/replaceable.h $(SRCDIR)/caching.h
-$(OBJDIR)/maq.o: $(SRCDIR)/maq.cpp $(SRCDIR)/maq.h 
+$(OBJDIR)/caching.o: $(SRCDIR)/caching.cpp $(SRCDIR)/caching.h  $(SRCDIR)/context.h
+$(OBJDIR)/functions.o: $(SRCDIR)/functions.cpp $(SRCDIR)/functions.h $(SRCDIR)/replaceable.h $(SRCDIR)/context.h
+$(OBJDIR)/relationships.o: $(SRCDIR)/relationships.cpp $(SRCDIR)/relationships.h $(SRCDIR)/functions.h $(SRCDIR)/maq.h $(SRCDIR)/replaceable.h $(SRCDIR)/caching.h $(SRCDIR)/context.h
+$(OBJDIR)/maq.o: $(SRCDIR)/maq.cpp $(SRCDIR)/maq.h $(SRCDIR)/context.h
 $(OBJDIR)/fragility.o: $(SRCDIR)/fragility.cpp $(SRCDIR)/fragility.h 
 $(OBJDIR)/lognormaldist.o: $(SRCDIR)/lognormaldist.cpp $(SRCDIR)/lognormaldist.h 
 $(OBJDIR)/loss_functions.o: $(SRCDIR)/loss_functions.cpp $(SRCDIR)/loss_functions.h 
-$(OBJDIR)/comp_group.o: $(SRCDIR)/comp_group.cpp $(SRCDIR)/comp_group.h $(SRCDIR)/caching.h
+$(OBJDIR)/comp_group.o: $(SRCDIR)/comp_group.cpp $(SRCDIR)/comp_group.h $(SRCDIR)/caching.h $(SRCDIR)/context.h
 $(OBJDIR)/structure.o: $(SRCDIR)/structure.cpp $(SRCDIR)/structure.h
+$(OBJDIR)/context.o: $(SRCDIR)/context.cpp $(SRCDIR)/context.h
 
 $(LIBDIR)/libslat$(LIBEXT): $(LIBOBJS)
 	$(CC) -shared $(TEMP) -o $(LIBDIR)/libslat$(LIBEXT) $(LIBOBJS) $(LDFLAGS)
@@ -76,7 +77,7 @@ $(OBJDIR)/maq_test.o: $(SRCDIR)/maq_test.cpp $(SRCDIR)/maq.h $(SRCDIR)/relations
 $(OBJDIR)/fragility_test.o: $(SRCDIR)/fragility_test.cpp $(SRCDIR)/fragility.h
 $(OBJDIR)/comp_group_test.o: $(SRCDIR)/comp_group_test.cpp $(SRCDIR)/comp_group.h 
 $(OBJDIR)/structure_test.o: $(SRCDIR)/structure_test.cpp $(SRCDIR)/structure.h
-$(OBJDIR)/caching_test.o: $(SRCDIR)/caching_test.cpp $(SRCDIR)/caching.h
+$(OBJDIR)/caching_test.o: $(SRCDIR)/caching_test.cpp $(SRCDIR)/caching.h $(SRCDIR)/context.h
 $(OBJDIR)/replaceable_test.o: $(SRCDIR)/replaceable_test.cpp $(SRCDIR)/replaceable.h
 $(OBJDIR)/unit_test.o: $(SRCDIR)/unit_test.cpp
 

@@ -460,9 +460,9 @@ namespace SLAT {
         MAQ_RESULT MAQ(std::function<double (double)> integrand,
                        const IntegrationSettings &settings)
         {
-            Context::PushText([] (std::ostream &o) {
-                    o << "MAQ()";
-                });
+            // Context::PushText([] (std::ostream &o) {
+            //         o << "MAQ()";
+            //     });
 //            BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
 //            BOOST_LOG(IntegrationSettings::settings_logger) << "> MAQ()";
 #pragma omp critical
@@ -534,7 +534,7 @@ namespace SLAT {
                     //DumpIntegrationStats();
                     BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << " binary_subdivision() found nothing";
                     //BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ(): " << 0 << ", " << true << ", " << r.evaluations;
-                    Context::PopText();
+                    // Context::PopText();
                     return {0, true, (unsigned int)r.evaluations}; 
                 } else {
                     double c = (r.a + r.b) / 2;
@@ -568,7 +568,7 @@ namespace SLAT {
                 //DumpIntegrationStats();
                 maq_evals += counter;
                 //BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() NAN, " << false << ", " << counter;
-                Context::PopText();
+                // Context::PopText();
                 return {NAN, false, counter};
             }
 
@@ -581,7 +581,7 @@ namespace SLAT {
                 //DumpIntegrationStats();
                 maq_evals += counter;
                 //BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() NAN, " << false << ", " << counter;
-                Context::PopText();
+                // Context::PopText();
                 return {NAN, false, counter};
             }
             
@@ -595,7 +595,7 @@ namespace SLAT {
                 //DumpIntegrationStats();
                 maq_evals += counter;
                 //BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() NAN, " << false << ", " << counter;
-                Context::PopText();
+                // Context::PopText();
                 return {NAN, false, counter};
             }
             
@@ -674,7 +674,7 @@ namespace SLAT {
                     //DumpIntegrationStats();
                     maq_evals += counter;
 //                    BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() NAN, " << false << ", " << counter;
-                    Context::PopText();
+                    // Context::PopText();
                     return {NAN, false, counter};
                 }
             
@@ -685,7 +685,7 @@ namespace SLAT {
                     //DumpIntegrationStats();
                     maq_evals += counter;
 //                    BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() NAN, " << false << ", " << counter;
-                    Context::PopText();
+                    // Context::PopText();
                     return {NAN, false, counter};
                 }
         
@@ -736,7 +736,7 @@ namespace SLAT {
             }
             maq_evals += counter;
 //            BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() " << integral << ", " << success << ", " << counter;
-            Context::PopText();
+            // Context::PopText();
             return {integral, success, counter};
             }
 
