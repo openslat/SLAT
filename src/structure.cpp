@@ -126,19 +126,13 @@ namespace SLAT {
         {
 #pragma omp section
             {
-                Integration::IntegrationSettings temp_settings(Integration::IntegrationSettings::Get_Global_Settings());
-                {
-                    std::stringstream s;
-                    s << get_Name() << "::calc_AnnualCost(" << im << ")";
-                    temp_settings.warning_label = s.str();
-                }
                 Integration::MAQ_RESULT result;
                 result = Integration::MAQ(
                     [this] (double im) -> double {
                         double cost = this->Cost(im, true).get_mean_X();
                         double deriv = std::abs(this->im->DerivativeAt(im));
                         return cost * deriv;
-                    }, temp_settings);
+                    });
                 if (result.successful) {
                     mu = result.integral;
                 } 

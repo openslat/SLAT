@@ -1,5 +1,6 @@
 %module pyslatcore
 %begin %{
+#define SWIG_FILE_WITH_INIT
 #include <cmath>
 #include "pyslatcore.h"
 %}
@@ -17,6 +18,7 @@ namespace std{
 
 
 void IntegrationSettings(double tolerance, unsigned int max_evals);
+void Initialise(void);
 
 enum FUNCTION_TYPE { NLH, PLC, LIN, LOGLOG };
 enum LOGNORMAL_MU_TYPE { MEAN_X, MEDIAN_X, MEAN_LN_X };
@@ -150,3 +152,4 @@ private:
 };
 
 Structure *MakeStructure();
+

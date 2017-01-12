@@ -92,7 +92,6 @@ namespace SLAT {
         }
 
         IntegrationSettings::IntegrationSettings(void)
-            : warning_label("<unalbelled>")
         {
             tolerance = TOLERANCE_DEFAULT;
             max_evals = EVALUATIONS_DEFAULT;
@@ -100,8 +99,6 @@ namespace SLAT {
         }
 
         IntegrationSettings::IntegrationSettings(const IntegrationSettings *other)
-            : warning_label("child of ??")
-
         {
             tolerance = TOLERANCE_UNSPECIFIED;
             max_evals = EVALUATIONS_UNSPECIFIED;

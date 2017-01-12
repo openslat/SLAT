@@ -50,7 +50,6 @@ namespace SLAT {
 
             unsigned int Get_Effective_Max_Evals(void) const;
             double Get_Effective_Tolerance(void) const;
-            std::string warning_label;
             IntegrationSettings();
             IntegrationSettings(const IntegrationSettings &other);
         private:

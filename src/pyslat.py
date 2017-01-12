@@ -5,7 +5,7 @@ from contextlib import redirect_stdout
 import numbers
 import sys
 
-
+pyslatcore.Initialise()
 
 def frange(start, stop, step):
     i = start

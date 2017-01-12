@@ -142,9 +142,6 @@ namespace SLAT {
              * is added to the cache before being returned.
              */
             T operator()(V v) { 
-                //std::stringstream s;
-                //s << "CachedFunction[" << this->name << "](" << v << ")";
-                //Context::PushText(s.str());
                 // TempContext context([this] (std::ostream &o) {
                 //         o << "CachedFunction(): " << this->name;
                 //     });
@@ -415,9 +412,6 @@ namespace SLAT {
              * returned.
              */
             T operator()(void) { 
-                // std::stringstream s;
-                // s << "CachedValue[" << this->name << "]";
-                // Context::PushText(s.str());
                 // TempContext context([this] (std::ostream &o) {
                 //         o << "CachedValue(): " << this->name;
                 //     });

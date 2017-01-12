@@ -1,9 +1,21 @@
 #include "caching.h"
 #include "maq.h"
 #include "pyslatcore.h"
+#include "context.h"
 #include <iostream>
 #include <set>
+#include <boost/log/sinks/text_ostream_backend.hpp>
+#include <boost/log/utility/setup/console.hpp>
 using namespace std;
+namespace logging = boost::log;
+
+void Initialise(void)
+{
+    logging::add_file_log("pyslatcore.log");
+    logging::add_console_log(std::cerr);
+    SLAT::Context::Initialise();
+}
+
 
 void IntegrationSettings(double tolerance, unsigned int max_evals)
 {

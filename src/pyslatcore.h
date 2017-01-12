@@ -197,3 +197,4 @@ private:
 
 Structure *MakeStructure();
  
+void Initialise(void);
