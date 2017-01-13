@@ -140,6 +140,9 @@ namespace SLAT {
 
     double IM::CollapseRate_calc(void)
     {
+        TempContext context([this] (std::ostream &o) {
+                o << "IM::CollapseRate_calc() [" << this->name << "]";
+            });
         if (collapse) {
             // std::cout << "IM::CollapseRate_calc " << name << " " << local_settings.Get_Effective_Max_Evals() << "; "
             //           << Get_Class_Integration_Settings().Get_Effective_Max_Evals() << "; "
@@ -167,6 +170,9 @@ namespace SLAT {
 
     double IM::DemolitionRate_calc(void)
     {
+        TempContext context([this] (std::ostream &o) {
+                o << "IM::DemolitionRate_calc() [" << this->name << "]";
+            });
         if (demolition) {
             Integration::MAQ_RESULT result;
             result =  Integration::MAQ(
@@ -255,6 +261,9 @@ namespace SLAT {
 
     double EDP::calc_lambda(double min_y) 
     {
+        TempContext context([this] (std::ostream &o) {
+                o << "EDP::calc_lambda() [" << this->name << "]";
+            });
         Integration::MAQ_RESULT result;
         result =  Integration::MAQ(
             [this, min_y] (double x2) -> double {

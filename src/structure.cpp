@@ -121,6 +121,9 @@ namespace SLAT {
 
     LogNormalDist Structure::calc_AnnualCost(void)
     {
+        TempContext context([this] (std::ostream &o) {
+                o << "Structure::calc_AnnualCost() [" << this->name << "]";
+            });
         double mu=NAN, beta=NAN;
 #pragma omp parallel sections
         {
