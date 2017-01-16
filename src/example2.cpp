@@ -120,7 +120,7 @@ int main(int argc, char **argv)
                     {
                         unsigned int evals = 1024;
                         {
-                            for (unsigned int bin_evals = 256; bin_evals <= 2024 * 1024; bin_evals *= 16) {
+                            for (unsigned int bin_evals = 256; bin_evals <= 128 * 1024; bin_evals *= 2) {
 #endif
                     for (int method=0; method < 4; method++) {
                         switch (method) {
