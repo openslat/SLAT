@@ -151,16 +151,18 @@ This document presents the results of that testing.
 
    A quick check that the data was imported successfully:
    #+BEGIN_SRC sqlite :db integration-statistics.sql :header
-   SELECT method, tolerance, maq_limit, bin_limit, runtime  FROM stats LIMIT 5;
+     SELECT method, tolerance, maq_limit, bin_limit, 
+         printf("%4.2f", runtime) as runtime
+         FROM stats LIMIT 5;
    #+END_SRC
 
    #+RESULTS:
    | method | tolerance | maq_limit | bin_limit | runtime |
-   | OLD    |       0.1 |       256 |        64 | 5.90776 |
-   | REV    |       0.1 |       256 |        64 | 5.56051 |
-   | REV2   |       0.1 |       256 |        64 | 5.38523 |
-   | NEW    |       0.1 |       256 |        64 | 5.01911 |
-   | OLD    |       0.1 |       256 |       256 | 7.77381 |
+   | OLD    |       0.1 |       256 |        64 |    5.91 |
+   | REV    |       0.1 |       256 |        64 |    5.56 |
+   | REV2   |       0.1 |       256 |        64 |    5.39 |
+   | NEW    |       0.1 |       256 |        64 |    5.02 |
+   | OLD    |       0.1 |       256 |       256 |    7.77 |
 
 
    What was the longest successful search for each algorithm?
@@ -177,191 +179,138 @@ This document presents the results of that testing.
 
    Total runtime for all tests (in hours):
    #+BEGIN_SRC sqlite :db integration-statistics.sql :header
-     SELECT SUM(runtime)/60/60 FROM stats;
+     SELECT printf("%5.2f", SUM(runtime)/60/60) 
+   	 AS 'Total Runtime (hours)' FROM stats;
    #+END_SRC
 
    #+RESULTS:
-   | SUM(runtime)/60/60 |
-   |   12.3425385777778 |
+   | Total Runtime (hours) |
+   |                 15.53 |
 
    How do the algorithms compare, in terms of run time?
+   #+NAME: runtime-summary
    #+BEGIN_SRC sqlite :db integration-statistics.sql :header
      SELECT method, 
-   	 printf("%8.2f", MIN(runtime)) AS 'MIN',
-   	 printf("%8.2f", AVG(runtime)) AS 'AVG',
-   	 printf("%8.2f", MAX(runtime)) AS 'MAX' 
+   	 printf("%8.2f", MIN(runtime)/60) AS 'MIN (minutes)',
+   	 printf("%8.2f", AVG(runtime)/60) AS 'AVG (minutes)',
+   	 printf("%8.2f", MAX(runtime)/60) AS 'MAX (minutes)' 
    	 FROM stats GROUP by method;
    #+END_SRC
 
-   #+RESULTS:
-   | method |  MIN |    AVG |     MAX |
-   | NEW    | 5.02 | 188.95 |  1688.7 |
-   | OLD    | 5.91 | 173.49 | 1513.01 |
-   | REV    | 5.56 | 173.88 | 1508.17 |
-   | REV2   | 5.39 | 168.96 | 1503.13 |
+   This simplistic comparison makes it look like there's not real difference
+   between the algorithms:
+   #+RESULTS: runtime-summary
+   | method | MIN (minutes) | AVG (minutes) | MAX (minutes) |
+   | NEW    |          0.08 |          1.86 |         28.14 |
+   | OLD    |           0.1 |          1.74 |         25.22 |
+   | REV    |          0.09 |          1.72 |         25.14 |
+   | REV2   |          0.09 |          1.68 |         25.05 |
 
+   That doesn't tell the full story, though. Let's consider the relationship
+   between =bin_limit=, =bin_fails=, and =runtime=:
+   #+NAME: limit-fails-runtime
    #+BEGIN_SRC sqlite :db integration-statistics.sql :header
-     SELECT stats1.method AS Method, bms, bin_limit, MIN(runtime)
-         FROM (SELECT method, bin_limit, runtime, bin_max_successful FROM stats) AS stats1 JOIN
+     SELECT method, bin_limit, bin_fails, printf("%4.2f", runtime/60) AS 'Runtime (Minutes)'
+   	 FROM stats
+	 WHERE bin_limit == 1048576 OR bin_limit == 256 AND tolerance == 0.01
+	 GROUP by method, bin_limit
+	 ORDER by bin_limit ASC;
+   #+END_SRC
+
+   All algorithms exhibit similar runtimes for a given =bin_limit=, but the
+   number of failed searches varies:
+   #+RESULTS: limit-fails-runtime
+   | method | bin_limit | bin_fails | Runtime (Minutes) |
+   | NEW    |       256 |       730 |              0.12 |
+   | OLD    |       256 |      2239 |              0.17 |
+   | REV    |       256 |      2239 |              0.15 |
+   | REV2   |       256 |      2239 |              0.14 |
+   | NEW    |   1048576 |       795 |             28.14 |
+   | OLD    |   1048576 |       795 |             25.22 |
+   | REV    |   1048576 |       795 |             25.14 |
+   | REV2   |   1048576 |       795 |             25.05 |
+
+
+   If we focus on runs that produce the same results, however, we see a clear
+   difference in the runtimes:
+   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+     SELECT stats1.method AS Method, bms, bin_limit, MIN(runtime), bin_fails
+         FROM (SELECT method, bin_limit, runtime, bin_max_successful, bin_fails, tolerance FROM stats) AS stats1 JOIN
               (SELECT method, MAX(bin_max_successful) AS bms FROM stats GROUP BY method) as stats2
 	 WHERE stats1.method == stats2.method AND
-	       stats1.bin_limit >= stats2.bms
+	       stats1.bin_max_successful == bms AND
+	       stats1.bin_limit >= stats2.bms AND
+	       tolerance == 0.001
 	 GROUP BY stats1.method;
    #+END_SRC
 
    #+RESULTS:
-   | Method |   bms | bin_limit | MIN(runtime) |
-   | NEW    |   228 |       256 |      5.36179 |
-   | OLD    | 16384 |     65536 |      86.7898 |
-   | REV    |  8206 |     65536 |      82.3719 |
-   | REV2   |  4111 |     65536 |       78.219 |
+   | Method |   bms | bin_limit | MIN(runtime) | bin_fails |
+   | NEW    |   228 |       256 |      13.8745 |       795 |
+   | OLD    | 16384 |     32768 |      61.1018 |       795 |
+   | REV    |  8206 |     16384 |      36.8632 |       795 |
+   | REV2   |  4111 |     16384 |      35.4484 |       795 |
 
-   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
-   SELECT method, MAX(bin_max_successful) AS bms FROM stats GROUP BY method;
-   #+END_SRC
 
-   #+RESULTS:
-   | method |   bms |
-   | NEW    |   228 |
-   | OLD    | 16384 |
-   | REV    |  8206 |
-   | REV2   |  4111 |
+   Observations:
+   1. The integration limit doesn't affect runtime, once it is large enough that
+      all integrations converge to the desired tolerance. In other words, there
+      is no penalty for setting =MAQ_LIMIT= larger than necessary.
+   2. Even with =bin_limit= set to $2^20$ (in this simulation), there are
+      integrands for which all of the algorithms fail to find something
+      'interesting'. Setting the limit so high imposes a significant penalty:
+      #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+        SELECT bin_limit, printf("%5.0f", runtime) AS 'Runtime'
+	   FROM stats
+           WHERE method == 'NEW' AND
+	        bin_limit >= 256 AND
+      		tolerance == 0.001 AND
+		maq_limit == 1024
+           GROUP BY bin_limit; 	   
+      #+END_SRC
 
-   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
-     SELECT method, bin_limit,
-   	 printf("%8.2f", MIN(runtime)) AS 'MIN',
-   	 printf("%8.2f", AVG(runtime)) AS 'AVG',
-   	 printf("%8.2f", MAX(runtime)) AS 'MAX' 
-   	 FROM stats GROUP by method, bin_limit;
-   #+END_SRC
+	   #+RESULTS:
+	   | bin_limit | Runtime |
+	   |       256 |      14 |
+	   |       512 |      14 |
+	   |      1024 |      15 |
+	   |      2048 |      16 |
+	   |      4096 |      19 |
+	   |      8192 |      27 |
+	   |     16384 |      36 |
+	   |     32768 |      59 |
+	   |     65536 |     106 |
+	   |    131072 |     198 |
+	   |   1048576 |    1689 |
 
-   #+RESULTS:
-   | method | bin_limit |     MIN |     AVG |     MAX |
-   | NEW    |        64 |    5.02 |    8.95 |   16.66 |
-   | NEW    |       256 |    5.36 |   12.11 |   64.06 |
-   | NEW    |      1024 |    6.31 |   10.87 |   21.58 |
-   | NEW    |      4096 |   11.31 |   15.84 |   21.38 |
-   | NEW    |     65536 |   87.23 |   101.1 |  116.37 |
-   | NEW    |   1048576 | 1362.18 | 1518.55 |  1688.7 |
-   | OLD    |        64 |    5.91 |   10.44 |   18.99 |
-   | OLD    |       256 |     7.7 |   14.78 |   59.15 |
-   | OLD    |      1024 |   10.47 |   15.29 |   23.21 |
-   | OLD    |      4096 |   15.54 |   26.83 |   63.58 |
-   | OLD    |     65536 |   86.79 |   98.46 |  113.42 |
-   | OLD    |   1048576 | 1205.92 | 1355.62 | 1513.01 |
-   | REV    |        64 |    5.56 |    9.83 |   17.82 |
-   | REV    |       256 |    6.63 |   11.35 |   19.19 |
-   | REV    |      1024 |    8.54 |   12.68 |    20.1 |
-   | REV    |      4096 |   12.77 |    17.5 |   24.42 |
-   | REV    |     65536 |   82.37 |   93.62 |   109.3 |
-   | REV    |   1048576 | 1255.05 | 1387.42 | 1508.17 |
-   | REV2   |        64 |    5.39 |    9.55 |   16.98 |
-   | REV2   |       256 |    6.18 |   10.65 |   17.45 |
-   | REV2   |      1024 |    7.27 |   11.42 |   18.14 |
-   | REV2   |      4096 |   11.56 |   16.07 |   22.55 |
-   | REV2   |     65536 |   78.22 |   91.73 |  106.67 |
-   | REV2   |   1048576 | 1216.57 | 1350.41 | 1503.13 |
-   
-   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
-     SELECT method, maq_limit, bin_limit, bin_fails,
-   	 printf("%8.2f", MIN(runtime)) AS 'MIN',
-   	 printf("%8.2f", AVG(runtime)) AS 'AVG',
-   	 printf("%8.2f", MAX(runtime)) AS 'MAX' 
-   	 FROM stats WHERE method=="NEW" GROUP by method, maq_limit, bin_limit;
-   #+END_SRC
+      The difference is due to the amount of time spent looking for 'something
+      interesting' that we never find. We can estimate how many of the integrand
+      evaluations performed by the binary subdivision algorithm are unproductive:
+      #+BEGIN_SRC sqlite :db integration-statistics.sql :header
+        SELECT bin_limit, runtime, 
+      	 bin_fails * bin_limit AS 'Wasted',
+      	 printf("%4.3f", 1.0*bin_fails*bin_limit/bin_evals) AS 'Wasted Frac'
+           FROM stats
+           WHERE method == 'NEW' AND
+      	  bin_limit >= 256 AND
+            	  tolerance == 0.001 AND
+      	  maq_limit == 1024
+           GROUP BY bin_limit; 	   
+      #+END_SRC
 
-   #+RESULTS:
-   | method | maq_limit | bin_limit | bin_fails |     MIN |     AVG |    MAX |
-   | NEW    |       256 |        64 |       811 |    5.02 |     8.8 |  15.01 |
-   | NEW    |       256 |       256 |       795 |    5.36 |    9.24 |   16.5 |
-   | NEW    |      1024 |        64 |       811 |    5.08 |    9.11 |  16.66 |
-   | NEW    |      1024 |       256 |       669 |     5.8 |   13.54 |  64.06 |
-   | NEW    |      1024 |      1024 |       795 |    6.31 |   10.87 |  21.58 |
-   | NEW    |      1024 |      4096 |       795 |   11.31 |   15.84 |  21.38 |
-   | NEW    |      1024 |     65536 |       795 |   87.23 |   101.1 | 116.37 |
-   | NEW    |      1024 |   1048576 |       795 | 1362.18 | 1518.55 | 1688.7 |
-
-   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
-     SELECT count(*), method, tolerance, bin_limit, bin_fails,
-   	 printf("%8.2f", MIN(runtime)) AS 'MIN',
-   	 printf("%8.2f", AVG(runtime)) AS 'AVG',
-   	 printf("%8.2f", MAX(runtime)) AS 'MAX' 
-   	 FROM stats WHERE method=="NEW" GROUP by method, tolerance, bin_limit;
-   #+END_SRC
-
-   #+RESULTS:
-   | count(*) | method | tolerance | bin_limit | bin_fails |     MIN |     AVG |     MAX |
-   |        2 | NEW    |     0.001 |        64 |       811 |   15.01 |   15.84 |   16.66 |
-   |        3 | NEW    |     0.001 |       256 |       795 |   15.31 |   15.79 |    16.5 |
-   |        1 | NEW    |     0.001 |      1024 |       795 |   21.58 |   21.58 |   21.58 |
-   |        1 | NEW    |     0.001 |      4096 |       795 |   21.38 |   21.38 |   21.38 |
-   |        1 | NEW    |     0.001 |     65536 |       795 |  116.37 |  116.37 |  116.37 |
-   |        1 | NEW    |     0.001 |   1048576 |       795 |  1688.7 |  1688.7 |  1688.7 |
-   |        2 | NEW    |     0.002 |        64 |       781 |   12.03 |   12.39 |   12.75 |
-   |        3 | NEW    |     0.002 |       256 |       767 |   12.19 |   12.35 |   12.55 |
-   |        1 | NEW    |     0.002 |      1024 |       767 |   13.46 |   13.46 |   13.46 |
-   |        1 | NEW    |     0.002 |      4096 |       767 |   18.35 |   18.35 |   18.35 |
-   |        1 | NEW    |     0.002 |     65536 |       767 |  110.05 |  110.05 |  110.05 |
-   |        1 | NEW    |     0.002 |   1048576 |       767 | 1607.79 | 1607.79 | 1607.79 |
-   |        2 | NEW    |     0.005 |        64 |       759 |    9.23 |    9.41 |    9.58 |
-   |        3 | NEW    |     0.005 |       256 |       745 |    9.63 |    9.67 |    9.73 |
-   |        1 | NEW    |     0.005 |      1024 |       745 |   10.57 |   10.57 |   10.57 |
-   |        1 | NEW    |     0.005 |      4096 |       745 |   15.51 |   15.51 |   15.51 |
-   |        1 | NEW    |     0.005 |     65536 |       745 |   103.5 |   103.5 |   103.5 |
-   |        1 | NEW    |     0.005 |   1048576 |       745 | 1549.12 | 1549.12 | 1549.12 |
-   |        2 | NEW    |      0.01 |        64 |       744 |    7.65 |    7.65 |    7.66 |
-   |        3 | NEW    |      0.01 |       256 |       730 |    8.11 |    8.36 |    8.59 |
-   |        1 | NEW    |      0.01 |      1024 |       730 |    9.09 |    9.09 |    9.09 |
-   |        1 | NEW    |      0.01 |      4096 |       730 |   13.71 |   13.71 |   13.71 |
-   |        1 | NEW    |      0.01 |     65536 |       730 |   100.2 |   100.2 |   100.2 |
-   |        1 | NEW    |      0.01 |   1048576 |       730 |  1507.4 |  1507.4 |  1507.4 |
-   |        2 | NEW    |      0.02 |        64 |       738 |    6.81 |    6.88 |    6.94 |
-   |        3 | NEW    |      0.02 |       256 |       724 |    7.18 |    7.19 |    7.21 |
-   |        1 | NEW    |      0.02 |      1024 |       724 |    8.23 |    8.23 |    8.23 |
-   |        1 | NEW    |      0.02 |      4096 |       724 |   12.72 |   12.72 |   12.72 |
-   |        1 | NEW    |      0.02 |     65536 |       724 |   97.85 |   97.85 |   97.85 |
-   |        1 | NEW    |      0.02 |   1048576 |       724 | 1489.82 | 1489.82 | 1489.82 |
-   |        2 | NEW    |      0.05 |        64 |       715 |    5.45 |    5.46 |    5.47 |
-   |        3 | NEW    |      0.05 |       256 |       701 |    5.72 |    5.79 |    5.84 |
-   |        1 | NEW    |      0.05 |      1024 |       701 |    6.81 |    6.81 |    6.81 |
-   |        1 | NEW    |      0.05 |      4096 |       701 |   11.31 |   11.31 |   11.31 |
-   |        1 | NEW    |      0.05 |     65536 |       701 |    92.5 |    92.5 |    92.5 |
-   |        1 | NEW    |      0.05 |   1048576 |       701 | 1424.86 | 1424.86 | 1424.86 |
-   |        2 | NEW    |       0.1 |        64 |       683 |    5.02 |    5.05 |    5.08 |
-   |        3 | NEW    |       0.1 |       256 |       669 |    5.36 |   25.59 |   64.06 |
-   |        1 | NEW    |       0.1 |      1024 |       669 |    6.31 |    6.31 |    6.31 |
-   |        1 | NEW    |       0.1 |      4096 |       669 |   17.87 |   17.87 |   17.87 |
-   |        1 | NEW    |       0.1 |     65536 |       669 |   87.23 |   87.23 |   87.23 |
-   |        1 | NEW    |       0.1 |   1048576 |       669 | 1362.18 | 1362.18 | 1362.18 |
-
-   #+BEGIN_SRC sqlite :db integration-statistics.sql :header
-   SELECT *
-   	 FROM (SELECT * from stats WHERE method='NEW') AS N JOIN
-                 (SELECT * from stats WHERE method='OLD') AS O JOIN
-                 (SELECT * from stats WHERE method='REV') AS R JOIN
-                 (SELECT * from stats WHERE method='REV2') AS R2
-             WHERE N.tolerance = O.tolerance AND 
-   		N.maq_limit = O.maq_limit AND
-   		N.bin_limit = O.bin_limit AND
-   		N.tolerance = R.tolerance AND
-   		N.maq_limit = R.maq_limit AND
-   		N.bin_limit = R.bin_limit AND
-   		N.tolerance = R2.tolerance AND
-   		N.maq_limit = R2.maq_limit AND
-   		N.bin_limit = R2.bin_limit AND
-		(N.bin_fails != O.bin_fails OR
-		 N.bin_fails != R.bin_fails OR
-		 N.bin_fails != R2.bin_fails)
-	 LIMIT 5;
-   #+END_SRC
-
-   #+RESULTS:
-   | method | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_max_successful | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime | method | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_max_successful | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime | method | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_max_successful | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime | method | tolerance | maq_limit | bin_limit | maq_max | bin_max | bin_max_successful | bin_evals | maq_evals |  calls | successes | failures | NANs | bin_fails | runtime |
-   | NEW    |       0.1 |       256 |        64 |      22 |      64 |                 62 |    535548 |   1896010 | 150092 |    149409 |        0 |    0 |       683 | 5.01911 | OLD    |       0.1 |       256 |        64 |      22 |      64 |                 63 |   1046023 |   1896080 | 150576 |    146099 |        0 |    0 |      4477 | 5.90776 | REV    |       0.1 |       256 |        64 |      22 |      64 |                 34 |    814071 |   1896082 | 150576 |    146099 |        0 |    0 |      4477 | 5.56051 | REV2   |       0.1 |       256 |        64 |      22 |      64 |                 19 |    714044 |   1896058 | 150576 |    146099 |        0 |    0 |      4477 | 5.38523 |
-   | NEW    |       0.1 |       256 |       256 |      22 |     256 |                225 |    667802 |   1896072 | 150092 |    149423 |        0 |    0 |       669 | 5.36179 | OLD    |       0.1 |       256 |       256 |      22 |     256 |                128 |   1773999 |   1887116 | 150256 |    148427 |        0 |    0 |      1829 | 7.77381 | REV    |       0.1 |       256 |       256 |      22 |     256 |                129 |   1267708 |   1887130 | 150256 |    148427 |        0 |    0 |      1829 | 6.62852 | REV2   |       0.1 |       256 |       256 |      22 |     256 |                 66 |   1034001 |   1887088 | 150256 |    148427 |        0 |    0 |      1829 | 6.17681 |
-   | NEW    |       0.1 |      1024 |        64 |      22 |      64 |                 62 |    536404 |   1896032 | 150092 |    149409 |        0 |    0 |       683 | 5.07561 | OLD    |       0.1 |      1024 |        64 |      22 |      64 |                 63 |   1056183 |   1896110 | 150576 |    146099 |        0 |    0 |      4477 | 6.12659 | REV    |       0.1 |      1024 |        64 |      22 |      64 |                 34 |    815337 |   1896084 | 150576 |    146099 |        0 |    0 |      4477 |  5.7254 | REV2   |       0.1 |      1024 |        64 |      22 |      64 |                 19 |    714336 |   1896090 | 150576 |    146099 |        0 |    0 |      4477 | 5.40639 |
-   | NEW    |       0.1 |      1024 |       256 |      22 |     256 |                225 |    667271 |   1896084 | 150092 |    149423 |        0 |    0 |       669 | 7.35473 | OLD    |       0.1 |      1024 |       256 |      22 |     256 |                128 |   1774271 |   1887056 | 150256 |    148427 |        0 |    0 |      1829 | 8.62532 | REV    |       0.1 |      1024 |       256 |      22 |     256 |                129 |   1267147 |   1887106 | 150256 |    148427 |        0 |    0 |      1829 | 8.06835 | REV2   |       0.1 |      1024 |       256 |      22 |     256 |                 66 |   1033700 |   1887104 | 150256 |    148427 |        0 |    0 |      1829 | 6.71785 |
-   | NEW    |       0.1 |      1024 |       256 |      22 |     256 |                225 |    667271 |   1896084 | 150092 |    149423 |        0 |    0 |       669 | 7.35473 | OLD    |       0.1 |      1024 |       256 |      22 |     256 |                128 |   1774271 |   1887056 | 150256 |    148427 |        0 |    0 |      1829 | 8.62532 | REV    |       0.1 |      1024 |       256 |      22 |     256 |                129 |   1267147 |   1887106 | 150256 |    148427 |        0 |    0 |      1829 | 8.06835 | REV2   |       0.1 |      1024 |       256 |      22 |     256 |                 66 |   1033893 |   1887116 | 150256 |    148427 |        0 |    0 |      1829 | 7.62606 |
+	   #+RESULTS:
+	   | bin_limit | runtime |    Wasted | Wasted Frac |
+	   |       256 | 13.8745 |    203520 |       0.197 |
+	   |       512 | 14.3693 |    407040 |        0.33 |
+	   |      1024 |  14.887 |    814080 |       0.496 |
+	   |      2048 | 16.3475 |   1628160 |       0.663 |
+	   |      4096 | 19.4154 |   3256320 |       0.797 |
+	   |      8192 | 26.7144 |   6512640 |       0.887 |
+	   |     16384 | 36.0466 |  13025280 |        0.94 |
+	   |     32768 | 59.1896 |  26050560 |       0.969 |
+	   |     65536 | 105.573 |  52101120 |       0.984 |
+	   |    131072 | 197.983 | 104202240 |       0.992 |
+	   |   1048576 |  1688.7 | 833617920 |       0.999 |
 
 
    Compare the number times the binary search failed to find anything for each algorithm:
@@ -573,7 +522,7 @@ This document presents the results of that testing.
    #+END_SRC
 
    #+RESULTS:
-   [[file:/tmp/babel-11969LLf/figure-11969ynO.pdf]]
+   [[file:/tmp/babel-1803mUu/figure-1803f6w.pdf]]
 
    #+NAME: bin_max_table
    #+BEGIN_SRC sqlite :db integration-statistics.sql :header :exports code
