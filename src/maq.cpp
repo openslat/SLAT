@@ -31,7 +31,6 @@ size_t nans = 0;
 size_t bin_fails = 0;
 const size_t N_BINS = 16;
 size_t bin_Bins[N_BINS] = {0};
-//size_t bin_near_fails = 0;
 
 void ResetIntegrationStats()
 {
@@ -48,7 +47,6 @@ void ResetIntegrationStats()
     for (size_t i=0; i < N_BINS; i++) {
         bin_Bins[i] = 0;
     }
-//    bin_near_fails = 0;
 }
 
 void DumpIntegrationStats()
@@ -72,14 +70,13 @@ void DumpIntegrationStats()
     }
     std::cout << std::endl;
 
-//              << "Bin_Near_Fails: " << bin_near_fails << std::endl;
 }
 
 namespace SLAT {
     namespace Integration {
 
         unsigned int IntegrationSettings::bin_evals = 0;
-        IntegrationSettings::METHOD_TYPE  IntegrationSettings::method = OLD;
+        IntegrationSettings::METHOD_TYPE  IntegrationSettings::method = NEW;
 
         
         src::logger_mt IntegrationSettings::settings_logger;
@@ -544,14 +541,6 @@ namespace SLAT {
                 b = r.b;
                 counter = 0; //r.evaluations;
             }
-            
-            // if (counter + 4 >= maxeval) {
-            //     //std::cout << "no evals left after binary_subdivision()" << std::endl;
-            //     bin_near_fails++;
-            //     total_count += 32;
-            //     counter = maxeval - 32;
-            // }
-            //int temp_count = counter;
    
             double fa = integrand(x_from_t(a))/(a == 0 ? 1 : a*a);
             double fb = integrand(x_from_t(b))/(b*b);
