@@ -367,12 +367,21 @@ namespace SLAT {
                     //std::cout << i << "/" << intervals << " [" << x_from_t(c) << "] --> " << fc << std::endl;
 
                     if (fc > std::numeric_limits<double>::epsilon()) {
-                        a = 1.0 - (float(i) + 1.0) / intervals;
-                        b = 1.0 - (float(i) - 1.0) / intervals;
-                        if (a == 0.0 && b == 1.0 && evaluations > 2) {
-                            //std::cout << "[1] " << i << " / " << intervals << "; " << evaluations << std::endl;
+                        if (c < 0.5) {
+                            a = 0.0;
+                            b = 2.0 * c;
+                        } else {
+                            b = 1.0;
+                            a = 2.0 * c - 1.0;
                         }
-                        //std::cout << "(1) " << c << " " << intervals << std::endl;
+                        
+                        // a = 1.0 - (float(i) + 1.0) / intervals;
+                        // b = 1.0 - (float(i) - 1.0) / intervals;
+                        // if (a == 0.0 && b == 1.0 && evaluations > 2) {
+                        //     //std::cout << "[1] " << i << " / " << intervals << "; " << evaluations << std::endl;
+                        // }
+                        // b = 1.0;
+                        // a = 2.0 * c - 1.0;
                         break;
                     }
                     long int p = 2 + 2 * k;
@@ -385,12 +394,23 @@ namespace SLAT {
                         //std::cout << i << "/" << intervals << " [" << x_from_t(c) << "] --> " << fc << std::endl;
 
                         if (fc > std::numeric_limits<double>::epsilon()) {
+#if 0
                             a = 1.0 - (float(i) + 1.0) / intervals;
                             b = 1.0 - (float(i) - 1.0) / intervals;
                             if (a == 0.0 && b == 1.0 && evaluations > 2) {
                                 //std::cout << "[2] " << i << " / " << intervals << "; " << evaluations << std::endl;
                             }
                             //std::cout << "(2) " << c << " " << intervals << std::endl;
+#else
+                            if (c < 0.5) {
+                                a = 0.0;
+                                b = 2.0 * c;
+                            } else {
+                                b = 1.0;
+                                a = 2.0 * c - 1.0;
+                            }
+                            BOOST_LOG_TRIVIAL(info) << c << " [" << a << ", " << b << "]";
+#endif
                             break;
                         }
                         p = p * 2;
@@ -654,7 +674,7 @@ namespace SLAT {
                 double fe = integrand(x_from_t(e))/(e*e);
 
         if (std::isnan(fd)) {
-//                    BOOST_LOG(IntegrationSettings::settings_logger) << "fd is NAN;  " << settings.warning_label;
+            BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fd is NAN";
 #pragma omp critical
                     nans++;
                     //DumpIntegrationStats();
@@ -665,7 +685,7 @@ namespace SLAT {
                 }
             
                 if (std::isnan(fe)) {
-//                    BOOST_LOG(IntegrationSettings::settings_logger) << "fe is NAN;  " << settings.warning_label;
+                    BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fe is NAN";
 #pragma omp critical
                     nans++;
                     //DumpIntegrationStats();

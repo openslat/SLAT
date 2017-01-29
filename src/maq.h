@@ -29,6 +29,7 @@ namespace keywords = boost::log::keywords;
 
 namespace SLAT {
     namespace Integration {
+        extern bool verbose;
         
         class IntegrationSettings
         {
