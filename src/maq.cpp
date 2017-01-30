@@ -364,24 +364,7 @@ namespace SLAT {
                     fc = f(x_from_t(c));
                     evaluations++;
 
-                    //std::cout << i << "/" << intervals << " [" << x_from_t(c) << "] --> " << fc << std::endl;
-
                     if (fc > std::numeric_limits<double>::epsilon()) {
-                        if (c < 0.5) {
-                            a = 0.0;
-                            b = 2.0 * c;
-                        } else {
-                            b = 1.0;
-                            a = 2.0 * c - 1.0;
-                        }
-                        
-                        // a = 1.0 - (float(i) + 1.0) / intervals;
-                        // b = 1.0 - (float(i) - 1.0) / intervals;
-                        // if (a == 0.0 && b == 1.0 && evaluations > 2) {
-                        //     //std::cout << "[1] " << i << " / " << intervals << "; " << evaluations << std::endl;
-                        // }
-                        // b = 1.0;
-                        // a = 2.0 * c - 1.0;
                         break;
                     }
                     long int p = 2 + 2 * k;
@@ -391,26 +374,8 @@ namespace SLAT {
                         c = 1.0 - float(i)/intervals;
                         fc = f(x_from_t(c));
                         evaluations++;
-                        //std::cout << i << "/" << intervals << " [" << x_from_t(c) << "] --> " << fc << std::endl;
 
                         if (fc > std::numeric_limits<double>::epsilon()) {
-#if 0
-                            a = 1.0 - (float(i) + 1.0) / intervals;
-                            b = 1.0 - (float(i) - 1.0) / intervals;
-                            if (a == 0.0 && b == 1.0 && evaluations > 2) {
-                                //std::cout << "[2] " << i << " / " << intervals << "; " << evaluations << std::endl;
-                            }
-                            //std::cout << "(2) " << c << " " << intervals << std::endl;
-#else
-                            if (c < 0.5) {
-                                a = 0.0;
-                                b = 2.0 * c;
-                            } else {
-                                b = 1.0;
-                                a = 2.0 * c - 1.0;
-                            }
-                            BOOST_LOG_TRIVIAL(info) << c << " [" << a << ", " << b << "]";
-#endif
                             break;
                         }
                         p = p * 2;
@@ -419,7 +384,6 @@ namespace SLAT {
                     intervals *= 2;
 
                     if (intervals * 2 == 0) {
-                        //std::cout << "........." << std::endl;
                         if (init_i == 0) {
                             init_i +=  2;
                             if (init_i > init_intervals) {
@@ -429,15 +393,15 @@ namespace SLAT {
                         intervals = init_intervals;;
                     }
                 }
-
-                if (std::isnan(fc)) {
-                    std::cout << "BREAK HERE" << std::endl;
-                    std::cout << c << std::endl;
+                if (c < 0.5) {
+                    a = 0.0;
+                    b = 2.0 * c;
+                } else {
+                    b = 1.0;
+                    a = 2.0 * c - 1.0;
                 }
 
                 if (fc <= std::numeric_limits<double>::epsilon()) {
-                    //std::cout << fc << ", " << std::numeric_limits<double>::epsilon() << ", " << evaluations << std::endl;
-                    //std::cout << "< alternate_binary_subdivision(): NAN, NAN, " << evaluations << std::endl;
                     return {NAN, NAN, evaluations};
                 }
 
