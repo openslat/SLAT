@@ -44,7 +44,6 @@ class SlatInterpreter(slatParserListener):
             raise  ValueError("Error--stack not empty: {}".format(self._stack))
         if len(self._stack_stack) > 0:
             raise ValueError("Error--stack stack not empty: {}".format(self._stack_stack))
-        print("..........")
 
     # Exit a parse tree produced by slatParser#title_command.
     def exitTitle_command(self, ctx:slatParser.Title_commandContext):
