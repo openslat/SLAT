@@ -25,6 +25,12 @@ namespace SLAT {
         ~LossFn() {};
         std::size_t n_states(void);
         const std::vector<LogNormalDist> LossFns(void);
+
+        /**
+         * Overloaded << operator for printing a LossFn to a stream. Intended
+         * for debugging.
+         */
+        friend std::ostream& operator<<(std::ostream& out, LossFn& o);
     private:
         std::vector<LogNormalDist> loss_functions;
     };

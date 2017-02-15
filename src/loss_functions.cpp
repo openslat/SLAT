@@ -33,4 +33,14 @@ namespace SLAT {
     {
         return loss_functions;
     }
+
+    std::ostream& operator<<(std::ostream& out, LossFn& o)
+    {
+        out << "LossFn: ";
+        for (size_t i=0; i < o.n_states(); i++) {
+            out << o.loss_functions[i] << "; ";
+        }
+        out << std::endl;
+        return out;
+    }
 }

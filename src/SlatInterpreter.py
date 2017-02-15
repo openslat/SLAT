@@ -1,5 +1,8 @@
 #! /usr/bin/env python3
 
+## @file
+# SLAT command language interpreter.
+
 import sys
 import io
 import re
@@ -14,42 +17,66 @@ import math
 import numpy as np
 from contextlib import redirect_stdout
 
+## Pre-process input string
+#
+#  Escape quotes.
 def preprocess_string(s):        
     return s.strip('\'"').replace('\\\"', '\"').replace('\\\'', '\'').replace('\\\\', '\\')
 
+## Interpreter class
+#
+# Based on the slatParserListener class, created by antlr.
+# @todo Explain basic operation of the parser. 
+# @todo Separately, document how to modify the SLAT language
 class SlatInterpreter(slatParserListener):
+    ## @var _stack
+    #  Stack to deal with nested lists
+    #  @todo Improve comments about stack.
+
+    ## @var _variables
+    #  A dictionary of variables defined by the user.
+    
+    ## @var _title
+    # A list of strings provided by the 'title' command.
+
+    ## Constructor
+    #  Call parent constructor, and clear local variables.
     def __init__(self):
         super().__init__()
         self._stack = []
         self._stack_stack = []
         self._variables = dict()
         self._title = []
+
+    ## Push a value onto the local stack.
     def _push_stack(self):
         self._stack_stack.append(self._stack)
         self._stack = []
 
+    ## Pop a value from the local stack.
+    #  @return The value that *was* on top of the stack.
     def _pop_stack(self):
         result = self._stack
         self._stack = self._stack_stack.pop()
         return result
-        
-    # Enter a parse tree produced by slatParser#command.
+
+    ## Enter a parse tree produced by slatParser#command.
     def enterCommand(self, ctx:slatParser.CommandContext):
         self._stack = []
         print(ctx.getText())
     
-    # Exit a parse tree produced by slatParser#command.
+    ## Exit a parse tree produced by slatParser#command.
     def exitCommand(self, ctx:slatParser.CommandContext):
         if len(self._stack) > 0:
             raise  ValueError("Error--stack not empty: {}".format(self._stack))
         if len(self._stack_stack) > 0:
             raise ValueError("Error--stack stack not empty: {}".format(self._stack_stack))
 
-    # Exit a parse tree produced by slatParser#title_command.
+    ## Exit a parse tree produced by slatParser#title_command.
     def exitTitle_command(self, ctx:slatParser.Title_commandContext):
         self._title.append(preprocess_string(ctx.STRING().getText()))
 
-    # Exit a parse tree produced by slatParser#detfn_command.
+    ## Exit a parse tree produced by slatParser#detfn_command.
     def exitDetfn_command(self, ctx:slatParser.Detfn_commandContext):
         if ctx.powerlaw_args():
             type = "power law"
@@ -74,9 +101,11 @@ class SlatInterpreter(slatParserListener):
         else:
             pyslat.detfn(id, type, value)
 
+    ## Enter a parse tree produced by slatParser#loglog
     def enterLoglog_args(self, ctx:slatParser.Loglog_argsContext):
         self._push_stack()
 
+    ## Exit a parse tree produced by slatParser#loglog
     def exitLoglog_args(self, ctx:slatParser.Loglog_argsContext):
         values = self._pop_stack()
         # Put x and y values into separate lists:
@@ -87,7 +116,7 @@ class SlatInterpreter(slatParserListener):
             y_values.append(pair[1])
         self._stack.append([x_values, y_values])
 
-    # Exit a parse tree produced by slatParser#scalar.
+    ## Exit a parse tree produced by slatParser#scalar.
     def exitScalar(self, ctx:slatParser.ScalarContext):
         if ctx.STRING():
             value = preprocess_string(ctx.STRING().getText())
@@ -95,26 +124,26 @@ class SlatInterpreter(slatParserListener):
             value = self._stack.pop()
         self._stack.append(value)
 
-    # Exit a parse tree produced by slatParser#scalar2.
+    ## Exit a parse tree produced by slatParser#scalar2.
     def exitScalar2(self, ctx:slatParser.Scalar2Context):
         value2 = self._stack.pop()
         value1 = self._stack.pop()
         self._stack.append([value1, value2])
 
-    # Exit a parse tree produced by slatParser#scalar3.
+    ## Exit a parse tree produced by slatParser#scalar3.
     def exitScalar3(self, ctx:slatParser.Scalar3Context):
         value3 = self._stack.pop()
         scalar2 = self._stack.pop()
         scalar2.append(value3)
         self._stack.append(scalar2)
         
-    # Exit a parse tree produced by slatParser#var_ref.
+    ## Exit a parse tree produced by slatParser#var_ref.
     def exitVar_ref(self, ctx:slatParser.Var_refContext):
         variable = ctx.ID().getText()
         value = self._variables.get(variable)
         self._stack.append(value)
 
-    # Exit a parse tree produced by slatParser#numerical_scalar.
+    ## Exit a parse tree produced by slatParser#numerical_scalar.
     def exitNumerical_scalar(self, ctx:slatParser.Numerical_scalarContext):
         if ctx.INTEGER():
             value = int(ctx.INTEGER().getText())
@@ -126,7 +155,7 @@ class SlatInterpreter(slatParserListener):
             raise ValueError("Unhandled type of numerical scalar")
         self._stack.append(value)
 
-    # Exit a parse tree produced by slatParser#parameter.
+    ## Exit a parse tree produced by slatParser#parameter.
     def exitParameter(self, ctx:slatParser.ParameterContext):
         if ctx.ID():
             value = ctx.ID().getText()
@@ -140,20 +169,20 @@ class SlatInterpreter(slatParserListener):
             raise ValueError("Unhandled Parameter type")
         self._stack.append(value)
 
-    # Enter a parse tree produced by slatParser#parameter_array.
+    ## Enter a parse tree produced by slatParser#parameter_array.
     def enterParameter_array(self, ctx:slatParser.Parameter_arrayContext):
         self._push_stack()
 
-    # Exit a parse tree produced by slatParser#parameter_array.
+    ## Exit a parse tree produced by slatParser#parameter_array.
     def exitParameter_array(self, ctx:slatParser.Parameter_arrayContext):
         values = self._pop_stack()
         self._stack.append(values)
 
-    # Enter a parse tree produced by slatParser#parameter_dictionary.
+    ## Enter a parse tree produced by slatParser#parameter_dictionary.
     def enterParameter_dictionary(self, ctx:slatParser.Parameter_dictionaryContext):
         self._push_stack()
 
-    # Exit a parse tree produced by slatParser#parameter_dictionary.
+    ## Exit a parse tree produced by slatParser#parameter_dictionary.
     def exitParameter_dictionary(self, ctx:slatParser.Parameter_dictionaryContext):
         values = dict()
         for value in self._stack:
@@ -161,13 +190,13 @@ class SlatInterpreter(slatParserListener):
         self._pop_stack()
         self._stack.append(values)
 
-    # Exit a parse tree produced by slatParser#dictionary_entry.
+    ## Exit a parse tree produced by slatParser#dictionary_entry.
     def exitDictionary_entry(self, ctx:slatParser.Dictionary_entryContext):
         key = (ctx.ID() or preprocess_string(ctx.STRING()).getText())
         value = self._stack.pop()
         self._stack.append([key, value])
 
-    # Exit a parse tree produced by slatParser#probfn_command.
+    ## Exit a parse tree produced by slatParser#probfn_command.
     def exitProbfn_command(self, ctx:slatParser.Probfn_commandContext):
         id = ctx.ID().getText()
         refs = ctx.function_ref()
@@ -179,7 +208,7 @@ class SlatInterpreter(slatParserListener):
 
         pyslat.probfn(id, 'lognormal', [mu, pyslat.detfn.lookup(mufn)], [sd, pyslat.detfn.lookup(sigmafn)])
 
-    # Exit a parse tree produced by slatParser#im_command.
+    ## Exit a parse tree produced by slatParser#im_command.
     def exitIm_command(self, ctx:slatParser.Im_commandContext):
         im_id = ctx.ID(0).getText()
         fn_id = ctx.ID(1).getText()
@@ -205,14 +234,14 @@ class SlatInterpreter(slatParserListener):
         dist = pyslat.MakeLogNormalDist(mu, options['mu'], sd, options['sd'])
         pyslat.im.lookup(id).SetDemolition(dist)
 
-    # Exit a parse tree produced by slatParser#edp_command.
+    ## Exit a parse tree produced by slatParser#edp_command.
     def exitEdp_command(self, ctx:slatParser.Edp_commandContext):
         edp_id = ctx.ID(0).getText()
         im_id = ctx.ID(1).getText()
         fn_id = ctx.ID(2).getText()
         pyslat.edp(edp_id, pyslat.im.lookup(im_id), pyslat.probfn.lookup(fn_id))
 
-    # Exit a parse tree produced by slatParser#fragfn_command.
+    ## Exit a parse tree produced by slatParser#fragfn_command.
     def exitFragfn_command(self, ctx:slatParser.Fragfn_commandContext):
         id = ctx.ID().getText()
         db_params = ctx.fragfn_db_params()
@@ -226,7 +255,7 @@ class SlatInterpreter(slatParserListener):
 
             pyslat.fragfn_user(id, options, scalars)
 
-    # Exit a parse tree produced by slatParser#fragfn_db_params.
+    ## Exit a parse tree produced by slatParser#fragfn_db_params.
     def exitFragfn_db_params(self, ctx:slatParser.Fragfn_db_paramsContext):
         dbkey = ctx.db_key().ID().getText().strip('\'"')
         
@@ -236,7 +265,7 @@ class SlatInterpreter(slatParserListener):
             dbfile = "(default database)"
         self._stack.append({'key': dbkey, 'database': dbfile})
 
-    # Exit a parse tree produced by slatParser#lognormal_options.
+    ## Exit a parse tree produced by slatParser#lognormal_options.
     def exitLognormal_options(self, ctx:slatParser.Lognormal_optionsContext):
         if ctx.mu_option():
             if ctx.mu_option().MEAN_LN_X():
@@ -268,7 +297,7 @@ class SlatInterpreter(slatParserListener):
             
         self._stack.append({"mu": mu, "sd":sd})
 
-    # Exit a parse tree produced by slatParser#lossfn_command.
+    ## Exit a parse tree produced by slatParser#lossfn_command.
     def exitLossfn_command(self, ctx:slatParser.Lossfn_commandContext):
         id = ctx.ID().getText()
         if ctx.simple_loss_command():
@@ -278,16 +307,16 @@ class SlatInterpreter(slatParserListener):
         else:
             raise ValueError("Unhanlded type of lossfn")
 
-    # Enter a parse tree produced by slatParser#scalar2_sequence.
+    ## Enter a parse tree produced by slatParser#scalar2_sequence.
     def enterScalar2_sequence(self, ctx:slatParser.Scalar2_sequenceContext):
         self._push_stack()
 
-    # Exit a parse tree produced by slatParser#scalar2_sequence.
+    ## Exit a parse tree produced by slatParser#scalar2_sequence.
     def exitScalar2_sequence(self, ctx:slatParser.Scalar2_sequenceContext):
         values = self._pop_stack()
         self._stack.append(values)
 
-    # Exit a parse tree produced by slatParser#compgroup_command.
+    ## Exit a parse tree produced by slatParser#compgroup_command.
     def exitCompgroup_command(self, ctx:slatParser.Compgroup_commandContext):
         print(" > exitCompgroup_command()")
         compgroup_id = ctx.group_id().getText()
@@ -303,6 +332,7 @@ class SlatInterpreter(slatParserListener):
                          delay_id and pyslat.lossfn.lookup(delay_id),
                          count)
 
+    ## Exit a parse tree prodcued by slatParser#structure_command.
     def exitStructure_command(self, ctx:slatParser.Structure_commandContext):
         id = ctx.ID().getText();
         s = pyslat.structure(id)
@@ -312,6 +342,7 @@ class SlatInterpreter(slatParserListener):
             s.AddCompGroup(pyslat.compgroup.lookup(g.getText()))
         print("Create structure {} from {}.".format(id, groups));
         
+    ## Exit a parse tree prodcued by slatParser#rebuild_cost_command.
     def exitRebuildcost_command(self, ctx:slatParser.Rebuildcost_commandContext):
         id = ctx.ID().getText()
         options = self._stack.pop()
@@ -329,7 +360,7 @@ class SlatInterpreter(slatParserListener):
         pyslat.structure.lookup(id).setDemolitionCost(pyslat.MakeLogNormalDist(mu, options['mu'], sd, options['sd']))
         
     
-    # Exit a parse tree produced by slatParser#print_command.
+    ## Exit a parse tree produced by slatParser#print_command.
     def exitPrint_command(self, ctx:slatParser.Print_commandContext):
         if ctx.print_options():
             options = self._stack.pop()
@@ -378,7 +409,7 @@ class SlatInterpreter(slatParserListener):
         else:
             print(message)
 
-    # Exit a parse tree produced by slatParser#print_message.
+    ## Exit a parse tree produced by slatParser#print_message.
     def exitPrint_message(self, ctx:slatParser.Print_messageContext):
         if ctx.python_script():
             object = self._stack.pop()
@@ -391,7 +422,7 @@ class SlatInterpreter(slatParserListener):
         self._stack.append(object)
 
         
-    # Exit a parse tree produced by slatParser#print_options.
+    ## Exit a parse tree produced by slatParser#print_options.
     def exitPrint_options(self, ctx:slatParser.Print_optionsContext):
         options = dict()
         if ctx.file_spec():
@@ -406,7 +437,7 @@ class SlatInterpreter(slatParserListener):
 
         self._stack.append(options)
 
-    # Exit a parse tree produced by slatParser#integration_command.
+    ## Exit a parse tree produced by slatParser#integration_command.
     def exitIntegration_command(self, ctx:slatParser.Integration_commandContext):
         method = ctx.integration_method()
         if method.MAQ():
@@ -422,7 +453,7 @@ class SlatInterpreter(slatParserListener):
         # TODO: Implement choice of methods
         pyslat.IntegrationSettings(precision, iterations);
 
-    # Exit a parse tree produced by slatParser#recorder_command.
+    ## Exit a parse tree produced by slatParser#recorder_command.
     def exitRecorder_command(self, ctx:slatParser.Recorder_commandContext):
         recorder_id = ctx.recorder_id().getText()
 
@@ -525,7 +556,7 @@ class SlatInterpreter(slatParserListener):
 
         pyslat.MakeRecorder(recorder_id, type, function, options, cols, at)
 
-    # Exit a parse tree produced by slatParser#recorder_at.
+    ## Exit a parse tree produced by slatParser#recorder_at.
     def exitRecorder_at(self, ctx:slatParser.Recorder_atContext):
         if ctx.FLOAT_VAL():
             floats = ctx.FLOAT_VAL()
@@ -551,7 +582,7 @@ class SlatInterpreter(slatParserListener):
             raise ValueError("Must specify --log or --linear")
         
         
-    # Exit a parse tree produced by slatParser#float_array.
+    ## Exit a parse tree produced by slatParser#float_array.
     def exitFloat_array(self, ctx:slatParser.Float_arrayContext):
         vals = []
         floats = ctx.FLOAT_VAL()
@@ -559,7 +590,7 @@ class SlatInterpreter(slatParserListener):
             vals.append(float(f.getText()))
         self._stack.append(vals)
 
-    # Exit a parse tree produced by slatParser#col_spec.
+    ## Exit a parse tree produced by slatParser#col_spec.
     def exitCol_spec(self, ctx:slatParser.Col_specContext):
         if ctx.placement_type():
             self._stack.append(ctx.placement_type().getText())
@@ -567,16 +598,16 @@ class SlatInterpreter(slatParserListener):
             self._stack.append(ctx.spread_type().getText())
         # else scalar is already on the stack
 
-    # Enter a parse tree produced by slatParser#recorder_cols.
+    ## Enter a parse tree produced by slatParser#recorder_cols.
     def enterRecorder_cols(self, ctx:slatParser.Recorder_colsContext):
         self._push_stack()
 
-    # Exit a parse tree produced by slatParser#recorder_cols.
+    ## Exit a parse tree produced by slatParser#recorder_cols.
     def exitRecorder_cols(self, ctx:slatParser.Recorder_colsContext):
         values = self._pop_stack()
         self._stack.append(values)
 
-    # Exit a parse tree produced by slatParser#python_script.
+    ## Exit a parse tree produced by slatParser#python_script.
     def exitPython_script(self, ctx:slatParser.Python_scriptContext):
         expression =  ctx.python_expression().getText()
         value = eval(expression, {"__builtins__": {}}, {"math":math, "numpy": np, "list":list, "map": map, "pyslat": pyslat})
@@ -584,14 +615,14 @@ class SlatInterpreter(slatParserListener):
         self._stack.append(value)
         #print(self._stack)
 
-    # Exit a parse tree produced by slatParser#analyze_command.
+    ## Exit a parse tree produced by slatParser#analyze_command.
     def exitAnalyze_command(self, ctx:slatParser.Analyze_commandContext):
         print("Perform analysis:")
         for rec in pyslat.recorder.all():
             print(rec)
             rec.run()
 
-    # Exit a parse tree produced by slatParser#set_command.
+    ## Exit a parse tree produced by slatParser#set_command.
     def exitSet_command(self, ctx:slatParser.Set_commandContext):
         id = ctx.ID().getText()
         value = self._stack.pop()

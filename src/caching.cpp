@@ -27,7 +27,7 @@ namespace SLAT {
              */
             omp_lock_t lock;
 
-            /*
+            /**
              * This is called from every Cached...<> constructor, to ensure the
              * lock is initialised before use. Only the first call will have any
              * effect.

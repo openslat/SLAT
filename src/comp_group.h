@@ -80,7 +80,14 @@ namespace SLAT {
          */
         Integration::IntegrationSettings local_settings;
 
+        /**
+         * Return the integration settings used by the class.
+         */
         Integration::IntegrationSettings &Get_Class_Integration_Settings(void);
+
+        /**
+         * Return the integration settings used by this object.
+         */
         Integration::IntegrationSettings &Get_Integration_Settings(void);
 
         /*
@@ -195,10 +202,35 @@ namespace SLAT {
         /*
          * Access functions
          */
+        /**
+         * Retrieve the fragility function of the component group.
+         * @return The FragilityFn.
+         */
         std::shared_ptr<FragilityFn> FragFn(void);
+
+        /**
+         * Retrieve eh intensity measure that affects the component group.
+         * @return The IM.
+         */
         std::shared_ptr<IM> getIM(void) { return edp->Base_Rate(); };
+
+        /**
+         * Retrieve the demand parameter that effects the component group.
+         * @return The EDP.
+         */
         std::shared_ptr<EDP> get_EDP(void) { return edp; };
+
+        /**
+         * Retrieve the fragility function of the component group.
+         * @return The FragilityFn.
+         * @todo Is this redundant, given FragFn()?
+         */
         std::shared_ptr<FragilityFn> get_Fragility(void) { return frag_fn; };
+
+        /**
+         * Retrive the string identifying the component group.
+         * @return The name string.
+         */
         std::string get_Name(void) const { return name; };
 
         /**
@@ -208,11 +240,36 @@ namespace SLAT {
         friend std::ostream& operator<<(std::ostream& out, const CompGroup& o);
 
     private:
+        /** 
+         * A string identifying the object; used in debugging, warning, and
+         * error messages.
+         */
         std::string name;
+
+        /**
+         * The EDP affecting this component group.
+         */
         std::shared_ptr<EDP> edp;
+
+        /**
+         * The fragility function, describing the likelihood of each damage 
+         * state based on the engineering demand.
+         */
         std::shared_ptr<FragilityFn> frag_fn;
+
+        /**
+         * A loss function describing the cost of repair for each damage state.
+         */
         std::shared_ptr<LossFn> cost_fn;
+
+        /**
+         * A loss function describing the delay incurred by each damage state.
+         */
         std::shared_ptr<LossFn> delay_fn;
+
+        /**
+         * The number of components in the group.
+         */
         int count;
 
         /**

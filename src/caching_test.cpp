@@ -18,7 +18,7 @@
 using namespace std;
 using namespace SLAT;
 
-/*
+/**
  * Check that function values are actually cached.
  */
 BOOST_AUTO_TEST_CASE(Cached_Function_Caching)
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(Cached_Function_Caching)
     BOOST_CHECK_EQUAL(f(2.0), 1);
 }
 
-/*
+/**
  * Clearing a cache will cause values to be re-calculated when requested.
  */
 BOOST_AUTO_TEST_CASE(Cached_Function_ClearCache)

@@ -29,6 +29,12 @@ namespace SLAT {
         const std::vector<LogNormalDist> DamageStates(void) {
             return damage_states;
         };
+
+        /**
+         * Overloaded << operator for printing a FragilityFn to a stream. Intended
+         * for debugging.
+         */
+        friend std::ostream& operator<<(std::ostream& out, FragilityFn& o);
     private:
         omp_lock_t lock;
         std::vector<LogNormalDist> damage_states;

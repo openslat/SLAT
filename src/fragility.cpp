@@ -71,4 +71,14 @@ namespace SLAT {
         }
         return result;
     }
+
+    std::ostream& operator<<(std::ostream& out, FragilityFn& o)
+    {
+        out << "FragilityFn: ";
+        for (size_t i=0; i < o.n_states(); i++) {
+            out << o.damage_states[i] << "; ";
+        }
+        out << std::endl;
+        return out;
+    }
 }

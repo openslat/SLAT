@@ -1,3 +1,6 @@
+##@file
+# Python interface to the C++ libslat library.
+
 ##@package pyslat
 #@brief libslat interface.
 #

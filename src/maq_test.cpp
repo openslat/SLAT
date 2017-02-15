@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
         }, local_settings);
     BOOST_REQUIRE(!result.successful);
     BOOST_REQUIRE(result.evaluations >= 3);
-    BOOST_CHECK(isnan(result.integral));
+    BOOST_CHECK(std::isnan(result.integral));
 
     result = MAQ([] (double x) -> double {
             return gsl_ran_lognormal_pdf(x, log(1), 1);
@@ -279,14 +279,14 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
         });
     BOOST_REQUIRE(!result.successful);
     BOOST_REQUIRE(result.evaluations >= 3);
-    BOOST_CHECK(isnan(result.integral));
+    BOOST_CHECK(std::isnan(result.integral));
 
     result = MAQ([] (double x) -> double {
             return gsl_ran_lognormal_pdf(x, log(1), 1);
         }, local_settings);
     BOOST_REQUIRE(!result.successful);
     BOOST_REQUIRE(result.evaluations >= 3);
-    BOOST_CHECK(isnan(result.integral));
+    BOOST_CHECK(std::isnan(result.integral));
 
     /*
      * Override again; local_settings should succeed, and defaults fail:
@@ -304,7 +304,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
         });
     BOOST_REQUIRE(!result.successful);
     BOOST_REQUIRE(result.evaluations >= 3);
-    BOOST_CHECK(isnan(result.integral));
+    BOOST_CHECK(std::isnan(result.integral));
 
     /*
      * Set the default tolerance too tight, and the integration will fail, but 
@@ -318,7 +318,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
     BOOST_REQUIRE(!result.successful);
     BOOST_REQUIRE(result.evaluations >= 
                   IntegrationSettings::Get_Global_Settings()->Get_Effective_Max_Evals());
-    BOOST_CHECK(isnan(result.integral));
+    BOOST_CHECK(std::isnan(result.integral));
 
     /*
      * Using the defaults, local settings should also fail:
@@ -331,7 +331,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
     BOOST_REQUIRE(!result.successful);
     BOOST_REQUIRE(result.evaluations >= 
                   IntegrationSettings::Get_Global_Settings()->Get_Effective_Max_Evals());
-    BOOST_CHECK(isnan(result.integral));
+    BOOST_CHECK(std::isnan(result.integral));
 
     /*
      * Override the local settings, and it should succeed, while the defaults
@@ -351,7 +351,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
     BOOST_REQUIRE(!result.successful);
     BOOST_REQUIRE(result.evaluations >= 
                   IntegrationSettings::Get_Global_Settings()->Get_Effective_Max_Evals());
-    BOOST_CHECK(isnan(result.integral));
+    BOOST_CHECK(std::isnan(result.integral));
 
     /*
      * Change local_settings to use only 40 evaluations. The integration will
@@ -363,7 +363,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
         }, local_settings);
     BOOST_REQUIRE(!result.successful);
     BOOST_REQUIRE(result.evaluations >= 40);
-    BOOST_CHECK(isnan(result.integral));
+    BOOST_CHECK(std::isnan(result.integral));
 
     /*
      * If we keep the same limit, but lower the required accuracy, the
