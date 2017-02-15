@@ -418,6 +418,10 @@ namespace SLAT {
         };
     }
 
+    /**
+     * Retrieve the fragility function of the component group.
+     * @return The FragilityFn.
+     */
     std::shared_ptr<FragilityFn> CompGroup::FragFn(void)
     {
         return frag_fn;
@@ -507,10 +511,10 @@ namespace SLAT {
     {
         out << "CompGroup " << o.get_Name() 
             << ": " << o.count 
-            << ", " << o.edp
-            << ", " << o.frag_fn
-            << ", " << o.cost_fn
-            << ", " << o.delay_fn
+            << ", " << *(o.edp)
+            << ", " << *(o.frag_fn)
+            << ", " << *(o.cost_fn)
+            << ", " << *(o.delay_fn)
             << std::endl;
         return out;
     }

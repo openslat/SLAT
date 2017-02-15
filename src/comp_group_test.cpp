@@ -17,53 +17,88 @@
 using namespace std;
 using namespace SLAT;
 
-/*
+/// Macro to save space.
+#define from_mean_X_and_sigma_lnX(m, s)                                 \
+    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX((m), (s))
+
+/**
+ * Common compononent group defintion for tests
+ */
+struct fixture {
+    shared_ptr<IM> im_rate_rel;
+    shared_ptr<CompGroup>  component_group_no_delay;
+    shared_ptr<CompGroup>  component_group_no_cost;
+    shared_ptr<CompGroup>  component_group;
+    shared_ptr<DeterministicFn> mu_edp;
+    shared_ptr<DeterministicFn> sigma_edp;
+
+    fixture() {
+        /*
+         * Prerequisites for the test component group:
+         */
+        /*
+         * Describe the IM rate of exceedence, and use it
+         * to create an IM relationship:
+         */
+        shared_ptr<DeterministicFn> im_rate_function(
+            new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
+        im_rate_rel = make_shared<IM>(im_rate_function);    
+        /*
+         * Create functions describing the behaviour of mu and sigma
+         * of an EDP; create the corresponding probabilistic function
+         * and define the EDP-IM relation:
+         */
+        mu_edp = make_shared<PowerLawParametricCurve>(0.1, 1.5);
+        sigma_edp = make_shared<PowerLawParametricCurve>(0.5, 0.0);
+        shared_ptr<ProbabilisticFn> edp_im_relationship(
+            new LogNormalFn(mu_edp, LogNormalFn::MEAN_X,
+                            sigma_edp, LogNormalFn::SIGMA_LN_X));
+        std::shared_ptr<EDP> rel(new EDP(im_rate_rel, edp_im_relationship));
+
+        /*
+         * Define fragility, cost, and delay functions for the component group:
+         */
+        /**
+         * @todo Use LogNormalDist namespace to shorten lines?
+         */
+        std::shared_ptr<FragilityFn> fragFn(
+            new FragilityFn( {
+                    from_mean_X_and_sigma_lnX(0.0062, 0.4),
+                        from_mean_X_and_sigma_lnX(0.0230, 0.4),
+                        from_mean_X_and_sigma_lnX(0.0440, 0.4),
+                        from_mean_X_and_sigma_lnX(0.0564, 0.4)}));
+        std::shared_ptr<LossFn> costFn(new LossFn( {
+                    from_mean_X_and_sigma_lnX(0.03, 0.4),
+                        from_mean_X_and_sigma_lnX(0.08, 0.4),
+                        from_mean_X_and_sigma_lnX(0.25, 0.4),
+                        from_mean_X_and_sigma_lnX(1.00, 0.4)}));
+    
+        std::shared_ptr<LossFn> delayFn(new LossFn( {
+                    from_mean_X_and_sigma_lnX(1.50, 0.20),
+                        from_mean_X_and_sigma_lnX(3.75, 0.25), 
+                        from_mean_X_and_sigma_lnX(10.0, 0.30),
+                        from_mean_X_and_sigma_lnX(23.0, 0.35)}));
+
+        /*
+         * Create component groups with just cost, just delay, and both:
+         */
+        component_group_no_delay = make_shared<CompGroup>(rel, fragFn, costFn, shared_ptr<LossFn>(), 1);
+        component_group_no_cost = make_shared<CompGroup>(rel, fragFn, shared_ptr<LossFn>(), delayFn, 1);
+        component_group = make_shared<CompGroup>(rel, fragFn, costFn, delayFn, 1);
+    };
+
+    ~fixture() {
+    };
+};
+
+/**
  * Test EDP-Cost and EDP-Delay relationships
  */
-BOOST_AUTO_TEST_CASE(comp_group_edp_test)
+BOOST_FIXTURE_TEST_CASE(comp_group_edp_test, fixture)
 {
-    /*
-     * Prerequisites for the test component group:
-     */
-    shared_ptr<DeterministicFn> im_rate_function(new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
-    shared_ptr<IM> im_rate_rel( new IM(im_rate_function));
-    
-    shared_ptr<DeterministicFn> mu_edp(
-        new PowerLawParametricCurve(0.1, 1.5));
-    shared_ptr<DeterministicFn> sigma_edp(
-        new PowerLawParametricCurve(0.5, 0.0));
-    shared_ptr<ProbabilisticFn> edp_im_relationship(
-        new LogNormalFn(mu_edp, LogNormalFn::MEAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X));
-
-    std::shared_ptr<EDP> rel(new EDP(im_rate_rel, edp_im_relationship));
-    
-    std::shared_ptr<FragilityFn> fragFn(new FragilityFn(
-                                            { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
-                                                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
-                                                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
-                                                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)}));
-    std::shared_ptr<LossFn> costFn(new LossFn(
-                                       { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
-                                               LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
-                                               LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
-                                               LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
-    
-    std::shared_ptr<LossFn> delayFn(new LossFn(
-                                        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.50, 0.20),
-                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(3.75, 0.25), 
-                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(10.0, 0.30),
-                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(23.0, 0.35)}));
-
-    /*
-     * Create component groups with just cost, just delay, and both:
-     */
-    CompGroup  component_group_no_delay(rel, fragFn, costFn, NULL, 1);
-    CompGroup  component_group_no_cost(rel, fragFn, NULL, delayFn, 1);
-    CompGroup  component_group(rel, fragFn, costFn, delayFn, 1);
-
-    
-    /*
+    /**
      * Test data, generated from R.
+     * @todo Include R code in git repo.
      */
     const struct { double edp, mu_loss, sd_loss, mu_delay, sd_delay; } test_data[] = {
         { 0.001, 1.93873040272997e-07, 3.47987132394903, 9.6936520552257e-06,  3.46258637879091 },
@@ -178,25 +213,25 @@ BOOST_AUTO_TEST_CASE(comp_group_edp_test)
          * distribution against test data.
          */
         if (std::abs(test_data[i].mu_loss) < 1E-10) {
-            BOOST_CHECK_SMALL(component_group.E_cost_EDP(test_data[i].edp), 1E-10);
+            BOOST_CHECK_SMALL(component_group->E_cost_EDP(test_data[i].edp), 1E-10);
         } else {
-            BOOST_CHECK_CLOSE(component_group.E_cost_EDP(test_data[i].edp), 
+            BOOST_CHECK_CLOSE(component_group->E_cost_EDP(test_data[i].edp), 
                               test_data[i].mu_loss,
                               0.1);
         }
 
         if (std::abs(test_data[i].sd_loss) < 1E-6) {
-            BOOST_CHECK_SMALL(component_group.SD_ln_cost_EDP(test_data[i].edp), 1E-6);
+            BOOST_CHECK_SMALL(component_group->SD_ln_cost_EDP(test_data[i].edp), 1E-6);
         } else {
-            BOOST_CHECK_CLOSE(component_group.SD_ln_cost_EDP(test_data[i].edp), 
+            BOOST_CHECK_CLOSE(component_group->SD_ln_cost_EDP(test_data[i].edp), 
                               test_data[i].sd_loss,
                               0.5);
         }
 
-        BOOST_CHECK_CLOSE(component_group.E_delay_EDP(test_data[i].edp), 
+        BOOST_CHECK_CLOSE(component_group->E_delay_EDP(test_data[i].edp), 
                           test_data[i].mu_delay,
                           0.1);
-        BOOST_CHECK_CLOSE(component_group.SD_ln_delay_EDP(test_data[i].edp), 
+        BOOST_CHECK_CLOSE(component_group->SD_ln_delay_EDP(test_data[i].edp), 
                           test_data[i].sd_delay,
                           0.5);
 
@@ -205,70 +240,32 @@ BOOST_AUTO_TEST_CASE(comp_group_edp_test)
          * methods should return NAN, and the "delay" methods should agree with
          * the full component group.
          */
-        BOOST_CHECK(std::isnan(component_group_no_cost.E_cost_EDP(test_data[i].edp)));
-        BOOST_CHECK(std::isnan(component_group_no_cost.E_cost_EDP(test_data[i].edp)));
-        BOOST_CHECK_EQUAL(component_group.E_delay_EDP(test_data[i].edp), 
-                          component_group_no_cost.E_delay_EDP(test_data[i].edp));
-        BOOST_CHECK_EQUAL(component_group.SD_ln_delay_EDP(test_data[i].edp), 
-                          component_group_no_cost.SD_ln_delay_EDP(test_data[i].edp));
+        BOOST_CHECK(std::isnan(component_group_no_cost->E_cost_EDP(test_data[i].edp)));
+        BOOST_CHECK(std::isnan(component_group_no_cost->E_cost_EDP(test_data[i].edp)));
+        BOOST_CHECK_EQUAL(component_group->E_delay_EDP(test_data[i].edp), 
+                          component_group_no_cost->E_delay_EDP(test_data[i].edp));
+        BOOST_CHECK_EQUAL(component_group->SD_ln_delay_EDP(test_data[i].edp), 
+                          component_group_no_cost->SD_ln_delay_EDP(test_data[i].edp));
 
         /*
          * Tests for the component group with no delay function. The "delay"
          * methods should return NAN, and the "cost" methods should agree with
          * the full component group.
          */
-        BOOST_CHECK_EQUAL(component_group.E_cost_EDP(test_data[i].edp), 
-                          component_group_no_delay.E_cost_EDP(test_data[i].edp));
-        BOOST_CHECK_EQUAL(component_group.SD_ln_cost_EDP(test_data[i].edp), 
-                          component_group_no_delay.SD_ln_cost_EDP(test_data[i].edp));
-        BOOST_CHECK(std::isnan(component_group_no_delay.E_delay_EDP(test_data[i].edp)));
-        BOOST_CHECK(std::isnan(component_group_no_delay.E_delay_EDP(test_data[i].edp)));
+        BOOST_CHECK_EQUAL(component_group->E_cost_EDP(test_data[i].edp), 
+                          component_group_no_delay->E_cost_EDP(test_data[i].edp));
+        BOOST_CHECK_EQUAL(component_group->SD_ln_cost_EDP(test_data[i].edp), 
+                          component_group_no_delay->SD_ln_cost_EDP(test_data[i].edp));
+        BOOST_CHECK(std::isnan(component_group_no_delay->E_delay_EDP(test_data[i].edp)));
+        BOOST_CHECK(std::isnan(component_group_no_delay->E_delay_EDP(test_data[i].edp)));
     }
 }
 
 /*
  * Test IM-Cost and IM-Delay relationships
  */
-BOOST_AUTO_TEST_CASE(comp_group_im_test)
+BOOST_FIXTURE_TEST_CASE(comp_group_im_test, fixture)
 {
-    /*
-     * Prerequisites for the test component group:
-     */
-    shared_ptr<DeterministicFn> im_rate_function(new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
-    shared_ptr<IM> im_rate_rel( new IM(im_rate_function));
-    
-    shared_ptr<DeterministicFn> mu_edp(
-        new PowerLawParametricCurve(0.1, 1.5));
-    shared_ptr<DeterministicFn> sigma_edp(
-        new PowerLawParametricCurve(0.5, 0.0));
-    shared_ptr<ProbabilisticFn> edp_im_relationship(
-        new LogNormalFn(mu_edp, LogNormalFn::MEAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X));
-
-    std::shared_ptr<EDP> rel(new EDP(im_rate_rel, edp_im_relationship));
-
-    std::shared_ptr<FragilityFn> fragFn(new FragilityFn(
-                                            { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
-                                                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
-                                                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
-                                                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)}));
-    std::shared_ptr<LossFn> costFn(new LossFn(
-                                       { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
-                                               LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
-                                               LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
-                                               LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
-    
-    std::shared_ptr<LossFn> delayFn(new LossFn(
-                                        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.50, 0.20),
-                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(3.75, 0.25), 
-                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(10.0, 0.30),
-                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(23.0, 0.35)}));
-
-    /*
-     * Create component group for testing:
-     */
-    CompGroup  component_group(rel, fragFn, costFn, delayFn, 1);
-
-
     /*
      * Test data, generated by R:
      */
@@ -380,40 +377,40 @@ BOOST_AUTO_TEST_CASE(comp_group_im_test)
      */
     for (size_t i=0; i < sizeof(im_test_data)/sizeof(im_test_data[0]); i++) {
         if (std::abs(im_test_data[i].mu_cost) < 1E-20) {
-            BOOST_CHECK_SMALL(component_group.E_cost_IM(im_test_data[i].im), 1E-20);
+            BOOST_CHECK_SMALL(component_group->E_cost_IM(im_test_data[i].im), 1E-20);
         } else {
-            BOOST_CHECK_CLOSE(component_group.E_cost_IM(im_test_data[i].im), 
+            BOOST_CHECK_CLOSE(component_group->E_cost_IM(im_test_data[i].im), 
                               im_test_data[i].mu_cost,
                               0.5);
         }
 
         if (std::abs(im_test_data[i].sd_cost) < 1E-6) {
-            BOOST_CHECK_SMALL(component_group.SD_ln_cost_IM(im_test_data[i].im), 1E-6);
+            BOOST_CHECK_SMALL(component_group->SD_ln_cost_IM(im_test_data[i].im), 1E-6);
         } else {
-            BOOST_CHECK_CLOSE(component_group.SD_ln_cost_IM(im_test_data[i].im), 
+            BOOST_CHECK_CLOSE(component_group->SD_ln_cost_IM(im_test_data[i].im), 
                               im_test_data[i].sd_cost,
                               1);
         }
 
         if (std::abs(im_test_data[i].mu_delay) < 1E-20) {
-            BOOST_CHECK_SMALL(component_group.E_delay_IM(im_test_data[i].im), 1E-20);
+            BOOST_CHECK_SMALL(component_group->E_delay_IM(im_test_data[i].im), 1E-20);
         } else {
-            BOOST_CHECK_CLOSE(component_group.E_delay_IM(im_test_data[i].im), 
+            BOOST_CHECK_CLOSE(component_group->E_delay_IM(im_test_data[i].im), 
                               im_test_data[i].mu_delay,
                               0.5);
         }
 
         if (std::abs(im_test_data[i].sd_delay) < 1E-6) {
-            BOOST_CHECK_SMALL(component_group.SD_ln_delay_IM(im_test_data[i].im), 1E-6);
+            BOOST_CHECK_SMALL(component_group->SD_ln_delay_IM(im_test_data[i].im), 1E-6);
         } else {
-            BOOST_CHECK_CLOSE(component_group.SD_ln_delay_IM(im_test_data[i].im), 
+            BOOST_CHECK_CLOSE(component_group->SD_ln_delay_IM(im_test_data[i].im), 
                               im_test_data[i].sd_delay,
                               1);
         }
     }
 
     /*
-     * Repleace the mu_edp function. This should clear the component group's cache:
+     * Replace the mu_edp function. This should clear the component group's cache:
      */
     {
         shared_ptr<DeterministicFn> new_mu_edp(new PowerLawParametricCurve(3 * 0.1, 1.5));
@@ -523,38 +520,38 @@ BOOST_AUTO_TEST_CASE(comp_group_im_test)
             {   2.44951515151515 ,    0.999998641599734 , 0.400001322394141 ,    22.9999752617222 , 0.350000923365747 },
             {   2.47475757575758 ,    0.999998791274229 , 0.400001176310359 ,    22.9999779534964 , 0.350000820758188 },
             {                2.5 ,     0.99999892376824 , 0.400001047040924 ,    22.9999803355137 , 0.350000730034766 }
-            };
+        };
         
         for (size_t i=0; i < sizeof(im_test_data)/sizeof(im_test_data[0]); i++) {
 
             if (std::abs(im_test_data[i].mu_cost) < 1E-20) {
-                BOOST_CHECK_SMALL(component_group.E_cost_IM(im_test_data[i].im), 1E-20);
+                BOOST_CHECK_SMALL(component_group->E_cost_IM(im_test_data[i].im), 1E-20);
             } else {
-                BOOST_CHECK_CLOSE(component_group.E_cost_IM(im_test_data[i].im), 
+                BOOST_CHECK_CLOSE(component_group->E_cost_IM(im_test_data[i].im), 
                                   im_test_data[i].mu_cost,
                                   0.5);
             }
 
             if (std::abs(im_test_data[i].sd_cost) < 1E-6) {
-                BOOST_CHECK_SMALL(component_group.SD_ln_cost_IM(im_test_data[i].im), 1E-6);
+                BOOST_CHECK_SMALL(component_group->SD_ln_cost_IM(im_test_data[i].im), 1E-6);
             } else {
-                BOOST_CHECK_CLOSE(component_group.SD_ln_cost_IM(im_test_data[i].im), 
+                BOOST_CHECK_CLOSE(component_group->SD_ln_cost_IM(im_test_data[i].im), 
                                   im_test_data[i].sd_cost,
                                   1);
             }
 
             if (std::abs(im_test_data[i].mu_delay) < 1E-20) {
-                BOOST_CHECK_SMALL(component_group.E_delay_IM(im_test_data[i].im), 1E-20);
+                BOOST_CHECK_SMALL(component_group->E_delay_IM(im_test_data[i].im), 1E-20);
             } else {
-                BOOST_CHECK_CLOSE(component_group.E_delay_IM(im_test_data[i].im), 
+                BOOST_CHECK_CLOSE(component_group->E_delay_IM(im_test_data[i].im), 
                                   im_test_data[i].mu_delay,
                                   0.5);
             }
 
             if (std::abs(im_test_data[i].sd_delay) < 1E-6) {
-                BOOST_CHECK_SMALL(component_group.SD_ln_delay_IM(im_test_data[i].im), 1E-6);
+                BOOST_CHECK_SMALL(component_group->SD_ln_delay_IM(im_test_data[i].im), 1E-6);
             } else {
-                BOOST_CHECK_CLOSE(component_group.SD_ln_delay_IM(im_test_data[i].im), 
+                BOOST_CHECK_CLOSE(component_group->SD_ln_delay_IM(im_test_data[i].im), 
                                   im_test_data[i].sd_delay,
                                   1);
             }
@@ -568,38 +565,38 @@ BOOST_AUTO_TEST_CASE(comp_group_im_test)
         shared_ptr<ProbabilisticFn> new_edp_im_relationship(
             new LogNormalFn(mu_edp, LogNormalFn::MEAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X));
         std::shared_ptr<EDP> new_rel(new EDP(im_rate_rel, new_edp_im_relationship));
-        component_group.get_EDP()->replace(new_rel);
+        component_group->get_EDP()->replace(new_rel);
     }
     for (size_t i=0; i < sizeof(im_test_data)/sizeof(im_test_data[0]); i++) {
         
         if (std::abs(im_test_data[i].mu_cost) < 1E-20) {
-            BOOST_CHECK_SMALL(component_group.E_cost_IM(im_test_data[i].im), 1E-20);
+            BOOST_CHECK_SMALL(component_group->E_cost_IM(im_test_data[i].im), 1E-20);
         } else {
-            BOOST_CHECK_CLOSE(component_group.E_cost_IM(im_test_data[i].im), 
+            BOOST_CHECK_CLOSE(component_group->E_cost_IM(im_test_data[i].im), 
                               im_test_data[i].mu_cost,
                               0.5);
         }
 
         if (std::abs(im_test_data[i].sd_cost) < 1E-6) {
-            BOOST_CHECK_SMALL(component_group.SD_ln_cost_IM(im_test_data[i].im), 1E-6);
+            BOOST_CHECK_SMALL(component_group->SD_ln_cost_IM(im_test_data[i].im), 1E-6);
         } else {
-            BOOST_CHECK_CLOSE(component_group.SD_ln_cost_IM(im_test_data[i].im), 
+            BOOST_CHECK_CLOSE(component_group->SD_ln_cost_IM(im_test_data[i].im), 
                               im_test_data[i].sd_cost,
                               1);
         }
 
         if (std::abs(im_test_data[i].mu_delay) < 1E-20) {
-            BOOST_CHECK_SMALL(component_group.E_delay_IM(im_test_data[i].im), 1E-20);
+            BOOST_CHECK_SMALL(component_group->E_delay_IM(im_test_data[i].im), 1E-20);
         } else {
-            BOOST_CHECK_CLOSE(component_group.E_delay_IM(im_test_data[i].im), 
+            BOOST_CHECK_CLOSE(component_group->E_delay_IM(im_test_data[i].im), 
                               im_test_data[i].mu_delay,
                               0.5);
         }
 
         if (std::abs(im_test_data[i].sd_delay) < 1E-6) {
-            BOOST_CHECK_SMALL(component_group.SD_ln_delay_IM(im_test_data[i].im), 1E-6);
+            BOOST_CHECK_SMALL(component_group->SD_ln_delay_IM(im_test_data[i].im), 1E-6);
         } else {
-            BOOST_CHECK_CLOSE(component_group.SD_ln_delay_IM(im_test_data[i].im), 
+            BOOST_CHECK_CLOSE(component_group->SD_ln_delay_IM(im_test_data[i].im), 
                               im_test_data[i].sd_delay,
                               1);
         }
@@ -607,41 +604,14 @@ BOOST_AUTO_TEST_CASE(comp_group_im_test)
     
 }
 
-BOOST_AUTO_TEST_CASE(comp_group_misc_tests)
+/**
+ * Miscellaneous tests for the comp_group class.
+ *
+ * @todo Split this up? Document each test.
+ * @todo Use three component groups as in earlier tests?
+ */
+BOOST_FIXTURE_TEST_CASE(comp_group_misc_tests, fixture)
 {
-    shared_ptr<DeterministicFn> im_rate_function(
-        new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
-    shared_ptr<IM> im_rate_rel(
-        new IM(im_rate_function));
-
-    shared_ptr<DeterministicFn> mu_edp(
-        new PowerLawParametricCurve(0.1, 1.5));
-    shared_ptr<DeterministicFn> sigma_edp(
-        new PowerLawParametricCurve(0.5, 0.0));
-    shared_ptr<ProbabilisticFn> edp_im_relationship(
-        new LogNormalFn(mu_edp, LogNormalFn::MEAN_X, sigma_edp, LogNormalFn::SIGMA_LN_X));
-
-    std::shared_ptr<EDP> rel(new EDP(im_rate_rel, edp_im_relationship));
-
-    std::shared_ptr<FragilityFn> fragFn(new FragilityFn(
-                                            { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0062, 0.4),
-                                                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
-                                                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
-                                                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)}));
-    std::shared_ptr<LossFn> costFn(new LossFn(
-                                       { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
-                                               LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
-                                               LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
-                                               LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.00, 0.4)}));
-    
-    std::shared_ptr<LossFn> delayFn(new LossFn(
-                                        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(1.50, 0.20),
-                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(3.75, 0.25), 
-                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(10.0, 0.30),
-                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(23.0, 0.35)}));
-
-    CompGroup  component_group(rel, fragFn, costFn, delayFn, 1);
-
     /*
      * Test data for annual and year expected loss:
      */
@@ -688,7 +658,7 @@ BOOST_AUTO_TEST_CASE(comp_group_misc_tests)
     ///@todo Test with different discount rate.
     for (size_t i=0; i < sizeof(annual_loss_test_data)/sizeof(annual_loss_test_data[0]); i++) {
         double years = annual_loss_test_data[i].t;
-        double annual_loss = component_group.E_cost(years, 0.06);
+        double annual_loss = component_group->E_cost(years, 0.06);
         BOOST_CHECK_CLOSE(annual_loss, annual_loss_test_data[i].e_annual, 0.2);
         BOOST_CHECK_CLOSE(annual_loss/years, annual_loss_test_data[i].e_yearly, 0.2);
     }
@@ -716,7 +686,7 @@ BOOST_AUTO_TEST_CASE(comp_group_misc_tests)
      * Test the lambda_cost() method:
      */
     for (size_t i=0; i < sizeof(loss_rate_test_data)/sizeof(loss_rate_test_data[0]); i++) {
-        BOOST_CHECK_CLOSE(loss_rate_test_data[i].rate, component_group.lambda_cost(loss_rate_test_data[i].loss), 0.2);
+        BOOST_CHECK_CLOSE(loss_rate_test_data[i].rate, component_group->lambda_cost(loss_rate_test_data[i].loss), 0.2);
     }
 }
 
