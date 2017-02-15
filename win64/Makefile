@@ -18,5 +18,6 @@ LDFLAGS+=-lpthread -fopenmp -lgsl
 PYLIBFLAGS=-shared -Wl,--dll -Wl,--export-all-symbols -Wl,-out-implib,pyslatcore.1 
 PYSLATCORE=_pyslatcore.pyd
 
+export LIB=win64/lib
 include ../Makefile.common
 
