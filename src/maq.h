@@ -68,7 +68,12 @@ namespace SLAT {
         protected:
         public: 
             static unsigned int bin_evals;
-            typedef enum { OLD, REV, REV2, NEW } METHOD_TYPE;
+            typedef enum { BINARY_SUBDIVISION,
+                           REVERSE_BINARY_SUBDIVISION,
+                           LOW_FIRST_REVERSE_BINARY_SUBDIVISION,
+                           SCATTERED,
+                           DIRECTED }
+            METHOD_TYPE;
             static METHOD_TYPE method;
             static src::logger_mt settings_logger;
         };

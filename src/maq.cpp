@@ -16,6 +16,7 @@
 #include <limits>
 #include <omp.h>
 #include <boost/log/trivial.hpp>
+#include <gsl/gsl_deriv.h>
 #include "maq.h"
 #include "context.h"
 
@@ -76,7 +77,7 @@ namespace SLAT {
     namespace Integration {
 
         unsigned int IntegrationSettings::bin_evals = 0;
-        IntegrationSettings::METHOD_TYPE  IntegrationSettings::method = NEW;
+        IntegrationSettings::METHOD_TYPE  IntegrationSettings::method = DIRECTED;
 
         
         src::logger_mt IntegrationSettings::settings_logger;
@@ -213,20 +214,6 @@ namespace SLAT {
                 }
 
                 if (fc <= std::numeric_limits<double>::epsilon()) {
-                    // std::cout << "----------" << std::endl;
-                    // double last_y = NAN;
-                    // for (int i=0; i < intervals; i++) {
-                    //     double t = float(i)/intervals;
-                    //     double y = f(x_from_t(t));
-                    //     if (y != last_y) {
-                    //         std::cout << std::setw(5) << i << "/" << std::setw(5) << intervals
-                    //                   << std::setw(12) << std::setprecision(5) << t
-                    //                   << std::setw(12) << std::setprecision(5) << y
-                    //                   << std::endl;
-                    //         last_y = y;
-                    //     }
-                    // }
-                    // std::cout << "----------" << std::endl;
                     return {NAN, NAN, evaluations};
                 }
 
@@ -237,7 +224,7 @@ namespace SLAT {
 /*
  * Try to divide the range [0, ∞) to bracket something interesting for integration, searching in the reverse direction.
  */
-        search_result_t binary_subdivision_rev(std::function<double (double)> f, unsigned int max_evals)
+        search_result_t reverse_binary_subdivision(std::function<double (double)> f, unsigned int max_evals)
         {
             double a=0; // Maps to x=∞
             double b=1.0; // Maps to x=0
@@ -280,7 +267,7 @@ namespace SLAT {
 /*
  * Try to divide the range [0, ∞) to bracket something interesting for integration, searching in the reverse direction.
  */
-        search_result_t binary_subdivision_rev2(std::function<double (double)> f, unsigned int max_evals)
+        search_result_t low_first_reverse_binary_subdivision(std::function<double (double)> f, unsigned int max_evals)
         {
             double a=0; // Maps to x=∞
             double b=1.0; // Maps to x=0
@@ -339,9 +326,8 @@ namespace SLAT {
 /*
  * Try to divide the range [0, ∞) to bracket something interesting for integration, alternate method
  */
-        search_result_t alternate_binary_subdivision(std::function<double (double)> f, unsigned int max_evals)
+        search_result_t scattered_search(std::function<double (double)> f, unsigned int max_evals)
         {
-            //std::cout << "> alternate_binary_subdivision()" << std::endl;
             double a=0; // Maps to x=∞
             double b=1.0; // Maps to x=0
             double c = (a + b)/2.0;
@@ -408,6 +394,134 @@ namespace SLAT {
             }
             return {a, b, evaluations};
         }
+
+/*
+ * Try to divide the range [0, ∞) to bracket something interesting for integration, alternate method #2
+ */
+        search_result_t directed_search(std::function<double (double)> f, unsigned int max_evals)
+        {
+            double a=0; // Maps to x=∞
+            double b=1.0; // Maps to x=0
+            double c = (a + b)/2.0;
+
+            double fb = f(x_from_t(b));
+            double fc = f(x_from_t(c));
+    
+            unsigned int evaluations = 2;
+
+            if (fb <= std::numeric_limits<double>::epsilon() && 
+                fc <= std::numeric_limits<double>::epsilon()) 
+            {
+                while (fc == 0.0 && evaluations < max_evals) {
+                    unsigned int init_intervals = 4;
+                    unsigned long long int intervals = init_intervals;
+                    long int k = 0;
+                    unsigned int init_i = 1;
+                    while (evaluations < max_evals && fc == 0.0) {
+                        unsigned long long int i = init_i;
+                        c = 1.0 - float(i)/intervals;
+                        fc = f(x_from_t(c));
+                        evaluations++;
+                        
+                        if (fc > 0.0) {
+                            break;
+                        }
+                        long int p = 2 + 2 * k;
+                        k = k + 2;
+                        i = i + p;
+                        while (i < intervals && evaluations < max_evals) {
+                            c = 1.0 - float(i)/intervals;
+                            fc = f(x_from_t(c));
+                            evaluations++;
+                            
+                            if (fc > 0.0) {
+                                break;
+                            }
+                            p = p * 2;
+                            i = i + p;
+                        }
+                        intervals *= 2;
+                        
+                        if (intervals * 2 == 0) {
+                            if (init_i == 0) {
+                                init_i +=  2;
+                                if (init_i > init_intervals) {
+                                    init_intervals *= 2;
+                                }
+                            }
+                            intervals = init_intervals;;
+                        }
+                    }
+                }
+
+                if (fc == 0.0) {
+                    return {NAN, NAN, evaluations};
+                }
+                    
+                if (c < 0.5) {
+                    a = 0.0;
+                    b = 2.0 * c;
+                } else {
+                    b = 1.0;
+                    a = 2.0 * c - 1.0;
+                }
+
+                    
+                while (fc <= std::numeric_limits<double>::epsilon() && 
+                       evaluations < max_evals &&
+                       (b - a > std::numeric_limits<double>::epsilon())) 
+                {
+                    double d = (a + c) / 2.0;
+                    double fd = f(x_from_t(d));
+                    evaluations++;
+
+                    if (fd > std::numeric_limits<double>::epsilon()) {
+                        c = d;
+                        fc = fd;
+                        break;
+                    } else if (fd <= fc) {
+                        a = d;
+                    } else {
+                        b = c;
+                        
+                        c = d;
+                        fc = fd;
+                    }
+
+                    double e = (c + b) / 2.0;
+                    double fe = f(x_from_t(e));
+                    evaluations++;
+
+                    if (fe > std::numeric_limits<double>::epsilon()) {
+                        c = e;
+                        fc = fe;
+                        break;
+                    } else if (fe < fc) {
+                        b = e;
+                    } else {
+                        a = c;
+                        
+                        c = e;
+                        fc = fe;
+                    }
+                }
+            }
+
+            // If the highest value is still too low, act as if we found nothing:
+            // if (fc < std::numeric_limits<double>::epsilon()) {
+            //     return {NAN, NAN, evaluations};
+            // }
+            if (c < 0.5) {
+                a = 0.0;
+                b = 2.0 * c;
+            } else {
+                b = 1.0;
+                a = 2.0 * c - 1.0;
+            }
+            
+            return {a, b, evaluations};
+        }
+        
 /*
  * MAQ integration algorithm
  */
@@ -438,11 +552,6 @@ namespace SLAT {
         MAQ_RESULT MAQ(std::function<double (double)> integrand,
                        const IntegrationSettings &settings)
         {
-            // Context::PushText([] (std::ostream &o) {
-            //         o << "MAQ()";
-            //     });
-//            BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
-//            BOOST_LOG(IntegrationSettings::settings_logger) << "> MAQ()";
 #pragma omp critical
             calls++;
             
@@ -451,12 +560,6 @@ namespace SLAT {
             unsigned int bineval = Integration::IntegrationSettings::bin_evals;
             if (bineval == 0) bineval = maxeval;
 
-            //BOOST_LOG(IntegrationSettings::settings_logger) << "MAX_EVALS: " << maxeval;
-            // if (maxeval < 2048) {
-            //     std::cout << "MAX_EVALS IS " << maxeval << std::endl;
-            // }
-                
-            
             bool success = true;
             // Initialisation
             unsigned int counter;
@@ -476,54 +579,40 @@ namespace SLAT {
              */
             double a, b;
             {
-#if true
                 search_result_t r = {0, 0, 0};
                 switch (IntegrationSettings::method) {
-                case IntegrationSettings::OLD:
+                case IntegrationSettings::BINARY_SUBDIVISION:
                     r = binary_subdivision(integrand, bineval);
                     break;
-                case IntegrationSettings::REV:
-                    r = binary_subdivision_rev(integrand, bineval);
+                case IntegrationSettings::REVERSE_BINARY_SUBDIVISION:
+                    r = reverse_binary_subdivision(integrand, bineval);
                     break;
-                case IntegrationSettings::REV2:
-                    r = binary_subdivision_rev2(integrand, bineval);
+                case IntegrationSettings::LOW_FIRST_REVERSE_BINARY_SUBDIVISION:
+                    r = low_first_reverse_binary_subdivision(integrand, bineval);
                     break;
-                case IntegrationSettings::NEW:
-                    r = alternate_binary_subdivision(integrand, bineval);
+                case IntegrationSettings::SCATTERED:
+                    r = scattered_search(integrand, bineval);
+                    break;
+                case IntegrationSettings::DIRECTED:
+                    r = directed_search(integrand, bineval);
                     break;
                 }
-#else
-                search_result_t r = alternate_binary_subdivision(integrand, bineval);
-                // if (!isnan(r.a) && r.evaluations > 100) {
-                //     r = binary_subdivision(integrand, bineval, IntegrationSettings::settings_logger );
-                // }
-#endif
                 bin_evals += r.evaluations;
                 if (max_bin < r.evaluations) max_bin = r.evaluations;
                 if (max_successful_bin < r.evaluations && r.evaluations < bineval) max_successful_bin = r.evaluations;
                 if (std::isnan(r.a)) {
-                    //std::cout << "binary_subdivision failed" << std::endl;
-                    //BOOST_LOG_TRIVIAL(fatal) << Context::GetText();
-                    //BOOST_LOG(IntegrationSettings::settings_logger) << "binary_subdivision failed to find anything for " << settings.
-                        // warning_label
-                        //                                             << " [" << r.evaluations << " evaluations]";
 #pragma omp critical
                     bin_fails++;
-                    //DumpIntegrationStats();
                     BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << " binary_subdivision() found nothing";
-                    //BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ(): " << 0 << ", " << true << ", " << r.evaluations;
-                    // Context::PopText();
                     return {0, true, (unsigned int)r.evaluations}; 
                 } else {
                     double c = (r.a + r.b) / 2;
                     size_t bin = c * N_BINS;
                     bin_Bins[bin]++;
-                    // BOOST_LOG(IntegrationSettings::settings_logger) << "binary_subdivision succeeded  for " << settings.warning_label
-                                                                    // << " after " << r.evaluations << " evaluations.";
                 }
                 a = r.a;
                 b = r.b;
-                counter = 0; //r.evaluations;
+                counter = r.evaluations;
             }
    
             double fa = integrand(x_from_t(a))/(a == 0 ? 1 : a*a);
@@ -532,26 +621,17 @@ namespace SLAT {
             if (std::isnan(fa)) {
                 std::cout << "fa is NAN" << std::endl;
                 BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fa is NAN";
-                //BOOST_LOG(IntegrationSettings::settings_logger) << "fa is NAN;  " << settings.warning_label;
 #pragma omp critical
                 nans++;
-                //DumpIntegrationStats();
                 maq_evals += counter;
-                //BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() NAN, " << false << ", " << counter;
-                // Context::PopText();
                 return {NAN, false, counter};
             }
 
             if (std::isnan(fb)) {
-                //std::cout << "fb is NAN" << std::endl;
                 BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fb is NAN";
-                //BOOST_LOG(IntegrationSettings::settings_logger) << "fb is NAN;  " << settings.warning_label;
 #pragma omp critical
                 nans++;
-                //DumpIntegrationStats();
                 maq_evals += counter;
-                //BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() NAN, " << false << ", " << counter;
-                // Context::PopText();
                 return {NAN, false, counter};
             }
             
@@ -559,13 +639,9 @@ namespace SLAT {
             double fc = integrand(x_from_t(c))/(c*c);
             if (std::isnan(fc)) {
                 BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fc is NAN";
-                //BOOST_LOG(IntegrationSettings::settings_logger) << "fc is NAN;  " << settings.warning_label;
 #pragma omp critical
                 nans++;
-                //DumpIntegrationStats();
                 maq_evals += counter;
-                //BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() NAN, " << false << ", " << counter;
-                // Context::PopText();
                 return {NAN, false, counter};
             }
             
@@ -595,9 +671,6 @@ namespace SLAT {
                      */
                     success = false;
                     integral = NAN;
-                    if (!std::isnan(abserr)) {
-                        std::cout << abserr << std::endl;
-                    }
                     break;
 #else
                     /*
@@ -605,8 +678,6 @@ namespace SLAT {
                      * though it isn't as good as requested. We should also
                      * generate a warning when this occurs.
                      */
-                    // BOOST_LOG(IntegrationSettings::settings_logger) << "failed to reach precision;  " << settings.warning_label
-                    //                                                 << " [" << counter << " evaluations]";
                     success = true;
                     maq_todo todo = region_stack.top();
                     region_stack.pop();
@@ -627,10 +698,6 @@ namespace SLAT {
 
                 r1 = todo.r;
 
-                // cout << "Popped: " << a << ", " << b << ", " << c << "; " 
-                //      << fa << ", " << fb << ", " << fc << "; " << r1
-                //      << endl;
-        
                 double d = (a + c)/2.0;
                 double e = (b + c)/2.0;
         
@@ -641,10 +708,7 @@ namespace SLAT {
             BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fd is NAN";
 #pragma omp critical
                     nans++;
-                    //DumpIntegrationStats();
                     maq_evals += counter;
-//                    BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() NAN, " << false << ", " << counter;
-                    // Context::PopText();
                     return {NAN, false, counter};
                 }
             
@@ -652,10 +716,7 @@ namespace SLAT {
                     BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fe is NAN";
 #pragma omp critical
                     nans++;
-                    //DumpIntegrationStats();
                     maq_evals += counter;
-//                    BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() NAN, " << false << ", " << counter;
-                    // Context::PopText();
                     return {NAN, false, counter};
                 }
         
@@ -669,30 +730,13 @@ namespace SLAT {
                 if (abserr <= std::abs(tol * q2) || abserr <= std::abs(tol * integral)) {
                     integral = integral + q2 + (q2 - q1)/15;
                 } else if (std::abs(r2) > std::abs(r3)) {
-                    // cout << "Push: " << c << ", " << b << ", " << e << "; " 
-                    //      << fc << ", " << fb << ", " << fe << "; " << r3
-                    //      << endl;
                     region_stack.push({c, b, e, fc, fb , fe, r3});
-                    // cout << "Push: " << a << ", " << c << ", " << d << "; " 
-                    //      << fa << ", " << fc << ", " << fd << "; " << r2
-                    //      << endl;
                     region_stack.push({a, c, d, fa, fc, fd, r2});
                 } else {
                     region_stack.push({a, c, d, fa, fc, fd, r2});
-                    // cout << "Push: " << a << ", " << c << ", " << d << "; " 
-                    //      << fa << ", " << fc << ", " << fd << "; " << r2
-                    //      << endl;
                     region_stack.push({c, b, e, fc, fb , fe, r3});
-                    // cout << "Push: " << c << ", " << b << ", " << e << "; " 
-                    //      << fc << ", " << fb << ", " << fe << "; " << r3
-                    //      << endl;
                 }
             }
-            if (!success || std::isnan(integral)) {
-                //std::cout << integral << "   " << success << "  " << counter << "   " << temp_count << maxeval << std::endl;
-            }
-            // BOOST_LOG(IntegrationSettings::settings_logger) << "MAQ done;  " << settings.warning_label
-            //                                                 << " [" << counter << " evaluations]";
             if (counter > max_count) {
                 max_count = counter;
             }
@@ -705,10 +749,7 @@ namespace SLAT {
             
             }
             maq_evals += counter;
-//            BOOST_LOG(IntegrationSettings::settings_logger) << "< MAQ() " << integral << ", " << success << ", " << counter;
-            // Context::PopText();
             return {integral, success, counter};
-            }
-
+        }
     }
 }
