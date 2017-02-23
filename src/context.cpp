@@ -5,16 +5,13 @@ namespace SLAT {
     std::shared_ptr<Context> Context::instance;
     omp_lock_t Context::lock;
 
-    void Context::Initialise()
+    std::shared_ptr<Context> Context::GetInstance()
     {
+        #pragma omp critical
         if (instance == NULL) {
             omp_init_lock(&Context::lock);
             instance = std::make_shared<Context>();
         }
-    }
-
-    std::shared_ptr<Context> Context::GetInstance()
-    {
         return instance;
     }
 
@@ -82,13 +79,6 @@ namespace SLAT {
             }
         }
         return msg.str();
-    }
-    
-    std::shared_ptr<Context> Context::GetContext()
-     {
-         std::shared_ptr<Context> instance = LockContext();
-         omp_unset_lock(&Context::lock);
-         return instance;
     }
 
     void Context::PushText(std::function<void (std::ostream &)>f)

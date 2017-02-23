@@ -19,7 +19,6 @@ namespace keywords = boost::log::keywords;
 struct AllocatorSetup {
     AllocatorSetup()   {
         /* setup your allocator here */
-        SLAT::Context::Initialise();
         logging::add_file_log("unit_tests.log");
         logging::add_common_attributes();
     }

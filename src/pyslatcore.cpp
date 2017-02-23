@@ -13,7 +13,6 @@ void Initialise(void)
 {
     logging::add_file_log("pyslatcore.log");
     logging::add_console_log(std::cerr);
-    SLAT::Context::Initialise();
 }
 
 

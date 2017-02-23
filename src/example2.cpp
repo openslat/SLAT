@@ -81,9 +81,7 @@ vector<double> frange(double min, double max, double step)
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(main_logger, src::logger_mt)
 int main(int argc, char **argv)
 {
-    std::cout << std::numeric_limits<double>::epsilon() << std::endl;
-
-    Context::Initialise();
+    //Context::Initialise();
     // {
     // logging::add_file_log("example2.log");
     // logging::add_common_attributes();
@@ -114,19 +112,20 @@ int main(int argc, char **argv)
     src::logger_mt& logger = main_logger::get();
     BOOST_LOG(logger) << "Starting main().";
     {
+#if 0
         double tolerances[] = { 
-            //0.001
             0.1, 0.05, 0.02, 0.01, 0.005, 0.002, 0.001 
         };
         unsigned int maq_evals[] = { 
-            //256
             64, 128, 256, 512, 1024, 2048 
         };
         unsigned int bin_evals[] = { 
-            //1024
-            256, 512, 1024, 2048, 8192, 128 * 1024 
+            256, 512, 1024, 2048, 8192,
+            16 * 1024, 32 * 1024,
+            128 * 1024,
+            //512 * 1024,
+            //1024 * 1024
         };
-
 
         IntegrationSettings::METHOD_TYPE methods[] = {
             IntegrationSettings::BINARY_SUBDIVISION,
@@ -135,6 +134,16 @@ int main(int argc, char **argv)
             IntegrationSettings::SCATTERED,
             IntegrationSettings::DIRECTED
         };
+#else
+        double tolerances[] = { 0.001 };
+        unsigned int maq_evals[] = { 256 };
+        unsigned int bin_evals[] = { 128 /** 1024*/ };
+
+        IntegrationSettings::METHOD_TYPE methods[] = {
+            IntegrationSettings::DIRECTED
+        };
+#endif
+
         
         for (size_t tol_i = 0; tol_i < countof(tolerances); tol_i++) {
             double tolerance = tolerances[tol_i];

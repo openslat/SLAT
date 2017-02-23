@@ -35,18 +35,21 @@ size_t bin_Bins[N_BINS] = {0};
 
 void ResetIntegrationStats()
 {
-    max_count = 0;
-    max_bin = 0;
-    max_successful_bin = 0;
-    maq_evals = 0;
-    bin_evals = 0;
-    calls = 0;
-    successes = 0;
-    fails = 0;
-    nans = 0;
-    bin_fails = 0;
-    for (size_t i=0; i < N_BINS; i++) {
-        bin_Bins[i] = 0;
+#pragma omp critical 
+    {
+        max_count = 0;
+        max_bin = 0;
+        max_successful_bin = 0;
+        maq_evals = 0;
+        bin_evals = 0;
+        calls = 0;
+        successes = 0;
+        fails = 0;
+        nans = 0;
+        bin_fails = 0;
+        for (size_t i=0; i < N_BINS; i++) {
+            bin_Bins[i] = 0;
+    }
     }
 }
 
@@ -597,9 +600,16 @@ namespace SLAT {
                     r = directed_search(integrand, bineval);
                     break;
                 }
+#pragma omp critical
                 bin_evals += r.evaluations;
-                if (max_bin < r.evaluations) max_bin = r.evaluations;
-                if (max_successful_bin < r.evaluations && r.evaluations < bineval) max_successful_bin = r.evaluations;
+                if (max_bin < r.evaluations) {
+#pragma omp critical
+                    max_bin = r.evaluations;
+                }
+                if (max_successful_bin < r.evaluations && r.evaluations < bineval) {
+#pragma omp critical
+                    max_successful_bin = r.evaluations;
+                }
                 if (std::isnan(r.a)) {
 #pragma omp critical
                     bin_fails++;
@@ -608,6 +618,7 @@ namespace SLAT {
                 } else {
                     double c = (r.a + r.b) / 2;
                     size_t bin = c * N_BINS;
+#pragma omp critical
                     bin_Bins[bin]++;
                 }
                 a = r.a;
@@ -623,6 +634,7 @@ namespace SLAT {
                 BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fa is NAN";
 #pragma omp critical
                 nans++;
+#pragma omp critical
                 maq_evals += counter;
                 return {NAN, false, counter};
             }
@@ -631,6 +643,7 @@ namespace SLAT {
                 BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fb is NAN";
 #pragma omp critical
                 nans++;
+#pragma omp critical
                 maq_evals += counter;
                 return {NAN, false, counter};
             }
@@ -641,6 +654,7 @@ namespace SLAT {
                 BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fc is NAN";
 #pragma omp critical
                 nans++;
+#pragma omp critical
                 maq_evals += counter;
                 return {NAN, false, counter};
             }
@@ -708,6 +722,7 @@ namespace SLAT {
             BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fd is NAN";
 #pragma omp critical
                     nans++;
+#pragma omp critical
                     maq_evals += counter;
                     return {NAN, false, counter};
                 }
@@ -716,6 +731,7 @@ namespace SLAT {
                     BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fe is NAN";
 #pragma omp critical
                     nans++;
+#pragma omp critical
                     maq_evals += counter;
                     return {NAN, false, counter};
                 }
@@ -738,6 +754,7 @@ namespace SLAT {
                 }
             }
             if (counter > max_count) {
+#pragma omp critical
                 max_count = counter;
             }
             if (success) {
@@ -748,6 +765,7 @@ namespace SLAT {
                 fails++;
             
             }
+#pragma omp critical
             maq_evals += counter;
             return {integral, success, counter};
         }
