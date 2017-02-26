@@ -14,6 +14,7 @@
 #include <map>
 #include <memory>
 #include <iostream>
+#include <omp.h>
 
 
 namespace SLAT {
@@ -36,6 +37,11 @@ namespace SLAT {
      */
     template <class T> class Replaceable {
     private:
+        /**
+         * Control access from multiple threads.
+         */
+        omp_lock_t lock;
+        
         /**
          * callback_struct stores a pair of std::function objects. 
          */
@@ -70,32 +76,41 @@ namespace SLAT {
     public:
         Replaceable()  { 
             id_counter = 0;
+            omp_init_lock(&lock);
         };
         
         int add_callbacks(std::function<void (void)> changed,
                           std::function<void (std::shared_ptr<T>)> replace)
         {
-            id_counter++;
+            omp_set_lock(&lock);
+            int result = ++id_counter;
             callbacks[id_counter] = {changed, replace};
-            return id_counter;
+            omp_unset_lock(&lock);
+            return result;
         }
 
         void remove_callbacks(int id) {
+            omp_set_lock(&lock);
             callbacks.erase(id);
+            omp_unset_lock(&lock);
         }
 
         void notify_change(void) {
+            omp_set_lock(&lock);
             for (auto it=callbacks.begin(); it != callbacks.end(); it++) {
                 it->second.changed_cb();
             }
+            omp_unset_lock(&lock);
         }
 
         void replace(std::shared_ptr<T> replacement) {
+            omp_set_lock(&lock);
             replacement->callbacks = callbacks;
             for (auto it=callbacks.begin(); it != callbacks.end();) {
                 it->second.replace_cb(replacement);
                 it = callbacks.erase(it);
             }
+            omp_unset_lock(&lock);
         }
     };
 }
