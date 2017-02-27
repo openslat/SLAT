@@ -9,10 +9,34 @@
 using namespace std;
 namespace logging = boost::log;
 
+boost::shared_ptr<logging::sinks::sink> std_error_sink;
+boost::shared_ptr<logging::sinks::sink> file_sink;
+
 void Initialise(void)
 {
-    logging::add_file_log("pyslatcore.log");
-    logging::add_console_log(std::cerr);
+    std_error_sink = logging::add_console_log(std::cerr);
+}
+
+void SetLogFile(std::string path)
+{
+    if (file_sink != NULL) {
+        logging::core::get()->remove_sink(file_sink);
+    } 
+    file_sink = logging::add_file_log(path);
+}
+
+void LogToStdErr(bool flag)
+{
+    if (flag) {
+        if (std_error_sink == NULL) {
+            boost::shared_ptr<logging::sinks::sink> k = logging::add_console_log(std::cerr);
+        }
+    } else {
+        if (std_error_sink != NULL) {
+            logging::core::get()->remove_sink(std_error_sink);
+            std_error_sink = NULL;
+        }
+    }
 }
 
 

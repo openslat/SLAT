@@ -2,6 +2,8 @@
 import pyslat
 import filecmp
 
+pyslat.LogToStdErr(True)  # Log errors to stderr (on by default)
+pyslat.SetLogFile("exercise2.log") # Save errors in 'exercise2.log'
 
 IM1 = pyslat.ImportIMFn("IM.1", "imfunc.txt")
 IM1.SetCollapse(pyslat.MakeLogNormalDist(

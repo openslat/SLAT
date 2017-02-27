@@ -8,7 +8,10 @@ command : (title_command | detfn_command | probfn_command | im_command | edp_com
 	| fragfn_command | lossfn_command | compgroup_command | print_command 
 	| integration_command | recorder_command | analyze_command | set_command 
 	| importprobfn_command | collapse_command | demolition_command |structure_command
-	| importimfn_command | rebuildcost_command | demolitioncost_command) SEMICOLON;
+	| importimfn_command | rebuildcost_command | demolitioncost_command
+	| log_command) SEMICOLON;
+
+log_command : LOG (STDERR_FLAG | NOSTDERR_FLAG)? file_spec?;
 
 title_command : TITLE STRING;
 

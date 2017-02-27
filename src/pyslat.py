@@ -189,6 +189,25 @@ def DefaultLogNormalDist():
 def IntegrationSettings(tolerance, max_evals):
     return pyslatcore.IntegrationSettings(tolerance, max_evals)
 
+## Enable/disable logging to stderr
+#  This wraps the library function SLAT::LogToStdErr().
+#
+# @param flag True to enable logging
+def LogToStdErr(flag):
+    return pyslatcore.LogToStdErr(flag)
+
+## Set log file name.
+#  If a file is open from an earlier call to this funciton, that file 
+#  will be closed.
+#
+#  This wraps the library function SLAT::SetLogFile().
+#
+# @param path The path to the log file. It will be created or emptied as necessary.
+#
+# @param flag True to enable logging
+def SetLogFile(path):
+    return pyslatcore.SetLogFile(path)
+
 ## Represents a log normal distribution.
 #
 # Wraps a pyslatcore::LogNormalDist.

@@ -639,6 +639,13 @@ class SlatInterpreter(slatParserListener):
         filename = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"')
         pyslat.ImportIMFn(id, filename)
 
+    def exitLog_command(self, ctx:slatParser.Log_commandContext):
+        if (ctx.STDERR_FLAG()):
+            pyslat.LogToStdErr(True)
+        if (ctx.NOSTDERR_FLAG()):
+            pyslat.LogToStdErr(False)
+        if (ctx.file_spec()):
+            pyslat.SetLogFile(ctx.file_spec().getText())
 
 def main(argv):
     for file in argv[1:]:

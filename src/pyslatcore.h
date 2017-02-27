@@ -198,3 +198,5 @@ private:
 Structure *MakeStructure();
  
 void Initialise(void);
+void SetLogFile(std::string path);
+void LogToStdErr(bool flag);

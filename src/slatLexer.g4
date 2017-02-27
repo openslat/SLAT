@@ -13,6 +13,10 @@ COMMENT :   '#' ~[\r\n]*;
 
 PYTHON_ESCAPE : '$(' -> pushMode(PYMODE);
 
+LOG : 'log';
+STDERR_FLAG: '--stderr';
+NOSTDERR_FLAG: '--nostderr';
+
 LBRACE : '{';
 RBRACE : '}';
 LBRACKET : '[';
