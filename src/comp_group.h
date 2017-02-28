@@ -67,29 +67,6 @@ namespace SLAT {
             edp->remove_callbacks(edp_callback_id);
         };
 
-        // Integration Settings
-        /**
-         * The CompGroup class has its own integration settings, which can
-         * override the global defaults.
-         */
-        static Integration::IntegrationSettings class_settings;
-
-        /**
-         * Each object can have its own set of integration settings, overriding
-         * global and class defaults.
-         */
-        Integration::IntegrationSettings local_settings;
-
-        /**
-         * Return the integration settings used by the class.
-         */
-        Integration::IntegrationSettings &Get_Class_Integration_Settings(void);
-
-        /**
-         * Return the integration settings used by this object.
-         */
-        Integration::IntegrationSettings &Get_Integration_Settings(void);
-
         /*
          * Relationships between EDP, and cost and delay. Since these are simple
          * calculations, they are not cached.

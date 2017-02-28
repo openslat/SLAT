@@ -32,24 +32,11 @@ namespace SLAT {
     class IM : public Replaceable<IM>
     {
     protected:
-        Integration::IntegrationSettings local_settings;
-        static Integration::IntegrationSettings class_settings;
-        
         int callback_id;
         std::shared_ptr<DeterministicFn> f;
         std::shared_ptr<LogNormalDist> collapse = NULL;
         std::shared_ptr<LogNormalDist> demolition = NULL;
     public:
-        /**
-         * Returns class integration settings:
-         */
-        static Integration::IntegrationSettings &Get_Class_Integration_Settings(void);
-
-        /**
-         * Returns object integration settings:
-         */
-        Integration::IntegrationSettings &Get_Integration_Settings(void);
-
         IM(std::shared_ptr<DeterministicFn> func, std::string name);
         IM(std::shared_ptr<DeterministicFn> func) : IM(func, "Anonymous IM") {};
 
@@ -146,8 +133,6 @@ namespace SLAT {
     class EDP : public Replaceable<EDP>
     {
     protected:
-        Integration::IntegrationSettings local_settings;
-        static Integration::IntegrationSettings class_settings;
         int callback_id;
 
     public:
@@ -162,37 +147,9 @@ namespace SLAT {
          */
         virtual double DerivativeAt(double x) ;
 
-        /**
-         * Returns class integration settings:
-         */
-        static Integration::IntegrationSettings &Get_Class_Integration_Settings(void);
-
-        /**
-         * Returns object integration settings:
-         */
-        Integration::IntegrationSettings &Get_Integration_Settings(void);
-
         virtual std::string ToString(void) const;
             
         friend std::ostream& operator<<(std::ostream& out, const EDP& o);
-
-        /** 
-         * Set the default tolerance and evaluations limit used by the
-         * integrator when calculating lambda for CompoundRateRelationships.
-         * 
-         * @param tol   Tolerance
-         * @param evals Maximum number of evaluations
-         */
-        static void SetDefaultIntegrationParameters(double tol, unsigned int evals);
-
-        /** 
-         * Get the default tolerance and evaluations limit used by the
-         * integrator when calculating lambda for CompoundRateRelationships.
-         * 
-         * @param tol    Returned with the tolerance.
-         * @param evals  Returned with the evaluations limit.
-         */
-        static void GetDefaultIntegrationParameters(double &tol, unsigned int &evals);
 
         /** 
          * Create a compound relationship given shared pointers to a rate

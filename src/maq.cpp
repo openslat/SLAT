@@ -78,95 +78,56 @@ void DumpIntegrationStats()
 
 namespace SLAT {
     namespace Integration {
-
         unsigned int IntegrationSettings::bin_evals = 0;
         IntegrationSettings::METHOD_TYPE  IntegrationSettings::method = DIRECTED;
 
-        
-        src::logger_mt IntegrationSettings::settings_logger;
-        IntegrationSettings IntegrationSettings::default_settings;
+        unsigned int IntegrationSettings::max_evals;
+        double IntegrationSettings::tolerance;
         
         void IntegrationSettings::Reset(void)
         {
-            default_settings.tolerance = TOLERANCE_DEFAULT;
-            default_settings.max_evals = EVALUATIONS_DEFAULT;
+            IntegrationSettings::tolerance = TOLERANCE_DEFAULT;
+            IntegrationSettings::max_evals = EVALUATIONS_DEFAULT;
         }
 
-        IntegrationSettings::IntegrationSettings(void)
+        unsigned int IntegrationSettings::Get_Max_Evals(void)
         {
-            tolerance = TOLERANCE_DEFAULT;
-            max_evals = EVALUATIONS_DEFAULT;
-            parent = NULL;
-        }
-
-        IntegrationSettings::IntegrationSettings(const IntegrationSettings *other)
-        {
-            tolerance = TOLERANCE_UNSPECIFIED;
-            max_evals = EVALUATIONS_UNSPECIFIED;
-            parent = other;
-        }
-
-        const IntegrationSettings *IntegrationSettings::Get_Global_Settings(void) 
-        {
-            return &IntegrationSettings::default_settings;
-        }
-
-        unsigned int IntegrationSettings::Get_Effective_Max_Evals(void) const
-        {
-            const IntegrationSettings *ptr = this;
-            while (ptr->parent != NULL && ptr->max_evals == EVALUATIONS_UNSPECIFIED) {
-                ptr = ptr->parent;
-            }
-            return ptr->max_evals;
+            return max_evals;
         }
 
 
-        double IntegrationSettings::Get_Effective_Tolerance(void) const
+        double IntegrationSettings::Get_Tolerance(void)
         {
-            const IntegrationSettings *ptr = this;
-            while (ptr->parent != NULL && ptr->tolerance == TOLERANCE_UNSPECIFIED) {
-                ptr = ptr->parent;
-            }
-            return ptr->tolerance;
-        }
-
-        void IntegrationSettings::Override_Tolerance(double tol) 
-        {
-            tolerance = tol;
-        }
-
-        void IntegrationSettings::Override_Max_Evals(unsigned int evals) 
-        {
-            max_evals = evals;
+            return tolerance;
         }
 
         void IntegrationSettings::Use_Default_Tolerance() 
         {
-            tolerance = TOLERANCE_UNSPECIFIED;
+            tolerance = TOLERANCE_DEFAULT;
         }
 
         void IntegrationSettings::Use_Default_Max_Evals() 
         {
-            max_evals = EVALUATIONS_UNSPECIFIED;
+            max_evals = EVALUATIONS_DEFAULT;
         }
 
         void IntegrationSettings::Set_Tolerance(double tol) 
         {
             if (tol > 0.0) {
-                default_settings.Override_Tolerance(tol);
+                tolerance = tol;
             } else {
-                BOOST_LOG(settings_logger) << "Can't set tolerance to " << tol
-                                           << "; must be > 0.0.";
+                BOOST_LOG_TRIVIAL(info) << "Can't set tolerance to " << tol
+                                        << "; must be > 0.0.";
             }
         }
 
         void IntegrationSettings::Set_Max_Evals(unsigned int evals)
         {
             if (evals > 0) {
-                default_settings.Override_Max_Evals(evals);
+                max_evals = evals;
             } else {
-                BOOST_LOG(settings_logger) << "Can't set max evaluatons to " << evals
-                                           << "; must be > 0.0.";
+                BOOST_LOG_TRIVIAL(info) << "Can't set max evaluatons to " << evals
+                                        << "; must be > 0.0.";
             }
         }
 
@@ -534,13 +495,6 @@ namespace SLAT {
             return (b - a) / 6 * (fa + 4 * fc + fb);
         }
 
-        MAQ_RESULT MAQ(std::function<double (double)> integrand) 
-        {
-            return MAQ(integrand, *IntegrationSettings::Get_Global_Settings());
-        }
-
-
-
         /**
          * @todo Determine how many of the allowed evaluations to use
          * for finding something interesting (and whether it is constant, or
@@ -552,14 +506,13 @@ namespace SLAT {
          * @todo Allow programmer to control what happens when number of
          * evaluations is exceeded (warn and use latest approximation, abort).
          */
-        MAQ_RESULT MAQ(std::function<double (double)> integrand,
-                       const IntegrationSettings &settings)
+        MAQ_RESULT MAQ(std::function<double (double)> integrand) 
         {
 #pragma omp critical
             calls++;
             
-            double tol = settings.Get_Effective_Tolerance();
-            unsigned int maxeval = settings.Get_Effective_Max_Evals();
+            double tol = IntegrationSettings::Get_Tolerance();
+            unsigned int maxeval = IntegrationSettings::Get_Max_Evals();
             unsigned int bineval = Integration::IntegrationSettings::bin_evals;
             if (bineval == 0) bineval = maxeval;
 

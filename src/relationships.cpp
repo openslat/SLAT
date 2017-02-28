@@ -20,32 +20,6 @@
 #include <iostream>
 
 namespace SLAT {
-    Integration::IntegrationSettings EDP::class_settings(
-        Integration::IntegrationSettings::Get_Global_Settings());
-
-    Integration::IntegrationSettings &EDP::Get_Class_Integration_Settings(void)
-    {
-        return class_settings;
-    }
-
-    Integration::IntegrationSettings &EDP::Get_Integration_Settings(void)
-    {
-        return local_settings;
-    }
-
-    Integration::IntegrationSettings IM::class_settings(
-        Integration::IntegrationSettings::Get_Global_Settings());
-
-    Integration::IntegrationSettings &IM::Get_Class_Integration_Settings(void)
-    {
-        return class_settings;
-    }
-
-    Integration::IntegrationSettings &IM::Get_Integration_Settings(void)
-    {
-        return local_settings;
-    }
-    
 /** 
  * Local wrapper function for use with GSL. 
  *
@@ -63,7 +37,6 @@ namespace SLAT {
     }
 
     IM::IM( std::shared_ptr<DeterministicFn> func, std::string name) :
-        local_settings(&class_settings),
         CollapseRate([this] (void) {
                 return this->CollapseRate_calc();
             }, name + std::string("::CollapseRate")),
@@ -72,9 +45,6 @@ namespace SLAT {
             }, name + std::string("::DemolitionRate"))
     {
         this->name = name;
-        // std::cout << "IM: " << name << " " << local_settings.Get_Effective_Max_Evals() << "; "
-        //           << Get_Class_Integration_Settings().Get_Effective_Max_Evals() << "; "
-        //           << Integration::IntegrationSettings::Get_Global_Settings()->Get_Effective_Max_Evals() << std::endl;
         
         f = func;
         callback_id = f->add_callbacks(
@@ -144,10 +114,6 @@ namespace SLAT {
                 o << "IM::CollapseRate_calc() [" << this->name << "]";
             });
         if (collapse) {
-            // std::cout << "IM::CollapseRate_calc " << name << " " << local_settings.Get_Effective_Max_Evals() << "; "
-            //           << Get_Class_Integration_Settings().Get_Effective_Max_Evals() << "; "
-            //           << Integration::IntegrationSettings::Get_Global_Settings()->Get_Effective_Max_Evals() << std::endl;
-
             Integration::MAQ_RESULT result;
             result =  Integration::MAQ(
                 [this] (double im) -> double {
@@ -155,7 +121,7 @@ namespace SLAT {
                     double p = this->pCollapse(im);
                     double result = fabs(d) * p;
                     return result;
-                }, local_settings); 
+                }); 
             //std::cout << "...." << std::endl;
             if (result.successful) {
                 return result.integral;
@@ -181,7 +147,7 @@ namespace SLAT {
                     double p = this->pDemolition(im);
                     double result = fabs(d) * p;
                     return result;
-                }, local_settings); 
+                }); 
             if (result.successful) {
                 return result.integral;
             } else {
@@ -228,7 +194,6 @@ namespace SLAT {
     EDP::EDP(std::shared_ptr<IM> base_rate,
              std::shared_ptr<ProbabilisticFn> dependent_rate, 
              std::string name) :
-        local_settings(&class_settings),
         callback_id(0),
         lambda([this] (double x) { return this->calc_lambda(x); }, name + "::lambda") 
     {
@@ -277,7 +242,7 @@ namespace SLAT {
                               (1.0 - base_rate->pRepair(x2))) * std::abs(d);
                 }
                 return result;
-            }, local_settings); 
+            }); 
         if (result.successful) {
             return result.integral;
         } else {

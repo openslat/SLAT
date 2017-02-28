@@ -18,20 +18,7 @@
 using namespace std;
 
 namespace SLAT {
-    Integration::IntegrationSettings CompGroup::class_settings(
-        Integration::IntegrationSettings::Get_Global_Settings());
-
-    Integration::IntegrationSettings &CompGroup::Get_Class_Integration_Settings(void)
-    {
-        return class_settings;
-    }
-
-    Integration::IntegrationSettings &CompGroup::Get_Integration_Settings(void)
-    {
-        return local_settings;
-    }
-    
-    /*
+   /*
      * Constructor--initialise all members, including CachedFunctions and
      * CachedValues, then install callbacks for EDP changes.
      */
@@ -40,8 +27,7 @@ namespace SLAT {
                          std::shared_ptr<LossFn> cost_fn,
                          std::shared_ptr<LossFn> delay_fn,
                          int count,
-                         std::string name)
-        :local_settings(&class_settings),
+                         std::string name):
         E_cost_IM([this] (double im) {
                 return this->E_cost_IM_calc(im);
             }, name + std::string("::E_cost_IM")),
@@ -212,7 +198,7 @@ namespace SLAT {
                     result = p * std::abs(d);
                 }
                 return result;
-            }, local_settings); 
+            }); 
         if (result.successful) {
             return result.integral;
         } else {
@@ -259,7 +245,7 @@ namespace SLAT {
                     result = (e * e + sd * sd) * std::abs(d);
                 }
                 return result;
-            }, local_settings); 
+            }); 
         if (result.successful) {
             double mean_x = E_cost_IM(im) / this->count;
 
@@ -288,7 +274,7 @@ namespace SLAT {
                 double expected_cost = E_cost_IM(im);
                 double deriv = std::abs(edp->Base_Rate()->DerivativeAt(im));
                 return expected_cost * deriv;
-            }, local_settings);
+            });
         if (result.successful) {
             return result.integral;
         } else {
@@ -316,7 +302,7 @@ namespace SLAT {
                 LogNormalDist ln_fn = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mean_x, sd_ln_x);
                 
                 return ln_fn.p_at_least(cost) * std::abs(edp->Base_Rate()->DerivativeAt(im));
-            }, local_settings);
+            });
         if (result.successful) {
             return result.integral;
         } else {
@@ -354,7 +340,7 @@ namespace SLAT {
                     result = p * std::abs(d);
                 }
                 return result;
-            }, local_settings); 
+            }); 
         if (result.successful) {
             return result.integral;
         } else {
@@ -401,7 +387,7 @@ namespace SLAT {
                     result = (e * e + sd * sd) * std::abs(d);
                 }
                 return result;
-            }, local_settings); 
+            }); 
         if (result.successful) {
             double mean_x = E_delay_IM(im) / this->count;
 
@@ -459,7 +445,7 @@ namespace SLAT {
                     result = p * std::abs(deriv);
                 }
                 return result;
-            }, local_settings); 
+            }); 
         
         if (result.successful) {
             return result.integral;
@@ -497,7 +483,7 @@ namespace SLAT {
                         result = p * std::abs(deriv);
                     }
                     return result;
-                }, local_settings); 
+                }); 
             if (result.successful) {
                 results[i] = result.integral;
             } else {

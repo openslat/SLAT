@@ -29,44 +29,18 @@ namespace keywords = boost::log::keywords;
 
 namespace SLAT {
     namespace Integration {
-        extern bool verbose;
-        
         class IntegrationSettings
         {
         public:
-            IntegrationSettings(const IntegrationSettings *other);
-            static const IntegrationSettings *Get_Global_Settings(void);
-            
-            void Override_Tolerance(double tolerance);
-            void Override_Max_Evals(unsigned int max_evals);  
             void Use_Default_Tolerance(void); // Restore default
             void Use_Default_Max_Evals(void); // Restore default
 
-            /*
-             * Change global defaults:
-             */
             static void Set_Tolerance(double tolerance);
             static void Set_Max_Evals(unsigned int max_evals);  
             static void Reset();
 
-            unsigned int Get_Effective_Max_Evals(void) const;
-            double Get_Effective_Tolerance(void) const;
-            IntegrationSettings();
-            IntegrationSettings(const IntegrationSettings &other);
-        private:
-            static const unsigned int EVALUATIONS_UNSPECIFIED=0;
-            static constexpr double TOLERANCE_UNSPECIFIED=0.0;
-
-            static const unsigned int EVALUATIONS_DEFAULT = 1024;
-            static constexpr double TOLERANCE_DEFAULT = 1E-6;
-            const IntegrationSettings *parent;
-
-            unsigned int max_evals;
-            double tolerance;
-
-            static IntegrationSettings default_settings;
-        protected:
-        public: 
+            static unsigned int Get_Max_Evals(void);
+            static double Get_Tolerance(void);
             static unsigned int bin_evals;
             typedef enum { BINARY_SUBDIVISION,
                            REVERSE_BINARY_SUBDIVISION,
@@ -75,7 +49,13 @@ namespace SLAT {
                            DIRECTED
             } METHOD_TYPE;
             static METHOD_TYPE method;
-            static src::logger_mt settings_logger;
+            //static src::logger_mt settings_logger;
+        private:
+            static const unsigned int EVALUATIONS_DEFAULT = 1024;
+            static constexpr double TOLERANCE_DEFAULT = 1E-6;
+
+            static unsigned int max_evals;
+            static double tolerance;
         };
         
 /*

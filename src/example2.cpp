@@ -160,8 +160,6 @@ int main(int argc, char **argv)
                         IntegrationSettings::Set_Max_Evals(maq_evals[maq_i]);
                         
                         {
-                            IntegrationSettings settings = IntegrationSettings::Get_Global_Settings();
-                            
                             std::cout << "----------------------------" << std::endl
                                       << "Method: ";
                             switch (IntegrationSettings::method) {
@@ -182,8 +180,8 @@ int main(int argc, char **argv)
                                 break;
                             }
                             std::cout << std::endl
-                                      << "Tolerance: " << settings.Get_Effective_Tolerance()
-                                      << "; Evals: " << settings.Get_Effective_Max_Evals()
+                                      << "Tolerance: " << IntegrationSettings::Get_Tolerance()
+                                      << "; Evals: " << IntegrationSettings::Get_Max_Evals()
                                       << "; Bin Evals: " << bin_evals[bin_i]
                                       << std::endl;
                         }
