@@ -7,12 +7,21 @@
 #include "comp_group.h"
 #include "structure.h" 
 
-void IntegrationSettings(double tolerance, unsigned int max_evals);
-
 
 enum FUNCTION_TYPE { NLH=0, PLC, LIN, LOGLOG };
 enum LOGNORMAL_MU_TYPE { MEAN_X, MEDIAN_X, MEAN_LN_X };
 enum LOGNORMAL_SIGMA_TYPE { SD_X, SD_LN_X };
+enum INTEGRATION_TYPE { BINARY_SUBDIVISION,
+                        REVERSE_BINARY_SUBDIVISION,
+                        LOW_FIRST_REVERSE_BINARY_SUBDIVISION,
+                        SCATTERED,
+                        DIRECTED };
+
+void IntegrationSettings(double tolerance, unsigned int integration_eval_limit);
+void Set_Integration_Tolerance(double tolerance);
+void Set_Integration_Eval_Limit(unsigned int limit);
+void Set_Integration_Search_Limit(unsigned int limit);
+void Set_Integration_Method(INTEGRATION_TYPE type);
 
 class IM;
 class EDP;

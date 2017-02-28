@@ -99,7 +99,9 @@ print_function: PRINT (DETFN | PROBFN | IM | EDP | FRAGFN | LOSSFN | COMPGROUP) 
 
 print_options : file_spec (APPEND_OPTION | NEW_OPTION)?;
 
-integration_command : INTEGRATION integration_method numerical_scalar (INTEGER | var_ref | python_script);
+integration_search_option: (BINARY | REVBIN | LOWREV | SCATTERED | DIRECTED) (INTEGER | var_ref | python_script);
+integration_command : INTEGRATION integration_method numerical_scalar (INTEGER | var_ref | python_script)
+		    integration_search_option?;
 integration_method : MAQ;
 
 recorder_command : RECORDER recorder_id ((recorder_type ID recorder_at recorder_cols?) 

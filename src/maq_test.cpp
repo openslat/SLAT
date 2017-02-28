@@ -23,7 +23,7 @@ BOOST_AUTO_TEST_CASE(Integration_Settings_Test)
     /*
      * Verify the system defaults:
      */
-    BOOST_REQUIRE(IntegrationSettings::Get_Max_Evals() == 1024);
+    BOOST_REQUIRE(IntegrationSettings::Get_Integration_Eval_Limit() == 1024);
     BOOST_REQUIRE(IntegrationSettings::Get_Tolerance() == 1E-6);
 
     /*
@@ -31,20 +31,20 @@ BOOST_AUTO_TEST_CASE(Integration_Settings_Test)
      */
     IntegrationSettings::Set_Tolerance(1E-5);
     BOOST_REQUIRE(IntegrationSettings::Get_Tolerance() == 1E-5);
-    BOOST_REQUIRE(IntegrationSettings::Get_Max_Evals() == 1024);
+    BOOST_REQUIRE(IntegrationSettings::Get_Integration_Eval_Limit() == 1024);
 
     /*
      * Change Max Evals; should not affect root settings:
      */
-    IntegrationSettings::Set_Max_Evals(512);
-    BOOST_REQUIRE(IntegrationSettings::Get_Max_Evals() == 512);
+    IntegrationSettings::Set_Integration_Eval_Limit(512);
+    BOOST_REQUIRE(IntegrationSettings::Get_Integration_Eval_Limit() == 512);
     BOOST_REQUIRE(IntegrationSettings::Get_Tolerance() == 1E-5);
 
     /*
      * Reset the integration parameters & verify:
      */
     IntegrationSettings::Reset();
-    BOOST_REQUIRE(IntegrationSettings::Get_Max_Evals() == 1024);
+    BOOST_REQUIRE(IntegrationSettings::Get_Integration_Eval_Limit() == 1024);
     BOOST_REQUIRE(IntegrationSettings::Get_Tolerance() == 1E-6);
 }
 
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
     /*
      * Override MAX_EVALS; integration should fail.
      */
-    IntegrationSettings::Set_Max_Evals(3);
+    IntegrationSettings::Set_Integration_Eval_Limit(3);
     result = MAQ([] (double x) -> double {
             return gsl_ran_lognormal_pdf(x, log(1), 1);
         });
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
     /*
      * Set the default MAX_EVALS to 3; both should fail:
      */
-    IntegrationSettings::Set_Max_Evals(3);
+    IntegrationSettings::Set_Integration_Eval_Limit(3);
     result = MAQ([] (double x) -> double {
             return gsl_ran_lognormal_pdf(x, log(1), 1);
         });
@@ -116,7 +116,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
         });
     BOOST_REQUIRE(!result.successful);
     BOOST_REQUIRE(result.evaluations >= 
-                  IntegrationSettings::Get_Max_Evals());
+                  IntegrationSettings::Get_Integration_Eval_Limit());
     BOOST_CHECK(std::isnan(result.integral));
 
 
@@ -125,7 +125,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
      * within * 0.1% of 1.0.
      */
     IntegrationSettings::Reset();
-    IntegrationSettings::Set_Max_Evals(40);
+    IntegrationSettings::Set_Integration_Eval_Limit(40);
     result = MAQ([] (double x) -> double {
             return gsl_ran_lognormal_pdf(x, log(1), 1);
         });
@@ -150,7 +150,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
      * within 0.0001%.
      */
     IntegrationSettings::Set_Tolerance(1E-6);
-    IntegrationSettings::Set_Max_Evals(1024);
+    IntegrationSettings::Set_Integration_Eval_Limit(1024);
     result = MAQ([] (double x) -> double {
             return gsl_ran_lognormal_pdf(x, log(1), 1);
         });
@@ -164,7 +164,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
      * number of evaluations, to the requested accuracy.
      */
     IntegrationSettings::Set_Tolerance(1E-6);
-    IntegrationSettings::Set_Max_Evals(1024);
+    IntegrationSettings::Set_Integration_Eval_Limit(1024);
     result = MAQ([] (double x) -> double {
             return gsl_ran_lognormal_pdf(x, log(1E5), 1);
         });

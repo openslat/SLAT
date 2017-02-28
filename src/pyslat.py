@@ -76,6 +76,17 @@ class LOGNORMAL_SIGMA_TYPE:
     ## sigma specifies the standard deviation(ln(x)).
     SD_LN_X = pyslatcore.SD_LN_X
 
+class INTEGRATION_METHOD:
+    BINARY_SUBDIVISION = pyslatcore.BINARY_SUBDIVISION
+
+    REVERSE_BINARY_SUBDIVISION = pyslatcore.REVERSE_BINARY_SUBDIVISION
+
+    LOW_FIRST_REVERSE_BINARY_SUBDIVISION = pyslatcore.LOW_FIRST_REVERSE_BINARY_SUBDIVISION
+
+    SCATTERED = pyslatcore.SCATTERED
+
+    DIRECTED = pyslatcore.DIRECTED
+
 ## Create a formula-based deterministic function.
 # This functions wraps the library function SLAT::factory(). It returns
 # a deterministic function (subclass FormulaFn), given a formula type
@@ -183,11 +194,25 @@ def DefaultLogNormalDist():
 #
 # @param tolerance The tolerance at which to consider an integration
 #        complete.
-# @param max_evals The maximum number of evaluations to allow when performing
+# @param integration_eval_limit The maximum number of evaluations to allow when performing
 #        an integration.
 # @todo Separate search and integration limits.
-def IntegrationSettings(tolerance, max_evals):
-    return pyslatcore.IntegrationSettings(tolerance, max_evals)
+def IntegrationSettings(tolerance, integration_eval_limit):
+    return pyslatcore.IntegrationSettings(tolerance, integration_eval_limit)
+
+def Set_Integration_Tolerance(tolerance):
+    return pyslatcore.Set_Integration_Tolerance(tolerance)
+
+def Set_Integration_Eval_Limit(limit):
+    return pyslatcore.Set_Integration_Eval_Limit(int(limit))
+
+def Set_Integration_Search_Limit(limit):
+    pyslatcore.Set_Integration_Search_Limit(int(limit))
+
+def Set_Integration_Method(type):
+    return pyslatcore.Set_Integration_Method(type)
+
+
 
 ## Enable/disable logging to stderr
 #  This wraps the library function SLAT::LogToStdErr().

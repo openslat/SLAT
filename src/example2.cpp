@@ -116,10 +116,10 @@ int main(int argc, char **argv)
         double tolerances[] = { 
             0.1, 0.05, 0.02, 0.01, 0.005, 0.002, 0.001 
         };
-        unsigned int maq_evals[] = { 
+        unsigned int integration_eval_limits[] = { 
             64, 128, 256, 512, 1024, 2048 
         };
-        unsigned int bin_evals[] = { 
+        unsigned int integration_search_limits[] = { 
             256, 512, 1024, 2048, 8192,
             16 * 1024, 32 * 1024,
             128 * 1024,
@@ -136,8 +136,8 @@ int main(int argc, char **argv)
         };
 #else
         double tolerances[] = { 0.001 };
-        unsigned int maq_evals[] = { 256 };
-        unsigned int bin_evals[] = { 128 /** 1024*/ };
+        unsigned int integration_eval_limits[] = { 256 };
+        unsigned int integration_search_limits[] = { 128 /** 1024*/ };
 
         IntegrationSettings::METHOD_TYPE methods[] = {
             IntegrationSettings::DIRECTED
@@ -147,22 +147,22 @@ int main(int argc, char **argv)
         
         for (size_t tol_i = 0; tol_i < countof(tolerances); tol_i++) {
             double tolerance = tolerances[tol_i];
-            for (unsigned int maq_i= 0; maq_i < countof(maq_evals); maq_i++) {
-                for (unsigned int bin_i= 0; bin_i < countof(bin_evals); bin_i++) {
+            for (unsigned int eval_i= 0; eval_i < countof(integration_eval_limits); eval_i++) {
+                for (unsigned int search_i= 0; search_i < countof(integration_search_limits); search_i++) {
                     for (unsigned int method_i = 0; method_i < countof(methods); method_i++) { 
-                        IntegrationSettings::method = methods[method_i];
+                        IntegrationSettings::Set_Integration_Method(methods[method_i]);
                         
                         double start_time = omp_get_wtime();
                         
                         // Set up Integration parameters:
                         IntegrationSettings::Set_Tolerance(tolerance);
-                        IntegrationSettings::bin_evals = bin_evals[bin_i];
-                        IntegrationSettings::Set_Max_Evals(maq_evals[maq_i]);
+                        IntegrationSettings::Set_Integration_Search_Limit(integration_search_limits[search_i]);
+                        IntegrationSettings::Set_Integration_Eval_Limit(integration_eval_limits[eval_i]);
                         
                         {
                             std::cout << "----------------------------" << std::endl
                                       << "Method: ";
-                            switch (IntegrationSettings::method) {
+                            switch (IntegrationSettings::Get_Integration_Method()) {
                             case IntegrationSettings::BINARY_SUBDIVISION:
                                 std::cout << " BINARY_SUBDIVISION";
                                 break;
@@ -181,8 +181,8 @@ int main(int argc, char **argv)
                             }
                             std::cout << std::endl
                                       << "Tolerance: " << IntegrationSettings::Get_Tolerance()
-                                      << "; Evals: " << IntegrationSettings::Get_Max_Evals()
-                                      << "; Bin Evals: " << bin_evals[bin_i]
+                                      << "; Evals: " << IntegrationSettings::Get_Integration_Eval_Limit()
+                                      << "; Bin Evals: " << integration_search_limits[search_i]
                                       << std::endl;
                         }
                         

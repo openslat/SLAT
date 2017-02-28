@@ -32,30 +32,41 @@ namespace SLAT {
         class IntegrationSettings
         {
         public:
-            void Use_Default_Tolerance(void); // Restore default
-            void Use_Default_Max_Evals(void); // Restore default
-
-            static void Set_Tolerance(double tolerance);
-            static void Set_Max_Evals(unsigned int max_evals);  
-            static void Reset();
-
-            static unsigned int Get_Max_Evals(void);
-            static double Get_Tolerance(void);
-            static unsigned int bin_evals;
             typedef enum { BINARY_SUBDIVISION,
                            REVERSE_BINARY_SUBDIVISION,
                            LOW_FIRST_REVERSE_BINARY_SUBDIVISION,
                            SCATTERED,
                            DIRECTED
             } METHOD_TYPE;
-            static METHOD_TYPE method;
+
+            static void Use_Default_Tolerance(void); // Restore default
+            static void Use_Default_Integration_Eval_Limit(void); // Restore default
+            static void Use_Default_Integration_Search_Limit(void); // Restore default
+            static void Use_Default_Method(void); // Restore default
+
+            static void Set_Tolerance(double tolerance);
+            static void Set_Integration_Eval_Limit(unsigned int integration_eval_limit);  
+            static void Set_Integration_Search_Limit(unsigned int integration_search_limit);  
+            static void Set_Integration_Method(METHOD_TYPE method);
+            static void Reset();
+
+            static unsigned int Get_Integration_Eval_Limit(void);
+            static unsigned int Get_Integration_Search_Limit(void);
+            static double Get_Tolerance(void);
+            static METHOD_TYPE Get_Integration_Method(void);
+            
             //static src::logger_mt settings_logger;
         private:
-            static const unsigned int EVALUATIONS_DEFAULT = 1024;
+            static const unsigned int INTEGRATION_EVAL_LIMIT_DEFAULT = 1024;
+            static const unsigned int INTEGRATION_SEARCH_LIMIT_DEFAULT = 1024;
             static constexpr double TOLERANCE_DEFAULT = 1E-6;
-
-            static unsigned int max_evals;
+            static const METHOD_TYPE METHOD_DEFAULT = DIRECTED;
+            
+            static unsigned int integration_eval_limit;
+            static unsigned int integration_search_limit;
             static double tolerance;
+        private:
+            static METHOD_TYPE integration_method;
         };
         
 /*

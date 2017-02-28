@@ -279,7 +279,7 @@ BOOST_AUTO_TEST_CASE( collapse )
     //     Integration::IntegrationSettings &settings = 
     //         im_rate_rel.Get_Integration_Settings();
     //     settings.Override_Tolerance(1E-6);
-    //     settings.Override_Max_Evals(5);
+    //     settings.Override_Integration_Eval_Limit(5);
     // }
 
     BOOST_CHECK_CLOSE( 0.0002158956085998493,

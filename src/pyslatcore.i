@@ -18,6 +18,11 @@ namespace std{
 
 
 void IntegrationSettings(double tolerance, unsigned int max_evals);
+void Set_Integration_Tolerance(double tolerance);
+void Set_Integration_Eval_Limit(unsigned int limit);
+void Set_Integration_Search_Limit(unsigned int limit);
+void Set_Integration_Method(INTEGRATION_TYPE type);
+
 void Initialise(void);
 void SetLogFile(std::string path);
 void LogToStdErr(bool flag);
@@ -25,6 +30,12 @@ void LogToStdErr(bool flag);
 enum FUNCTION_TYPE { NLH, PLC, LIN, LOGLOG };
 enum LOGNORMAL_MU_TYPE { MEAN_X, MEDIAN_X, MEAN_LN_X };
 enum LOGNORMAL_SIGMA_TYPE { SD_X, SD_LN_X };
+enum INTEGRATION_TYPE { BINARY_SUBDIVISION,
+                        REVERSE_BINARY_SUBDIVISION,
+                        LOW_FIRST_REVERSE_BINARY_SUBDIVISION,
+                        SCATTERED,
+                        DIRECTED };
+
 
 class DeterministicFn {
 public:

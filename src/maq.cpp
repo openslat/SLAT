@@ -78,27 +78,39 @@ void DumpIntegrationStats()
 
 namespace SLAT {
     namespace Integration {
-        unsigned int IntegrationSettings::bin_evals = 0;
-        IntegrationSettings::METHOD_TYPE  IntegrationSettings::method = DIRECTED;
 
-        unsigned int IntegrationSettings::max_evals;
-        double IntegrationSettings::tolerance;
+        unsigned int IntegrationSettings::integration_eval_limit  = INTEGRATION_EVAL_LIMIT_DEFAULT;
+        unsigned int IntegrationSettings::integration_search_limit = INTEGRATION_SEARCH_LIMIT_DEFAULT;
+        double IntegrationSettings::tolerance = TOLERANCE_DEFAULT;
+        IntegrationSettings::METHOD_TYPE  IntegrationSettings::integration_method = IntegrationSettings::METHOD_DEFAULT;
         
         void IntegrationSettings::Reset(void)
         {
+            IntegrationSettings::Use_Default_Tolerance();
             IntegrationSettings::tolerance = TOLERANCE_DEFAULT;
-            IntegrationSettings::max_evals = EVALUATIONS_DEFAULT;
+            IntegrationSettings::integration_eval_limit = INTEGRATION_EVAL_LIMIT_DEFAULT;
+            IntegrationSettings::integration_search_limit = INTEGRATION_SEARCH_LIMIT_DEFAULT;
+            IntegrationSettings::integration_method = METHOD_DEFAULT;
         }
 
-        unsigned int IntegrationSettings::Get_Max_Evals(void)
+        unsigned int IntegrationSettings::Get_Integration_Eval_Limit(void)
         {
-            return max_evals;
+            return integration_eval_limit;
         }
 
+        unsigned int IntegrationSettings::Get_Integration_Search_Limit(void)
+        {
+            return integration_search_limit;
+        }
 
         double IntegrationSettings::Get_Tolerance(void)
         {
             return tolerance;
+        }
+
+        IntegrationSettings::METHOD_TYPE IntegrationSettings::Get_Integration_Method(void)
+        {
+            return integration_method;
         }
 
         void IntegrationSettings::Use_Default_Tolerance() 
@@ -106,9 +118,9 @@ namespace SLAT {
             tolerance = TOLERANCE_DEFAULT;
         }
 
-        void IntegrationSettings::Use_Default_Max_Evals() 
+        void IntegrationSettings::Use_Default_Integration_Eval_Limit() 
         {
-            max_evals = EVALUATIONS_DEFAULT;
+            integration_eval_limit = INTEGRATION_EVAL_LIMIT_DEFAULT;
         }
 
         void IntegrationSettings::Set_Tolerance(double tol) 
@@ -121,16 +133,30 @@ namespace SLAT {
             }
         }
 
-        void IntegrationSettings::Set_Max_Evals(unsigned int evals)
+        void IntegrationSettings::Set_Integration_Eval_Limit(unsigned int evals)
         {
             if (evals > 0) {
-                max_evals = evals;
+                integration_eval_limit = evals;
             } else {
-                BOOST_LOG_TRIVIAL(info) << "Can't set max evaluatons to " << evals
+                BOOST_LOG_TRIVIAL(info) << "Can't set integration eval limit to " << evals
                                         << "; must be > 0.0.";
             }
         }
 
+        void IntegrationSettings::Set_Integration_Search_Limit(unsigned int evals)
+        {
+            if (evals > 0) {
+                integration_search_limit = evals;
+            } else {
+                BOOST_LOG_TRIVIAL(info) << "Can't set integration search limit to " << evals
+                                        << "; must be > 0.0.";
+            }
+        }
+        
+        void IntegrationSettings::Set_Integration_Method(METHOD_TYPE method)
+        {
+            IntegrationSettings::integration_method = method;
+        }
 /*
  * Functions for mapping between the x and t domains:
  */
@@ -146,7 +172,7 @@ namespace SLAT {
 /*
  * Try to divide the range [0, ∞) to bracket something interesting for integration.
  */
-        search_result_t binary_subdivision(std::function<double (double)> f, unsigned int max_evals)
+        search_result_t binary_subdivision(std::function<double (double)> f, unsigned int integration_eval_limit)
         {
             double a=0; // Maps to x=∞
             double b=1.0; // Maps to x=0
@@ -161,7 +187,7 @@ namespace SLAT {
                 fc <= std::numeric_limits<double>::epsilon()) 
             {
                 long int intervals = 4;
-                while (evaluations < max_evals && fc <= std::numeric_limits<double>::epsilon()) {
+                while (evaluations < integration_eval_limit && fc <= std::numeric_limits<double>::epsilon()) {
                     for (int i=1; i < intervals; i += 2) {
                         c = float(i)/intervals;
                         fc = f(x_from_t(c));
@@ -188,7 +214,7 @@ namespace SLAT {
 /*
  * Try to divide the range [0, ∞) to bracket something interesting for integration, searching in the reverse direction.
  */
-        search_result_t reverse_binary_subdivision(std::function<double (double)> f, unsigned int max_evals)
+        search_result_t reverse_binary_subdivision(std::function<double (double)> f, unsigned int integration_eval_limit)
         {
             double a=0; // Maps to x=∞
             double b=1.0; // Maps to x=0
@@ -203,7 +229,7 @@ namespace SLAT {
                 fc <= std::numeric_limits<double>::epsilon()) 
             {
                 long int intervals = 4;
-                while (evaluations < max_evals && fc <= std::numeric_limits<double>::epsilon()) {
+                while (evaluations < integration_eval_limit && fc <= std::numeric_limits<double>::epsilon()) {
                     for (int i=1; i < intervals; i += 2) {
                         c = 1.0 - float(i)/intervals;
                         fc = f(x_from_t(c));
@@ -231,7 +257,7 @@ namespace SLAT {
 /*
  * Try to divide the range [0, ∞) to bracket something interesting for integration, searching in the reverse direction.
  */
-        search_result_t low_first_reverse_binary_subdivision(std::function<double (double)> f, unsigned int max_evals)
+        search_result_t low_first_reverse_binary_subdivision(std::function<double (double)> f, unsigned int integration_eval_limit)
         {
             double a=0; // Maps to x=∞
             double b=1.0; // Maps to x=0
@@ -246,7 +272,7 @@ namespace SLAT {
                 fc <= std::numeric_limits<double>::epsilon()) 
             {
                 long int intervals = 4;
-                while (evaluations < max_evals/2 && fc <= std::numeric_limits<double>::epsilon()) {
+                while (evaluations < integration_eval_limit/2 && fc <= std::numeric_limits<double>::epsilon()) {
                     for (int i=1; i < intervals/2; i += 2) {
                         c = 1.0 - float(i)/intervals;
                         fc = f(x_from_t(c));
@@ -263,7 +289,7 @@ namespace SLAT {
                 }
 
                 intervals = 4;
-                while (evaluations < max_evals && fc <= std::numeric_limits<double>::epsilon()) {
+                while (evaluations < integration_eval_limit && fc <= std::numeric_limits<double>::epsilon()) {
                     for (int i=1 + intervals/2; i < intervals; i += 2) {
                         c = 1.0 - float(i)/intervals;
                         fc = f(x_from_t(c));
@@ -290,7 +316,7 @@ namespace SLAT {
 /*
  * Try to divide the range [0, ∞) to bracket something interesting for integration, alternate method
  */
-        search_result_t scattered_search(std::function<double (double)> f, unsigned int max_evals)
+        search_result_t scattered_search(std::function<double (double)> f, unsigned int integration_eval_limit)
         {
             double a=0; // Maps to x=∞
             double b=1.0; // Maps to x=0
@@ -308,7 +334,7 @@ namespace SLAT {
                 unsigned long long int intervals = init_intervals;
                 long int k = 0;
                 unsigned int init_i = 1;
-                while (evaluations < max_evals && fc <= std::numeric_limits<double>::epsilon()) {
+                while (evaluations < integration_eval_limit && fc <= std::numeric_limits<double>::epsilon()) {
                     unsigned long long int i = init_i;
                     c = 1.0 - float(i)/intervals;
                     fc = f(x_from_t(c));
@@ -320,7 +346,7 @@ namespace SLAT {
                     long int p = 2 + 2 * k;
                     k = k + 2;
                     i = i + p;
-                    while (i < intervals && evaluations < max_evals) {
+                    while (i < intervals && evaluations < integration_eval_limit) {
                         c = 1.0 - float(i)/intervals;
                         fc = f(x_from_t(c));
                         evaluations++;
@@ -362,7 +388,7 @@ namespace SLAT {
 /*
  * Try to divide the range [0, ∞) to bracket something interesting for integration, alternate method #2
  */
-        search_result_t directed_search(std::function<double (double)> f, unsigned int max_evals)
+        search_result_t directed_search(std::function<double (double)> f, unsigned int integration_eval_limit)
         {
             double a=0; // Maps to x=∞
             double b=1.0; // Maps to x=0
@@ -376,12 +402,12 @@ namespace SLAT {
             if (fb <= std::numeric_limits<double>::epsilon() && 
                 fc <= std::numeric_limits<double>::epsilon()) 
             {
-                while (fc == 0.0 && evaluations < max_evals) {
+                while (fc == 0.0 && evaluations < integration_eval_limit) {
                     unsigned int init_intervals = 4;
                     unsigned long long int intervals = init_intervals;
                     long int k = 0;
                     unsigned int init_i = 1;
-                    while (evaluations < max_evals && fc == 0.0) {
+                    while (evaluations < integration_eval_limit && fc == 0.0) {
                         unsigned long long int i = init_i;
                         c = 1.0 - float(i)/intervals;
                         fc = f(x_from_t(c));
@@ -393,7 +419,7 @@ namespace SLAT {
                         long int p = 2 + 2 * k;
                         k = k + 2;
                         i = i + p;
-                        while (i < intervals && evaluations < max_evals) {
+                        while (i < intervals && evaluations < integration_eval_limit) {
                             c = 1.0 - float(i)/intervals;
                             fc = f(x_from_t(c));
                             evaluations++;
@@ -432,7 +458,7 @@ namespace SLAT {
 
                     
                 while (fc <= std::numeric_limits<double>::epsilon() && 
-                       evaluations < max_evals &&
+                       evaluations < integration_eval_limit &&
                        (b - a > std::numeric_limits<double>::epsilon())) 
                 {
                     double d = (a + c) / 2.0;
@@ -512,9 +538,8 @@ namespace SLAT {
             calls++;
             
             double tol = IntegrationSettings::Get_Tolerance();
-            unsigned int maxeval = IntegrationSettings::Get_Max_Evals();
-            unsigned int bineval = Integration::IntegrationSettings::bin_evals;
-            if (bineval == 0) bineval = maxeval;
+            unsigned int maxeval = IntegrationSettings::Get_Integration_Eval_Limit();
+            unsigned int bineval = Integration::IntegrationSettings::Get_Integration_Search_Limit();
 
             bool success = true;
             // Initialisation
@@ -536,7 +561,7 @@ namespace SLAT {
             double a, b;
             {
                 search_result_t r = {0, 0, 0};
-                switch (IntegrationSettings::method) {
+                switch (IntegrationSettings::Get_Integration_Method()) {
                 case IntegrationSettings::BINARY_SUBDIVISION:
                     r = binary_subdivision(integrand, bineval);
                     break;

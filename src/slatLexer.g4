@@ -67,6 +67,11 @@ SD_LN_X: 'sd_ln_x';
 SD_X: 'sd_x';
 
 MAQ: 'maq';
+BINARY: 'binary';
+REVBIN: 'revbin';
+LOWREV: 'lowrev';
+SCATTERED: 'scattered';
+DIRECTED: 'directed';
 
 BY_FATE_FLAG: '--by-fate';
 BY_EDP_FLAG: '--by-edp';

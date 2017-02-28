@@ -40,12 +40,52 @@ void LogToStdErr(bool flag)
 }
 
 
-void IntegrationSettings(double tolerance, unsigned int max_evals)
+void IntegrationSettings(double tolerance, unsigned int integration_eval_limit)
 {
     SLAT::Integration::IntegrationSettings::Set_Tolerance(tolerance);
-    SLAT::Integration::IntegrationSettings::Set_Max_Evals(max_evals);
+    SLAT::Integration::IntegrationSettings::Set_Integration_Eval_Limit(integration_eval_limit);
 }
 
+void Set_Integration_Tolerance(double tolerance)
+{
+    SLAT::Integration::IntegrationSettings::Set_Tolerance(tolerance);
+}
+
+void Set_Integration_Eval_Limit(unsigned int limit)
+{
+    SLAT::Integration::IntegrationSettings::Set_Integration_Eval_Limit(limit);
+}
+
+void Set_Integration_Search_Limit(unsigned int limit)
+{
+    SLAT::Integration::IntegrationSettings::Set_Integration_Search_Limit(limit);
+}
+void Set_Integration_Method(INTEGRATION_TYPE method)
+{
+    SLAT::Integration::IntegrationSettings::METHOD_TYPE m;
+    switch (method) {
+    case BINARY_SUBDIVISION:
+        m = SLAT::Integration::IntegrationSettings::BINARY_SUBDIVISION;
+        break;
+    case REVERSE_BINARY_SUBDIVISION:
+        m = SLAT::Integration::IntegrationSettings::REVERSE_BINARY_SUBDIVISION;
+        break;
+    case LOW_FIRST_REVERSE_BINARY_SUBDIVISION:
+        m = SLAT::Integration::IntegrationSettings::LOW_FIRST_REVERSE_BINARY_SUBDIVISION;
+        break;
+    case SCATTERED:
+        m = SLAT::Integration::IntegrationSettings::SCATTERED;
+        break;
+    case DIRECTED:
+        m = SLAT::Integration::IntegrationSettings::DIRECTED;
+        break;
+    default:
+        stringstream err;
+        err << "Invalid integration method #" << (unsigned int)method << ".";
+        throw std::invalid_argument(err.str());
+    }
+    SLAT::Integration::IntegrationSettings::Set_Integration_Method(m);
+}
 
 DeterministicFn::DeterministicFn() : function(NULL) {};
 DeterministicFn::DeterministicFn(std::shared_ptr<SLAT::DeterministicFn> f)

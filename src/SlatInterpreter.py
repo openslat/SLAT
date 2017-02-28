@@ -63,7 +63,7 @@ class SlatInterpreter(slatParserListener):
     ## Enter a parse tree produced by slatParser#command.
     def enterCommand(self, ctx:slatParser.CommandContext):
         self._stack = []
-        print(ctx.getText())
+        #print(ctx.getText())
     
     ## Exit a parse tree produced by slatParser#command.
     def exitCommand(self, ctx:slatParser.CommandContext):
@@ -439,6 +439,27 @@ class SlatInterpreter(slatParserListener):
 
     ## Exit a parse tree produced by slatParser#integration_command.
     def exitIntegration_command(self, ctx:slatParser.Integration_commandContext):
+        if (ctx.integration_search_option()):
+            if (ctx.integration_search_option().BINARY()):
+                search_method = pyslat.INTEGRATION_METHOD.BINARY_SUBDIVISION
+            elif ctx.integration_search_option().REVBIN():
+                search_method = pyslat.INTEGRATION_METHOD.REVERSE_BINARY_SUBDIVISION
+            elif ctx.integration_search_option().LOWREV():
+                search_method = pyslat.INTEGRATION_METHOD.LOW_FIRST_REVERSE_BINARY_SUBDIVISION
+            elif ctx.integration_search_option().SCATTERED():
+                search_method = pyslat.INTEGRATION_METHOD.SCATTERED
+            elif ctx.integration_search_option().DIRECTED():
+                search_method = pyslat.INTEGRATION_METHOD.DIRECTED
+            else:
+                raise ValueError("Unrecognised search algorithm: " +
+                                 ctx.integration_search_option().getText())
+            pyslat.Set_Integration_Method(search_method)
+
+            if ctx.integration_search_option().INTEGER():
+                pyslat.Set_Integration_Search_Limit(ctx.integration_search_option().INTEGER().getText())
+            else:
+                pyslat.Set_Integration_Search_Limit(self._stack.pop())
+
         method = ctx.integration_method()
         if method.MAQ():
             methodstring = "MAQ"
@@ -452,6 +473,7 @@ class SlatInterpreter(slatParserListener):
             iterations = self._stack.pop()
         # TODO: Implement choice of methods
         pyslat.IntegrationSettings(precision, iterations);
+        
 
     ## Exit a parse tree produced by slatParser#recorder_command.
     def exitRecorder_command(self, ctx:slatParser.Recorder_commandContext):
