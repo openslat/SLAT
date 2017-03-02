@@ -187,8 +187,7 @@ int main(int argc, char **argv)
                         }
                         
                         {
-                            extern void ResetIntegrationStats();
-                            ResetIntegrationStats();
+                            Integration::reset_statistics();
                         }
                         
                         // Read IM data
@@ -1094,8 +1093,7 @@ int main(int argc, char **argv)
                         BOOST_LOG(logger) << "Done" << endl;
 
                         {
-                            extern void DumpIntegrationStats();
-                            DumpIntegrationStats();
+                            Integration::format_statistics(std::cout);
                         }
                         double end_time = omp_get_wtime();
 

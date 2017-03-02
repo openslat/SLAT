@@ -80,6 +80,37 @@ namespace SLAT {
         MAQ_RESULT MAQ(std::function<double (double)> integrand);
         MAQ_RESULT MAQ(std::function<double (double)> integrand,
                        const IntegrationSettings &settings);
+
+
+        /**
+         * Integration statistics
+         */ 
+        typedef struct {
+            // Controls--these will be populated from current values when the
+            // statistics are queried.
+            Integration::IntegrationSettings::METHOD_TYPE method;        ///< Search method
+            double tolerance;          ///< Integration tolerance
+            unsigned int eval_limit;   ///< Limit on evaluations during integration
+            unsigned int search_limit; ///< Limit on evaluations during search
+
+            // Counters:
+            unsigned int max_successful_integration;
+            unsigned int number_integration_fails;
+            unsigned long total_integrations_evals;
+
+            unsigned int max_successful_search;
+            unsigned int number_search_fails;
+            unsigned long total_search_evals;
+
+            unsigned int calls;
+            unsigned int successes;
+            unsigned int nans;
+        } IntegrationStats;
+
+        void reset_statistics(void);
+        const IntegrationStats *get_statistics(void);
+        void format_statistics(std::ostream &ostr);
+    
     }
 }
 #endif

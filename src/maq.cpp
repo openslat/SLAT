@@ -20,60 +20,72 @@
 #include "maq.h"
 #include "context.h"
 
-unsigned int max_count = 0;
-unsigned int max_bin = 0;
-unsigned int max_successful_bin = 0;
-unsigned long bin_evals = 0;
-unsigned long maq_evals = 0;
-size_t calls = 0;
-size_t successes = 0;
-size_t fails = 0;
-size_t nans = 0;
-size_t bin_fails = 0;
-const size_t N_BINS = 16;
-size_t bin_Bins[N_BINS] = {0};
+using namespace SLAT;
+using namespace SLAT::Integration;
 
-void ResetIntegrationStats()
+static IntegrationStats stats;
+
+void Integration::reset_statistics(void)
 {
-#pragma omp critical 
-    {
-        max_count = 0;
-        max_bin = 0;
-        max_successful_bin = 0;
-        maq_evals = 0;
-        bin_evals = 0;
-        calls = 0;
-        successes = 0;
-        fails = 0;
-        nans = 0;
-        bin_fails = 0;
-        for (size_t i=0; i < N_BINS; i++) {
-            bin_Bins[i] = 0;
-    }
-    }
+    stats.max_successful_integration = 0;
+    stats.number_integration_fails = 0;
+    stats.total_integrations_evals = 0;
+
+    stats.max_successful_search = 0;
+    stats.number_search_fails = 0;
+    stats.total_search_evals = 0;
+
+    stats.calls = 0;
+    stats.successes = 0;
+    stats.nans = 0;
+}
+    
+const IntegrationStats *Integration::get_statistics(void)
+{
+    stats.method = IntegrationSettings::Get_Integration_Method();
+    stats.tolerance = IntegrationSettings::Get_Tolerance();
+    stats.eval_limit = IntegrationSettings::Get_Integration_Eval_Limit();
+    stats.search_limit = IntegrationSettings::Get_Integration_Search_Limit();
+    return &stats;
 }
 
-void DumpIntegrationStats()
+void Integration::format_statistics(std::ostream &ostr)
 {
-#pragma omp critical
-    std::cout << "Max Count: " << max_count << std::endl
-              << "Max Bin: " << max_bin << std::endl
-              << "Max Successful Bin: " << max_successful_bin << std::endl
-              << "Bin Evals: " << bin_evals << std::endl
-              << "MAQ Evals: " << maq_evals << std::endl
-              << "Total Count: " << (bin_evals + maq_evals) << std::endl
-              << "Calls: " << calls << std::endl
-              << "Successes: " << successes << std::endl
-              << "Fails: " << fails << std::endl
-              << "NANs: " << nans << std::endl
-              << "Bin_Fails: " << bin_fails << std::endl;
-
-    std::cout << "Bins: ";
-    for (size_t i=0; i < N_BINS; i++) {
-        std::cout << bin_Bins[i] << "  ";
+    (void)get_statistics(); // Force update of settings values
+    
+    ostr << "Integration Statistics:" << std::endl
+         << "Search Algorithm: ";
+    switch (stats.method) {
+    case IntegrationSettings::BINARY_SUBDIVISION:
+        ostr << "Binary Subdivision";
+        break;
+    case IntegrationSettings::REVERSE_BINARY_SUBDIVISION:
+        ostr << "Reverse Binary Subdivision";
+        break;
+    case IntegrationSettings::LOW_FIRST_REVERSE_BINARY_SUBDIVISION:
+        ostr << "Low-First Reverse Binary Subdivision";
+        break;
+    case IntegrationSettings::SCATTERED:
+        ostr << "Scattered";
+        break;
+    case IntegrationSettings::DIRECTED:
+        ostr << "Directed";
+    default:
+        ostr << "Unrecognized";
     }
-    std::cout << std::endl;
-
+    ostr << std::endl
+         << "Tolerance: " << stats.tolerance << std::endl
+         << "Integration Eval Limit: " << stats.eval_limit << std::endl
+         << "Search Eval Limit: " << stats.search_limit << std::endl
+         << "Max Integration Evals: " << stats.max_successful_integration << std::endl
+         << "Integration Failures: " << stats.number_integration_fails << std::endl
+         << "Total Integration Evals: " << stats.total_integrations_evals << std::endl
+         << "Max Search Evals: " << stats.max_successful_search << std::endl
+         << "Number Search Fails: " << stats.number_search_fails << std::endl
+         << "Total Search Evals: " << stats.total_search_evals << std::endl
+         << "Number of Calls: " << stats.calls << std::endl
+         << "Successes: " << stats.successes << std::endl
+         << "NANs: " << stats.nans << std::endl;
 }
 
 namespace SLAT {
@@ -535,7 +547,7 @@ namespace SLAT {
         MAQ_RESULT MAQ(std::function<double (double)> integrand) 
         {
 #pragma omp critical
-            calls++;
+            stats.calls++;
             
             double tol = IntegrationSettings::Get_Tolerance();
             unsigned int maxeval = IntegrationSettings::Get_Integration_Eval_Limit();
@@ -579,31 +591,23 @@ namespace SLAT {
                     break;
                 }
 #pragma omp critical
-                bin_evals += r.evaluations;
-                if (max_bin < r.evaluations) {
+                stats.total_search_evals += r.evaluations;
+                if (stats.max_successful_search < r.evaluations) {
 #pragma omp critical
-                    max_bin = r.evaluations;
-                }
-                if (max_successful_bin < r.evaluations && r.evaluations < bineval) {
-#pragma omp critical
-                    max_successful_bin = r.evaluations;
+                    stats.max_successful_search = r.evaluations;
                 }
                 if (std::isnan(r.a)) {
 #pragma omp critical
-                    bin_fails++;
+                    stats.number_search_fails++;
                     BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << " binary_subdivision() found nothing";
                     return {0, true, (unsigned int)r.evaluations}; 
                 } else {
-                    double c = (r.a + r.b) / 2;
-                    size_t bin = c * N_BINS;
-#pragma omp critical
-                    bin_Bins[bin]++;
+                    a = r.a;
+                    b = r.b;
+                    counter = r.evaluations;
                 }
-                a = r.a;
-                b = r.b;
-                counter = r.evaluations;
             }
-   
+            
             double fa = integrand(x_from_t(a))/(a == 0 ? 1 : a*a);
             double fb = integrand(x_from_t(b))/(b*b);
 
@@ -611,18 +615,18 @@ namespace SLAT {
                 std::cout << "fa is NAN" << std::endl;
                 BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fa is NAN";
 #pragma omp critical
-                nans++;
+                stats.nans++;
 #pragma omp critical
-                maq_evals += counter;
+                stats.total_integrations_evals += counter;
                 return {NAN, false, counter};
             }
 
             if (std::isnan(fb)) {
                 BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fb is NAN";
 #pragma omp critical
-                nans++;
+                stats.nans++;
 #pragma omp critical
-                maq_evals += counter;
+                stats.total_integrations_evals += counter;
                 return {NAN, false, counter};
             }
             
@@ -631,9 +635,9 @@ namespace SLAT {
             if (std::isnan(fc)) {
                 BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fc is NAN";
 #pragma omp critical
-                nans++;
+                stats.nans++;
 #pragma omp critical
-                maq_evals += counter;
+                stats.total_integrations_evals += counter;
                 return {NAN, false, counter};
             }
             
@@ -699,18 +703,18 @@ namespace SLAT {
         if (std::isnan(fd)) {
             BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fd is NAN";
 #pragma omp critical
-                    nans++;
+                    stats.nans++;
 #pragma omp critical
-                    maq_evals += counter;
+                    stats.total_integrations_evals += counter;
                     return {NAN, false, counter};
                 }
             
                 if (std::isnan(fe)) {
                     BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << "; fe is NAN";
 #pragma omp critical
-                    nans++;
+                    stats.nans++;
 #pragma omp critical
-                    maq_evals += counter;
+                    stats.total_integrations_evals += counter;
                     return {NAN, false, counter};
                 }
         
@@ -731,20 +735,20 @@ namespace SLAT {
                     region_stack.push({c, b, e, fc, fb , fe, r3});
                 }
             }
-            if (counter > max_count) {
+            if (counter > stats.max_successful_integration) {
 #pragma omp critical
-                max_count = counter;
+                stats.max_successful_integration = counter;
             }
             if (success) {
 #pragma omp critical
-                successes++;
+                stats.successes++;
             } else {
 #pragma omp critical
-                fails++;
+                stats.number_integration_fails++;
             
             }
 #pragma omp critical
-            maq_evals += counter;
+            stats.total_integrations_evals += counter;
             return {integral, success, counter};
         }
     }
