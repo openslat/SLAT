@@ -22,6 +22,8 @@ void Set_Integration_Tolerance(double tolerance);
 void Set_Integration_Eval_Limit(unsigned int limit);
 void Set_Integration_Search_Limit(unsigned int limit);
 void Set_Integration_Method(INTEGRATION_TYPE type);
+void reset_statistics(void);
+std::string format_statistics(void);
 
 void Initialise(void);
 void SetLogFile(std::string path);

@@ -749,3 +749,17 @@ Structure *MakeStructure()
 {
     return new Structure(std::make_shared<SLAT::Structure>("anonymous structure"));
 }
+
+
+void reset_statistics(void)
+{
+    SLAT::Integration::reset_statistics();
+}
+
+std::string format_statistics(void)
+{
+    std::stringstream str;
+    SLAT::Integration::format_statistics(str);
+    return str.str();
+}
+    

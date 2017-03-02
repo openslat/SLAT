@@ -389,3 +389,4 @@ for r in pyslat.recorder.all():
     
 
     
+print(pyslat.Format_Statistics())

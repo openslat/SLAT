@@ -212,6 +212,11 @@ def Set_Integration_Search_Limit(limit):
 def Set_Integration_Method(type):
     return pyslatcore.Set_Integration_Method(type)
 
+def Reset_Statistics():
+    pyslatcore.reset_statistics()
+
+def Format_Statistics():
+    return pyslatcore.format_statistics()
 
 
 ## Enable/disable logging to stderr

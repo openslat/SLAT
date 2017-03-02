@@ -70,6 +70,7 @@ void Integration::format_statistics(std::ostream &ostr)
         break;
     case IntegrationSettings::DIRECTED:
         ostr << "Directed";
+        break;
     default:
         ostr << "Unrecognized";
     }

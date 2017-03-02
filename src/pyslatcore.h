@@ -209,3 +209,5 @@ Structure *MakeStructure();
 void Initialise(void);
 void SetLogFile(std::string path);
 void LogToStdErr(bool flag);
+void reset_statistics(void);
+std::string format_statistics(void);
