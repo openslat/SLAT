@@ -1466,4 +1466,7 @@ recorder STRUCTCOST_FRAG_REC structcost BUILDING --by-frag $linvalues results/co
 
 #recorder DEAGG_REC deagg BUILDING 0.01:3.0 --linear 199 results/deagg --new;
 recorder TOTALCOST_REC totalcost BUILDING 0.01:3.0 --linear 199 results/total_cost --new;
+
 analyze;
+
+intstats print;

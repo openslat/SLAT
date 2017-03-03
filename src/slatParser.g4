@@ -2,16 +2,17 @@ parser grammar slatParser;
 
 options { tokenVocab=slatLexer; }
 
-script : (WS | command)*;
+script : (WS | command)* EOF;
 
 command : (title_command | detfn_command | probfn_command | im_command | edp_command
 	| fragfn_command | lossfn_command | compgroup_command | print_command 
 	| integration_command | recorder_command | analyze_command | set_command 
 	| importprobfn_command | collapse_command | demolition_command |structure_command
 	| importimfn_command | rebuildcost_command | demolitioncost_command
-	| log_command) SEMICOLON;
+	| log_command | intstats_command) SEMICOLON;
 
 log_command : LOG (STDERR_FLAG | NOSTDERR_FLAG)? file_spec?;
+intstats_command : INTSTATS (PRINT | RESET);
 
 title_command : TITLE STRING;
 

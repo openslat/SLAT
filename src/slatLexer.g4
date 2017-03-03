@@ -115,6 +115,9 @@ IMPORTIMFN: 'importimfn';
 PLUS: '+';
 MINUS: '-';
 STAR: '*';
+INTSTATS: 'intstats';
+RESET : 'reset';
+
 
 SINGLE_QUOTED_STRING : SINGLE_QUOTE (SQ_UNESCAPED_CHAR| SQ_ESCAPED_CHAR)* SINGLE_QUOTE;
 
@@ -164,6 +167,7 @@ fragment
 EXPONENT : ('e' | 'E') SIGN? DIGIT_SEQUENCE;
 
 FILE_NAME : [/a-zA-Z_.0-9]+;
+
 
 mode PYMODE;
 PYTHON_END: ')' -> popMode ;

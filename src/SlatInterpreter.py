@@ -669,6 +669,12 @@ class SlatInterpreter(slatParserListener):
         if (ctx.file_spec()):
             pyslat.SetLogFile(ctx.file_spec().getText())
 
+    def exitIntstats_command(self, ctx:slatParser.Intstats_commandContext):
+        if ctx.PRINT():
+            print(pyslat.Format_Statistics())
+        if ctx.RESET():
+            pyslat.Reset_Statistics()
+
 def main(argv):
     for file in argv[1:]:
         print("File:", file)
