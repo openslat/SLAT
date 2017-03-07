@@ -313,6 +313,11 @@ double IM::get_lambda(double x)
     return relationship->lambda(x);
 }
 
+std:: vector<double> IM::get_lambda(std::vector<double> x) 
+{
+    return relationship->lambda(x);
+}
+
 
 void IM::SetCollapse(LogNormalDist c)
 {

@@ -52,6 +52,15 @@ namespace SLAT {
          * @return The probability the of exceedence.
          */
         double lambda(double x);
+
+        /** 
+         * Returns the probability of exceedence at given values.
+         * 
+         * @param x The values for which we want to know the probability.
+         * 
+         * @return The probabilities the of exceedence.
+         */
+        std::vector<double> lambda(std::vector<double> x);
         
         /** 
          * Returns the derivative of lambda at the given point.

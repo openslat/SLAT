@@ -538,7 +538,11 @@ class im:
     ## Return the rate-of-exceedence for a given IM value
     # @param x The IM value of interest.
     def getlambda(self, x):
-        return self._func.get_lambda(x)
+        if type(x) == list:
+            result = list(self._func.get_lambda(x))
+        else:
+            result = self._func.get_lambda(x)
+        return result
 
     ## Return the probality of repair for a given IM value.
     # @param x The IM value of interest.
@@ -1310,105 +1314,110 @@ class recorder:
             print(line)
 
 
-            for x in self._at:
-                line = "{:>15.6}".format(x)
-                if self._type == 'dsedp':
-                    yvals = self._function.fragfn().pExceeded(x)
-                    for y in yvals:
-                        line = "{}{:>15.6}".format(line, y)
-                    line = "{}{:>15.6}".format(line, sum(yvals))
-                elif self._type == 'dsim':
-                    yvals = self._function.pDS_IM(x)
-                    for y in yvals:
-                        line = "{}{:>15.6}".format(line, y)
-                    line = "{}{:>15.6}".format(line, sum(yvals))
-                elif self._type == 'anncost':
-                    annual_loss = self._function.E_cost(int(x), self._options['lambda'])
-                    line = "{}{:>15.6}".format(line, annual_loss)
-                elif self._type == 'costrate':
-                    loss_rate = self._function.lambda_cost(x)
-                    line = "{}{:>15.6}".format(line, loss_rate)
-                elif self._type == 'collapse':
-                    p = self._function.pDemolition(x)
-                    line = "{}{:>15.6}".format(line, p)
-                    p = self._function.pCollapse(x)
-                    line = "{}{:>15.6}".format(line, p)
-                elif self._type == 'deagg':
-                    values = self._function.DeaggregatedLoss(x)
-                    nc = values[0]
-                    c = values[1]
-                    line = "{}{:>15.6}{:>15.6}{:>15.6}{:>15.6}".format(
-                        x, 
-                        nc.get_mean_X(), nc.get_sigma_lnX(), 
-                        c.get_mean_X(), c.get_sigma_lnX())
-                elif not self._columns == None:
+            if self._type == 'imrate':
+                yvals = self._function.getlambda(self._at)
+                for x, y in zip(self._at, yvals):
+                    print("{:>15.6}{:>15.6}".format(x, y))
+            else:
+                for x in self._at:
                     line = "{:>15.6}".format(x)
-                    for y in self._columns:
-                        if isinstance(y, numbers.Number):
-                            if isinstance(self._function, probfn):
-                                yval = self._function.function().X_at_exceedence(x, y)
-                            elif isinstance(self._function, edp):
-                                yval = self._function.X_at_exceedence(x, y)
+                    if self._type == 'dsedp':
+                        yvals = self._function.fragfn().pExceeded(x)
+                        for y in yvals:
+                            line = "{}{:>15.6}".format(line, y)
+                        line = "{}{:>15.6}".format(line, sum(yvals))
+                    elif self._type == 'dsim':
+                        yvals = self._function.pDS_IM(x)
+                        for y in yvals:
+                            line = "{}{:>15.6}".format(line, y)
+                        line = "{}{:>15.6}".format(line, sum(yvals))
+                    elif self._type == 'anncost':
+                        annual_loss = self._function.E_cost(int(x), self._options['lambda'])
+                        line = "{}{:>15.6}".format(line, annual_loss)
+                    elif self._type == 'costrate':
+                        loss_rate = self._function.lambda_cost(x)
+                        line = "{}{:>15.6}".format(line, loss_rate)
+                    elif self._type == 'collapse':
+                        p = self._function.pDemolition(x)
+                        line = "{}{:>15.6}".format(line, p)
+                        p = self._function.pCollapse(x)
+                        line = "{}{:>15.6}".format(line, p)
+                    elif self._type == 'deagg':
+                        values = self._function.DeaggregatedLoss(x)
+                        nc = values[0]
+                        c = values[1]
+                        line = "{}{:>15.6}{:>15.6}{:>15.6}{:>15.6}".format(
+                            x, 
+                            nc.get_mean_X(), nc.get_sigma_lnX(), 
+                            c.get_mean_X(), c.get_sigma_lnX())
+                    elif not self._columns == None:
+                        line = "{:>15.6}".format(x)
+                        for y in self._columns:
+                            if isinstance(y, numbers.Number):
+                                if isinstance(self._function, probfn):
+                                    yval = self._function.function().X_at_exceedence(x, y)
+                                elif isinstance(self._function, edp):
+                                    yval = self._function.X_at_exceedence(x, y)
+                                else:
+                                    yval = "----"
+                            elif y == 'mean_x':
+                                if self._type == 'costedp':
+                                    yval = self._function.E_Cost_EDP(x)
+                                elif self._type == 'costim':
+                                    yval = self._function.E_Cost_IM(x)
+                                elif self._type == 'delayim':
+                                    yval = self._function.E_Delay_IM(x)
+                                elif self._type == 'delayedp':
+                                    yval = self._function.E_Delay_EDP(x)
+                                elif self._type == 'totalcost':
+                                    yval = self._function.TotalCost(x).mean()
+                                else:
+                                    yval = self._function.Mean(x)
+                            elif y == 'mean_ln_x':
+                                if self._type == 'totalcost':
+                                    yval = self._function.TotalCost(x).mean_ln()
+                                else:
+                                    yval = self._function.MeanLn(x)
+                            elif y == 'median_x':
+                                if self._type == 'totalcost':
+                                    yval = self._function.TotalCost(x).median()
+                                else:
+                                    yval = self._function.Median(x)
+                            elif y == 'sd_ln_x':
+                                if self._type == 'costedp':
+                                    yval = self._function.SD_ln_Cost_EDP(x)
+                                elif self._type == 'costim':
+                                    yval = self._function.SD_ln_Cost_IM(x)
+                                elif self._type == 'delayim':
+                                    yval = self._function.SD_ln_Delay_IM(x)
+                                elif self._type == 'delayedp':
+                                    yval = self._function.SD_ln_Delay_EDP(x)
+                                elif self._type == 'totalcost':
+                                    yval = self._function.TotalCost(x).sd_ln()
+                                else:
+                                    yval = self._function.SD_ln(x)
+                            elif y == 'sd_x':
+                                if self._type == 'totalcost':
+                                    yval = self._function.TotalCost(x).sd()
+                                else:
+                                    yval = self._function.SD(x)
                             else:
-                                yval = "----"
-                        elif y == 'mean_x':
-                            if self._type == 'costedp':
-                                yval = self._function.E_Cost_EDP(x)
-                            elif self._type == 'costim':
-                                yval = self._function.E_Cost_IM(x)
-                            elif self._type == 'delayim':
-                                yval = self._function.E_Delay_IM(x)
-                            elif self._type == 'delayedp':
-                                yval = self._function.E_Delay_EDP(x)
-                            elif self._type == 'totalcost':
-                                yval = self._function.TotalCost(x).mean()
-                            else:
-                                yval = self._function.Mean(x)
-                        elif y == 'mean_ln_x':
-                            if self._type == 'totalcost':
-                                yval = self._function.TotalCost(x).mean_ln()
-                            else:
-                                yval = self._function.MeanLn(x)
-                        elif y == 'median_x':
-                            if self._type == 'totalcost':
-                                yval = self._function.TotalCost(x).median()
-                            else:
-                                yval = self._function.Median(x)
-                        elif y == 'sd_ln_x':
-                            if self._type == 'costedp':
-                                yval = self._function.SD_ln_Cost_EDP(x)
-                            elif self._type == 'costim':
-                                yval = self._function.SD_ln_Cost_IM(x)
-                            elif self._type == 'delayim':
-                                yval = self._function.SD_ln_Delay_IM(x)
-                            elif self._type == 'delayedp':
-                                yval = self._function.SD_ln_Delay_EDP(x)
-                            elif self._type == 'totalcost':
-                                yval = self._function.TotalCost(x).sd_ln()
-                            else:
-                                yval = self._function.SD_ln(x)
-                        elif y == 'sd_x':
-                            if self._type == 'totalcost':
-                                yval = self._function.TotalCost(x).sd()
-                            else:
-                                yval = self._function.SD(x)
-                        else:
-                            yval = "+++++++++"
-                        line = "{}{:>15.6}".format(line, yval)
-                else:
-                    if isinstance(self._function, detfn):
-                        yval = self._function.ValueAt(x)
-                    elif (isinstance(self._function, im) or
-                          isinstance(self._function, edp) or
-                          isinstance(self._function, IM) or
-                          isinstance(self._function, EDP)):
-                          yval = self._function.getlambda(x)
-                    elif isinstance(self._function, compgroup):
-                          yval = self._function.E_Cost_EDP(x)
+                                yval = "+++++++++"
+                            line = "{}{:>15.6}".format(line, yval)
                     else:
-                        yval = "*****"
-                    line = "{}{:>15.6}".format(line, yval)
-                print(line)
+                        if isinstance(self._function, detfn):
+                            yval = self._function.ValueAt(x)
+                        elif (isinstance(self._function, im) or
+                              isinstance(self._function, edp) or
+                              isinstance(self._function, IM) or
+                              isinstance(self._function, EDP)):
+                              yval = self._function.getlambda(x)
+                        elif isinstance(self._function, compgroup):
+                              yval = self._function.E_Cost_EDP(x)
+                        else:
+                            yval = "*****"
+                        line = "{}{:>15.6}".format(line, yval)
+                    print(line)
 
     ## Run the recorder.
     #  This invokes generate_output(), redirecting the output to a file

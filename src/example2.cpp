@@ -224,12 +224,7 @@ int main(int argc, char **argv)
                             vector<double> im_vals = logrange(0.01, 3.0, 199);
 
                             // Calculate the data:
-                            double results[im_vals.size()];
-        
-#pragma omp parallel for
-                            for (size_t i=0; i < im_vals.size(); i++) {
-                                results[i] = im_rel->lambda(im_vals[i]);
-                            }
+                            vector<double> results = im_rel->lambda(im_vals);
 
                             ofstream ofile("c-results/im_rate");
                             ofile << setw(15) << "IM.1" << setw(15) << "lambda" << endl;
@@ -245,14 +240,9 @@ int main(int argc, char **argv)
                             vector<double> im_vals = linrange(0.01, 3.0, 199);
 
                             // Calculate the data:
-                            double results[im_vals.size()];
-        
+                            vector<double> results = im_rel->lambda(im_vals);
                             {
                                 TempContext context("IM-Rate");
-#pragma omp parallel for
-                                for (size_t i=0; i < im_vals.size(); i++) {
-                                    results[i] = im_rel->lambda(im_vals[i]);
-                                }
 
                                 ofstream ofile("c-results/im_rate_lin");
                                 ofile << setw(15) << "IM.1" << setw(15) << "lambda" << endl;

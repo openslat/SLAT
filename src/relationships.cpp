@@ -63,6 +63,16 @@ namespace SLAT {
         return f->ValueAt(x);
     }
 
+    std::vector<double> IM::lambda(std::vector<double> x)
+    {
+        std::vector<double> result(x.size());
+#pragma omp parallel for
+        for (size_t i=0; i < x.size(); i++) {
+            result[i] = lambda(x[i]);
+        }
+        return result;
+    }
+
     std::string IM::ToString(void) const 
     {
         return "IM(" + f->ToString() + ")";

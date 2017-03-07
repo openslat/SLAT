@@ -73,6 +73,7 @@ class IM {
 public:
     IM();
     double get_lambda(double x);
+    std::vector<double> get_lambda(std::vector<double> x);
     void SetCollapse(LogNormalDist c);
     double pCollapse(double im);
     double CollapseRate(void);
