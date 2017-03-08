@@ -73,6 +73,36 @@ namespace SLAT {
         return result;
     }
 
+    std::vector<double> IM::pCollapse(std::vector<double> im)
+    {
+        std::vector<double> result(im.size());
+#pragma omp parallel for
+        for (size_t i=0; i < im.size(); i++) {
+            result[i] = pCollapse(im[i]);
+        }
+        return result;
+    }
+
+    std::vector<double> IM::pDemolition(std::vector<double> im)
+    {
+        std::vector<double> result(im.size());
+#pragma omp parallel for
+        for (size_t i=0; i < im.size(); i++) {
+            result[i] = pDemolition(im[i]);
+        }
+        return result;
+    }
+
+    std::vector<double> IM::pRepair(std::vector<double> im)
+    {
+        std::vector<double> result(im.size());
+#pragma omp parallel for
+        for (size_t i=0; i < im.size(); i++) {
+            result[i] = pRepair(im[i]);
+        }
+        return result;
+    }
+    
     std::string IM::ToString(void) const 
     {
         return "IM(" + f->ToString() + ")";

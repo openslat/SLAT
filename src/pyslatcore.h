@@ -99,11 +99,14 @@ public:
     std::vector<double> get_lambda(std::vector<double> x);
     void SetCollapse(LogNormalDist c);
     double pCollapse(double im);
+    std::vector<double> pCollapse(std::vector<double> im);
     double CollapseRate(void);
     void SetDemolition(LogNormalDist d);
     double pDemolition(double im);
+    std::vector<double> pDemolition(std::vector<double> im);
     double DemolitionRate(void);
     double pRepair(double im);
+    std::vector<double> pRepair(std::vector<double> im);
 public:
     std::shared_ptr<SLAT::IM> relationship;
         

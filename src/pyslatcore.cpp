@@ -329,6 +329,11 @@ double IM::pCollapse(double im)
     return relationship->pCollapse(im);
 }
 
+std::vector<double> IM::pCollapse(std::vector<double> im)
+{
+    return relationship->pCollapse(im);
+}
+
 double IM::CollapseRate(void)
 {
     return relationship->CollapseRate();
@@ -344,6 +349,11 @@ double IM::pDemolition(double im)
     return relationship->pDemolition(im);
 }
 
+std::vector<double> IM::pDemolition(std::vector<double> im)
+{
+    return relationship->pDemolition(im);
+}
+
 double IM::DemolitionRate(void)
 {
     return relationship->DemolitionRate();
@@ -353,7 +363,12 @@ double IM::pRepair(double im)
 {
     return relationship->pRepair(im);
 }
-    
+
+std::vector<double> IM::pRepair(std::vector<double> im)
+{
+    return relationship->pRepair(im);
+}
+
 EDP::EDP() : relationship(NULL)
 {
 }

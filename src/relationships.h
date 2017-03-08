@@ -93,6 +93,10 @@ namespace SLAT {
             }
         }
 
+        std::vector<double> pDemolition(std::vector<double> im);
+        std::vector<double> pCollapse(std::vector<double> im);
+        std::vector<double> pRepair(std::vector<double> im);
+
         double pRepair(double im) {
             return 1.0 - (pDemolition(im) + pCollapse(im));
         }

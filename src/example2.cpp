@@ -255,16 +255,13 @@ int main(int argc, char **argv)
                         }
     
                         // Write the Collapse data:
+                        for (size_t k=0; k < 1000; k++)
                         {
                             TempContext context("Collapse Rate");
                             vector<double> im_vals = linrange(0.01, 3.0, 199);
-                            double collapse[im_vals.size()], demolition[im_vals.size()];
-#pragma omp parallel for
-                            for (size_t i=0; i < im_vals.size(); i++) {
-                                collapse[i] = im_rel->pCollapse(im_vals[i]);
-                                demolition[i] = im_rel->pDemolition(im_vals[i]);
-                            }
-        
+                            vector<double> collapse = im_rel->pCollapse(im_vals);
+                            vector<double> demolition = im_rel->pDemolition(im_vals);
+
                             ofstream ofile("c-results/collapse.txt");
                             ofile << setw(15) << "IM.1" << setw(15) << "p(Demolition)"
                                   << setw(15) << "p(Collapse)" << endl;
@@ -274,6 +271,7 @@ int main(int argc, char **argv)
                                 ofile << setw(15) << im_vals[i] << setw(15) << demolition[i]
                                       << setw(15) << collapse[i] << endl;
                             }
+                            Caching::Clear_Caches();
                         }
 
                         // Write the rate of collapse:

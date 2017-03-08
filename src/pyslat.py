@@ -547,12 +547,20 @@ class im:
     ## Return the probality of repair for a given IM value.
     # @param x The IM value of interest.
     def pRepair(self, x):
-        return self._func.pRepair(x)
+        if type(x) == list:
+            result = list(self._func.pRepair(x))
+        else:
+            result = self._func.pRepair(x)
+        return result
     
     ## Return the probality of collapse for a given IM value.
     # @param x The IM value of interest.
     def pCollapse(self, x):
-        return self._func.pCollapse(x)
+        if type(x) == list:
+            result = list(self._func.pCollapse(x))
+        else:
+            result = self._func.pCollapse(x)
+        return result
 
     ## Set the probality of collapse | IM. 
     # @param collapse A deterministic function representing the 
@@ -570,7 +578,11 @@ class im:
     ## Return the probality of demolition for a given IM value.
     # @param x The IM value of interest.
     def pDemolition(self, x):
-        return self._func.pDemolition(x)
+        if type(x) == list:
+            result = list(self._func.pDemolition(x))
+        else:
+            result = self._func.pDemolition(x)
+        return result
 
     ## Set the probality of demolition | IM. 
     # @param collapse A deterministic function representing the 
@@ -1318,6 +1330,11 @@ class recorder:
                 yvals = self._function.getlambda(self._at)
                 for x, y in zip(self._at, yvals):
                     print("{:>15.6}{:>15.6}".format(x, y))
+            elif self._type == 'collapse':
+                yvals_demo = self._function.pDemolition(self._at)
+                yvals_coll = self._function.pCollapse(self._at)
+                for x, demo, coll in zip(self._at, yvals_demo, yvals_coll):
+                    print("{:>15.6}{:>15.6}{:>15.6}".format(x, demo, coll))
             else:
                 for x in self._at:
                     line = "{:>15.6}".format(x)
@@ -1337,11 +1354,6 @@ class recorder:
                     elif self._type == 'costrate':
                         loss_rate = self._function.lambda_cost(x)
                         line = "{}{:>15.6}".format(line, loss_rate)
-                    elif self._type == 'collapse':
-                        p = self._function.pDemolition(x)
-                        line = "{}{:>15.6}".format(line, p)
-                        p = self._function.pCollapse(x)
-                        line = "{}{:>15.6}".format(line, p)
                     elif self._type == 'deagg':
                         values = self._function.DeaggregatedLoss(x)
                         nc = values[0]
