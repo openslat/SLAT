@@ -255,7 +255,6 @@ int main(int argc, char **argv)
                         }
     
                         // Write the Collapse data:
-                        for (size_t k=0; k < 1000; k++)
                         {
                             TempContext context("Collapse Rate");
                             vector<double> im_vals = linrange(0.01, 3.0, 199);
@@ -368,14 +367,9 @@ int main(int argc, char **argv)
                             int n = i + 1;
                             {
                                 vector<double> im_vals = linrange(0.01, 3.0, 199);
-                                double mean[im_vals.size()], sd[im_vals.size()];
-            
-#pragma omp parallel for
-                                for (size_t i=0; i < im_vals.size(); i++) {
-                                    mean[i] = edp_rels[n]->Mean(im_vals[i]);
-                                    sd[i] = edp_rels[n]->SD_ln(im_vals[i]);
-                                }
-            
+                                vector<double> mean = edp_rels[n]->Mean(im_vals);
+                                vector<double> sd = edp_rels[n]->SD_ln(im_vals);
+
                                 stringstream path;
                                 path << "c-results/im_edp_" << n << ".txt";
             
@@ -406,15 +400,11 @@ int main(int argc, char **argv)
                                 } else {
                                     edp_vals = logrange(0.001, 0.1, 199);
                                 }
-                                double results[edp_vals.size()];
 
                                 TempContext context([i] (std::ostream &o) {
                                         o << "EDP #" << i << " lambda";
                                     });
-#pragma omp parallel for
-                                for (size_t i=0; i < edp_vals.size(); i++) {
-                                    results[i] = edp_rels[n]->lambda(edp_vals[i]);
-                                }
+                                std::vector<double> results = edp_rels[n]->par_lambda(edp_vals);
         
                                 for (size_t i=0; i < edp_vals.size(); i++) {
                                     outfile << setw(15) << edp_vals[i] 

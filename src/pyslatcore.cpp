@@ -383,6 +383,16 @@ double EDP::get_lambda(double x)
     return relationship->lambda(x);
 }
 
+std::vector<double> EDP::get_lambda(std::vector<double> x) 
+{
+    std::vector<double> result(x.size());
+#pragma omp parallel for
+    for (size_t i=0; i < x.size(); i++) {
+        result[i] = get_lambda(x[i]);
+    }
+    return result;
+}
+
 double EDP::P_exceedence(double x, double y) 
 {
     return relationship->P_exceedence(x, y);
@@ -411,6 +421,56 @@ double EDP::SD_ln(double x)
 double EDP::SD(double x)
 {
     return relationship->SD(x);
+}
+
+std::vector<double> EDP::Mean(std::vector<double> x)
+{
+    std::vector<double> result(x.size());
+#pragma omp parallel for
+    for (size_t i=0; i < x.size(); i++) {
+        result[i] = Mean(x[i]);
+    }
+    return result;
+}
+
+std::vector<double> EDP::MeanLn(std::vector<double> x)
+{
+    std::vector<double> result(x.size());
+#pragma omp parallel for
+    for (size_t i=0; i < x.size(); i++) {
+        result[i] = MeanLn(x[i]);
+    }
+    return result;
+}
+
+std::vector<double> EDP::Median(std::vector<double> x)
+{
+    std::vector<double> result(x.size());
+#pragma omp parallel for
+    for (size_t i=0; i < x.size(); i++) {
+        result[i] = Median(x[i]);
+    }
+    return result;
+}
+
+std::vector<double> EDP::SD_ln(std::vector<double> x)
+{
+    std::vector<double> result(x.size());
+#pragma omp parallel for
+    for (size_t i=0; i < x.size(); i++) {
+        result[i] = SD_ln(x[i]);
+    }
+    return result;
+}
+
+std::vector<double> EDP::SD(std::vector<double> x)
+{
+    std::vector<double> result(x.size());
+#pragma omp parallel for
+    for (size_t i=0; i < x.size(); i++) {
+        result[i] = SD(x[i]);
+    }
+    return result;
 }
 
 std::string EDP::get_Name(void)

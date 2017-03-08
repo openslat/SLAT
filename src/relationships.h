@@ -150,6 +150,7 @@ namespace SLAT {
 
     public:
         Caching::CachedFunction<double, double> lambda;
+        std::vector<double> par_lambda(std::vector<double> args);
         
         /** 
          * Returns the derivative of lambda at the given point.
@@ -205,6 +206,12 @@ namespace SLAT {
         double Median(double base_value) const;
         double SD_ln(double base_value) const;
         double SD(double base_value) const;
+
+        std::vector<double> Mean(std::vector<double>base_value) const;
+        std::vector<double> MeanLn(std::vector<double>base_value) const;
+        std::vector<double> Median(std::vector<double>base_value) const;
+        std::vector<double> SD_ln(std::vector<double>base_value) const;
+        std::vector<double> SD(std::vector<double>base_value) const;
         
         std::shared_ptr<IM> Base_Rate(void) { return base_rate; };
         

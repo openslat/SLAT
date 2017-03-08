@@ -665,34 +665,58 @@ class edp:
     ## Return mean(EDP) for a given IM.
     #  @param x The IM value at which to calculate mean(x).
     def Mean(self, x):
-        return self._func.Mean(x)
+        if type(x) == list:
+            result = list(self._func.Mean(x))
+        else:
+            result = self._func.Mean(x)
+        return result
 
     ## Return mean(ln(EDP)) for a given IM.
     #  @param x The IM value at which to calculate mean(ln(x)).
     def MeanLn(self, x):
-        return self._func.MeanLn(x)
+        if type(x) == list:
+            result = list(self._func.MeanLn(x))
+        else:
+            result = self._func.MeanLn(x)
+        return result
 
     ## Return median(EDP) for a given IM.
     #  @param x The IM value at which to calculate median(x).
     def Median(self, x):
-        return self._func.Median(x)
+        if type(x) == list:
+            result = list(self._func.Median(x))
+        else:
+            result = self._func.Median(x)
+        return result
 
     ## Return standard deviation(ln(EDP)) for a given IM.
     #  @param x The IM value at which to calculate standard deviation(ln(x)).
     def SD_ln(self, x):
-        return self._func.SD_ln(x)
+        if type(x) == list:
+            result = list(self._func.SD_ln(x))
+        else:
+            result = self._func.SD_ln(x)
+        return result
 
     ## Return standard deviation(EDP) for a given IM.
     #  @param x The IM value at which to calculate standard deviation(x).
     def SD(self, x):
-        return self._func.SD(x)
+        if type(x) == list:
+            result = list(self._func.SD(x))
+        else:
+            result = self._func.SD(x)
+        return result
 
     ## Return the probability exceeding a given value.
     #  @param x The EDP value we're interested in
     #  @todo Is this 'probability' or 'rate'? Make sure this is described
     #        correctly at all levels of code.
     def getlambda(self, x):
-        return self._func.get_lambda(x)
+        if type(x) == list:
+            result = list(self._func.get_lambda(x))
+        else:
+            result = self._func.get_lambda(x)
+        return result
 
     ## Return the inverse probability of exceedence.
     #  Given an IM value 'im', and a probability 'p', return
@@ -1335,6 +1359,28 @@ class recorder:
                 yvals_coll = self._function.pCollapse(self._at)
                 for x, demo, coll in zip(self._at, yvals_demo, yvals_coll):
                     print("{:>15.6}{:>15.6}{:>15.6}".format(x, demo, coll))
+            elif self._type == 'edpim':
+                yvals = []
+                for y in self._columns:
+                    if y == 'mean_x':
+                        yvals.append(self._function.Mean(self._at))
+                    elif y == 'mean_ln_x':
+                        yvals.append(self._function.MeanLn(self._at))
+                    elif y == 'median_x':
+                        yvals.append(self._function.Median(self._at))
+                    elif y == 'sd_ln_x':
+                        yvals.append(self._function.SD_ln(self._at))
+                    elif y == 'sd_x':
+                        yvals.append(self._function.SD(self._at))
+                for x, y in zip(self._at, map(list, zip(*yvals))):
+                    line = "{:>15.6}".format(x)
+                    for yval in y:
+                        line = "{}{:>15.6}".format(line, yval)
+                    print(line)
+#            elif type(self._function) == edp:
+#                print(self._type)
+#                print(self._columns)
+#                raise ValueError("EDP: " + self._type)
             else:
                 for x in self._at:
                     line = "{:>15.6}".format(x)

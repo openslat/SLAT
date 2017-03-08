@@ -296,9 +296,29 @@ namespace SLAT {
         return dependent_rate->P_exceedence(base_value, min_dependent_value);
     }
 
+    std::vector<double> EDP::par_lambda(std::vector<double> args)
+    {
+        std::vector<double> result(args.size());
+#pragma omp parallel for
+        for (size_t i=0; i < args.size(); i++) {
+            result[i] = lambda(args[i]);
+        }
+        return result;
+    }
+    
     double EDP::MeanLn(double base_value) const
     {
         return dependent_rate->MeanLn(base_value);
+    }
+
+    std::vector<double> EDP::MeanLn(std::vector<double> base_values) const
+    {
+        std::vector<double> result(base_values.size());
+#pragma omp parallel for
+        for (size_t i = 0; i < base_values.size(); i++) {
+            result[i] = MeanLn(base_values[i]);
+        }
+        return result;
     }
 
     double EDP::Median(double base_value) const
@@ -306,9 +326,29 @@ namespace SLAT {
         return dependent_rate->Median(base_value);
     }
 
+    std::vector<double> EDP::Median(std::vector<double> base_values) const
+    {
+        std::vector<double> result(base_values.size());
+#pragma omp parallel for
+        for (size_t i = 0; i < base_values.size(); i++) {
+            result[i] = Median(base_values[i]);
+        }
+        return result;
+    }
+
     double EDP::Mean(double base_value) const
     {
         return dependent_rate->Mean(base_value);
+    }
+
+    std::vector<double> EDP::Mean(std::vector<double> base_values) const
+    {
+        std::vector<double> result(base_values.size());
+#pragma omp parallel for
+        for (size_t i = 0; i < base_values.size(); i++) {
+            result[i] = Mean(base_values[i]);
+        }
+        return result;
     }
 
     double EDP::SD_ln(double base_value) const
@@ -316,9 +356,29 @@ namespace SLAT {
         return dependent_rate->SD_ln(base_value);
     }
 
+    std::vector<double> EDP::SD_ln(std::vector<double> base_values) const
+    {
+        std::vector<double> result(base_values.size());
+#pragma omp parallel for
+        for (size_t i = 0; i < base_values.size(); i++) {
+            result[i] = SD_ln(base_values[i]);
+        }
+        return result;
+    }
+
     double EDP::SD(double base_value) const
     {
         return dependent_rate->SD(base_value);
+    }
+
+    std::vector<double> EDP::SD(std::vector<double> base_values) const
+    {
+        std::vector<double> result(base_values.size());
+#pragma omp parallel for
+        for (size_t i = 0; i < base_values.size(); i++) {
+            result[i] = SD(base_values[i]);
+        }
+        return result;
     }
 
 }
