@@ -144,7 +144,9 @@ namespace SLAT {
          * error, and any error codes, at least for now.
          */
         double result, abserror;
-        gsl_deriv_forward(&F, x, 1E-8, &result, &abserror);
+        gsl_deriv_central(&F, x, 1E-8, &result, &abserror);
+        if (std::isnan(result)) gsl_deriv_forward(&F, x, 1E-8, &result, &abserror);
+        if (std::isnan(result)) gsl_deriv_backward(&F, x, 1E-8, &result, &abserror);
         return result;
     }
 
