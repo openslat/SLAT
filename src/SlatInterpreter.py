@@ -534,6 +534,14 @@ class SlatInterpreter(slatParserListener):
                     options['structcost-type'] = 'by-edp'
                 if ctx.structcost_type().BY_FRAG_FLAG():
                     options['structcost-type'] = 'by-frag'
+            if ctx.NPV_FLAG():
+                options['structcost-type'] = 'npv'
+                options['discount-rate'] = float(ctx.FLOAT_VAL().getText())
+                first_year = int(ctx.INTEGER()[0].getText())
+                increment = int(ctx.INTEGER()[1].getText())
+                last_year = int(ctx.INTEGER()[2].getText())
+                at = list(range(first_year, last_year, increment))
+                
             elif ctx.ANNUAL_FLAG():
                 options['structcost-type'] = 'annual'
                 cols = []

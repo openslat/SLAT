@@ -719,6 +719,11 @@ std::vector<LogNormalDist> Structure::CostsByFate(double im)
     return results;
 }
 
+double Structure::E_cost(int years, double discount_rate) 
+{
+    return wrapper->E_cost(years, discount_rate); 
+};
+
 void Structure::setRebuildCost(LogNormalDist cost) 
 {
     wrapper->setRebuildCost(*cost.dist);

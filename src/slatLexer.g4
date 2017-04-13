@@ -77,6 +77,7 @@ BY_FATE_FLAG: '--by-fate';
 BY_EDP_FLAG: '--by-edp';
 BY_FRAG_FLAG: '--by-frag';
 ANNUAL_FLAG: '--annual';
+NPV_FLAG: '--npv';
 
 STRING : SINGLE_QUOTED_STRING | DOUBLE_QUOTED_STRING ;
 

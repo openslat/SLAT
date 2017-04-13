@@ -943,7 +943,7 @@ int main(int argc, char **argv)
 
                             // Record the Expected Loss | Time relationship
                             ofstream outfile("c-results/expected_loss");
-                            outfile << setw(15) << "Years" 
+                            outfile << setw(15) << "Year" 
                                     << setw(15) << "E[ALt]"
                                     << endl;
         

@@ -109,7 +109,7 @@ recorder_command : RECORDER recorder_id ((recorder_type ID recorder_at recorder_
                   | ((DSRATE | COLLRATE) ID)
                   | ((COSTRATE | COLLAPSE | DEAGG | TOTALCOST) ID recorder_at)
 		  | (ANNCOST ID recorder_at LAMBDA_FLAG lambda_value)
-		  | (STRUCTCOST ID ((structcost_type recorder_at) | (ANNUAL_FLAG lognormal_options)) recorder_cols?))
+		  | (STRUCTCOST ID ((NPV_FLAG INTEGER COLON INTEGER COLON INTEGER  FLOAT_VAL) | ((structcost_type recorder_at) | (ANNUAL_FLAG lognormal_options)) recorder_cols?)))
 		  print_options?;
 lambda_value: numerical_scalar;
 recorder_id : ID;

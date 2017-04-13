@@ -203,6 +203,7 @@ public:
     LogNormalDist TotalCost(double im);
     std::vector<LogNormalDist> DeaggregatedCost(double im);
     std::vector<LogNormalDist> CostsByFate(double im);
+    double E_cost(int years, double discount_rate);
     void setRebuildCost(LogNormalDist cost);
     LogNormalDist getRebuildCost(void);
     void setDemolitionCost(LogNormalDist cost);

@@ -1463,7 +1463,7 @@ recorder STRUCTCOST_ANNUAL_REC structcost BUILDING --annual --mu mean_x --sd sd_
 recorder STRUCTCOST_FATE_REC structcost BUILDING --by-fate $linvalues results/cost_by_fate --new;
 recorder STRUCTCOST_EDP_REC structcost BUILDING --by-edp $linvalues results/cost_by_edp --new;
 recorder STRUCTCOST_FRAG_REC structcost BUILDING --by-frag $linvalues results/cost_by_frag --new;
-
+recorder STRUCTCOST_NPV_REC structcost BUILDING --npv 1:1:100 0.06 results/expected_loss;
 #recorder DEAGG_REC deagg BUILDING 0.01:3.0 --linear 199 results/deagg --new;
 recorder TOTALCOST_REC totalcost BUILDING 0.01:3.0 --linear 199 results/total_cost --new;
 

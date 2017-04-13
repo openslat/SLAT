@@ -372,6 +372,13 @@ pyslat.MakeRecorder("STRUCTCOST_COMP_REC",
                 None, 
                 linvalues)
 
+pyslat.MakeRecorder("STRUCTCOST_NPV_REC", 
+                "structcost", 
+                pyslat.structure.lookup("building"),
+                {'filename': "py-results/expected_loss", 'append': False, 'structcost-type': 'npv', 'discount-rate': 0.06},
+                None, 
+                list(range(1, 100)))
+
 pyslat.MakeRecorder("TOTALCOST_COMP_REC", 
                 "totalcost", 
                 pyslat.structure.lookup("building"),

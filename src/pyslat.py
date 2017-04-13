@@ -1177,6 +1177,13 @@ class structure:
     def AnnualCost(self):
         return lognormaldist(self._structure.AnnualCost())
 
+    ## Return mean(cost) for a given number of years, assuming a given
+    #  discount rate.
+    # @param t Number of years
+    # @param l Discount rate.
+    def E_cost(self, t, l):
+        return self._structure.E_cost(t, l)
+    
     ## Return the deaggregated cost.
     #  @param im The intensity measure value we're interested in.
     #  @return The cost, as a pair of pyslat.lognormaldist objects.
@@ -1515,6 +1522,12 @@ class StructcostRecorder(recorder):
     ## Constructor
     # Supplements recorder.__init__ with additional pre-processing.
     def __init__(self, id, type, function, options, columns, at):
+        print("> StructcostRecorder(", id, ")")
+        print("type: ", type)
+        print("function: ", function)
+        print("options: ", options)
+        print("columns: ", columns)
+        print("at: ", at)
         if  (not options['structcost-type'] == 'annual') \
             and at==None:
             raise ValueError('MUST PROVIDE ''AT'' CLAUSE')
@@ -1689,6 +1702,16 @@ class StructcostRecorder(recorder):
                         
                         line = "{}{:>15.6}".format(line, yval)
                 print(line)
+        elif self._options['structcost-type'] == 'npv':
+            discount_rate = self._options['discount-rate']
+            print("{:>15}{:>15}".format("Year", "E[ALt]"))
+            for year in self._at:
+                line = "{:>15}".format(year)
+                e = self._function.E_cost(year, discount_rate)
+                line = "{}{:>15.6}".format(line, e)
+                print(line)
+        else:
+            raise ValueError("NOT SUPPORTED")
 
 ## Factory method for recorders.
 # Constructs an instance of a recorder or appropriate subclass.
