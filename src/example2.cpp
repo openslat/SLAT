@@ -829,15 +829,13 @@ int main(int argc, char **argv)
                                         label << "DS" << i;
                                         outfile << setw(20) << label.str();
                                     }
-                                    outfile << setw(20) << "E(DS)" << endl;
+                                    outfile << endl;
 
                                     vector<double> rates = cg->Rate();
-                                    double expected = 0.0;
                                     for (size_t i=0; i < rates.size(); i++) {
                                         outfile << setw(20) << setprecision(6) << rates[i];
-                                        expected += rates[i];
                                     }
-                                    outfile << setw(20) << expected << endl;
+                                    outfile << endl;
                                 }
 
                                 {
@@ -917,6 +915,8 @@ int main(int argc, char **argv)
                             outfile << setw(15) << "IM.1" 
                                     << setw(15) << "mean_x"
                                     << setw(15) << "sd_ln_x"
+                                    // << setw(15) << "d.lambda"
+                                    // << setw(15) << "pdf"
                                     << endl;
         
                             vector<double> im_vals = linrange(0.01, 3.0, 199);
@@ -930,10 +930,37 @@ int main(int argc, char **argv)
                                 outfile << setw(15) << *im 
                                         << setw(15) << cost.get_mean_X()
                                         << setw(15) << cost.get_sigma_lnX()
+                                        // << setw(15) << std::abs(im_rel->DerivativeAt(*im))
+                                        // << setw(15) << cost.get_mean_X() * std::abs(im_rel->DerivativeAt(*im))
                                         << endl;
                             }
                         }
 
+                        {
+                            TempContext context([] (std::ostream &o) {
+                                    o << "Expected Loss";
+                                });
+
+                            // Record the Expected Loss | Time relationship
+                            ofstream outfile("c-results/expected_loss");
+                            outfile << setw(15) << "Years" 
+                                    << setw(15) << "E[ALt]"
+                                    << endl;
+        
+                            vector<int> years(100);
+                            for (size_t i=0; i < 100; i++) {
+                                years[i] = i + 1;
+                            }
+                            
+                            {
+                                vector<double> cost = building->E_cost(years, 0.06);
+                                for (size_t i=0; i < years.size(); i++) {
+                                    outfile << setw(15) << years[i] 
+                                            << setw(15) << cost[i]
+                                            << endl;
+                                }
+                            }
+                        }
                         {
                             TempContext context([] (std::ostream &o) {
                                     o << "COST BY FATE";

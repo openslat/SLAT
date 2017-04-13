@@ -1307,8 +1307,6 @@ class recorder:
                  label = "DS{}".format(i + 1)
                  line1 = "{}{:>20}".format(line1, label)
                  line2 = "{}{:>20.6}".format(line2, rates[i])
-            line1 = "{}{:>20}".format(line1, "E(DS)")
-            line2 = "{}{:>20.6}".format(line2, sum(rates))
             print(line1)
             print(line2)
         else:

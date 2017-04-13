@@ -99,6 +99,21 @@ namespace SLAT {
         return LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(E_cost, sigma_cost);
     }
 
+    double Structure::E_cost(int year, double discount_rate)
+    {
+        return ((1.0 - exp(-discount_rate * year)) / discount_rate) * AnnualCost().get_mean_X();
+    }
+
+    std::vector<double> Structure::E_cost(std::vector<int> years, double discount_rate)
+    {
+        std::vector<double> result(years.size());
+#pragma omp parallel for
+        for (size_t i=0; i < years.size(); i++) {
+            result[i] = E_cost(years[i], discount_rate);
+        }
+        return result;
+    }
+
     std::pair<LogNormalDist, LogNormalDist> Structure::DeaggregatedCost(double im)
     {
         LogNormalDist cost_nc = CostNC(im);

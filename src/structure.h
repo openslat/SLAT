@@ -26,6 +26,14 @@ namespace SLAT {
 
         LogNormalDist Cost(double im, bool consider_collapse);
         LogNormalDist TotalCost(double im);
+        
+        /**
+         * Expected (mean) cost for a given number of years, assuming a given
+         * discount rate.
+         */
+        double E_cost(int year, double discount_rate);
+        std::vector<double> E_cost(std::vector<int> years, double discount_rate);
+        
         typedef struct { LogNormalDist repair, demolition, collapse; } COSTS;
         COSTS CostsByFate(double im);
         Caching::CachedValue<LogNormalDist> AnnualCost;
