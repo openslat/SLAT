@@ -626,11 +626,6 @@ double CompGroup::E_annual_cost(void)
     return wrapper->E_annual_cost();
 };
 
-double CompGroup::E_cost(int years, double discount_rate) 
-{
-    return wrapper->E_cost(years, discount_rate); 
-};
-
 double CompGroup::lambda_cost(double cost)
 {
     return wrapper->lambda_cost(cost); 

@@ -139,7 +139,6 @@ public:
     double E_Cost_IM(double edp);
     double SD_ln_Cost_IM(double edp);
     double E_annual_cost(void);
-    double E_cost(int years, double discount_rate);
     double E_Delay_EDP(double edp);
     double SD_ln_Delay_EDP(double edp);
     double E_Delay_IM(double edp);
