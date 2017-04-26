@@ -1100,6 +1100,10 @@ class structure:
     def get_IM(self):
         return self._im
 
+    ## Return the pdf|im for the structure:
+    def pdf(self, im):
+        return self._structure.pdf(im)
+
     ## Add a component group to the structure.
     #
     # If this is the first group to be added to the structure, the 
@@ -1713,6 +1717,36 @@ class StructcostRecorder(recorder):
         else:
             raise ValueError("NOT SUPPORTED")
 
+## PDF Recorder
+#  This subclass represents the 'pdf' recorder.
+#  It prints the IM identifier and PDF or normalised PDF (depending on the
+#  presence of the 'normalise' flag), including column headers.
+class PdfRecorder(recorder):
+    ## Constructor
+    # Just recorder.__init__.
+    def __init__(self, id, type, function, options, columns, at):
+        super().__init__(id, type, function, options, columns, at)
+
+    ## Print the IM identifier and pdf
+    #  including column headers.
+    def generate_output(self):
+        print("{:>15.6}{:>15.6}".format(self._function.get_IM().id(), "pdf"))
+        results = []
+        max_pdf = 0
+        for im in self._at:
+            pdf = self._function.pdf(im)
+            results.append(pdf)
+            if (pdf > max_pdf):
+                max_pdf = pdf
+
+        if self._options.get('normalise', None):
+            divisor = max_pdf
+        else:
+            divisor = 1.0
+
+        for i in range(len(self._at)):
+            print("{:>15.6}{:>15.6}".format(self._at[i], results[i]/divisor))
+        
 ## Factory method for recorders.
 # Constructs an instance of a recorder or appropriate subclass.
 # Parameters the same as for recorder.__init__.
@@ -1722,6 +1756,8 @@ def MakeRecorder(id, type, function, options, columns, at):
         return CollRateRecorder(id, type, function, options, columns, at)
     elif (type == 'structcost'):
         return StructcostRecorder(id, type, function, options, columns, at)
+    elif (type == 'pdf'):
+        return PdfRecorder(id, type, function, options, columns, at)
     else:
         return recorder(id, type, function, options, columns, at)
     

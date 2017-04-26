@@ -386,6 +386,20 @@ pyslat.MakeRecorder("TOTALCOST_COMP_REC",
                 None, 
                 linvalues)
 
+pyslat.MakeRecorder("PDF_REC",
+                "pdf", 
+                pyslat.structure.lookup("building"),
+                {'filename': "py-results/pdf", 'append': False},
+                None, 
+                pyslat.linrange(0.00, 1.5, 200))
+
+pyslat.MakeRecorder("NORM_PDF_REC",
+                "pdf", 
+                pyslat.structure.lookup("building"),
+                {'filename': "py-results/norm_pdf", 'append': False, 'normalise': True},
+                None, 
+                pyslat.linrange(0.0, 1.5, 200))
+
 pyslat.Set_Integration_Tolerance(1.0E-3)
 pyslat.Set_Integration_Eval_Limit(256)
 pyslat.Set_Integration_Search_Limit(256)

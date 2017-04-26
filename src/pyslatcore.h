@@ -211,6 +211,7 @@ public:
     LogNormalDist AnnualCost(void);
     std::list<std::list<CompGroup *>> ComponentsByEDP(void);
     std::list<std::list<CompGroup *>> ComponentsByFragility(void);
+    double pdf(double im);
 private:
     std::shared_ptr<SLAT::Structure> wrapper;
 };

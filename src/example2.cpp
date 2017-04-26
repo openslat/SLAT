@@ -915,8 +915,6 @@ int main(int argc, char **argv)
                             outfile << setw(15) << "IM.1" 
                                     << setw(15) << "mean_x"
                                     << setw(15) << "sd_ln_x"
-                                    // << setw(15) << "d.lambda"
-                                    // << setw(15) << "pdf"
                                     << endl;
         
                             vector<double> im_vals = linrange(0.01, 3.0, 199);
@@ -930,9 +928,63 @@ int main(int argc, char **argv)
                                 outfile << setw(15) << *im 
                                         << setw(15) << cost.get_mean_X()
                                         << setw(15) << cost.get_sigma_lnX()
-                                        // << setw(15) << std::abs(im_rel->DerivativeAt(*im))
-                                        // << setw(15) << cost.get_mean_X() * std::abs(im_rel->DerivativeAt(*im))
                                         << endl;
+                            }
+                        }
+
+                        {
+                            TempContext context([] (std::ostream &o) {
+                                    o << "PDF";
+                                });
+
+                            // Record the PDF|IM relationship:
+                            ofstream outfile("c-results/pdf");
+                            outfile << setw(15) << "IM.1" 
+                                    << setw(15) << "pdf"
+                                    << endl;
+        
+                            vector<double> im_vals = linrange(0.0, 1.5, 200);
+                
+                            for (vector<double>::const_iterator im = im_vals.begin();
+                                 im != im_vals.end();
+                                 im++)
+                            {
+                                outfile << setw(15) << *im 
+                                        << setw(15) << building->pdf(*im)
+                                        <<endl;
+                            }
+                        }
+
+                        {
+                            TempContext context([] (std::ostream &o) {
+                                    o << "Normalised PDF";
+                                });
+
+                            // Record the PDF|IM relationship:
+                            ofstream outfile("c-results/norm_pdf");
+                            outfile << setw(15) << "IM.1" 
+                                    << setw(15) << "pdf"
+                                    << endl;
+        
+                            vector<double> im_vals = linrange(0.0, 1.5, 200);
+                
+                            double max_pdf = 0;
+                            for (vector<double>::const_iterator im = im_vals.begin();
+                                 im != im_vals.end();
+                                 im++)
+                            {
+                                if (building->pdf(*im) > max_pdf) {
+                                    max_pdf = building->pdf(*im);
+                                }
+                            }
+                            
+                            for (vector<double>::const_iterator im = im_vals.begin();
+                                 im != im_vals.end();
+                                 im++)
+                            {
+                                outfile << setw(15) << *im 
+                                        << setw(15) << building->pdf(*im)/max_pdf
+                                        <<endl;
                             }
                         }
 

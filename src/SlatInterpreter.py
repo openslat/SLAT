@@ -516,6 +516,10 @@ class SlatInterpreter(slatParserListener):
             type = 'structcost'
         elif ctx.DEAGG():
             type = 'deagg'
+        elif ctx.PDF():
+            type = 'pdf'
+            if ctx.NORMALISE_FLAG():
+                options['normalise'] = True
         else:
             print("---------------")
             print(type)
@@ -579,7 +583,7 @@ class SlatInterpreter(slatParserListener):
              or type == 'anncost' \
              or type == 'costrate':
             function = pyslat.compgroup.lookup(id)
-        elif type == 'structcost' or type == 'deagg' or type == 'totalcost':
+        elif type == 'structcost' or type == 'deagg' or type == 'totalcost' or type == 'pdf':
             function = pyslat.structure.lookup(id)
         else:
             raise ValueError("Unhandled recorder type")

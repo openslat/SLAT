@@ -799,6 +799,11 @@ std::list<std::list<CompGroup *>> Structure::ComponentsByFragility(void)
     return result;
 };
 
+double Structure::pdf(double im)
+{
+    return wrapper->pdf(im);
+};
+
 // python::list ComponentsByFragility(void) {
 // //            std::cout << "> ComponentsByFragility()" << std::endl;
 //     python::list result;

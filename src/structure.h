@@ -47,6 +47,10 @@ namespace SLAT {
             return components;
         };
         std::string get_Name(void) const { return name; };
+
+        double pdf(double im) {
+            return TotalCost(im).get_mean_X() * std::abs(this->im->DerivativeAt(im));
+        };
     private:
         std::string name;
         LogNormalDist calc_AnnualCost(void);
