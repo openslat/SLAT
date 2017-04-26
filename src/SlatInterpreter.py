@@ -489,9 +489,6 @@ class SlatInterpreter(slatParserListener):
         else:
             cols = None
 
-        if ctx.lambda_value():
-            options['lambda'] = self._stack.pop()
-            
         if ctx.recorder_at():
             at = self._stack.pop()
         else:
@@ -502,8 +499,6 @@ class SlatInterpreter(slatParserListener):
             type = type.getText()
         elif ctx.DSRATE():
             type = "dsrate"
-        elif ctx.ANNCOST():
-            type = "anncost"
         elif ctx.COSTRATE():
             type = 'costrate'
         elif ctx.TOTALCOST():

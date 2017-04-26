@@ -148,12 +148,6 @@ namespace SLAT {
         Caching::CachedFunction<LogNormalDist, double> delay_EDP_dist;
 
         /**
-         * Expected (mean) cost for a given number of years, assuming a given
-         * discount rate.
-         */
-        double E_cost(int years, double discount_rate);
-
-        /**
          * Mean ln(cost), given EDP.
          */
         double mean_ln_cost_EDP(double edp);

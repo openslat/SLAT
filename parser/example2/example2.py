@@ -328,12 +328,6 @@ for comp in COMPONENT_DATA:
                     None, 
                     pyslat.frange(1E-4, 1.2, 4.8E-3))
 
-    pyslat.MakeRecorder("ANNCOST_{:>03}_REC".format(id), "anncost", cg,
-                    {'filename': ResultsFile("annual_cost_{}.txt".format(id)),
-                     "lambda": 0.06},
-                    None, 
-                    pyslat.frange(1.0, 100.0, 1.0))
-                
     building.AddCompGroup(cg)
 
 

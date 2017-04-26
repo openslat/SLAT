@@ -214,14 +214,6 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "COST-IM table written." << endl;
 
         std::cout << "Expected Annual Cost: " << component_group->E_annual_cost() << std::endl;
-        
-        outfile.open("annual_cost.dat");
-        outfile << setw(10) << "Year" << setw(15) << "Cost" << endl;
-        for (int year=0; year <= 100; year++) {
-            outfile << setw(10) << year << setw(15) << component_group->E_cost(year, 0.06) << endl;
-        }
-        outfile.close();
-        BOOST_LOG(logger) << "annual cost table written." << endl;
 
         outfile.open("cost_rate.dat");
         outfile << setw(10) << "Cost" << setw(15) << "Rate" << std::endl;

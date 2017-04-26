@@ -864,32 +864,6 @@ int main(int argc, char **argv)
                                     }
                                     //cout << "AFTER COST-RATE " << omp_get_wtime() << endl;
                                 }
-
-                                {
-                                    TempContext context([n] (std::ostream &o) {
-                                            o << "ANNUAL COST" << n;
-                                        });
-                                    // Record Annual Cost relationship
-                                    stringstream path;
-                                    path << "c-results/annual_cost_" << n << ".txt";
-
-                                    ofstream outfile(path.str());
-                                    outfile << setw(15) << "t" << setw(15) << "E[ALt]" << endl;
-                
-                                    vector<double> t_vals = frange(1.0, 100.0, 1.0);
-                                    double costs[t_vals.size()];
-                                    //cout << "BEFORE ANNUAL COST " << omp_get_wtime() << endl;
-#pragma omp parallel for
-                                    for (size_t i=0; i < t_vals.size(); i++) {
-                                        costs[i] = cg->E_cost(t_vals[i], 0.06);
-                                    }
-
-                                    for (size_t i=0; i < t_vals.size(); i++) {
-                                        outfile << setw(15) << t_vals[i]
-                                                << setw(15) << costs[i] << std::endl;
-                                    }
-                                    //cout << "AFTER ANNUAL COST " << omp_get_wtime() << endl;
-                                }
                             }
                         }
                                 

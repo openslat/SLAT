@@ -281,11 +281,6 @@ namespace SLAT {
             return NAN;;
         }
     }
-    double CompGroup::E_cost(int years, double discount_rate)
-    {
-        return ((1.0 - exp(-discount_rate * years)) / discount_rate) * E_annual_cost();
-    }
-    
 
     double CompGroup::lambda_cost_calc(double cost) 
     {

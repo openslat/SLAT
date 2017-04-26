@@ -1333,7 +1333,6 @@ class recorder:
                       'costim': ['IM', None],
                       'delayedp': ['EDP', None],
                       'delayim': ['IM', None],
-                      'anncost': ['t', ["E[ALt]"]],
                       'costrate': ['t', 'Rate'],
                       'totalcost': ['IM', None],
                       'collapse': ['IM', ['p(Demolition)', 'p(Collapse)']],
@@ -1403,9 +1402,6 @@ class recorder:
                         for y in yvals:
                             line = "{}{:>15.6}".format(line, y)
                         line = "{}{:>15.6}".format(line, sum(yvals))
-                    elif self._type == 'anncost':
-                        annual_loss = self._function.E_cost(int(x), self._options['lambda'])
-                        line = "{}{:>15.6}".format(line, annual_loss)
                     elif self._type == 'costrate':
                         loss_rate = self._function.lambda_cost(x)
                         line = "{}{:>15.6}".format(line, loss_rate)
