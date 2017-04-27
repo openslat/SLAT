@@ -1,5 +1,5 @@
 #! /bin/bash
-DEST=export32
+DEST=openslat-32
 LIBBASE=/opt/mxe/usr/i686-w64-mingw32.shared
 PYDIR=~/swig-test/python-win32
 
@@ -24,3 +24,13 @@ until [ "$old_libs" == "$new_libs" ]; do
 done
 
 cp -r scripts $DEST
+
+mkdir $DEST/example2
+mkdir $DEST/example2/results
+mkdir $DEST/example2/py-results
+mkdir $DEST/example2/c-results
+cp ../parser/example2/*.txt $DEST/example2
+cp  ../parser/example2/*.dat $DEST/example2
+cp  ../parser/example2/example2.py $DEST/example2
+cp  ../parser/example2/example2.slat $DEST/example2
+

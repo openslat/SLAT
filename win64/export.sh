@@ -1,12 +1,10 @@
 #! /bin/bash
-DEST=export64
+DEST=openslat-64
 LIBBASE=/opt/mxe/usr/x86_64-w64-mingw32.shared
 PYDIR=~/swig-test/python-amd64
 
 rm -rf $DEST
 mkdir $DEST
-mkdir --parents $DEST/parser/example2
-cp ../parser/example2/example2.slat ../parser/example2/example2.py $DEST/parser/example2
 cp bin/* lib/* scripts/* $DEST
 
 old_libs=""
@@ -26,3 +24,13 @@ until [ "$old_libs" == "$new_libs" ]; do
 done
 
 cp -r scripts $DEST
+
+mkdir $DEST/example2
+mkdir $DEST/example2/results
+mkdir $DEST/example2/py-results
+mkdir $DEST/example2/c-results
+cp ../parser/example2/*.txt $DEST/example2
+cp  ../parser/example2/*.dat $DEST/example2
+cp  ../parser/example2/example2.py $DEST/example2
+cp  ../parser/example2/example2.slat $DEST/example2
+
