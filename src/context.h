@@ -21,6 +21,7 @@
 namespace SLAT {
     class Context {
     public:
+        static void Initialise();
         static std::string GetText();
     private:
         static void PushText(std::string text);

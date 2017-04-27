@@ -14,6 +14,7 @@ boost::shared_ptr<logging::sinks::sink> file_sink;
 
 void Initialise(void)
 {
+    SLAT::Context::Initialise();
     std_error_sink = logging::add_console_log(std::cerr);
 }
 

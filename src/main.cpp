@@ -27,6 +27,7 @@ namespace keywords = boost::log::keywords;
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(main_logger, src::logger_mt)
 int main(int argc, char **argv)
 {
+    Context::Initialise();
     logging::add_file_log("main.log");
     logging::add_common_attributes();
 

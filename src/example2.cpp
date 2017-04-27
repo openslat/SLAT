@@ -81,7 +81,7 @@ vector<double> frange(double min, double max, double step)
 BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(main_logger, src::logger_mt)
 int main(int argc, char **argv)
 {
-    //Context::Initialise();
+    Context::Initialise();
     // {
     // logging::add_file_log("example2.log");
     // logging::add_common_attributes();
