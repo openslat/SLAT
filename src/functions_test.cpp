@@ -24,7 +24,11 @@ BOOST_AUTO_TEST_CASE( Power_Law_Curve_1_2 )
         double x = double(i)/10.0;
         
         BOOST_CHECK_EQUAL( f.ValueAt(x), x*x);
-        BOOST_CHECK_CLOSE( f.DerivativeAt(x), 2.0 * x, 0.1);
+        if (x == 0) {
+            BOOST_CHECK_SMALL( f.DerivativeAt(x), 1E-10);
+        } else {
+            BOOST_CHECK_CLOSE( f.DerivativeAt(x), 2.0 * x, 0.1);
+        }
     }
 }
 
