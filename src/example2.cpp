@@ -1,3 +1,4 @@
+#include <sys/stat.h>
 #include <iostream>
 #include <fstream>
 #include <iomanip>
@@ -14,6 +15,7 @@
 #include "lognormaldist.h"
 #include <chrono>
 #include <set>
+#include <boost/filesystem.hpp>
 
 template <typename T, std::size_t N>
 constexpr std::size_t countof(T const (&)[N]) noexcept
@@ -101,6 +103,11 @@ int main(int argc, char **argv)
         
     //     return 0;
     // }
+
+    const std::string input_directory = "input";
+    const std::string output_directory = "c-results";
+
+    boost::filesystem::create_directory(output_directory.c_str());
     
 
     signal(SIGSEGV, catch_signal);
@@ -193,16 +200,16 @@ int main(int argc, char **argv)
                         // Read IM data
                         shared_ptr<IM> im_rel;
                         {
-                            ifstream infile("imfunc.txt");
+                            ifstream infile(input_directory + "/imfunc.csv");
                             char s[512];
                             infile.getline(s, sizeof(s));
                             if (infile.fail()) {
-                                cerr << "Error reading imfunc.txt" << endl;
+                                cerr << "Error reading imfunc.csv" << endl;
                                 return -1;
                             }
                             infile.getline(s, sizeof(s));
                             if (infile.fail()) {
-                                cerr << "Error reading imfunc.txt" << endl;
+                                cerr << "Error reading imfunc.csv" << endl;
                                 return -1;
                             }
                             vector<double> im, lambda;
@@ -226,7 +233,7 @@ int main(int argc, char **argv)
                             // Calculate the data:
                             vector<double> results = im_rel->lambda(im_vals);
 
-                            ofstream ofile("c-results/im_rate");
+                            ofstream ofile("c-results/im_rate.csv");
                             ofile << setw(15) << "IM.1" << setw(15) << "lambda" << endl;
 
                             for (size_t i=0; i < im_vals.size(); i++) 
@@ -244,7 +251,7 @@ int main(int argc, char **argv)
                             {
                                 TempContext context("IM-Rate");
 
-                                ofstream ofile("c-results/im_rate_lin");
+                                ofstream ofile("c-results/im_rate_lin.csv");
                                 ofile << setw(15) << "IM.1" << setw(15) << "lambda" << endl;
 
                                 for (size_t i=0; i < im_vals.size(); i++) 
@@ -261,7 +268,7 @@ int main(int argc, char **argv)
                             vector<double> collapse = im_rel->pCollapse(im_vals);
                             vector<double> demolition = im_rel->pDemolition(im_vals);
 
-                            ofstream ofile("c-results/collapse.txt");
+                            ofstream ofile("c-results/collapse.csv");
                             ofile << setw(15) << "IM.1" << setw(15) << "p(Demolition)"
                                   << setw(15) << "p(Collapse)" << endl;
 
@@ -275,7 +282,7 @@ int main(int argc, char **argv)
 
                         // Write the rate of collapse:
                         {
-                            ofstream ofile("c-results/collrate.txt");
+                            ofstream ofile("c-results/collrate.csv");
                             ofile << setw(15) << "IM" << setw(30) << "rate(Demolition)"
                                   << setw(30) << "rate(Collapse)" << endl;
                             ofile << setw(15) << "IM.1"
@@ -292,7 +299,7 @@ int main(int argc, char **argv)
                                 int n = i + 1;
             
                                 stringstream path;
-                                path << "RB_EDP" << n << ".txt";
+                                path << input_directory << "/RB_EDP" << n << ".csv";
 
                                 ifstream infile(path.str());
                                 char s[512];
@@ -371,7 +378,7 @@ int main(int argc, char **argv)
                                 vector<double> sd = edp_rels[n]->SD_ln(im_vals);
 
                                 stringstream path;
-                                path << "c-results/im_edp_" << n << ".txt";
+                                path << "c-results/im_edp_" << n << ".csv";
             
                                 ofstream outfile(path.str());
                                 outfile << setw(15) << "IM.1" << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
@@ -385,7 +392,7 @@ int main(int argc, char **argv)
 
                             {
                                 stringstream path;
-                                path << "c-results/edp_" << n << "_rate.txt";
+                                path << "c-results/edp_" << n << "_rate.csv";
 
                                 ofstream outfile(path.str());
                                 outfile << setw(15) << "EDP" << setw(15) << "lambda" << endl;
@@ -607,7 +614,7 @@ int main(int argc, char **argv)
                                             });
 
                                         stringstream path;
-                                        path << "c-results/cost_" << n << "_edp.txt";
+                                        path << "c-results/cost_" << n << "_edp.csv";
                     
                                         ofstream outfile(path.str());
                                         outfile << setw(15) << "EDP" << setw(15) << "mean_x" 
@@ -639,7 +646,7 @@ int main(int argc, char **argv)
                                             });
 
                                         stringstream path;
-                                        path << "c-results/delay_" << n << "_edp.txt";
+                                        path << "c-results/delay_" << n << "_edp.csv";
                     
                                         ofstream outfile(path.str());
                                         outfile << setw(15) << "EDP" << setw(15) << "mean_x" 
@@ -672,7 +679,7 @@ int main(int argc, char **argv)
 
                                     // Record COST-IM relationship
                                     stringstream path;
-                                    path << "c-results/cost_" << n << "_im.txt";
+                                    path << "c-results/cost_" << n << "_im.csv";
             
                                     ofstream outfile(path.str());
                                     outfile << setw(15) << "IM.1" << setw(15) << "mean_x" 
@@ -704,7 +711,7 @@ int main(int argc, char **argv)
 
                                     // Record DELAY-IM relationship
                                     stringstream path;
-                                    path << "c-results/delay_" << n << "_im.txt";
+                                    path << "c-results/delay_" << n << "_im.csv";
             
                                     ofstream outfile(path.str());
                                     outfile << setw(15) << "IM.1" << setw(15) << "mean_x" 
@@ -736,7 +743,7 @@ int main(int argc, char **argv)
 
                                     // Record DS-EDP relationship
                                     stringstream path;
-                                    path << "c-results/ds_edp_" << n << ".txt";
+                                    path << "c-results/ds_edp_" << n << ".csv";
 
                                     shared_ptr<FragilityFn> fragility = cg->FragFn();
                 
@@ -778,7 +785,7 @@ int main(int argc, char **argv)
                                 if (true) {
                                     // Record DS-IM relationship
                                     stringstream path;
-                                    path << "c-results/ds_im_" << n << ".txt";
+                                    path << "c-results/ds_im_" << n << ".csv";
 
                                     ofstream outfile(path.str());
                                     outfile << setw(15) << "IM.1";
@@ -822,7 +829,7 @@ int main(int argc, char **argv)
                                             o << "DS #" << n << " RATE";
                                         });
                                     stringstream path;
-                                    path << "c-results/ds_rate_" << setw(3) << setfill('0')  << n << ".txt";
+                                    path << "c-results/ds_rate_" << setw(3) << setfill('0')  << n << ".csv";
                                     ofstream outfile(path.str());
                                     for (size_t i=1; i <= cg->FragFn()->n_states(); i++) {
                                         stringstream label;
@@ -845,7 +852,7 @@ int main(int argc, char **argv)
 
                                     // Record COST-RATE relationship
                                     stringstream path;
-                                    path << "c-results/cost_rate_" << n << ".txt";
+                                    path << "c-results/cost_rate_" << n << ".csv";
 
                                     ofstream outfile(path.str());
                                     outfile << setw(15) << "t" << setw(15) << "Rate" << endl;
@@ -885,7 +892,7 @@ int main(int argc, char **argv)
                                 });
 
                             // Record the total Cost|IM relationship:
-                            ofstream outfile("c-results/total_cost");
+                            ofstream outfile("c-results/total_cost.csv");
                             outfile << setw(15) << "IM.1" 
                                     << setw(15) << "mean_x"
                                     << setw(15) << "sd_ln_x"
@@ -912,7 +919,7 @@ int main(int argc, char **argv)
                                 });
 
                             // Record the PDF|IM relationship:
-                            ofstream outfile("c-results/pdf");
+                            ofstream outfile("c-results/pdf.csv");
                             outfile << setw(15) << "IM.1" 
                                     << setw(15) << "pdf"
                                     << endl;
@@ -935,7 +942,7 @@ int main(int argc, char **argv)
                                 });
 
                             // Record the PDF|IM relationship:
-                            ofstream outfile("c-results/norm_pdf");
+                            ofstream outfile("c-results/norm_pdf.csv");
                             outfile << setw(15) << "IM.1" 
                                     << setw(15) << "pdf"
                                     << endl;
@@ -968,7 +975,7 @@ int main(int argc, char **argv)
                                 });
 
                             // Record the Expected Loss | Time relationship
-                            ofstream outfile("c-results/expected_loss");
+                            ofstream outfile("c-results/expected_loss.csv");
                             outfile << setw(15) << "Year" 
                                     << setw(15) << "E[ALt]"
                                     << endl;
@@ -992,7 +999,7 @@ int main(int argc, char **argv)
                                     o << "COST BY FATE";
                                 });
                             // Record the deaggregated cost for the structure:
-                            ofstream outfile("c-results/cost_by_fate");
+                            ofstream outfile("c-results/cost_by_fate.csv");
                             outfile << setw(15) << "IM.1" 
                                     << setw(15) << "repair.mean_x"
                                     << setw(15) << "demo.mean_x"
@@ -1021,7 +1028,7 @@ int main(int argc, char **argv)
                                 });
                                     
                             // Record the expected cost for the structure:
-                            ofstream outfile("c-results/ann_cost");
+                            ofstream outfile("c-results/ann_cost.csv");
                             outfile << setw(15) << "mean_x" << setw(15) << "sd_ln_x" << endl;
                             LogNormalDist anncost = building->AnnualCost();
                             outfile << setw(15) << anncost.get_mean_X()
@@ -1045,7 +1052,7 @@ int main(int argc, char **argv)
                             }
         
                             {
-                                ofstream outfile("c-results/cost_by_edp");
+                                ofstream outfile("c-results/cost_by_edp.csv");
                                 outfile << setw(15) << "IM.1";
                                 for (int i=1; i <= N_EDPS; i++) {
                                     outfile << setw(15) << edp_rels[i]->get_Name();
@@ -1086,7 +1093,7 @@ int main(int argc, char **argv)
                             }
 
                             {
-                                ofstream outfile("c-results/cost_by_frag");
+                                ofstream outfile("c-results/cost_by_frag.csv");
                                 outfile << setw(15) << "IM.1";
                                 for (set<int>::iterator i=fragilities.begin();
                                      i != fragilities.end();

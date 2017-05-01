@@ -3,6 +3,9 @@ title 'Example #2';
 title '------------';
 
 log slat.log;
+# Default directory for importing files:
+inputdir input;
+outputdir results;
 
 # Define the IM function:
 #detfn IM_FUNC loglog    [0.01, 0.376775], [0.02, 0.155158], [0.04, 0.054048],
@@ -14,32 +17,32 @@ log slat.log;
 #	[1.9, 2.00E-07],  [2.0, 1.00E-07];
 
 # Define the EDP-IM functions:
-importprobfn EDPIM_FUNC_01  RB_EDP1.txt;
-importprobfn EDPIM_FUNC_02  RB_EDP2.txt;
-importprobfn EDPIM_FUNC_03  RB_EDP3.txt;
-importprobfn EDPIM_FUNC_04  RB_EDP4.txt;
-importprobfn EDPIM_FUNC_05  RB_EDP5.txt;
-importprobfn EDPIM_FUNC_06  RB_EDP6.txt;
-importprobfn EDPIM_FUNC_07  RB_EDP7.txt;
-importprobfn EDPIM_FUNC_08  RB_EDP8.txt;
-importprobfn EDPIM_FUNC_09  RB_EDP9.txt;
-importprobfn EDPIM_FUNC_10  RB_EDP10.txt;
-importprobfn EDPIM_FUNC_11  RB_EDP11.txt;
-importprobfn EDPIM_FUNC_12  RB_EDP12.txt;
-importprobfn EDPIM_FUNC_13  RB_EDP13.txt;
-importprobfn EDPIM_FUNC_14  RB_EDP14.txt;
-importprobfn EDPIM_FUNC_15  RB_EDP15.txt;
-importprobfn EDPIM_FUNC_16  RB_EDP16.txt;
-importprobfn EDPIM_FUNC_17  RB_EDP17.txt;
-importprobfn EDPIM_FUNC_18  RB_EDP18.txt;
-importprobfn EDPIM_FUNC_19  RB_EDP19.txt;
-importprobfn EDPIM_FUNC_20  RB_EDP20.txt;
-importprobfn EDPIM_FUNC_21  RB_EDP21.txt;
+importprobfn EDPIM_FUNC_01  RB_EDP1;
+importprobfn EDPIM_FUNC_02  RB_EDP2;
+importprobfn EDPIM_FUNC_03  RB_EDP3;
+importprobfn EDPIM_FUNC_04  RB_EDP4;
+importprobfn EDPIM_FUNC_05  RB_EDP5;
+importprobfn EDPIM_FUNC_06  RB_EDP6;
+importprobfn EDPIM_FUNC_07  RB_EDP7;
+importprobfn EDPIM_FUNC_08  RB_EDP8;
+importprobfn EDPIM_FUNC_09  RB_EDP9;
+importprobfn EDPIM_FUNC_10  RB_EDP10;
+importprobfn EDPIM_FUNC_11  RB_EDP11;
+importprobfn EDPIM_FUNC_12  RB_EDP12;
+importprobfn EDPIM_FUNC_13  RB_EDP13;
+importprobfn EDPIM_FUNC_14  RB_EDP14;
+importprobfn EDPIM_FUNC_15  RB_EDP15;
+importprobfn EDPIM_FUNC_16  RB_EDP16;
+importprobfn EDPIM_FUNC_17  RB_EDP17;
+importprobfn EDPIM_FUNC_18  RB_EDP18;
+importprobfn EDPIM_FUNC_19  RB_EDP19;
+importprobfn EDPIM_FUNC_20  RB_EDP20;
+importprobfn EDPIM_FUNC_21  RB_EDP21;
 
 # Define relationships:
 #im IM.1 IM_FUNC;
 
-importimfn IM.1 imfunc.txt;
+importimfn IM.1 imfunc;
 
 collapse IM.1 1.2, 0.470 --mu mean_x --sd sd_ln_x;
 demolition IM.1 0.9, 0.470 --mu mean_x --sd sd_ln_x;
@@ -350,996 +353,996 @@ set costedpvalues5 $(pyslat.linrange(0.001, 0.10, 199));
 recorder IM_RATE_REC imrate IM.1 $imvalues results/im_rate --new;
 recorder IM_RATE_LIN_REC imrate IM.1 $linvalues results/im_rate_lin --new;
 
-recorder IM_COLLAPSE_REC collapse IM.1 $(pyslat.linrange(0.01, 3.0, 199)) results/collapse.txt --new;
-recorder IM_COLLRATE_REC collrate IM.1 results/collrate.txt --new;
+recorder IM_COLLAPSE_REC collapse IM.1 $(pyslat.linrange(0.01, 3.0, 199)) results/collapse --new;
+recorder IM_COLLRATE_REC collrate IM.1 results/collrate --new;
 
 
-recorder EDPIM.1_REC edpim EDP.01 $linvalues --cols mean_x, sd_ln_x results/im_edp_1.txt --new;
-#recorder EDPIM.1_REC edpim EDP.01 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_1.txt --new;
-recorder EDPRATE_1_REC edprate EDP.01 $(pyslat.logrange(0.032, 0.0325, 199)) results/edp_1_rate.txt --new;
+recorder EDPIM.1_REC edpim EDP.01 $linvalues --cols mean_x, sd_ln_x results/im_edp_1 --new;
+#recorder EDPIM.1_REC edpim EDP.01 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_1 --new;
+recorder EDPRATE_1_REC edprate EDP.01 $(pyslat.logrange(0.032, 0.0325, 199)) results/edp_1_rate --new;
 
-recorder EDPIM_2_REC edpim EDP.02 $linvalues --cols mean_x, sd_ln_x results/im_edp_2.txt --new;
-#recorder EDPIM_2_REC edpim EDP.02 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_2.txt --new;
-recorder EDP_RATE_2_REC edprate EDP.02 $(pyslat.logrange(0.001, 0.10, 199)) results/edp_2_rate.txt --new;
+recorder EDPIM_2_REC edpim EDP.02 $linvalues --cols mean_x, sd_ln_x results/im_edp_2 --new;
+#recorder EDPIM_2_REC edpim EDP.02 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_2 --new;
+recorder EDP_RATE_2_REC edprate EDP.02 $(pyslat.logrange(0.001, 0.10, 199)) results/edp_2_rate --new;
 
-recorder EDPIM_3_REC edpim EDP.03 $linvalues --cols mean_x, sd_ln_x results/im_edp_3.txt --new;
-#recorder EDPIM_3_REC edpim EDP.03 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_3.txt --new;
-recorder EDPRATE_3_REC edprate EDP.03 $edpoddvalues results/edp_3_rate.txt --new;
+recorder EDPIM_3_REC edpim EDP.03 $linvalues --cols mean_x, sd_ln_x results/im_edp_3 --new;
+#recorder EDPIM_3_REC edpim EDP.03 $linvalues --cols mean_x, sd_ln_x, 0.16, 0.84 results/im_edp_3 --new;
+recorder EDPRATE_3_REC edprate EDP.03 $edpoddvalues results/edp_3_rate --new;
 
-recorder EDPIM_4_REC edpim EDP.04 $linvalues --cols mean_x, sd_ln_x results/im_edp_4.txt --new;
-recorder EDPRATE_4_REC edprate EDP.04 $edpevenvalues results/edp_4_rate.txt --new;
+recorder EDPIM_4_REC edpim EDP.04 $linvalues --cols mean_x, sd_ln_x results/im_edp_4 --new;
+recorder EDPRATE_4_REC edprate EDP.04 $edpevenvalues results/edp_4_rate --new;
 
-recorder EDPIM_5_REC edpim EDP.05 $linvalues --cols mean_x, sd_ln_x results/im_edp_5.txt --new;
-recorder EDPRATE_5_REC edprate EDP.05 $edpoddvalues results/edp_5_rate.txt --new;
+recorder EDPIM_5_REC edpim EDP.05 $linvalues --cols mean_x, sd_ln_x results/im_edp_5 --new;
+recorder EDPRATE_5_REC edprate EDP.05 $edpoddvalues results/edp_5_rate --new;
 
-recorder EDPIM_6_REC edpim EDP.06 $linvalues --cols mean_x, sd_ln_x results/im_edp_6.txt --new;
-recorder EDPRATE_6_REC edprate EDP.06 $edpevenvalues results/edp_6_rate.txt --new;
+recorder EDPIM_6_REC edpim EDP.06 $linvalues --cols mean_x, sd_ln_x results/im_edp_6 --new;
+recorder EDPRATE_6_REC edprate EDP.06 $edpevenvalues results/edp_6_rate --new;
 
-recorder EDPIM_7_REC edpim EDP.07 $linvalues --cols mean_x, sd_ln_x results/im_edp_7.txt --new;
-recorder EDPRATE_7_REC edprate EDP.07 $edpoddvalues results/edp_7_rate.txt --new;
+recorder EDPIM_7_REC edpim EDP.07 $linvalues --cols mean_x, sd_ln_x results/im_edp_7 --new;
+recorder EDPRATE_7_REC edprate EDP.07 $edpoddvalues results/edp_7_rate --new;
 
-recorder EDPIM_8_REC edpim EDP.08 $linvalues --cols mean_x, sd_ln_x results/im_edp_8.txt --new;
-recorder EDPRATE_8_REC edprate EDP.08 $edpevenvalues results/edp_8_rate.txt --new;
+recorder EDPIM_8_REC edpim EDP.08 $linvalues --cols mean_x, sd_ln_x results/im_edp_8 --new;
+recorder EDPRATE_8_REC edprate EDP.08 $edpevenvalues results/edp_8_rate --new;
 
-recorder EDPIM_9_REC edpim EDP.09 $linvalues --cols mean_x, sd_ln_x results/im_edp_9.txt --new;
-recorder EDPRATE_9_REC edprate EDP.09 $edpoddvalues results/edp_9_rate.txt --new;
+recorder EDPIM_9_REC edpim EDP.09 $linvalues --cols mean_x, sd_ln_x results/im_edp_9 --new;
+recorder EDPRATE_9_REC edprate EDP.09 $edpoddvalues results/edp_9_rate --new;
 
-recorder EDPIM.10_REC edpim EDP.10 $linvalues --cols mean_x, sd_ln_x results/im_edp_10.txt --new;
-recorder EDPRATE_10_REC edprate EDP.10 $edpevenvalues results/edp_10_rate.txt --new;
+recorder EDPIM.10_REC edpim EDP.10 $linvalues --cols mean_x, sd_ln_x results/im_edp_10 --new;
+recorder EDPRATE_10_REC edprate EDP.10 $edpevenvalues results/edp_10_rate --new;
 
-recorder EDPIM.11_REC edpim EDP.11 $linvalues --cols mean_x, sd_ln_x results/im_edp_11.txt --new;
-recorder EDPRATE_11_REC edprate EDP.11 $edpoddvalues results/edp_11_rate.txt --new;
+recorder EDPIM.11_REC edpim EDP.11 $linvalues --cols mean_x, sd_ln_x results/im_edp_11 --new;
+recorder EDPRATE_11_REC edprate EDP.11 $edpoddvalues results/edp_11_rate --new;
 
-recorder EDPIM.12_REC edpim EDP.12 $linvalues --cols mean_x, sd_ln_x results/im_edp_12.txt --new;
-recorder EDPRATE_12_REC edprate EDP.12 $edpevenvalues results/edp_12_rate.txt --new;
+recorder EDPIM.12_REC edpim EDP.12 $linvalues --cols mean_x, sd_ln_x results/im_edp_12 --new;
+recorder EDPRATE_12_REC edprate EDP.12 $edpevenvalues results/edp_12_rate --new;
 
-recorder EDPIM.13_REC edpim EDP.13 $linvalues --cols mean_x, sd_ln_x results/im_edp_13.txt --new;
-recorder EDPRATE_13_REC edprate EDP.13 $edpoddvalues results/edp_13_rate.txt --new;
+recorder EDPIM.13_REC edpim EDP.13 $linvalues --cols mean_x, sd_ln_x results/im_edp_13 --new;
+recorder EDPRATE_13_REC edprate EDP.13 $edpoddvalues results/edp_13_rate --new;
 
-recorder EDPIM.14_REC edpim EDP.14 $linvalues --cols mean_x, sd_ln_x results/im_edp_14.txt --new;
-recorder EDPRATE_14_REC edprate EDP.14 $edpevenvalues results/edp_14_rate.txt --new;
+recorder EDPIM.14_REC edpim EDP.14 $linvalues --cols mean_x, sd_ln_x results/im_edp_14 --new;
+recorder EDPRATE_14_REC edprate EDP.14 $edpevenvalues results/edp_14_rate --new;
 
-recorder EDPIM.15_REC edpim EDP.15 $linvalues --cols mean_x, sd_ln_x results/im_edp_15.txt --new;
-recorder EDPRATE_15_REC edprate EDP.15 $edpoddvalues results/edp_15_rate.txt --new;
+recorder EDPIM.15_REC edpim EDP.15 $linvalues --cols mean_x, sd_ln_x results/im_edp_15 --new;
+recorder EDPRATE_15_REC edprate EDP.15 $edpoddvalues results/edp_15_rate --new;
 
-recorder EDPIM.16_REC edpim EDP.16 $linvalues --cols mean_x, sd_ln_x results/im_edp_16.txt --new;
-recorder EDPRATE_16_REC edprate EDP.16 $edpevenvalues results/edp_16_rate.txt --new;
+recorder EDPIM.16_REC edpim EDP.16 $linvalues --cols mean_x, sd_ln_x results/im_edp_16 --new;
+recorder EDPRATE_16_REC edprate EDP.16 $edpevenvalues results/edp_16_rate --new;
 
-recorder EDPIM.17_REC edpim EDP.17 $linvalues --cols mean_x, sd_ln_x results/im_edp_17.txt --new;
-recorder EDPRATE_17_REC edprate EDP.17 $edpoddvalues results/edp_17_rate.txt --new;
+recorder EDPIM.17_REC edpim EDP.17 $linvalues --cols mean_x, sd_ln_x results/im_edp_17 --new;
+recorder EDPRATE_17_REC edprate EDP.17 $edpoddvalues results/edp_17_rate --new;
 
-recorder EDPIM.18_REC edpim EDP.18 $linvalues --cols mean_x, sd_ln_x results/im_edp_18.txt --new;
-recorder EDPRATE_18_REC edprate EDP.18 $edpevenvalues results/edp_18_rate.txt --new;
+recorder EDPIM.18_REC edpim EDP.18 $linvalues --cols mean_x, sd_ln_x results/im_edp_18 --new;
+recorder EDPRATE_18_REC edprate EDP.18 $edpevenvalues results/edp_18_rate --new;
 
-recorder EDPIM.19_REC edpim EDP.19 $linvalues --cols mean_x, sd_ln_x results/im_edp_19.txt --new;
-recorder EDPRATE_19_REC edprate EDP.19 $edpoddvalues results/edp_19_rate.txt --new;
+recorder EDPIM.19_REC edpim EDP.19 $linvalues --cols mean_x, sd_ln_x results/im_edp_19 --new;
+recorder EDPRATE_19_REC edprate EDP.19 $edpoddvalues results/edp_19_rate --new;
 
-recorder EDPIM_20_REC edpim EDP.20 $linvalues --cols mean_x, sd_ln_x results/im_edp_20.txt --new;
-recorder EDPRATE_20_REC edprate EDP.20 $edpevenvalues results/edp_20_rate.txt --new;
+recorder EDPIM_20_REC edpim EDP.20 $linvalues --cols mean_x, sd_ln_x results/im_edp_20 --new;
+recorder EDPRATE_20_REC edprate EDP.20 $edpevenvalues results/edp_20_rate --new;
 
-recorder EDPIM_21_REC edpim EDP.21 $linvalues --cols mean_x, sd_ln_x results/im_edp_21.txt --new;
-recorder EDPRATE_21_REC edprate EDP.21 $edpoddvalues results/edp_21_rate.txt --new;
+recorder EDPIM_21_REC edpim EDP.21 $linvalues --cols mean_x, sd_ln_x results/im_edp_21 --new;
+recorder EDPRATE_21_REC edprate EDP.21 $edpoddvalues results/edp_21_rate --new;
 
 
-recorder COSTIM.1_REC costim COMPGROUP.001 $costimvalues results/cost_1_im.txt --new;
-recorder DELAYIM.1_REC delayim COMPGROUP.001 $costimvalues results/delay_1_im.txt --new;
-recorder COSTEDP.1_REC costedp COMPGROUP.001 $costedpvalues1 results/cost_1_edp.txt --new;
-recorder DELAYEDP.1_REC delayedp COMPGROUP.001 $costedpvalues1 results/delay_1_edp.txt --new;
-recorder DSRATE_001_REC dsrate COMPGROUP.001 results/ds_rate_001.txt --new;
-recorder DSEDP.1_REC dsedp COMPGROUP.001 0.0:0.01:0.200 results/ds_edp_1.txt --new;
-recorder DSIM.1_REC dsim COMPGROUP.001 $linvalues results/ds_im_1.txt --new;
-recorder COSTRATE_1_REC costrate COMPGROUP.001 1E-4:4.8E-3:1.2 results/cost_rate_1.txt --new;
+recorder COSTIM.1_REC costim COMPGROUP.001 $costimvalues results/cost_1_im --new;
+recorder DELAYIM.1_REC delayim COMPGROUP.001 $costimvalues results/delay_1_im --new;
+recorder COSTEDP.1_REC costedp COMPGROUP.001 $costedpvalues1 results/cost_1_edp --new;
+recorder DELAYEDP.1_REC delayedp COMPGROUP.001 $costedpvalues1 results/delay_1_edp --new;
+recorder DSRATE_001_REC dsrate COMPGROUP.001 results/ds_rate_001 --new;
+recorder DSEDP.1_REC dsedp COMPGROUP.001 0.0:0.01:0.200 results/ds_edp_1 --new;
+recorder DSIM.1_REC dsim COMPGROUP.001 $linvalues results/ds_im_1 --new;
+recorder COSTRATE_1_REC costrate COMPGROUP.001 1E-4:4.8E-3:1.2 results/cost_rate_1 --new;
 
 
-recorder COSTEDP.2_REC costedp COMPGROUP.002 $costedpvalues1 results/cost_2_edp.txt --new;
-recorder COSTIM_2_REC costim COMPGROUP.002 $costimvalues results/cost_2_im.txt --new;
-recorder DSRATE_002_REC dsrate COMPGROUP.002 results/ds_rate_002.txt --new;
-recorder DSEDP.2_REC dsedp COMPGROUP.002 0.0:0.01:0.200 results/ds_edp_2.txt --new;
-recorder DSIM.2_REC dsim COMPGROUP.002 $linvalues results/ds_im_2.txt --new;
-recorder COSTRATE_2_REC costrate COMPGROUP.002 1E-4:4.8E-3:1.2 results/cost_rate_2.txt --new;
+recorder COSTEDP.2_REC costedp COMPGROUP.002 $costedpvalues1 results/cost_2_edp --new;
+recorder COSTIM_2_REC costim COMPGROUP.002 $costimvalues results/cost_2_im --new;
+recorder DSRATE_002_REC dsrate COMPGROUP.002 results/ds_rate_002 --new;
+recorder DSEDP.2_REC dsedp COMPGROUP.002 0.0:0.01:0.200 results/ds_edp_2 --new;
+recorder DSIM.2_REC dsim COMPGROUP.002 $linvalues results/ds_im_2 --new;
+recorder COSTRATE_2_REC costrate COMPGROUP.002 1E-4:4.8E-3:1.2 results/cost_rate_2 --new;
 
-recorder COSTEDP.3_REC costedp COMPGROUP.003 $costedpvalues2 results/cost_3_edp.txt --new;
-recorder COSTIM_3_REC costim COMPGROUP.003 $costimvalues results/cost_3_im.txt --new;
-recorder DSRATE_003_REC dsrate COMPGROUP.003 results/ds_rate_003.txt --new;
-recorder DSEDP.3_REC dsedp COMPGROUP.003 0.0:0.01:0.200 results/ds_edp_3.txt --new;
-recorder DSIM.3_REC dsim COMPGROUP.003 $linvalues results/ds_im_3.txt --new;
-recorder COSTRATE_3_REC costrate COMPGROUP.003 1E-4:4.8E-3:1.2 results/cost_rate_3.txt --new;
+recorder COSTEDP.3_REC costedp COMPGROUP.003 $costedpvalues2 results/cost_3_edp --new;
+recorder COSTIM_3_REC costim COMPGROUP.003 $costimvalues results/cost_3_im --new;
+recorder DSRATE_003_REC dsrate COMPGROUP.003 results/ds_rate_003 --new;
+recorder DSEDP.3_REC dsedp COMPGROUP.003 0.0:0.01:0.200 results/ds_edp_3 --new;
+recorder DSIM.3_REC dsim COMPGROUP.003 $linvalues results/ds_im_3 --new;
+recorder COSTRATE_3_REC costrate COMPGROUP.003 1E-4:4.8E-3:1.2 results/cost_rate_3 --new;
 
 
-recorder COSTEDP.4_REC costedp COMPGROUP.004 $costedpvalues2 results/cost_4_edp.txt --new;
-recorder COSTIM_4_REC costim COMPGROUP.004 $costimvalues results/cost_4_im.txt --new;
-recorder DSRATE_004_REC dsrate COMPGROUP.004 results/ds_rate_004.txt --new;
-recorder DSEDP.4_REC dsedp COMPGROUP.004 0.0:0.01:0.200 results/ds_edp_4.txt --new;
-recorder DSIM.4_REC dsim COMPGROUP.004 $linvalues results/ds_im_4.txt --new;
-recorder COSTRATE_4_REC costrate COMPGROUP.004 1E-4:4.8E-3:1.2 results/cost_rate_4.txt --new;
+recorder COSTEDP.4_REC costedp COMPGROUP.004 $costedpvalues2 results/cost_4_edp --new;
+recorder COSTIM_4_REC costim COMPGROUP.004 $costimvalues results/cost_4_im --new;
+recorder DSRATE_004_REC dsrate COMPGROUP.004 results/ds_rate_004 --new;
+recorder DSEDP.4_REC dsedp COMPGROUP.004 0.0:0.01:0.200 results/ds_edp_4 --new;
+recorder DSIM.4_REC dsim COMPGROUP.004 $linvalues results/ds_im_4 --new;
+recorder COSTRATE_4_REC costrate COMPGROUP.004 1E-4:4.8E-3:1.2 results/cost_rate_4 --new;
 
 
-recorder COSTEDP.5_REC costedp COMPGROUP.005 $costedpvalues2 results/cost_5_edp.txt --new;
-recorder COSTIM_5_REC costim COMPGROUP.005 $costimvalues results/cost_5_im.txt --new;
-recorder DSRATE_005_REC dsrate COMPGROUP.005 results/ds_rate_005.txt --new;
-recorder DSEDP.5_REC dsedp COMPGROUP.005 0.0:0.01:0.200 results/ds_edp_5.txt --new;
-recorder DSIM.5_REC dsim COMPGROUP.005 $linvalues results/ds_im_5.txt --new;
-recorder COSTRATE_5_REC costrate COMPGROUP.005 1E-4:4.8E-3:1.2 results/cost_rate_5.txt --new;
+recorder COSTEDP.5_REC costedp COMPGROUP.005 $costedpvalues2 results/cost_5_edp --new;
+recorder COSTIM_5_REC costim COMPGROUP.005 $costimvalues results/cost_5_im --new;
+recorder DSRATE_005_REC dsrate COMPGROUP.005 results/ds_rate_005 --new;
+recorder DSEDP.5_REC dsedp COMPGROUP.005 0.0:0.01:0.200 results/ds_edp_5 --new;
+recorder DSIM.5_REC dsim COMPGROUP.005 $linvalues results/ds_im_5 --new;
+recorder COSTRATE_5_REC costrate COMPGROUP.005 1E-4:4.8E-3:1.2 results/cost_rate_5 --new;
 
 
-recorder COSTEDP.6_REC costedp COMPGROUP.006 $costedpvalues2 results/cost_6_edp.txt --new;
-recorder COSTIM_6_REC costim COMPGROUP.006 $costimvalues results/cost_6_im.txt --new;
-recorder DSRATE_006_REC dsrate COMPGROUP.006 results/ds_rate_006.txt --new;
-recorder DSEDP.6_REC dsedp COMPGROUP.006 0.0:0.01:0.200 results/ds_edp_6.txt --new;
-recorder DSIM.6_REC dsim COMPGROUP.006 $linvalues results/ds_im_6.txt --new;
-recorder COSTRATE_6_REC costrate COMPGROUP.006 1E-4:4.8E-3:1.2 results/cost_rate_6.txt --new;
+recorder COSTEDP.6_REC costedp COMPGROUP.006 $costedpvalues2 results/cost_6_edp --new;
+recorder COSTIM_6_REC costim COMPGROUP.006 $costimvalues results/cost_6_im --new;
+recorder DSRATE_006_REC dsrate COMPGROUP.006 results/ds_rate_006 --new;
+recorder DSEDP.6_REC dsedp COMPGROUP.006 0.0:0.01:0.200 results/ds_edp_6 --new;
+recorder DSIM.6_REC dsim COMPGROUP.006 $linvalues results/ds_im_6 --new;
+recorder COSTRATE_6_REC costrate COMPGROUP.006 1E-4:4.8E-3:1.2 results/cost_rate_6 --new;
 
 
-recorder COSTEDP.7_REC costedp COMPGROUP.007 $costedpvalues2 results/cost_7_edp.txt --new;
-recorder COSTIM_7_REC costim COMPGROUP.007 $costimvalues results/cost_7_im.txt --new;
-recorder DSRATE_007_REC dsrate COMPGROUP.007 results/ds_rate_007.txt --new;
-recorder DSEDP.7_REC dsedp COMPGROUP.007 0.0:0.01:0.200 results/ds_edp_7.txt --new;
-recorder DSIM.7_REC dsim COMPGROUP.007 $linvalues results/ds_im_7.txt --new;
-recorder COSTRATE_7_REC costrate COMPGROUP.007 1E-4:4.8E-3:1.2 results/cost_rate_7.txt --new;
+recorder COSTEDP.7_REC costedp COMPGROUP.007 $costedpvalues2 results/cost_7_edp --new;
+recorder COSTIM_7_REC costim COMPGROUP.007 $costimvalues results/cost_7_im --new;
+recorder DSRATE_007_REC dsrate COMPGROUP.007 results/ds_rate_007 --new;
+recorder DSEDP.7_REC dsedp COMPGROUP.007 0.0:0.01:0.200 results/ds_edp_7 --new;
+recorder DSIM.7_REC dsim COMPGROUP.007 $linvalues results/ds_im_7 --new;
+recorder COSTRATE_7_REC costrate COMPGROUP.007 1E-4:4.8E-3:1.2 results/cost_rate_7 --new;
 
 
-recorder COSTEDP.8_REC costedp COMPGROUP.008 $costedpvalues2 results/cost_8_edp.txt --new;
-recorder COSTIM_8_REC costim COMPGROUP.008 $costimvalues results/cost_8_im.txt --new;
-recorder DSRATE_008_REC dsrate COMPGROUP.008 results/ds_rate_008.txt --new;
-recorder DSEDP.8_REC dsedp COMPGROUP.008 0.0:0.01:0.200 results/ds_edp_8.txt --new;
-recorder DSIM.8_REC dsim COMPGROUP.008 $linvalues results/ds_im_8.txt --new;
-recorder COSTRATE_8_REC costrate COMPGROUP.008 1E-4:4.8E-3:1.2 results/cost_rate_8.txt --new;
+recorder COSTEDP.8_REC costedp COMPGROUP.008 $costedpvalues2 results/cost_8_edp --new;
+recorder COSTIM_8_REC costim COMPGROUP.008 $costimvalues results/cost_8_im --new;
+recorder DSRATE_008_REC dsrate COMPGROUP.008 results/ds_rate_008 --new;
+recorder DSEDP.8_REC dsedp COMPGROUP.008 0.0:0.01:0.200 results/ds_edp_8 --new;
+recorder DSIM.8_REC dsim COMPGROUP.008 $linvalues results/ds_im_8 --new;
+recorder COSTRATE_8_REC costrate COMPGROUP.008 1E-4:4.8E-3:1.2 results/cost_rate_8 --new;
 
 
-recorder COSTEDP.9_REC costedp COMPGROUP.009 $costedpvalues2 results/cost_9_edp.txt --new;
-recorder COSTIM_9_REC costim COMPGROUP.009 $costimvalues results/cost_9_im.txt --new;
-recorder DSRATE_009_REC dsrate COMPGROUP.009 results/ds_rate_009.txt --new;
-recorder DSEDP.9_REC dsedp COMPGROUP.009 0.0:0.01:0.200 results/ds_edp_9.txt --new;
-recorder DSIM.9_REC dsim COMPGROUP.009 $linvalues results/ds_im_9.txt --new;
-recorder COSTRATE_9_REC costrate COMPGROUP.009 1E-4:4.8E-3:1.2 results/cost_rate_9.txt --new;
+recorder COSTEDP.9_REC costedp COMPGROUP.009 $costedpvalues2 results/cost_9_edp --new;
+recorder COSTIM_9_REC costim COMPGROUP.009 $costimvalues results/cost_9_im --new;
+recorder DSRATE_009_REC dsrate COMPGROUP.009 results/ds_rate_009 --new;
+recorder DSEDP.9_REC dsedp COMPGROUP.009 0.0:0.01:0.200 results/ds_edp_9 --new;
+recorder DSIM.9_REC dsim COMPGROUP.009 $linvalues results/ds_im_9 --new;
+recorder COSTRATE_9_REC costrate COMPGROUP.009 1E-4:4.8E-3:1.2 results/cost_rate_9 --new;
 
 
-recorder COSTEDP.10_REC costedp COMPGROUP.010 $costedpvalues2 results/cost_10_edp.txt --new;
-recorder COSTIM.10_REC costim COMPGROUP.010 $costimvalues results/cost_10_im.txt --new;
-recorder DSRATE_010_REC dsrate COMPGROUP.010 results/ds_rate_010.txt --new;
-recorder DSEDP.10_REC dsedp COMPGROUP.010 0.0:0.01:0.200 results/ds_edp_10.txt --new;
-recorder DSIM.10_REC dsim COMPGROUP.010 $linvalues results/ds_im_10.txt --new;
-recorder COSTRATE_10_REC costrate COMPGROUP.010 1E-4:4.8E-3:1.2 results/cost_rate_10.txt --new;
+recorder COSTEDP.10_REC costedp COMPGROUP.010 $costedpvalues2 results/cost_10_edp --new;
+recorder COSTIM.10_REC costim COMPGROUP.010 $costimvalues results/cost_10_im --new;
+recorder DSRATE_010_REC dsrate COMPGROUP.010 results/ds_rate_010 --new;
+recorder DSEDP.10_REC dsedp COMPGROUP.010 0.0:0.01:0.200 results/ds_edp_10 --new;
+recorder DSIM.10_REC dsim COMPGROUP.010 $linvalues results/ds_im_10 --new;
+recorder COSTRATE_10_REC costrate COMPGROUP.010 1E-4:4.8E-3:1.2 results/cost_rate_10 --new;
 
 
-recorder COSTEDP.11_REC costedp COMPGROUP.011 $costedpvalues2 results/cost_11_edp.txt --new;
-recorder COSTIM.11_REC costim COMPGROUP.011 $costimvalues results/cost_11_im.txt --new;
-recorder DSRATE_011_REC dsrate COMPGROUP.011 results/ds_rate_011.txt --new;
-recorder DSEDP.11_REC dsedp COMPGROUP.011 0.0:0.01:0.200 results/ds_edp_11.txt --new;
-recorder DSIM.11_REC dsim COMPGROUP.011 $linvalues results/ds_im_11.txt --new;
-recorder COSTRATE_11_REC costrate COMPGROUP.011 1E-4:4.8E-3:1.2 results/cost_rate_11.txt --new;
+recorder COSTEDP.11_REC costedp COMPGROUP.011 $costedpvalues2 results/cost_11_edp --new;
+recorder COSTIM.11_REC costim COMPGROUP.011 $costimvalues results/cost_11_im --new;
+recorder DSRATE_011_REC dsrate COMPGROUP.011 results/ds_rate_011 --new;
+recorder DSEDP.11_REC dsedp COMPGROUP.011 0.0:0.01:0.200 results/ds_edp_11 --new;
+recorder DSIM.11_REC dsim COMPGROUP.011 $linvalues results/ds_im_11 --new;
+recorder COSTRATE_11_REC costrate COMPGROUP.011 1E-4:4.8E-3:1.2 results/cost_rate_11 --new;
 
 
-recorder COSTEDP.12_REC costedp COMPGROUP.012 $costedpvalues2 results/cost_12_edp.txt --new;
-recorder COSTIM.12_REC costim COMPGROUP.012 $costimvalues results/cost_12_im.txt --new;
-recorder DSRATE_012_REC dsrate COMPGROUP.012 results/ds_rate_012.txt --new;
-recorder DSEDP.12_REC dsedp COMPGROUP.012 0.0:0.01:0.200 results/ds_edp_12.txt --new;
-recorder DSIM.12_REC dsim COMPGROUP.012 $linvalues results/ds_im_12.txt --new;
-recorder COSTRATE_12_REC costrate COMPGROUP.012 1E-4:4.8E-3:1.2 results/cost_rate_12.txt --new;
+recorder COSTEDP.12_REC costedp COMPGROUP.012 $costedpvalues2 results/cost_12_edp --new;
+recorder COSTIM.12_REC costim COMPGROUP.012 $costimvalues results/cost_12_im --new;
+recorder DSRATE_012_REC dsrate COMPGROUP.012 results/ds_rate_012 --new;
+recorder DSEDP.12_REC dsedp COMPGROUP.012 0.0:0.01:0.200 results/ds_edp_12 --new;
+recorder DSIM.12_REC dsim COMPGROUP.012 $linvalues results/ds_im_12 --new;
+recorder COSTRATE_12_REC costrate COMPGROUP.012 1E-4:4.8E-3:1.2 results/cost_rate_12 --new;
 
 
-recorder COSTEDP.13_REC costedp COMPGROUP.013 $costedpvalues2 results/cost_13_edp.txt --new;
-recorder COSTIM.13_REC costim COMPGROUP.013 $costimvalues results/cost_13_im.txt --new;
-recorder DSRATE_013_REC dsrate COMPGROUP.013 results/ds_rate_013.txt --new;
-recorder DSEDP.13_REC dsedp COMPGROUP.013 0.0:0.01:0.200 results/ds_edp_13.txt --new;
-recorder DSIM.13_REC dsim COMPGROUP.013 $linvalues results/ds_im_13.txt --new;
-recorder COSTRATE_13_REC costrate COMPGROUP.013 1E-4:4.8E-3:1.2 results/cost_rate_13.txt --new;
+recorder COSTEDP.13_REC costedp COMPGROUP.013 $costedpvalues2 results/cost_13_edp --new;
+recorder COSTIM.13_REC costim COMPGROUP.013 $costimvalues results/cost_13_im --new;
+recorder DSRATE_013_REC dsrate COMPGROUP.013 results/ds_rate_013 --new;
+recorder DSEDP.13_REC dsedp COMPGROUP.013 0.0:0.01:0.200 results/ds_edp_13 --new;
+recorder DSIM.13_REC dsim COMPGROUP.013 $linvalues results/ds_im_13 --new;
+recorder COSTRATE_13_REC costrate COMPGROUP.013 1E-4:4.8E-3:1.2 results/cost_rate_13 --new;
 
 
-recorder COSTEDP.14_REC costedp COMPGROUP.014 $costedpvalues2 results/cost_14_edp.txt --new;
-recorder COSTIM.14_REC costim COMPGROUP.014 $costimvalues results/cost_14_im.txt --new;
-recorder DSRATE_014_REC dsrate COMPGROUP.014 results/ds_rate_014.txt --new;
-recorder DSEDP.14_REC dsedp COMPGROUP.014 0.0:0.01:0.200 results/ds_edp_14.txt --new;
-recorder DSIM.14_REC dsim COMPGROUP.014 $linvalues results/ds_im_14.txt --new;
-recorder COSTRATE_14_REC costrate COMPGROUP.014 1E-4:4.8E-3:1.2 results/cost_rate_14.txt --new;
+recorder COSTEDP.14_REC costedp COMPGROUP.014 $costedpvalues2 results/cost_14_edp --new;
+recorder COSTIM.14_REC costim COMPGROUP.014 $costimvalues results/cost_14_im --new;
+recorder DSRATE_014_REC dsrate COMPGROUP.014 results/ds_rate_014 --new;
+recorder DSEDP.14_REC dsedp COMPGROUP.014 0.0:0.01:0.200 results/ds_edp_14 --new;
+recorder DSIM.14_REC dsim COMPGROUP.014 $linvalues results/ds_im_14 --new;
+recorder COSTRATE_14_REC costrate COMPGROUP.014 1E-4:4.8E-3:1.2 results/cost_rate_14 --new;
 
 
-recorder COSTEDP.15_REC costedp COMPGROUP.015 $costedpvalues2 results/cost_15_edp.txt --new;
-recorder COSTIM.15_REC costim COMPGROUP.015 $costimvalues results/cost_15_im.txt --new;
-recorder DSRATE_015_REC dsrate COMPGROUP.015 results/ds_rate_015.txt --new;
-recorder DSEDP.15_REC dsedp COMPGROUP.015 0.0:0.01:0.200 results/ds_edp_15.txt --new;
-recorder DSIM.15_REC dsim COMPGROUP.015 $linvalues results/ds_im_15.txt --new;
-recorder COSTRATE_15_REC costrate COMPGROUP.015 1E-4:4.8E-3:1.2 results/cost_rate_15.txt --new;
+recorder COSTEDP.15_REC costedp COMPGROUP.015 $costedpvalues2 results/cost_15_edp --new;
+recorder COSTIM.15_REC costim COMPGROUP.015 $costimvalues results/cost_15_im --new;
+recorder DSRATE_015_REC dsrate COMPGROUP.015 results/ds_rate_015 --new;
+recorder DSEDP.15_REC dsedp COMPGROUP.015 0.0:0.01:0.200 results/ds_edp_15 --new;
+recorder DSIM.15_REC dsim COMPGROUP.015 $linvalues results/ds_im_15 --new;
+recorder COSTRATE_15_REC costrate COMPGROUP.015 1E-4:4.8E-3:1.2 results/cost_rate_15 --new;
 
 
-recorder COSTEDP.16_REC costedp COMPGROUP.016 $costedpvalues2 results/cost_16_edp.txt --new;
-recorder COSTIM.16_REC costim COMPGROUP.016 $costimvalues results/cost_16_im.txt --new;
-recorder DSRATE_016_REC dsrate COMPGROUP.016 results/ds_rate_016.txt --new;
-recorder DSEDP.16_REC dsedp COMPGROUP.016 0.0:0.01:0.200 results/ds_edp_16.txt --new;
-recorder DSIM.16_REC dsim COMPGROUP.016 $linvalues results/ds_im_16.txt --new;
-recorder COSTRATE_16_REC costrate COMPGROUP.016 1E-4:4.8E-3:1.2 results/cost_rate_16.txt --new;
+recorder COSTEDP.16_REC costedp COMPGROUP.016 $costedpvalues2 results/cost_16_edp --new;
+recorder COSTIM.16_REC costim COMPGROUP.016 $costimvalues results/cost_16_im --new;
+recorder DSRATE_016_REC dsrate COMPGROUP.016 results/ds_rate_016 --new;
+recorder DSEDP.16_REC dsedp COMPGROUP.016 0.0:0.01:0.200 results/ds_edp_16 --new;
+recorder DSIM.16_REC dsim COMPGROUP.016 $linvalues results/ds_im_16 --new;
+recorder COSTRATE_16_REC costrate COMPGROUP.016 1E-4:4.8E-3:1.2 results/cost_rate_16 --new;
 
 
-recorder COSTEDP.17_REC costedp COMPGROUP.017 $costedpvalues2 results/cost_17_edp.txt --new;
-recorder COSTIM.17_REC costim COMPGROUP.017 $costimvalues results/cost_17_im.txt --new;
-recorder DSRATE_017_REC dsrate COMPGROUP.017 results/ds_rate_017.txt --new;
-recorder DSEDP.17_REC dsedp COMPGROUP.017 0.0:0.01:0.200 results/ds_edp_17.txt --new;
-recorder DSIM.17_REC dsim COMPGROUP.017 $linvalues results/ds_im_17.txt --new;
-recorder COSTRATE_17_REC costrate COMPGROUP.017 1E-4:4.8E-3:1.2 results/cost_rate_17.txt --new;
+recorder COSTEDP.17_REC costedp COMPGROUP.017 $costedpvalues2 results/cost_17_edp --new;
+recorder COSTIM.17_REC costim COMPGROUP.017 $costimvalues results/cost_17_im --new;
+recorder DSRATE_017_REC dsrate COMPGROUP.017 results/ds_rate_017 --new;
+recorder DSEDP.17_REC dsedp COMPGROUP.017 0.0:0.01:0.200 results/ds_edp_17 --new;
+recorder DSIM.17_REC dsim COMPGROUP.017 $linvalues results/ds_im_17 --new;
+recorder COSTRATE_17_REC costrate COMPGROUP.017 1E-4:4.8E-3:1.2 results/cost_rate_17 --new;
 
 
-recorder COSTEDP.18_REC costedp COMPGROUP.018 $costedpvalues2 results/cost_18_edp.txt --new;
-recorder COSTIM.18_REC costim COMPGROUP.018 $costimvalues results/cost_18_im.txt --new;
-recorder DSRATE_018_REC dsrate COMPGROUP.018 results/ds_rate_018.txt --new;
-recorder DSEDP.18_REC dsedp COMPGROUP.018 0.0:0.01:0.200 results/ds_edp_18.txt --new;
-recorder DSIM.18_REC dsim COMPGROUP.018 $linvalues results/ds_im_18.txt --new;
-recorder COSTRATE_18_REC costrate COMPGROUP.018 1E-4:4.8E-3:1.2 results/cost_rate_18.txt --new;
+recorder COSTEDP.18_REC costedp COMPGROUP.018 $costedpvalues2 results/cost_18_edp --new;
+recorder COSTIM.18_REC costim COMPGROUP.018 $costimvalues results/cost_18_im --new;
+recorder DSRATE_018_REC dsrate COMPGROUP.018 results/ds_rate_018 --new;
+recorder DSEDP.18_REC dsedp COMPGROUP.018 0.0:0.01:0.200 results/ds_edp_18 --new;
+recorder DSIM.18_REC dsim COMPGROUP.018 $linvalues results/ds_im_18 --new;
+recorder COSTRATE_18_REC costrate COMPGROUP.018 1E-4:4.8E-3:1.2 results/cost_rate_18 --new;
 
 
-recorder COSTEDP.19_REC costedp COMPGROUP.019 $costedpvalues2 results/cost_19_edp.txt --new;
-recorder COSTIM.19_REC costim COMPGROUP.019 $costimvalues results/cost_19_im.txt --new;
-recorder DSRATE_019_REC dsrate COMPGROUP.019 results/ds_rate_019.txt --new;
-recorder DSEDP.19_REC dsedp COMPGROUP.019 0.0:0.01:0.200 results/ds_edp_19.txt --new;
-recorder DSIM.19_REC dsim COMPGROUP.019 $linvalues results/ds_im_19.txt --new;
-recorder COSTRATE_19_REC costrate COMPGROUP.019 1E-4:4.8E-3:1.2 results/cost_rate_19.txt --new;
+recorder COSTEDP.19_REC costedp COMPGROUP.019 $costedpvalues2 results/cost_19_edp --new;
+recorder COSTIM.19_REC costim COMPGROUP.019 $costimvalues results/cost_19_im --new;
+recorder DSRATE_019_REC dsrate COMPGROUP.019 results/ds_rate_019 --new;
+recorder DSEDP.19_REC dsedp COMPGROUP.019 0.0:0.01:0.200 results/ds_edp_19 --new;
+recorder DSIM.19_REC dsim COMPGROUP.019 $linvalues results/ds_im_19 --new;
+recorder COSTRATE_19_REC costrate COMPGROUP.019 1E-4:4.8E-3:1.2 results/cost_rate_19 --new;
 
 
-recorder COSTEDP.20_REC costedp COMPGROUP.020 $costedpvalues2 results/cost_20_edp.txt --new;
-recorder COSTIM_20_REC costim COMPGROUP.020 $costimvalues results/cost_20_im.txt --new;
-recorder DSRATE_020_REC dsrate COMPGROUP.020 results/ds_rate_020.txt --new;
-recorder DSEDP.20_REC dsedp COMPGROUP.020 0.0:0.01:0.200 results/ds_edp_20.txt --new;
-recorder DSIM.20_REC dsim COMPGROUP.020 $linvalues results/ds_im_20.txt --new;
-recorder COSTRATE_20_REC costrate COMPGROUP.020 1E-4:4.8E-3:1.2 results/cost_rate_20.txt --new;
+recorder COSTEDP.20_REC costedp COMPGROUP.020 $costedpvalues2 results/cost_20_edp --new;
+recorder COSTIM_20_REC costim COMPGROUP.020 $costimvalues results/cost_20_im --new;
+recorder DSRATE_020_REC dsrate COMPGROUP.020 results/ds_rate_020 --new;
+recorder DSEDP.20_REC dsedp COMPGROUP.020 0.0:0.01:0.200 results/ds_edp_20 --new;
+recorder DSIM.20_REC dsim COMPGROUP.020 $linvalues results/ds_im_20 --new;
+recorder COSTRATE_20_REC costrate COMPGROUP.020 1E-4:4.8E-3:1.2 results/cost_rate_20 --new;
 
 
-recorder COSTEDP.21_REC costedp COMPGROUP.021 $costedpvalues5 results/cost_21_edp.txt --new;
-recorder COSTIM_21_REC costim COMPGROUP.021 $costimvalues results/cost_21_im.txt --new;
-recorder DSRATE_021_REC dsrate COMPGROUP.021 results/ds_rate_021.txt --new;
-recorder DSEDP.21_REC dsedp COMPGROUP.021 0.0:0.01:0.200 results/ds_edp_21.txt --new;
-recorder DSIM.21_REC dsim COMPGROUP.021 $linvalues results/ds_im_21.txt --new;
-recorder COSTRATE_21_REC costrate COMPGROUP.021 1E-4:4.8E-3:1.2 results/cost_rate_21.txt --new;
+recorder COSTEDP.21_REC costedp COMPGROUP.021 $costedpvalues5 results/cost_21_edp --new;
+recorder COSTIM_21_REC costim COMPGROUP.021 $costimvalues results/cost_21_im --new;
+recorder DSRATE_021_REC dsrate COMPGROUP.021 results/ds_rate_021 --new;
+recorder DSEDP.21_REC dsedp COMPGROUP.021 0.0:0.01:0.200 results/ds_edp_21 --new;
+recorder DSIM.21_REC dsim COMPGROUP.021 $linvalues results/ds_im_21 --new;
+recorder COSTRATE_21_REC costrate COMPGROUP.021 1E-4:4.8E-3:1.2 results/cost_rate_21 --new;
 
 
-recorder COSTEDP.22_REC costedp COMPGROUP.022 $costedpvalues2 results/cost_22_edp.txt --new;
-recorder COSTIM_22_REC costim COMPGROUP.022 $costimvalues results/cost_22_im.txt --new;
-recorder DSRATE_022_REC dsrate COMPGROUP.022 results/ds_rate_022.txt --new;
-recorder DSEDP.22_REC dsedp COMPGROUP.022 0.0:0.01:0.200 results/ds_edp_22.txt --new;
-recorder DSIM.22_REC dsim COMPGROUP.022 $linvalues results/ds_im_22.txt --new;
-recorder COSTRATE_22_REC costrate COMPGROUP.022 1E-4:4.8E-3:1.2 results/cost_rate_22.txt --new;
+recorder COSTEDP.22_REC costedp COMPGROUP.022 $costedpvalues2 results/cost_22_edp --new;
+recorder COSTIM_22_REC costim COMPGROUP.022 $costimvalues results/cost_22_im --new;
+recorder DSRATE_022_REC dsrate COMPGROUP.022 results/ds_rate_022 --new;
+recorder DSEDP.22_REC dsedp COMPGROUP.022 0.0:0.01:0.200 results/ds_edp_22 --new;
+recorder DSIM.22_REC dsim COMPGROUP.022 $linvalues results/ds_im_22 --new;
+recorder COSTRATE_22_REC costrate COMPGROUP.022 1E-4:4.8E-3:1.2 results/cost_rate_22 --new;
 
 
-recorder COSTEDP.23_REC costedp COMPGROUP.023 $costedpvalues2 results/cost_23_edp.txt --new;
-recorder COSTIM_23_REC costim COMPGROUP.023 $costimvalues results/cost_23_im.txt --new;
-recorder DSRATE_023_REC dsrate COMPGROUP.023 results/ds_rate_023.txt --new;
-recorder DSEDP.23_REC dsedp COMPGROUP.023 0.0:0.01:0.200 results/ds_edp_23.txt --new;
-recorder DSIM.23_REC dsim COMPGROUP.023 $linvalues results/ds_im_23.txt --new;
-recorder COSTRATE_23_REC costrate COMPGROUP.023 1E-4:4.8E-3:1.2 results/cost_rate_23.txt --new;
+recorder COSTEDP.23_REC costedp COMPGROUP.023 $costedpvalues2 results/cost_23_edp --new;
+recorder COSTIM_23_REC costim COMPGROUP.023 $costimvalues results/cost_23_im --new;
+recorder DSRATE_023_REC dsrate COMPGROUP.023 results/ds_rate_023 --new;
+recorder DSEDP.23_REC dsedp COMPGROUP.023 0.0:0.01:0.200 results/ds_edp_23 --new;
+recorder DSIM.23_REC dsim COMPGROUP.023 $linvalues results/ds_im_23 --new;
+recorder COSTRATE_23_REC costrate COMPGROUP.023 1E-4:4.8E-3:1.2 results/cost_rate_23 --new;
 
 
-recorder COSTEDP.24_REC costedp COMPGROUP.024 $costedpvalues2 results/cost_24_edp.txt --new;
-recorder COSTIM_24_REC costim COMPGROUP.024 $costimvalues results/cost_24_im.txt --new;
-recorder DSRATE_024_REC dsrate COMPGROUP.024 results/ds_rate_024.txt --new;
-recorder DSEDP.24_REC dsedp COMPGROUP.024 0.0:0.01:0.200 results/ds_edp_24.txt --new;
-recorder DSIM.24_REC dsim COMPGROUP.024 $linvalues results/ds_im_24.txt --new;
-recorder COSTRATE_24_REC costrate COMPGROUP.024 1E-4:4.8E-3:1.2 results/cost_rate_24.txt --new;
+recorder COSTEDP.24_REC costedp COMPGROUP.024 $costedpvalues2 results/cost_24_edp --new;
+recorder COSTIM_24_REC costim COMPGROUP.024 $costimvalues results/cost_24_im --new;
+recorder DSRATE_024_REC dsrate COMPGROUP.024 results/ds_rate_024 --new;
+recorder DSEDP.24_REC dsedp COMPGROUP.024 0.0:0.01:0.200 results/ds_edp_24 --new;
+recorder DSIM.24_REC dsim COMPGROUP.024 $linvalues results/ds_im_24 --new;
+recorder COSTRATE_24_REC costrate COMPGROUP.024 1E-4:4.8E-3:1.2 results/cost_rate_24 --new;
 
 
-recorder COSTEDP.25_REC costedp COMPGROUP.025 $costedpvalues2 results/cost_25_edp.txt --new;
-recorder COSTIM_25_REC costim COMPGROUP.025 $costimvalues results/cost_25_im.txt --new;
-recorder DSRATE_025_REC dsrate COMPGROUP.025 results/ds_rate_025.txt --new;
-recorder DSEDP.25_REC dsedp COMPGROUP.025 0.0:0.01:0.200 results/ds_edp_25.txt --new;
-recorder DSIM.25_REC dsim COMPGROUP.025 $linvalues results/ds_im_25.txt --new;
-recorder COSTRATE_25_REC costrate COMPGROUP.025 1E-4:4.8E-3:1.2 results/cost_rate_25.txt --new;
+recorder COSTEDP.25_REC costedp COMPGROUP.025 $costedpvalues2 results/cost_25_edp --new;
+recorder COSTIM_25_REC costim COMPGROUP.025 $costimvalues results/cost_25_im --new;
+recorder DSRATE_025_REC dsrate COMPGROUP.025 results/ds_rate_025 --new;
+recorder DSEDP.25_REC dsedp COMPGROUP.025 0.0:0.01:0.200 results/ds_edp_25 --new;
+recorder DSIM.25_REC dsim COMPGROUP.025 $linvalues results/ds_im_25 --new;
+recorder COSTRATE_25_REC costrate COMPGROUP.025 1E-4:4.8E-3:1.2 results/cost_rate_25 --new;
 
 
-recorder COSTEDP.26_REC costedp COMPGROUP.026 $costedpvalues2 results/cost_26_edp.txt --new;
-recorder COSTIM_26_REC costim COMPGROUP.026 $costimvalues results/cost_26_im.txt --new;
-recorder DSRATE_026_REC dsrate COMPGROUP.026 results/ds_rate_026.txt --new;
-recorder DSEDP.26_REC dsedp COMPGROUP.026 0.0:0.01:0.200 results/ds_edp_26.txt --new;
-recorder DSIM.26_REC dsim COMPGROUP.026 $linvalues results/ds_im_26.txt --new;
-recorder COSTRATE_26_REC costrate COMPGROUP.026 1E-4:4.8E-3:1.2 results/cost_rate_26.txt --new;
+recorder COSTEDP.26_REC costedp COMPGROUP.026 $costedpvalues2 results/cost_26_edp --new;
+recorder COSTIM_26_REC costim COMPGROUP.026 $costimvalues results/cost_26_im --new;
+recorder DSRATE_026_REC dsrate COMPGROUP.026 results/ds_rate_026 --new;
+recorder DSEDP.26_REC dsedp COMPGROUP.026 0.0:0.01:0.200 results/ds_edp_26 --new;
+recorder DSIM.26_REC dsim COMPGROUP.026 $linvalues results/ds_im_26 --new;
+recorder COSTRATE_26_REC costrate COMPGROUP.026 1E-4:4.8E-3:1.2 results/cost_rate_26 --new;
 
 
-recorder COSTEDP.27_REC costedp COMPGROUP.027 $costedpvalues2 results/cost_27_edp.txt --new;
-recorder COSTIM_27_REC costim COMPGROUP.027 $costimvalues results/cost_27_im.txt --new;
-recorder DSRATE_027_REC dsrate COMPGROUP.027 results/ds_rate_027.txt --new;
-recorder DSEDP.27_REC dsedp COMPGROUP.027 0.0:0.01:0.200 results/ds_edp_27.txt --new;
-recorder DSIM.27_REC dsim COMPGROUP.027 $linvalues results/ds_im_27.txt --new;
-recorder COSTRATE_27_REC costrate COMPGROUP.027 1E-4:4.8E-3:1.2 results/cost_rate_27.txt --new;
+recorder COSTEDP.27_REC costedp COMPGROUP.027 $costedpvalues2 results/cost_27_edp --new;
+recorder COSTIM_27_REC costim COMPGROUP.027 $costimvalues results/cost_27_im --new;
+recorder DSRATE_027_REC dsrate COMPGROUP.027 results/ds_rate_027 --new;
+recorder DSEDP.27_REC dsedp COMPGROUP.027 0.0:0.01:0.200 results/ds_edp_27 --new;
+recorder DSIM.27_REC dsim COMPGROUP.027 $linvalues results/ds_im_27 --new;
+recorder COSTRATE_27_REC costrate COMPGROUP.027 1E-4:4.8E-3:1.2 results/cost_rate_27 --new;
 
 
-recorder COSTEDP.28_REC costedp COMPGROUP.028 $costedpvalues2 results/cost_28_edp.txt --new;
-recorder COSTIM_28_REC costim COMPGROUP.028 $costimvalues results/cost_28_im.txt --new;
-recorder DSRATE_028_REC dsrate COMPGROUP.028 results/ds_rate_028.txt --new;
-recorder DSEDP.28_REC dsedp COMPGROUP.028 0.0:0.01:0.200 results/ds_edp_28.txt --new;
-recorder DSIM.28_REC dsim COMPGROUP.028 $linvalues results/ds_im_28.txt --new;
-recorder COSTRATE_28_REC costrate COMPGROUP.028 1E-4:4.8E-3:1.2 results/cost_rate_28.txt --new;
+recorder COSTEDP.28_REC costedp COMPGROUP.028 $costedpvalues2 results/cost_28_edp --new;
+recorder COSTIM_28_REC costim COMPGROUP.028 $costimvalues results/cost_28_im --new;
+recorder DSRATE_028_REC dsrate COMPGROUP.028 results/ds_rate_028 --new;
+recorder DSEDP.28_REC dsedp COMPGROUP.028 0.0:0.01:0.200 results/ds_edp_28 --new;
+recorder DSIM.28_REC dsim COMPGROUP.028 $linvalues results/ds_im_28 --new;
+recorder COSTRATE_28_REC costrate COMPGROUP.028 1E-4:4.8E-3:1.2 results/cost_rate_28 --new;
 
 
-recorder COSTEDP.29_REC costedp COMPGROUP.029 $costedpvalues2 results/cost_29_edp.txt --new;
-recorder COSTIM_29_REC costim COMPGROUP.029 $costimvalues results/cost_29_im.txt --new;
-recorder DSRATE_029_REC dsrate COMPGROUP.029 results/ds_rate_029.txt --new;
-recorder DSEDP.29_REC dsedp COMPGROUP.029 0.0:0.01:0.200 results/ds_edp_29.txt --new;
-recorder DSIM.29_REC dsim COMPGROUP.029 $linvalues results/ds_im_29.txt --new;
-recorder COSTRATE_29_REC costrate COMPGROUP.029 1E-4:4.8E-3:1.2 results/cost_rate_29.txt --new;
+recorder COSTEDP.29_REC costedp COMPGROUP.029 $costedpvalues2 results/cost_29_edp --new;
+recorder COSTIM_29_REC costim COMPGROUP.029 $costimvalues results/cost_29_im --new;
+recorder DSRATE_029_REC dsrate COMPGROUP.029 results/ds_rate_029 --new;
+recorder DSEDP.29_REC dsedp COMPGROUP.029 0.0:0.01:0.200 results/ds_edp_29 --new;
+recorder DSIM.29_REC dsim COMPGROUP.029 $linvalues results/ds_im_29 --new;
+recorder COSTRATE_29_REC costrate COMPGROUP.029 1E-4:4.8E-3:1.2 results/cost_rate_29 --new;
 
 
-recorder COSTEDP.30_REC costedp COMPGROUP.030 $costedpvalues2 results/cost_30_edp.txt --new;
-recorder COSTIM_30_REC costim COMPGROUP.030 $costimvalues results/cost_30_im.txt --new;
-recorder DSRATE_030_REC dsrate COMPGROUP.030 results/ds_rate_030.txt --new;
-recorder DSEDP.30_REC dsedp COMPGROUP.030 0.0:0.01:0.200 results/ds_edp_30.txt --new;
-recorder DSIM.30_REC dsim COMPGROUP.030 $linvalues results/ds_im_30.txt --new;
-recorder COSTRATE_30_REC costrate COMPGROUP.030 1E-4:4.8E-3:1.2 results/cost_rate_30.txt --new;
+recorder COSTEDP.30_REC costedp COMPGROUP.030 $costedpvalues2 results/cost_30_edp --new;
+recorder COSTIM_30_REC costim COMPGROUP.030 $costimvalues results/cost_30_im --new;
+recorder DSRATE_030_REC dsrate COMPGROUP.030 results/ds_rate_030 --new;
+recorder DSEDP.30_REC dsedp COMPGROUP.030 0.0:0.01:0.200 results/ds_edp_30 --new;
+recorder DSIM.30_REC dsim COMPGROUP.030 $linvalues results/ds_im_30 --new;
+recorder COSTRATE_30_REC costrate COMPGROUP.030 1E-4:4.8E-3:1.2 results/cost_rate_30 --new;
 
 
-recorder COSTEDP.31_REC costedp COMPGROUP.031 $costedpvalues5 results/cost_31_edp.txt --new;
-recorder COSTIM_31_REC costim COMPGROUP.031 $costimvalues results/cost_31_im.txt --new;
-recorder DSRATE_031_REC dsrate COMPGROUP.031 results/ds_rate_031.txt --new;
-recorder DSEDP.31_REC dsedp COMPGROUP.031 0.0:0.01:0.200 results/ds_edp_31.txt --new;
-recorder DSIM.31_REC dsim COMPGROUP.031 $linvalues results/ds_im_31.txt --new;
-recorder COSTRATE_31_REC costrate COMPGROUP.031 1E-4:4.8E-3:1.2 results/cost_rate_31.txt --new;
+recorder COSTEDP.31_REC costedp COMPGROUP.031 $costedpvalues5 results/cost_31_edp --new;
+recorder COSTIM_31_REC costim COMPGROUP.031 $costimvalues results/cost_31_im --new;
+recorder DSRATE_031_REC dsrate COMPGROUP.031 results/ds_rate_031 --new;
+recorder DSEDP.31_REC dsedp COMPGROUP.031 0.0:0.01:0.200 results/ds_edp_31 --new;
+recorder DSIM.31_REC dsim COMPGROUP.031 $linvalues results/ds_im_31 --new;
+recorder COSTRATE_31_REC costrate COMPGROUP.031 1E-4:4.8E-3:1.2 results/cost_rate_31 --new;
 
 
-recorder COSTEDP.32_REC costedp COMPGROUP.032 $costedpvalues2 results/cost_32_edp.txt --new;
-recorder COSTIM_32_REC costim COMPGROUP.032 $costimvalues results/cost_32_im.txt --new;
-recorder DSRATE_032_REC dsrate COMPGROUP.032 results/ds_rate_032.txt --new;
-recorder DSEDP.32_REC dsedp COMPGROUP.032 0.0:0.01:0.200 results/ds_edp_32.txt --new;
-recorder DSIM.32_REC dsim COMPGROUP.032 $linvalues results/ds_im_32.txt --new;
-recorder COSTRATE_32_REC costrate COMPGROUP.032 1E-4:4.8E-3:1.2 results/cost_rate_32.txt --new;
+recorder COSTEDP.32_REC costedp COMPGROUP.032 $costedpvalues2 results/cost_32_edp --new;
+recorder COSTIM_32_REC costim COMPGROUP.032 $costimvalues results/cost_32_im --new;
+recorder DSRATE_032_REC dsrate COMPGROUP.032 results/ds_rate_032 --new;
+recorder DSEDP.32_REC dsedp COMPGROUP.032 0.0:0.01:0.200 results/ds_edp_32 --new;
+recorder DSIM.32_REC dsim COMPGROUP.032 $linvalues results/ds_im_32 --new;
+recorder COSTRATE_32_REC costrate COMPGROUP.032 1E-4:4.8E-3:1.2 results/cost_rate_32 --new;
 
 
-recorder COSTEDP.33_REC costedp COMPGROUP.033 $costedpvalues2 results/cost_33_edp.txt --new;
-recorder COSTIM_33_REC costim COMPGROUP.033 $costimvalues results/cost_33_im.txt --new;
-recorder DSRATE_033_REC dsrate COMPGROUP.033 results/ds_rate_033.txt --new;
-recorder DSEDP.33_REC dsedp COMPGROUP.033 0.0:0.01:0.200 results/ds_edp_33.txt --new;
-recorder DSIM.33_REC dsim COMPGROUP.033 $linvalues results/ds_im_33.txt --new;
-recorder COSTRATE_33_REC costrate COMPGROUP.033 1E-4:4.8E-3:1.2 results/cost_rate_33.txt --new;
+recorder COSTEDP.33_REC costedp COMPGROUP.033 $costedpvalues2 results/cost_33_edp --new;
+recorder COSTIM_33_REC costim COMPGROUP.033 $costimvalues results/cost_33_im --new;
+recorder DSRATE_033_REC dsrate COMPGROUP.033 results/ds_rate_033 --new;
+recorder DSEDP.33_REC dsedp COMPGROUP.033 0.0:0.01:0.200 results/ds_edp_33 --new;
+recorder DSIM.33_REC dsim COMPGROUP.033 $linvalues results/ds_im_33 --new;
+recorder COSTRATE_33_REC costrate COMPGROUP.033 1E-4:4.8E-3:1.2 results/cost_rate_33 --new;
 
 
-recorder COSTEDP.34_REC costedp COMPGROUP.034 $costedpvalues2 results/cost_34_edp.txt --new;
-recorder COSTIM_34_REC costim COMPGROUP.034 $costimvalues results/cost_34_im.txt --new;
-recorder DSRATE_034_REC dsrate COMPGROUP.034 results/ds_rate_034.txt --new;
-recorder DSEDP.34_REC dsedp COMPGROUP.034 0.0:0.01:0.200 results/ds_edp_34.txt --new;
-recorder DSIM.34_REC dsim COMPGROUP.034 $linvalues results/ds_im_34.txt --new;
-recorder COSTRATE_34_REC costrate COMPGROUP.034 1E-4:4.8E-3:1.2 results/cost_rate_34.txt --new;
+recorder COSTEDP.34_REC costedp COMPGROUP.034 $costedpvalues2 results/cost_34_edp --new;
+recorder COSTIM_34_REC costim COMPGROUP.034 $costimvalues results/cost_34_im --new;
+recorder DSRATE_034_REC dsrate COMPGROUP.034 results/ds_rate_034 --new;
+recorder DSEDP.34_REC dsedp COMPGROUP.034 0.0:0.01:0.200 results/ds_edp_34 --new;
+recorder DSIM.34_REC dsim COMPGROUP.034 $linvalues results/ds_im_34 --new;
+recorder COSTRATE_34_REC costrate COMPGROUP.034 1E-4:4.8E-3:1.2 results/cost_rate_34 --new;
 
 
-recorder COSTEDP.35_REC costedp COMPGROUP.035 $costedpvalues2 results/cost_35_edp.txt --new;
-recorder COSTIM_35_REC costim COMPGROUP.035 $costimvalues results/cost_35_im.txt --new;
-recorder DSRATE_035_REC dsrate COMPGROUP.035 results/ds_rate_035.txt --new;
-recorder DSEDP.35_REC dsedp COMPGROUP.035 0.0:0.01:0.200 results/ds_edp_35.txt --new;
-recorder DSIM.35_REC dsim COMPGROUP.035 $linvalues results/ds_im_35.txt --new;
-recorder COSTRATE_35_REC costrate COMPGROUP.035 1E-4:4.8E-3:1.2 results/cost_rate_35.txt --new;
+recorder COSTEDP.35_REC costedp COMPGROUP.035 $costedpvalues2 results/cost_35_edp --new;
+recorder COSTIM_35_REC costim COMPGROUP.035 $costimvalues results/cost_35_im --new;
+recorder DSRATE_035_REC dsrate COMPGROUP.035 results/ds_rate_035 --new;
+recorder DSEDP.35_REC dsedp COMPGROUP.035 0.0:0.01:0.200 results/ds_edp_35 --new;
+recorder DSIM.35_REC dsim COMPGROUP.035 $linvalues results/ds_im_35 --new;
+recorder COSTRATE_35_REC costrate COMPGROUP.035 1E-4:4.8E-3:1.2 results/cost_rate_35 --new;
 
 
-recorder COSTEDP.36_REC costedp COMPGROUP.036 $costedpvalues2 results/cost_36_edp.txt --new;
-recorder COSTIM_36_REC costim COMPGROUP.036 $costimvalues results/cost_36_im.txt --new;
-recorder DSRATE_036_REC dsrate COMPGROUP.036 results/ds_rate_036.txt --new;
-recorder DSEDP.36_REC dsedp COMPGROUP.036 0.0:0.01:0.200 results/ds_edp_36.txt --new;
-recorder DSIM.36_REC dsim COMPGROUP.036 $linvalues results/ds_im_36.txt --new;
-recorder COSTRATE_36_REC costrate COMPGROUP.036 1E-4:4.8E-3:1.2 results/cost_rate_36.txt --new;
+recorder COSTEDP.36_REC costedp COMPGROUP.036 $costedpvalues2 results/cost_36_edp --new;
+recorder COSTIM_36_REC costim COMPGROUP.036 $costimvalues results/cost_36_im --new;
+recorder DSRATE_036_REC dsrate COMPGROUP.036 results/ds_rate_036 --new;
+recorder DSEDP.36_REC dsedp COMPGROUP.036 0.0:0.01:0.200 results/ds_edp_36 --new;
+recorder DSIM.36_REC dsim COMPGROUP.036 $linvalues results/ds_im_36 --new;
+recorder COSTRATE_36_REC costrate COMPGROUP.036 1E-4:4.8E-3:1.2 results/cost_rate_36 --new;
 
 
-recorder COSTEDP.37_REC costedp COMPGROUP.037 $costedpvalues2 results/cost_37_edp.txt --new;
-recorder COSTIM_37_REC costim COMPGROUP.037 $costimvalues results/cost_37_im.txt --new;
-recorder DSRATE_037_REC dsrate COMPGROUP.037 results/ds_rate_037.txt --new;
-recorder DSEDP.37_REC dsedp COMPGROUP.037 0.0:0.01:0.200 results/ds_edp_37.txt --new;
-recorder DSIM.37_REC dsim COMPGROUP.037 $linvalues results/ds_im_37.txt --new;
-recorder COSTRATE_37_REC costrate COMPGROUP.037 1E-4:4.8E-3:1.2 results/cost_rate_37.txt --new;
+recorder COSTEDP.37_REC costedp COMPGROUP.037 $costedpvalues2 results/cost_37_edp --new;
+recorder COSTIM_37_REC costim COMPGROUP.037 $costimvalues results/cost_37_im --new;
+recorder DSRATE_037_REC dsrate COMPGROUP.037 results/ds_rate_037 --new;
+recorder DSEDP.37_REC dsedp COMPGROUP.037 0.0:0.01:0.200 results/ds_edp_37 --new;
+recorder DSIM.37_REC dsim COMPGROUP.037 $linvalues results/ds_im_37 --new;
+recorder COSTRATE_37_REC costrate COMPGROUP.037 1E-4:4.8E-3:1.2 results/cost_rate_37 --new;
 
 
-recorder COSTEDP.38_REC costedp COMPGROUP.038 $costedpvalues2 results/cost_38_edp.txt --new;
-recorder COSTIM_38_REC costim COMPGROUP.038 $costimvalues results/cost_38_im.txt --new;
-recorder DSRATE_038_REC dsrate COMPGROUP.038 results/ds_rate_038.txt --new;
-recorder DSEDP.38_REC dsedp COMPGROUP.038 0.0:0.01:0.200 results/ds_edp_38.txt --new;
-recorder DSIM.38_REC dsim COMPGROUP.038 $linvalues results/ds_im_38.txt --new;
-recorder COSTRATE_38_REC costrate COMPGROUP.038 1E-4:4.8E-3:1.2 results/cost_rate_38.txt --new;
+recorder COSTEDP.38_REC costedp COMPGROUP.038 $costedpvalues2 results/cost_38_edp --new;
+recorder COSTIM_38_REC costim COMPGROUP.038 $costimvalues results/cost_38_im --new;
+recorder DSRATE_038_REC dsrate COMPGROUP.038 results/ds_rate_038 --new;
+recorder DSEDP.38_REC dsedp COMPGROUP.038 0.0:0.01:0.200 results/ds_edp_38 --new;
+recorder DSIM.38_REC dsim COMPGROUP.038 $linvalues results/ds_im_38 --new;
+recorder COSTRATE_38_REC costrate COMPGROUP.038 1E-4:4.8E-3:1.2 results/cost_rate_38 --new;
 
 
-recorder COSTEDP.39_REC costedp COMPGROUP.039 $costedpvalues2 results/cost_39_edp.txt --new;
-recorder COSTIM_39_REC costim COMPGROUP.039 $costimvalues results/cost_39_im.txt --new;
-recorder DSRATE_039_REC dsrate COMPGROUP.039 results/ds_rate_039.txt --new;
-recorder DSEDP.39_REC dsedp COMPGROUP.039 0.0:0.01:0.200 results/ds_edp_39.txt --new;
-recorder DSIM.39_REC dsim COMPGROUP.039 $linvalues results/ds_im_39.txt --new;
-recorder COSTRATE_39_REC costrate COMPGROUP.039 1E-4:4.8E-3:1.2 results/cost_rate_39.txt --new;
+recorder COSTEDP.39_REC costedp COMPGROUP.039 $costedpvalues2 results/cost_39_edp --new;
+recorder COSTIM_39_REC costim COMPGROUP.039 $costimvalues results/cost_39_im --new;
+recorder DSRATE_039_REC dsrate COMPGROUP.039 results/ds_rate_039 --new;
+recorder DSEDP.39_REC dsedp COMPGROUP.039 0.0:0.01:0.200 results/ds_edp_39 --new;
+recorder DSIM.39_REC dsim COMPGROUP.039 $linvalues results/ds_im_39 --new;
+recorder COSTRATE_39_REC costrate COMPGROUP.039 1E-4:4.8E-3:1.2 results/cost_rate_39 --new;
 
 
-recorder COSTEDP.40_REC costedp COMPGROUP.040 $costedpvalues2 results/cost_40_edp.txt --new;
-recorder COSTIM_40_REC costim COMPGROUP.040 $costimvalues results/cost_40_im.txt --new;
-recorder DSRATE_040_REC dsrate COMPGROUP.040 results/ds_rate_040.txt --new;
-recorder DSEDP.40_REC dsedp COMPGROUP.040 0.0:0.01:0.200 results/ds_edp_40.txt --new;
-recorder DSIM.40_REC dsim COMPGROUP.040 $linvalues results/ds_im_40.txt --new;
-recorder COSTRATE_40_REC costrate COMPGROUP.040 1E-4:4.8E-3:1.2 results/cost_rate_40.txt --new;
+recorder COSTEDP.40_REC costedp COMPGROUP.040 $costedpvalues2 results/cost_40_edp --new;
+recorder COSTIM_40_REC costim COMPGROUP.040 $costimvalues results/cost_40_im --new;
+recorder DSRATE_040_REC dsrate COMPGROUP.040 results/ds_rate_040 --new;
+recorder DSEDP.40_REC dsedp COMPGROUP.040 0.0:0.01:0.200 results/ds_edp_40 --new;
+recorder DSIM.40_REC dsim COMPGROUP.040 $linvalues results/ds_im_40 --new;
+recorder COSTRATE_40_REC costrate COMPGROUP.040 1E-4:4.8E-3:1.2 results/cost_rate_40 --new;
 
 
-recorder COSTEDP.41_REC costedp COMPGROUP.041 $costedpvalues5 results/cost_41_edp.txt --new;
-recorder COSTIM_41_REC costim COMPGROUP.041 $costimvalues results/cost_41_im.txt --new;
-recorder DSRATE_041_REC dsrate COMPGROUP.041 results/ds_rate_041.txt --new;
-recorder DSEDP.41_REC dsedp COMPGROUP.041 0.0:0.01:0.200 results/ds_edp_41.txt --new;
-recorder DSIM.41_REC dsim COMPGROUP.041 $linvalues results/ds_im_41.txt --new;
-recorder COSTRATE_41_REC costrate COMPGROUP.041 1E-4:4.8E-3:1.2 results/cost_rate_41.txt --new;
+recorder COSTEDP.41_REC costedp COMPGROUP.041 $costedpvalues5 results/cost_41_edp --new;
+recorder COSTIM_41_REC costim COMPGROUP.041 $costimvalues results/cost_41_im --new;
+recorder DSRATE_041_REC dsrate COMPGROUP.041 results/ds_rate_041 --new;
+recorder DSEDP.41_REC dsedp COMPGROUP.041 0.0:0.01:0.200 results/ds_edp_41 --new;
+recorder DSIM.41_REC dsim COMPGROUP.041 $linvalues results/ds_im_41 --new;
+recorder COSTRATE_41_REC costrate COMPGROUP.041 1E-4:4.8E-3:1.2 results/cost_rate_41 --new;
 
 
-recorder COSTEDP.42_REC costedp COMPGROUP.042 $costedpvalues2 results/cost_42_edp.txt --new;
-recorder COSTIM_42_REC costim COMPGROUP.042 $costimvalues results/cost_42_im.txt --new;
-recorder DSRATE_042_REC dsrate COMPGROUP.042 results/ds_rate_042.txt --new;
-recorder DSEDP.42_REC dsedp COMPGROUP.042 0.0:0.01:0.200 results/ds_edp_42.txt --new;
-recorder DSIM.42_REC dsim COMPGROUP.042 $linvalues results/ds_im_42.txt --new;
-recorder COSTRATE_42_REC costrate COMPGROUP.042 1E-4:4.8E-3:1.2 results/cost_rate_42.txt --new;
+recorder COSTEDP.42_REC costedp COMPGROUP.042 $costedpvalues2 results/cost_42_edp --new;
+recorder COSTIM_42_REC costim COMPGROUP.042 $costimvalues results/cost_42_im --new;
+recorder DSRATE_042_REC dsrate COMPGROUP.042 results/ds_rate_042 --new;
+recorder DSEDP.42_REC dsedp COMPGROUP.042 0.0:0.01:0.200 results/ds_edp_42 --new;
+recorder DSIM.42_REC dsim COMPGROUP.042 $linvalues results/ds_im_42 --new;
+recorder COSTRATE_42_REC costrate COMPGROUP.042 1E-4:4.8E-3:1.2 results/cost_rate_42 --new;
 
 
-recorder COSTEDP.43_REC costedp COMPGROUP.043 $costedpvalues2 results/cost_43_edp.txt --new;
-recorder COSTIM_43_REC costim COMPGROUP.043 $costimvalues results/cost_43_im.txt --new;
-recorder DSRATE_043_REC dsrate COMPGROUP.043 results/ds_rate_043.txt --new;
-recorder DSEDP.43_REC dsedp COMPGROUP.043 0.0:0.01:0.200 results/ds_edp_43.txt --new;
-recorder DSIM.43_REC dsim COMPGROUP.043 $linvalues results/ds_im_43.txt --new;
-recorder COSTRATE_43_REC costrate COMPGROUP.043 1E-4:4.8E-3:1.2 results/cost_rate_43.txt --new;
+recorder COSTEDP.43_REC costedp COMPGROUP.043 $costedpvalues2 results/cost_43_edp --new;
+recorder COSTIM_43_REC costim COMPGROUP.043 $costimvalues results/cost_43_im --new;
+recorder DSRATE_043_REC dsrate COMPGROUP.043 results/ds_rate_043 --new;
+recorder DSEDP.43_REC dsedp COMPGROUP.043 0.0:0.01:0.200 results/ds_edp_43 --new;
+recorder DSIM.43_REC dsim COMPGROUP.043 $linvalues results/ds_im_43 --new;
+recorder COSTRATE_43_REC costrate COMPGROUP.043 1E-4:4.8E-3:1.2 results/cost_rate_43 --new;
 
 
-recorder COSTEDP.44_REC costedp COMPGROUP.044 $costedpvalues2 results/cost_44_edp.txt --new;
-recorder COSTIM_44_REC costim COMPGROUP.044 $costimvalues results/cost_44_im.txt --new;
-recorder DSRATE_044_REC dsrate COMPGROUP.044 results/ds_rate_044.txt --new;
-recorder DSEDP.44_REC dsedp COMPGROUP.044 0.0:0.01:0.200 results/ds_edp_44.txt --new;
-recorder DSIM.44_REC dsim COMPGROUP.044 $linvalues results/ds_im_44.txt --new;
-recorder COSTRATE_44_REC costrate COMPGROUP.044 1E-4:4.8E-3:1.2 results/cost_rate_44.txt --new;
+recorder COSTEDP.44_REC costedp COMPGROUP.044 $costedpvalues2 results/cost_44_edp --new;
+recorder COSTIM_44_REC costim COMPGROUP.044 $costimvalues results/cost_44_im --new;
+recorder DSRATE_044_REC dsrate COMPGROUP.044 results/ds_rate_044 --new;
+recorder DSEDP.44_REC dsedp COMPGROUP.044 0.0:0.01:0.200 results/ds_edp_44 --new;
+recorder DSIM.44_REC dsim COMPGROUP.044 $linvalues results/ds_im_44 --new;
+recorder COSTRATE_44_REC costrate COMPGROUP.044 1E-4:4.8E-3:1.2 results/cost_rate_44 --new;
 
 
-recorder COSTEDP.45_REC costedp COMPGROUP.045 $costedpvalues2 results/cost_45_edp.txt --new;
-recorder COSTIM_45_REC costim COMPGROUP.045 $costimvalues results/cost_45_im.txt --new;
-recorder DSRATE_045_REC dsrate COMPGROUP.045 results/ds_rate_045.txt --new;
-recorder DSEDP.45_REC dsedp COMPGROUP.045 0.0:0.01:0.200 results/ds_edp_45.txt --new;
-recorder DSIM.45_REC dsim COMPGROUP.045 $linvalues results/ds_im_45.txt --new;
-recorder COSTRATE_45_REC costrate COMPGROUP.045 1E-4:4.8E-3:1.2 results/cost_rate_45.txt --new;
+recorder COSTEDP.45_REC costedp COMPGROUP.045 $costedpvalues2 results/cost_45_edp --new;
+recorder COSTIM_45_REC costim COMPGROUP.045 $costimvalues results/cost_45_im --new;
+recorder DSRATE_045_REC dsrate COMPGROUP.045 results/ds_rate_045 --new;
+recorder DSEDP.45_REC dsedp COMPGROUP.045 0.0:0.01:0.200 results/ds_edp_45 --new;
+recorder DSIM.45_REC dsim COMPGROUP.045 $linvalues results/ds_im_45 --new;
+recorder COSTRATE_45_REC costrate COMPGROUP.045 1E-4:4.8E-3:1.2 results/cost_rate_45 --new;
 
 
-recorder COSTEDP.46_REC costedp COMPGROUP.046 $costedpvalues2 results/cost_46_edp.txt --new;
-recorder COSTIM_46_REC costim COMPGROUP.046 $costimvalues results/cost_46_im.txt --new;
-recorder DSRATE_046_REC dsrate COMPGROUP.046 results/ds_rate_046.txt --new;
-recorder DSEDP.46_REC dsedp COMPGROUP.046 0.0:0.01:0.200 results/ds_edp_46.txt --new;
-recorder DSIM.46_REC dsim COMPGROUP.046 $linvalues results/ds_im_46.txt --new;
-recorder COSTRATE_46_REC costrate COMPGROUP.046 1E-4:4.8E-3:1.2 results/cost_rate_46.txt --new;
+recorder COSTEDP.46_REC costedp COMPGROUP.046 $costedpvalues2 results/cost_46_edp --new;
+recorder COSTIM_46_REC costim COMPGROUP.046 $costimvalues results/cost_46_im --new;
+recorder DSRATE_046_REC dsrate COMPGROUP.046 results/ds_rate_046 --new;
+recorder DSEDP.46_REC dsedp COMPGROUP.046 0.0:0.01:0.200 results/ds_edp_46 --new;
+recorder DSIM.46_REC dsim COMPGROUP.046 $linvalues results/ds_im_46 --new;
+recorder COSTRATE_46_REC costrate COMPGROUP.046 1E-4:4.8E-3:1.2 results/cost_rate_46 --new;
 
 
-recorder COSTEDP.47_REC costedp COMPGROUP.047 $costedpvalues2 results/cost_47_edp.txt --new;
-recorder COSTIM_47_REC costim COMPGROUP.047 $costimvalues results/cost_47_im.txt --new;
-recorder DSRATE_047_REC dsrate COMPGROUP.047 results/ds_rate_047.txt --new;
-recorder DSEDP.47_REC dsedp COMPGROUP.047 0.0:0.01:0.200 results/ds_edp_47.txt --new;
-recorder DSIM.47_REC dsim COMPGROUP.047 $linvalues results/ds_im_47.txt --new;
-recorder COSTRATE_47_REC costrate COMPGROUP.047 1E-4:4.8E-3:1.2 results/cost_rate_47.txt --new;
+recorder COSTEDP.47_REC costedp COMPGROUP.047 $costedpvalues2 results/cost_47_edp --new;
+recorder COSTIM_47_REC costim COMPGROUP.047 $costimvalues results/cost_47_im --new;
+recorder DSRATE_047_REC dsrate COMPGROUP.047 results/ds_rate_047 --new;
+recorder DSEDP.47_REC dsedp COMPGROUP.047 0.0:0.01:0.200 results/ds_edp_47 --new;
+recorder DSIM.47_REC dsim COMPGROUP.047 $linvalues results/ds_im_47 --new;
+recorder COSTRATE_47_REC costrate COMPGROUP.047 1E-4:4.8E-3:1.2 results/cost_rate_47 --new;
 
 
-recorder COSTEDP.48_REC costedp COMPGROUP.048 $costedpvalues2 results/cost_48_edp.txt --new;
-recorder COSTIM_48_REC costim COMPGROUP.048 $costimvalues results/cost_48_im.txt --new;
-recorder DSRATE_048_REC dsrate COMPGROUP.048 results/ds_rate_048.txt --new;
-recorder DSEDP.48_REC dsedp COMPGROUP.048 0.0:0.01:0.200 results/ds_edp_48.txt --new;
-recorder DSIM.48_REC dsim COMPGROUP.048 $linvalues results/ds_im_48.txt --new;
-recorder COSTRATE_48_REC costrate COMPGROUP.048 1E-4:4.8E-3:1.2 results/cost_rate_48.txt --new;
+recorder COSTEDP.48_REC costedp COMPGROUP.048 $costedpvalues2 results/cost_48_edp --new;
+recorder COSTIM_48_REC costim COMPGROUP.048 $costimvalues results/cost_48_im --new;
+recorder DSRATE_048_REC dsrate COMPGROUP.048 results/ds_rate_048 --new;
+recorder DSEDP.48_REC dsedp COMPGROUP.048 0.0:0.01:0.200 results/ds_edp_48 --new;
+recorder DSIM.48_REC dsim COMPGROUP.048 $linvalues results/ds_im_48 --new;
+recorder COSTRATE_48_REC costrate COMPGROUP.048 1E-4:4.8E-3:1.2 results/cost_rate_48 --new;
 
 
-recorder COSTEDP.49_REC costedp COMPGROUP.049 $costedpvalues2 results/cost_49_edp.txt --new;
-recorder COSTIM_49_REC costim COMPGROUP.049 $costimvalues results/cost_49_im.txt --new;
-recorder DSRATE_049_REC dsrate COMPGROUP.049 results/ds_rate_049.txt --new;
-recorder DSEDP.49_REC dsedp COMPGROUP.049 0.0:0.01:0.200 results/ds_edp_49.txt --new;
-recorder DSIM.49_REC dsim COMPGROUP.049 $linvalues results/ds_im_49.txt --new;
-recorder COSTRATE_49_REC costrate COMPGROUP.049 1E-4:4.8E-3:1.2 results/cost_rate_49.txt --new;
+recorder COSTEDP.49_REC costedp COMPGROUP.049 $costedpvalues2 results/cost_49_edp --new;
+recorder COSTIM_49_REC costim COMPGROUP.049 $costimvalues results/cost_49_im --new;
+recorder DSRATE_049_REC dsrate COMPGROUP.049 results/ds_rate_049 --new;
+recorder DSEDP.49_REC dsedp COMPGROUP.049 0.0:0.01:0.200 results/ds_edp_49 --new;
+recorder DSIM.49_REC dsim COMPGROUP.049 $linvalues results/ds_im_49 --new;
+recorder COSTRATE_49_REC costrate COMPGROUP.049 1E-4:4.8E-3:1.2 results/cost_rate_49 --new;
 
 
-recorder COSTEDP.50_REC costedp COMPGROUP.050 $costedpvalues2 results/cost_50_edp.txt --new;
-recorder COSTIM_50_REC costim COMPGROUP.050 $costimvalues results/cost_50_im.txt --new;
-recorder DSRATE_050_REC dsrate COMPGROUP.050 results/ds_rate_050.txt --new;
-recorder DSEDP.50_REC dsedp COMPGROUP.050 0.0:0.01:0.200 results/ds_edp_50.txt --new;
-recorder DSIM.50_REC dsim COMPGROUP.050 $linvalues results/ds_im_50.txt --new;
-recorder COSTRATE_50_REC costrate COMPGROUP.050 1E-4:4.8E-3:1.2 results/cost_rate_50.txt --new;
+recorder COSTEDP.50_REC costedp COMPGROUP.050 $costedpvalues2 results/cost_50_edp --new;
+recorder COSTIM_50_REC costim COMPGROUP.050 $costimvalues results/cost_50_im --new;
+recorder DSRATE_050_REC dsrate COMPGROUP.050 results/ds_rate_050 --new;
+recorder DSEDP.50_REC dsedp COMPGROUP.050 0.0:0.01:0.200 results/ds_edp_50 --new;
+recorder DSIM.50_REC dsim COMPGROUP.050 $linvalues results/ds_im_50 --new;
+recorder COSTRATE_50_REC costrate COMPGROUP.050 1E-4:4.8E-3:1.2 results/cost_rate_50 --new;
 
 
-recorder COSTEDP.51_REC costedp COMPGROUP.051 $costedpvalues3 results/cost_51_edp.txt --new;
-recorder COSTIM_51_REC costim COMPGROUP.051 $costimvalues results/cost_51_im.txt --new;
-recorder DSRATE_051_REC dsrate COMPGROUP.051 results/ds_rate_051.txt --new;
-recorder DSEDP.51_REC dsedp COMPGROUP.051 0.0:0.01:0.200 results/ds_edp_51.txt --new;
-recorder DSIM.51_REC dsim COMPGROUP.051 $linvalues results/ds_im_51.txt --new;
-recorder COSTRATE_51_REC costrate COMPGROUP.051 1E-4:4.8E-3:1.2 results/cost_rate_51.txt --new;
+recorder COSTEDP.51_REC costedp COMPGROUP.051 $costedpvalues3 results/cost_51_edp --new;
+recorder COSTIM_51_REC costim COMPGROUP.051 $costimvalues results/cost_51_im --new;
+recorder DSRATE_051_REC dsrate COMPGROUP.051 results/ds_rate_051 --new;
+recorder DSEDP.51_REC dsedp COMPGROUP.051 0.0:0.01:0.200 results/ds_edp_51 --new;
+recorder DSIM.51_REC dsim COMPGROUP.051 $linvalues results/ds_im_51 --new;
+recorder COSTRATE_51_REC costrate COMPGROUP.051 1E-4:4.8E-3:1.2 results/cost_rate_51 --new;
 
 
-recorder COSTEDP.52_REC costedp COMPGROUP.052 $costedpvalues3 results/cost_52_edp.txt --new;
-recorder COSTIM_52_REC costim COMPGROUP.052 $costimvalues results/cost_52_im.txt --new;
-recorder DSRATE_052_REC dsrate COMPGROUP.052 results/ds_rate_052.txt --new;
-recorder DSEDP.52_REC dsedp COMPGROUP.052 0.0:0.01:0.200 results/ds_edp_52.txt --new;
-recorder DSIM.52_REC dsim COMPGROUP.052 $linvalues results/ds_im_52.txt --new;
-recorder COSTRATE_52_REC costrate COMPGROUP.052 1E-4:4.8E-3:1.2 results/cost_rate_52.txt --new;
+recorder COSTEDP.52_REC costedp COMPGROUP.052 $costedpvalues3 results/cost_52_edp --new;
+recorder COSTIM_52_REC costim COMPGROUP.052 $costimvalues results/cost_52_im --new;
+recorder DSRATE_052_REC dsrate COMPGROUP.052 results/ds_rate_052 --new;
+recorder DSEDP.52_REC dsedp COMPGROUP.052 0.0:0.01:0.200 results/ds_edp_52 --new;
+recorder DSIM.52_REC dsim COMPGROUP.052 $linvalues results/ds_im_52 --new;
+recorder COSTRATE_52_REC costrate COMPGROUP.052 1E-4:4.8E-3:1.2 results/cost_rate_52 --new;
 
 
-recorder COSTEDP.53_REC costedp COMPGROUP.053 $costedpvalues3 results/cost_53_edp.txt --new;
-recorder COSTIM_53_REC costim COMPGROUP.053 $costimvalues results/cost_53_im.txt --new;
-recorder DSRATE_053_REC dsrate COMPGROUP.053 results/ds_rate_053.txt --new;
-recorder DSEDP.53_REC dsedp COMPGROUP.053 0.0:0.01:0.200 results/ds_edp_53.txt --new;
-recorder DSIM.53_REC dsim COMPGROUP.053 $linvalues results/ds_im_53.txt --new;
-recorder COSTRATE_53_REC costrate COMPGROUP.053 1E-4:4.8E-3:1.2 results/cost_rate_53.txt --new;
+recorder COSTEDP.53_REC costedp COMPGROUP.053 $costedpvalues3 results/cost_53_edp --new;
+recorder COSTIM_53_REC costim COMPGROUP.053 $costimvalues results/cost_53_im --new;
+recorder DSRATE_053_REC dsrate COMPGROUP.053 results/ds_rate_053 --new;
+recorder DSEDP.53_REC dsedp COMPGROUP.053 0.0:0.01:0.200 results/ds_edp_53 --new;
+recorder DSIM.53_REC dsim COMPGROUP.053 $linvalues results/ds_im_53 --new;
+recorder COSTRATE_53_REC costrate COMPGROUP.053 1E-4:4.8E-3:1.2 results/cost_rate_53 --new;
 
 
-recorder COSTEDP.54_REC costedp COMPGROUP.054 $costedpvalues3 results/cost_54_edp.txt --new;
-recorder COSTIM_54_REC costim COMPGROUP.054 $costimvalues results/cost_54_im.txt --new;
-recorder DSRATE_054_REC dsrate COMPGROUP.054 results/ds_rate_054.txt --new;
-recorder DSEDP.54_REC dsedp COMPGROUP.054 0.0:0.01:0.200 results/ds_edp_54.txt --new;
-recorder DSIM.54_REC dsim COMPGROUP.054 $linvalues results/ds_im_54.txt --new;
-recorder COSTRATE_54_REC costrate COMPGROUP.054 1E-4:4.8E-3:1.2 results/cost_rate_54.txt --new;
+recorder COSTEDP.54_REC costedp COMPGROUP.054 $costedpvalues3 results/cost_54_edp --new;
+recorder COSTIM_54_REC costim COMPGROUP.054 $costimvalues results/cost_54_im --new;
+recorder DSRATE_054_REC dsrate COMPGROUP.054 results/ds_rate_054 --new;
+recorder DSEDP.54_REC dsedp COMPGROUP.054 0.0:0.01:0.200 results/ds_edp_54 --new;
+recorder DSIM.54_REC dsim COMPGROUP.054 $linvalues results/ds_im_54 --new;
+recorder COSTRATE_54_REC costrate COMPGROUP.054 1E-4:4.8E-3:1.2 results/cost_rate_54 --new;
 
 
-recorder COSTEDP.55_REC costedp COMPGROUP.055 $costedpvalues3 results/cost_55_edp.txt --new;
-recorder COSTIM_55_REC costim COMPGROUP.055 $costimvalues results/cost_55_im.txt --new;
-recorder DSRATE_055_REC dsrate COMPGROUP.055 results/ds_rate_055.txt --new;
-recorder DSEDP.55_REC dsedp COMPGROUP.055 0.0:0.01:0.200 results/ds_edp_55.txt --new;
-recorder DSIM.55_REC dsim COMPGROUP.055 $linvalues results/ds_im_55.txt --new;
-recorder COSTRATE_55_REC costrate COMPGROUP.055 1E-4:4.8E-3:1.2 results/cost_rate_55.txt --new;
+recorder COSTEDP.55_REC costedp COMPGROUP.055 $costedpvalues3 results/cost_55_edp --new;
+recorder COSTIM_55_REC costim COMPGROUP.055 $costimvalues results/cost_55_im --new;
+recorder DSRATE_055_REC dsrate COMPGROUP.055 results/ds_rate_055 --new;
+recorder DSEDP.55_REC dsedp COMPGROUP.055 0.0:0.01:0.200 results/ds_edp_55 --new;
+recorder DSIM.55_REC dsim COMPGROUP.055 $linvalues results/ds_im_55 --new;
+recorder COSTRATE_55_REC costrate COMPGROUP.055 1E-4:4.8E-3:1.2 results/cost_rate_55 --new;
 
 
-recorder COSTEDP.56_REC costedp COMPGROUP.056 $costedpvalues3 results/cost_56_edp.txt --new;
-recorder COSTIM_56_REC costim COMPGROUP.056 $costimvalues results/cost_56_im.txt --new;
-recorder DSRATE_056_REC dsrate COMPGROUP.056 results/ds_rate_056.txt --new;
-recorder DSEDP.56_REC dsedp COMPGROUP.056 0.0:0.01:0.200 results/ds_edp_56.txt --new;
-recorder DSIM.56_REC dsim COMPGROUP.056 $linvalues results/ds_im_56.txt --new;
-recorder COSTRATE_56_REC costrate COMPGROUP.056 1E-4:4.8E-3:1.2 results/cost_rate_56.txt --new;
+recorder COSTEDP.56_REC costedp COMPGROUP.056 $costedpvalues3 results/cost_56_edp --new;
+recorder COSTIM_56_REC costim COMPGROUP.056 $costimvalues results/cost_56_im --new;
+recorder DSRATE_056_REC dsrate COMPGROUP.056 results/ds_rate_056 --new;
+recorder DSEDP.56_REC dsedp COMPGROUP.056 0.0:0.01:0.200 results/ds_edp_56 --new;
+recorder DSIM.56_REC dsim COMPGROUP.056 $linvalues results/ds_im_56 --new;
+recorder COSTRATE_56_REC costrate COMPGROUP.056 1E-4:4.8E-3:1.2 results/cost_rate_56 --new;
 
 
-recorder COSTEDP.57_REC costedp COMPGROUP.057 $costedpvalues3 results/cost_57_edp.txt --new;
-recorder COSTIM_57_REC costim COMPGROUP.057 $costimvalues results/cost_57_im.txt --new;
-recorder DSRATE_057_REC dsrate COMPGROUP.057 results/ds_rate_057.txt --new;
-recorder DSEDP.57_REC dsedp COMPGROUP.057 0.0:0.01:0.200 results/ds_edp_57.txt --new;
-recorder DSIM.57_REC dsim COMPGROUP.057 $linvalues results/ds_im_57.txt --new;
-recorder COSTRATE_57_REC costrate COMPGROUP.057 1E-4:4.8E-3:1.2 results/cost_rate_57.txt --new;
+recorder COSTEDP.57_REC costedp COMPGROUP.057 $costedpvalues3 results/cost_57_edp --new;
+recorder COSTIM_57_REC costim COMPGROUP.057 $costimvalues results/cost_57_im --new;
+recorder DSRATE_057_REC dsrate COMPGROUP.057 results/ds_rate_057 --new;
+recorder DSEDP.57_REC dsedp COMPGROUP.057 0.0:0.01:0.200 results/ds_edp_57 --new;
+recorder DSIM.57_REC dsim COMPGROUP.057 $linvalues results/ds_im_57 --new;
+recorder COSTRATE_57_REC costrate COMPGROUP.057 1E-4:4.8E-3:1.2 results/cost_rate_57 --new;
 
 
-recorder COSTEDP.58_REC costedp COMPGROUP.058 $costedpvalues3 results/cost_58_edp.txt --new;
-recorder COSTIM_58_REC costim COMPGROUP.058 $costimvalues results/cost_58_im.txt --new;
-recorder DSRATE_058_REC dsrate COMPGROUP.058 results/ds_rate_058.txt --new;
-recorder DSEDP.58_REC dsedp COMPGROUP.058 0.0:0.01:0.200 results/ds_edp_58.txt --new;
-recorder DSIM.58_REC dsim COMPGROUP.058 $linvalues results/ds_im_58.txt --new;
-recorder COSTRATE_58_REC costrate COMPGROUP.058 1E-4:4.8E-3:1.2 results/cost_rate_58.txt --new;
+recorder COSTEDP.58_REC costedp COMPGROUP.058 $costedpvalues3 results/cost_58_edp --new;
+recorder COSTIM_58_REC costim COMPGROUP.058 $costimvalues results/cost_58_im --new;
+recorder DSRATE_058_REC dsrate COMPGROUP.058 results/ds_rate_058 --new;
+recorder DSEDP.58_REC dsedp COMPGROUP.058 0.0:0.01:0.200 results/ds_edp_58 --new;
+recorder DSIM.58_REC dsim COMPGROUP.058 $linvalues results/ds_im_58 --new;
+recorder COSTRATE_58_REC costrate COMPGROUP.058 1E-4:4.8E-3:1.2 results/cost_rate_58 --new;
 
 
-recorder COSTEDP.59_REC costedp COMPGROUP.059 $costedpvalues3 results/cost_59_edp.txt --new;
-recorder COSTIM_59_REC costim COMPGROUP.059 $costimvalues results/cost_59_im.txt --new;
-recorder DSRATE_059_REC dsrate COMPGROUP.059 results/ds_rate_059.txt --new;
-recorder DSEDP.59_REC dsedp COMPGROUP.059 0.0:0.01:0.200 results/ds_edp_59.txt --new;
-recorder DSIM.59_REC dsim COMPGROUP.059 $linvalues results/ds_im_59.txt --new;
-recorder COSTRATE_59_REC costrate COMPGROUP.059 1E-4:4.8E-3:1.2 results/cost_rate_59.txt --new;
+recorder COSTEDP.59_REC costedp COMPGROUP.059 $costedpvalues3 results/cost_59_edp --new;
+recorder COSTIM_59_REC costim COMPGROUP.059 $costimvalues results/cost_59_im --new;
+recorder DSRATE_059_REC dsrate COMPGROUP.059 results/ds_rate_059 --new;
+recorder DSEDP.59_REC dsedp COMPGROUP.059 0.0:0.01:0.200 results/ds_edp_59 --new;
+recorder DSIM.59_REC dsim COMPGROUP.059 $linvalues results/ds_im_59 --new;
+recorder COSTRATE_59_REC costrate COMPGROUP.059 1E-4:4.8E-3:1.2 results/cost_rate_59 --new;
 
 
-recorder COSTEDP.60_REC costedp COMPGROUP.060 $costedpvalues3 results/cost_60_edp.txt --new;
-recorder COSTIM_60_REC costim COMPGROUP.060 $costimvalues results/cost_60_im.txt --new;
-recorder DSRATE_060_REC dsrate COMPGROUP.060 results/ds_rate_060.txt --new;
-recorder DSEDP.60_REC dsedp COMPGROUP.060 0.0:0.01:0.200 results/ds_edp_60.txt --new;
-recorder DSIM.60_REC dsim COMPGROUP.060 $linvalues results/ds_im_60.txt --new;
-recorder COSTRATE_60_REC costrate COMPGROUP.060 1E-4:4.8E-3:1.2 results/cost_rate_60.txt --new;
+recorder COSTEDP.60_REC costedp COMPGROUP.060 $costedpvalues3 results/cost_60_edp --new;
+recorder COSTIM_60_REC costim COMPGROUP.060 $costimvalues results/cost_60_im --new;
+recorder DSRATE_060_REC dsrate COMPGROUP.060 results/ds_rate_060 --new;
+recorder DSEDP.60_REC dsedp COMPGROUP.060 0.0:0.01:0.200 results/ds_edp_60 --new;
+recorder DSIM.60_REC dsim COMPGROUP.060 $linvalues results/ds_im_60 --new;
+recorder COSTRATE_60_REC costrate COMPGROUP.060 1E-4:4.8E-3:1.2 results/cost_rate_60 --new;
 
 
-recorder COSTEDP.61_REC costedp COMPGROUP.061 $costedpvalues3 results/cost_61_edp.txt --new;
-recorder COSTIM_61_REC costim COMPGROUP.061 $costimvalues results/cost_61_im.txt --new;
-recorder DSRATE_061_REC dsrate COMPGROUP.061 results/ds_rate_061.txt --new;
-recorder DSEDP.61_REC dsedp COMPGROUP.061 0.0:0.01:0.200 results/ds_edp_61.txt --new;
-recorder DSIM.61_REC dsim COMPGROUP.061 $linvalues results/ds_im_61.txt --new;
-recorder COSTRATE_61_REC costrate COMPGROUP.061 1E-4:4.8E-3:1.2 results/cost_rate_61.txt --new;
+recorder COSTEDP.61_REC costedp COMPGROUP.061 $costedpvalues3 results/cost_61_edp --new;
+recorder COSTIM_61_REC costim COMPGROUP.061 $costimvalues results/cost_61_im --new;
+recorder DSRATE_061_REC dsrate COMPGROUP.061 results/ds_rate_061 --new;
+recorder DSEDP.61_REC dsedp COMPGROUP.061 0.0:0.01:0.200 results/ds_edp_61 --new;
+recorder DSIM.61_REC dsim COMPGROUP.061 $linvalues results/ds_im_61 --new;
+recorder COSTRATE_61_REC costrate COMPGROUP.061 1E-4:4.8E-3:1.2 results/cost_rate_61 --new;
 
 
-recorder COSTEDP.62_REC costedp COMPGROUP.062 $costedpvalues3 results/cost_62_edp.txt --new;
-recorder COSTIM_62_REC costim COMPGROUP.062 $costimvalues results/cost_62_im.txt --new;
-recorder DSRATE_062_REC dsrate COMPGROUP.062 results/ds_rate_062.txt --new;
-recorder DSEDP.62_REC dsedp COMPGROUP.062 0.0:0.01:0.200 results/ds_edp_62.txt --new;
-recorder DSIM.62_REC dsim COMPGROUP.062 $linvalues results/ds_im_62.txt --new;
-recorder COSTRATE_62_REC costrate COMPGROUP.062 1E-4:4.8E-3:1.2 results/cost_rate_62.txt --new;
+recorder COSTEDP.62_REC costedp COMPGROUP.062 $costedpvalues3 results/cost_62_edp --new;
+recorder COSTIM_62_REC costim COMPGROUP.062 $costimvalues results/cost_62_im --new;
+recorder DSRATE_062_REC dsrate COMPGROUP.062 results/ds_rate_062 --new;
+recorder DSEDP.62_REC dsedp COMPGROUP.062 0.0:0.01:0.200 results/ds_edp_62 --new;
+recorder DSIM.62_REC dsim COMPGROUP.062 $linvalues results/ds_im_62 --new;
+recorder COSTRATE_62_REC costrate COMPGROUP.062 1E-4:4.8E-3:1.2 results/cost_rate_62 --new;
 
 
-recorder COSTEDP.63_REC costedp COMPGROUP.063 $costedpvalues3 results/cost_63_edp.txt --new;
-recorder COSTIM_63_REC costim COMPGROUP.063 $costimvalues results/cost_63_im.txt --new;
-recorder DSRATE_063_REC dsrate COMPGROUP.063 results/ds_rate_063.txt --new;
-recorder DSEDP.63_REC dsedp COMPGROUP.063 0.0:0.01:0.200 results/ds_edp_63.txt --new;
-recorder DSIM.63_REC dsim COMPGROUP.063 $linvalues results/ds_im_63.txt --new;
-recorder COSTRATE_63_REC costrate COMPGROUP.063 1E-4:4.8E-3:1.2 results/cost_rate_63.txt --new;
+recorder COSTEDP.63_REC costedp COMPGROUP.063 $costedpvalues3 results/cost_63_edp --new;
+recorder COSTIM_63_REC costim COMPGROUP.063 $costimvalues results/cost_63_im --new;
+recorder DSRATE_063_REC dsrate COMPGROUP.063 results/ds_rate_063 --new;
+recorder DSEDP.63_REC dsedp COMPGROUP.063 0.0:0.01:0.200 results/ds_edp_63 --new;
+recorder DSIM.63_REC dsim COMPGROUP.063 $linvalues results/ds_im_63 --new;
+recorder COSTRATE_63_REC costrate COMPGROUP.063 1E-4:4.8E-3:1.2 results/cost_rate_63 --new;
 
 
-recorder COSTEDP.64_REC costedp COMPGROUP.064 $costedpvalues3 results/cost_64_edp.txt --new;
-recorder COSTIM_64_REC costim COMPGROUP.064 $costimvalues results/cost_64_im.txt --new;
-recorder DSRATE_064_REC dsrate COMPGROUP.064 results/ds_rate_064.txt --new;
-recorder DSEDP.64_REC dsedp COMPGROUP.064 0.0:0.01:0.200 results/ds_edp_64.txt --new;
-recorder DSIM.64_REC dsim COMPGROUP.064 $linvalues results/ds_im_64.txt --new;
-recorder COSTRATE_64_REC costrate COMPGROUP.064 1E-4:4.8E-3:1.2 results/cost_rate_64.txt --new;
+recorder COSTEDP.64_REC costedp COMPGROUP.064 $costedpvalues3 results/cost_64_edp --new;
+recorder COSTIM_64_REC costim COMPGROUP.064 $costimvalues results/cost_64_im --new;
+recorder DSRATE_064_REC dsrate COMPGROUP.064 results/ds_rate_064 --new;
+recorder DSEDP.64_REC dsedp COMPGROUP.064 0.0:0.01:0.200 results/ds_edp_64 --new;
+recorder DSIM.64_REC dsim COMPGROUP.064 $linvalues results/ds_im_64 --new;
+recorder COSTRATE_64_REC costrate COMPGROUP.064 1E-4:4.8E-3:1.2 results/cost_rate_64 --new;
 
 
-recorder COSTEDP.65_REC costedp COMPGROUP.065 $costedpvalues3 results/cost_65_edp.txt --new;
-recorder COSTIM_65_REC costim COMPGROUP.065 $costimvalues results/cost_65_im.txt --new;
-recorder DSRATE_065_REC dsrate COMPGROUP.065 results/ds_rate_065.txt --new;
-recorder DSEDP.65_REC dsedp COMPGROUP.065 0.0:0.01:0.200 results/ds_edp_65.txt --new;
-recorder DSIM.65_REC dsim COMPGROUP.065 $linvalues results/ds_im_65.txt --new;
-recorder COSTRATE_65_REC costrate COMPGROUP.065 1E-4:4.8E-3:1.2 results/cost_rate_65.txt --new;
+recorder COSTEDP.65_REC costedp COMPGROUP.065 $costedpvalues3 results/cost_65_edp --new;
+recorder COSTIM_65_REC costim COMPGROUP.065 $costimvalues results/cost_65_im --new;
+recorder DSRATE_065_REC dsrate COMPGROUP.065 results/ds_rate_065 --new;
+recorder DSEDP.65_REC dsedp COMPGROUP.065 0.0:0.01:0.200 results/ds_edp_65 --new;
+recorder DSIM.65_REC dsim COMPGROUP.065 $linvalues results/ds_im_65 --new;
+recorder COSTRATE_65_REC costrate COMPGROUP.065 1E-4:4.8E-3:1.2 results/cost_rate_65 --new;
 
 
-recorder COSTEDP.66_REC costedp COMPGROUP.066 $costedpvalues3 results/cost_66_edp.txt --new;
-recorder COSTIM_66_REC costim COMPGROUP.066 $costimvalues results/cost_66_im.txt --new;
-recorder DSRATE_066_REC dsrate COMPGROUP.066 results/ds_rate_066.txt --new;
-recorder DSEDP.66_REC dsedp COMPGROUP.066 0.0:0.01:0.200 results/ds_edp_66.txt --new;
-recorder DSIM.66_REC dsim COMPGROUP.066 $linvalues results/ds_im_66.txt --new;
-recorder COSTRATE_66_REC costrate COMPGROUP.066 1E-4:4.8E-3:1.2 results/cost_rate_66.txt --new;
+recorder COSTEDP.66_REC costedp COMPGROUP.066 $costedpvalues3 results/cost_66_edp --new;
+recorder COSTIM_66_REC costim COMPGROUP.066 $costimvalues results/cost_66_im --new;
+recorder DSRATE_066_REC dsrate COMPGROUP.066 results/ds_rate_066 --new;
+recorder DSEDP.66_REC dsedp COMPGROUP.066 0.0:0.01:0.200 results/ds_edp_66 --new;
+recorder DSIM.66_REC dsim COMPGROUP.066 $linvalues results/ds_im_66 --new;
+recorder COSTRATE_66_REC costrate COMPGROUP.066 1E-4:4.8E-3:1.2 results/cost_rate_66 --new;
 
 
-recorder COSTEDP.67_REC costedp COMPGROUP.067 $costedpvalues3 results/cost_67_edp.txt --new;
-recorder COSTIM_67_REC costim COMPGROUP.067 $costimvalues results/cost_67_im.txt --new;
-recorder DSRATE_067_REC dsrate COMPGROUP.067 results/ds_rate_067.txt --new;
-recorder DSEDP.67_REC dsedp COMPGROUP.067 0.0:0.01:0.200 results/ds_edp_67.txt --new;
-recorder DSIM.67_REC dsim COMPGROUP.067 $linvalues results/ds_im_67.txt --new;
-recorder COSTRATE_67_REC costrate COMPGROUP.067 1E-4:4.8E-3:1.2 results/cost_rate_67.txt --new;
+recorder COSTEDP.67_REC costedp COMPGROUP.067 $costedpvalues3 results/cost_67_edp --new;
+recorder COSTIM_67_REC costim COMPGROUP.067 $costimvalues results/cost_67_im --new;
+recorder DSRATE_067_REC dsrate COMPGROUP.067 results/ds_rate_067 --new;
+recorder DSEDP.67_REC dsedp COMPGROUP.067 0.0:0.01:0.200 results/ds_edp_67 --new;
+recorder DSIM.67_REC dsim COMPGROUP.067 $linvalues results/ds_im_67 --new;
+recorder COSTRATE_67_REC costrate COMPGROUP.067 1E-4:4.8E-3:1.2 results/cost_rate_67 --new;
 
 
-recorder COSTEDP.68_REC costedp COMPGROUP.068 $costedpvalues3 results/cost_68_edp.txt --new;
-recorder COSTIM_68_REC costim COMPGROUP.068 $costimvalues results/cost_68_im.txt --new;
-recorder DSRATE_068_REC dsrate COMPGROUP.068 results/ds_rate_068.txt --new;
-recorder DSEDP.68_REC dsedp COMPGROUP.068 0.0:0.01:0.200 results/ds_edp_68.txt --new;
-recorder DSIM.68_REC dsim COMPGROUP.068 $linvalues results/ds_im_68.txt --new;
-recorder COSTRATE_68_REC costrate COMPGROUP.068 1E-4:4.8E-3:1.2 results/cost_rate_68.txt --new;
+recorder COSTEDP.68_REC costedp COMPGROUP.068 $costedpvalues3 results/cost_68_edp --new;
+recorder COSTIM_68_REC costim COMPGROUP.068 $costimvalues results/cost_68_im --new;
+recorder DSRATE_068_REC dsrate COMPGROUP.068 results/ds_rate_068 --new;
+recorder DSEDP.68_REC dsedp COMPGROUP.068 0.0:0.01:0.200 results/ds_edp_68 --new;
+recorder DSIM.68_REC dsim COMPGROUP.068 $linvalues results/ds_im_68 --new;
+recorder COSTRATE_68_REC costrate COMPGROUP.068 1E-4:4.8E-3:1.2 results/cost_rate_68 --new;
 
 
-recorder COSTEDP.69_REC costedp COMPGROUP.069 $costedpvalues3 results/cost_69_edp.txt --new;
-recorder COSTIM_69_REC costim COMPGROUP.069 $costimvalues results/cost_69_im.txt --new;
-recorder DSRATE_069_REC dsrate COMPGROUP.069 results/ds_rate_069.txt --new;
-recorder DSEDP.69_REC dsedp COMPGROUP.069 0.0:0.01:0.200 results/ds_edp_69.txt --new;
-recorder DSIM.69_REC dsim COMPGROUP.069 $linvalues results/ds_im_69.txt --new;
-recorder COSTRATE_69_REC costrate COMPGROUP.069 1E-4:4.8E-3:1.2 results/cost_rate_69.txt --new;
+recorder COSTEDP.69_REC costedp COMPGROUP.069 $costedpvalues3 results/cost_69_edp --new;
+recorder COSTIM_69_REC costim COMPGROUP.069 $costimvalues results/cost_69_im --new;
+recorder DSRATE_069_REC dsrate COMPGROUP.069 results/ds_rate_069 --new;
+recorder DSEDP.69_REC dsedp COMPGROUP.069 0.0:0.01:0.200 results/ds_edp_69 --new;
+recorder DSIM.69_REC dsim COMPGROUP.069 $linvalues results/ds_im_69 --new;
+recorder COSTRATE_69_REC costrate COMPGROUP.069 1E-4:4.8E-3:1.2 results/cost_rate_69 --new;
 
 
-recorder COSTEDP.70_REC costedp COMPGROUP.070 $costedpvalues3 results/cost_70_edp.txt --new;
-recorder COSTIM_70_REC costim COMPGROUP.070 $costimvalues results/cost_70_im.txt --new;
-recorder DSRATE_070_REC dsrate COMPGROUP.070 results/ds_rate_070.txt --new;
-recorder DSEDP.70_REC dsedp COMPGROUP.070 0.0:0.01:0.200 results/ds_edp_70.txt --new;
-recorder DSIM.70_REC dsim COMPGROUP.070 $linvalues results/ds_im_70.txt --new;
-recorder COSTRATE_70_REC costrate COMPGROUP.070 1E-4:4.8E-3:1.2 results/cost_rate_70.txt --new;
+recorder COSTEDP.70_REC costedp COMPGROUP.070 $costedpvalues3 results/cost_70_edp --new;
+recorder COSTIM_70_REC costim COMPGROUP.070 $costimvalues results/cost_70_im --new;
+recorder DSRATE_070_REC dsrate COMPGROUP.070 results/ds_rate_070 --new;
+recorder DSEDP.70_REC dsedp COMPGROUP.070 0.0:0.01:0.200 results/ds_edp_70 --new;
+recorder DSIM.70_REC dsim COMPGROUP.070 $linvalues results/ds_im_70 --new;
+recorder COSTRATE_70_REC costrate COMPGROUP.070 1E-4:4.8E-3:1.2 results/cost_rate_70 --new;
 
 
-recorder COSTEDP.71_REC costedp COMPGROUP.071 $costedpvalues4 results/cost_71_edp.txt --new;
-recorder COSTIM_71_REC costim COMPGROUP.071 $costimvalues results/cost_71_im.txt --new;
-recorder DSRATE_071_REC dsrate COMPGROUP.071 results/ds_rate_071.txt --new;
-recorder DSEDP.71_REC dsedp COMPGROUP.071 0.0:0.01:0.200 results/ds_edp_71.txt --new;
-recorder DSIM.71_REC dsim COMPGROUP.071 $linvalues results/ds_im_71.txt --new;
-recorder COSTRATE_71_REC costrate COMPGROUP.071 1E-4:4.8E-3:1.2 results/cost_rate_71.txt --new;
+recorder COSTEDP.71_REC costedp COMPGROUP.071 $costedpvalues4 results/cost_71_edp --new;
+recorder COSTIM_71_REC costim COMPGROUP.071 $costimvalues results/cost_71_im --new;
+recorder DSRATE_071_REC dsrate COMPGROUP.071 results/ds_rate_071 --new;
+recorder DSEDP.71_REC dsedp COMPGROUP.071 0.0:0.01:0.200 results/ds_edp_71 --new;
+recorder DSIM.71_REC dsim COMPGROUP.071 $linvalues results/ds_im_71 --new;
+recorder COSTRATE_71_REC costrate COMPGROUP.071 1E-4:4.8E-3:1.2 results/cost_rate_71 --new;
 
 
-recorder COSTEDP.72_REC costedp COMPGROUP.072 $costedpvalues3 results/cost_72_edp.txt --new;
-recorder COSTIM_72_REC costim COMPGROUP.072 $costimvalues results/cost_72_im.txt --new;
-recorder DSRATE_072_REC dsrate COMPGROUP.072 results/ds_rate_072.txt --new;
-recorder DSEDP.72_REC dsedp COMPGROUP.072 0.0:0.01:0.200 results/ds_edp_72.txt --new;
-recorder DSIM.72_REC dsim COMPGROUP.072 $linvalues results/ds_im_72.txt --new;
-recorder COSTRATE_72_REC costrate COMPGROUP.072 1E-4:4.8E-3:1.2 results/cost_rate_72.txt --new;
+recorder COSTEDP.72_REC costedp COMPGROUP.072 $costedpvalues3 results/cost_72_edp --new;
+recorder COSTIM_72_REC costim COMPGROUP.072 $costimvalues results/cost_72_im --new;
+recorder DSRATE_072_REC dsrate COMPGROUP.072 results/ds_rate_072 --new;
+recorder DSEDP.72_REC dsedp COMPGROUP.072 0.0:0.01:0.200 results/ds_edp_72 --new;
+recorder DSIM.72_REC dsim COMPGROUP.072 $linvalues results/ds_im_72 --new;
+recorder COSTRATE_72_REC costrate COMPGROUP.072 1E-4:4.8E-3:1.2 results/cost_rate_72 --new;
 
 
-recorder COSTEDP.73_REC costedp COMPGROUP.073 $costedpvalues3 results/cost_73_edp.txt --new;
-recorder COSTIM_73_REC costim COMPGROUP.073 $costimvalues results/cost_73_im.txt --new;
-recorder DSRATE_073_REC dsrate COMPGROUP.073 results/ds_rate_073.txt --new;
-recorder DSEDP.73_REC dsedp COMPGROUP.073 0.0:0.01:0.200 results/ds_edp_73.txt --new;
-recorder DSIM.73_REC dsim COMPGROUP.073 $linvalues results/ds_im_73.txt --new;
-recorder COSTRATE_73_REC costrate COMPGROUP.073 1E-4:4.8E-3:1.2 results/cost_rate_73.txt --new;
+recorder COSTEDP.73_REC costedp COMPGROUP.073 $costedpvalues3 results/cost_73_edp --new;
+recorder COSTIM_73_REC costim COMPGROUP.073 $costimvalues results/cost_73_im --new;
+recorder DSRATE_073_REC dsrate COMPGROUP.073 results/ds_rate_073 --new;
+recorder DSEDP.73_REC dsedp COMPGROUP.073 0.0:0.01:0.200 results/ds_edp_73 --new;
+recorder DSIM.73_REC dsim COMPGROUP.073 $linvalues results/ds_im_73 --new;
+recorder COSTRATE_73_REC costrate COMPGROUP.073 1E-4:4.8E-3:1.2 results/cost_rate_73 --new;
 
 
-recorder COSTEDP.74_REC costedp COMPGROUP.074 $costedpvalues3 results/cost_74_edp.txt --new;
-recorder COSTIM_74_REC costim COMPGROUP.074 $costimvalues results/cost_74_im.txt --new;
-recorder DSRATE_074_REC dsrate COMPGROUP.074 results/ds_rate_074.txt --new;
-recorder DSEDP.74_REC dsedp COMPGROUP.074 0.0:0.01:0.200 results/ds_edp_74.txt --new;
-recorder DSIM.74_REC dsim COMPGROUP.074 $linvalues results/ds_im_74.txt --new;
-recorder COSTRATE_74_REC costrate COMPGROUP.074 1E-4:4.8E-3:1.2 results/cost_rate_74.txt --new;
+recorder COSTEDP.74_REC costedp COMPGROUP.074 $costedpvalues3 results/cost_74_edp --new;
+recorder COSTIM_74_REC costim COMPGROUP.074 $costimvalues results/cost_74_im --new;
+recorder DSRATE_074_REC dsrate COMPGROUP.074 results/ds_rate_074 --new;
+recorder DSEDP.74_REC dsedp COMPGROUP.074 0.0:0.01:0.200 results/ds_edp_74 --new;
+recorder DSIM.74_REC dsim COMPGROUP.074 $linvalues results/ds_im_74 --new;
+recorder COSTRATE_74_REC costrate COMPGROUP.074 1E-4:4.8E-3:1.2 results/cost_rate_74 --new;
 
 
-recorder COSTEDP.75_REC costedp COMPGROUP.075 $costedpvalues3 results/cost_75_edp.txt --new;
-recorder COSTIM_75_REC costim COMPGROUP.075 $costimvalues results/cost_75_im.txt --new;
-recorder DSRATE_075_REC dsrate COMPGROUP.075 results/ds_rate_075.txt --new;
-recorder DSEDP.75_REC dsedp COMPGROUP.075 0.0:0.01:0.200 results/ds_edp_75.txt --new;
-recorder DSIM.75_REC dsim COMPGROUP.075 $linvalues results/ds_im_75.txt --new;
-recorder COSTRATE_75_REC costrate COMPGROUP.075 1E-4:4.8E-3:1.2 results/cost_rate_75.txt --new;
+recorder COSTEDP.75_REC costedp COMPGROUP.075 $costedpvalues3 results/cost_75_edp --new;
+recorder COSTIM_75_REC costim COMPGROUP.075 $costimvalues results/cost_75_im --new;
+recorder DSRATE_075_REC dsrate COMPGROUP.075 results/ds_rate_075 --new;
+recorder DSEDP.75_REC dsedp COMPGROUP.075 0.0:0.01:0.200 results/ds_edp_75 --new;
+recorder DSIM.75_REC dsim COMPGROUP.075 $linvalues results/ds_im_75 --new;
+recorder COSTRATE_75_REC costrate COMPGROUP.075 1E-4:4.8E-3:1.2 results/cost_rate_75 --new;
 
 
-recorder COSTEDP.76_REC costedp COMPGROUP.076 $costedpvalues3 results/cost_76_edp.txt --new;
-recorder COSTIM_76_REC costim COMPGROUP.076 $costimvalues results/cost_76_im.txt --new;
-recorder DSRATE_076_REC dsrate COMPGROUP.076 results/ds_rate_076.txt --new;
-recorder DSEDP.76_REC dsedp COMPGROUP.076 0.0:0.01:0.200 results/ds_edp_76.txt --new;
-recorder DSIM.76_REC dsim COMPGROUP.076 $linvalues results/ds_im_76.txt --new;
-recorder COSTRATE_76_REC costrate COMPGROUP.076 1E-4:4.8E-3:1.2 results/cost_rate_76.txt --new;
+recorder COSTEDP.76_REC costedp COMPGROUP.076 $costedpvalues3 results/cost_76_edp --new;
+recorder COSTIM_76_REC costim COMPGROUP.076 $costimvalues results/cost_76_im --new;
+recorder DSRATE_076_REC dsrate COMPGROUP.076 results/ds_rate_076 --new;
+recorder DSEDP.76_REC dsedp COMPGROUP.076 0.0:0.01:0.200 results/ds_edp_76 --new;
+recorder DSIM.76_REC dsim COMPGROUP.076 $linvalues results/ds_im_76 --new;
+recorder COSTRATE_76_REC costrate COMPGROUP.076 1E-4:4.8E-3:1.2 results/cost_rate_76 --new;
 
 
-recorder COSTEDP.77_REC costedp COMPGROUP.077 $costedpvalues3 results/cost_77_edp.txt --new;
-recorder COSTIM_77_REC costim COMPGROUP.077 $costimvalues results/cost_77_im.txt --new;
-recorder DSRATE_077_REC dsrate COMPGROUP.077 results/ds_rate_077.txt --new;
-recorder DSEDP.77_REC dsedp COMPGROUP.077 0.0:0.01:0.200 results/ds_edp_77.txt --new;
-recorder DSIM.77_REC dsim COMPGROUP.077 $linvalues results/ds_im_77.txt --new;
-recorder COSTRATE_77_REC costrate COMPGROUP.077 1E-4:4.8E-3:1.2 results/cost_rate_77.txt --new;
+recorder COSTEDP.77_REC costedp COMPGROUP.077 $costedpvalues3 results/cost_77_edp --new;
+recorder COSTIM_77_REC costim COMPGROUP.077 $costimvalues results/cost_77_im --new;
+recorder DSRATE_077_REC dsrate COMPGROUP.077 results/ds_rate_077 --new;
+recorder DSEDP.77_REC dsedp COMPGROUP.077 0.0:0.01:0.200 results/ds_edp_77 --new;
+recorder DSIM.77_REC dsim COMPGROUP.077 $linvalues results/ds_im_77 --new;
+recorder COSTRATE_77_REC costrate COMPGROUP.077 1E-4:4.8E-3:1.2 results/cost_rate_77 --new;
 
 
-recorder COSTEDP.78_REC costedp COMPGROUP.078 $costedpvalues3 results/cost_78_edp.txt --new;
-recorder COSTIM_78_REC costim COMPGROUP.078 $costimvalues results/cost_78_im.txt --new;
-recorder DSRATE_078_REC dsrate COMPGROUP.078 results/ds_rate_078.txt --new;
-recorder DSEDP.78_REC dsedp COMPGROUP.078 0.0:0.01:0.200 results/ds_edp_78.txt --new;
-recorder DSIM.78_REC dsim COMPGROUP.078 $linvalues results/ds_im_78.txt --new;
-recorder COSTRATE_78_REC costrate COMPGROUP.078 1E-4:4.8E-3:1.2 results/cost_rate_78.txt --new;
+recorder COSTEDP.78_REC costedp COMPGROUP.078 $costedpvalues3 results/cost_78_edp --new;
+recorder COSTIM_78_REC costim COMPGROUP.078 $costimvalues results/cost_78_im --new;
+recorder DSRATE_078_REC dsrate COMPGROUP.078 results/ds_rate_078 --new;
+recorder DSEDP.78_REC dsedp COMPGROUP.078 0.0:0.01:0.200 results/ds_edp_78 --new;
+recorder DSIM.78_REC dsim COMPGROUP.078 $linvalues results/ds_im_78 --new;
+recorder COSTRATE_78_REC costrate COMPGROUP.078 1E-4:4.8E-3:1.2 results/cost_rate_78 --new;
 
 
-recorder COSTEDP.79_REC costedp COMPGROUP.079 $costedpvalues3 results/cost_79_edp.txt --new;
-recorder COSTIM_79_REC costim COMPGROUP.079 $costimvalues results/cost_79_im.txt --new;
-recorder DSRATE_079_REC dsrate COMPGROUP.079 results/ds_rate_079.txt --new;
-recorder DSEDP.79_REC dsedp COMPGROUP.079 0.0:0.01:0.200 results/ds_edp_79.txt --new;
-recorder DSIM.79_REC dsim COMPGROUP.079 $linvalues results/ds_im_79.txt --new;
-recorder COSTRATE_79_REC costrate COMPGROUP.079 1E-4:4.8E-3:1.2 results/cost_rate_79.txt --new;
+recorder COSTEDP.79_REC costedp COMPGROUP.079 $costedpvalues3 results/cost_79_edp --new;
+recorder COSTIM_79_REC costim COMPGROUP.079 $costimvalues results/cost_79_im --new;
+recorder DSRATE_079_REC dsrate COMPGROUP.079 results/ds_rate_079 --new;
+recorder DSEDP.79_REC dsedp COMPGROUP.079 0.0:0.01:0.200 results/ds_edp_79 --new;
+recorder DSIM.79_REC dsim COMPGROUP.079 $linvalues results/ds_im_79 --new;
+recorder COSTRATE_79_REC costrate COMPGROUP.079 1E-4:4.8E-3:1.2 results/cost_rate_79 --new;
 
 
-recorder COSTEDP.80_REC costedp COMPGROUP.080 $costedpvalues3 results/cost_80_edp.txt --new;
-recorder COSTIM_80_REC costim COMPGROUP.080 $costimvalues results/cost_80_im.txt --new;
-recorder DSRATE_080_REC dsrate COMPGROUP.080 results/ds_rate_080.txt --new;
-recorder DSEDP.80_REC dsedp COMPGROUP.080 0.0:0.01:0.200 results/ds_edp_80.txt --new;
-recorder DSIM.80_REC dsim COMPGROUP.080 $linvalues results/ds_im_80.txt --new;
-recorder COSTRATE_80_REC costrate COMPGROUP.080 1E-4:4.8E-3:1.2 results/cost_rate_80.txt --new;
+recorder COSTEDP.80_REC costedp COMPGROUP.080 $costedpvalues3 results/cost_80_edp --new;
+recorder COSTIM_80_REC costim COMPGROUP.080 $costimvalues results/cost_80_im --new;
+recorder DSRATE_080_REC dsrate COMPGROUP.080 results/ds_rate_080 --new;
+recorder DSEDP.80_REC dsedp COMPGROUP.080 0.0:0.01:0.200 results/ds_edp_80 --new;
+recorder DSIM.80_REC dsim COMPGROUP.080 $linvalues results/ds_im_80 --new;
+recorder COSTRATE_80_REC costrate COMPGROUP.080 1E-4:4.8E-3:1.2 results/cost_rate_80 --new;
 
 
-recorder COSTEDP.81_REC costedp COMPGROUP.081 $costedpvalues3 results/cost_81_edp.txt --new;
-recorder COSTIM_81_REC costim COMPGROUP.081 $costimvalues results/cost_81_im.txt --new;
-recorder DSRATE_081_REC dsrate COMPGROUP.081 results/ds_rate_081.txt --new;
-recorder DSEDP.81_REC dsedp COMPGROUP.081 0.0:0.01:0.200 results/ds_edp_81.txt --new;
-recorder DSIM.81_REC dsim COMPGROUP.081 $linvalues results/ds_im_81.txt --new;
-recorder COSTRATE_81_REC costrate COMPGROUP.081 1E-4:4.8E-3:1.2 results/cost_rate_81.txt --new;
+recorder COSTEDP.81_REC costedp COMPGROUP.081 $costedpvalues3 results/cost_81_edp --new;
+recorder COSTIM_81_REC costim COMPGROUP.081 $costimvalues results/cost_81_im --new;
+recorder DSRATE_081_REC dsrate COMPGROUP.081 results/ds_rate_081 --new;
+recorder DSEDP.81_REC dsedp COMPGROUP.081 0.0:0.01:0.200 results/ds_edp_81 --new;
+recorder DSIM.81_REC dsim COMPGROUP.081 $linvalues results/ds_im_81 --new;
+recorder COSTRATE_81_REC costrate COMPGROUP.081 1E-4:4.8E-3:1.2 results/cost_rate_81 --new;
 
 
-recorder COSTEDP.82_REC costedp COMPGROUP.082 $costedpvalues3 results/cost_82_edp.txt --new;
-recorder COSTIM_82_REC costim COMPGROUP.082 $costimvalues results/cost_82_im.txt --new;
-recorder DSRATE_082_REC dsrate COMPGROUP.082 results/ds_rate_082.txt --new;
-recorder DSEDP.82_REC dsedp COMPGROUP.082 0.0:0.01:0.200 results/ds_edp_82.txt --new;
-recorder DSIM.82_REC dsim COMPGROUP.082 $linvalues results/ds_im_82.txt --new;
-recorder COSTRATE_82_REC costrate COMPGROUP.082 1E-4:4.8E-3:1.2 results/cost_rate_82.txt --new;
+recorder COSTEDP.82_REC costedp COMPGROUP.082 $costedpvalues3 results/cost_82_edp --new;
+recorder COSTIM_82_REC costim COMPGROUP.082 $costimvalues results/cost_82_im --new;
+recorder DSRATE_082_REC dsrate COMPGROUP.082 results/ds_rate_082 --new;
+recorder DSEDP.82_REC dsedp COMPGROUP.082 0.0:0.01:0.200 results/ds_edp_82 --new;
+recorder DSIM.82_REC dsim COMPGROUP.082 $linvalues results/ds_im_82 --new;
+recorder COSTRATE_82_REC costrate COMPGROUP.082 1E-4:4.8E-3:1.2 results/cost_rate_82 --new;
 
 
-recorder COSTEDP.83_REC costedp COMPGROUP.083 $costedpvalues3 results/cost_83_edp.txt --new;
-recorder COSTIM_83_REC costim COMPGROUP.083 $costimvalues results/cost_83_im.txt --new;
-recorder DSRATE_083_REC dsrate COMPGROUP.083 results/ds_rate_083.txt --new;
-recorder DSEDP.83_REC dsedp COMPGROUP.083 0.0:0.01:0.200 results/ds_edp_83.txt --new;
-recorder DSIM.83_REC dsim COMPGROUP.083 $linvalues results/ds_im_83.txt --new;
-recorder COSTRATE_83_REC costrate COMPGROUP.083 1E-4:4.8E-3:1.2 results/cost_rate_83.txt --new;
+recorder COSTEDP.83_REC costedp COMPGROUP.083 $costedpvalues3 results/cost_83_edp --new;
+recorder COSTIM_83_REC costim COMPGROUP.083 $costimvalues results/cost_83_im --new;
+recorder DSRATE_083_REC dsrate COMPGROUP.083 results/ds_rate_083 --new;
+recorder DSEDP.83_REC dsedp COMPGROUP.083 0.0:0.01:0.200 results/ds_edp_83 --new;
+recorder DSIM.83_REC dsim COMPGROUP.083 $linvalues results/ds_im_83 --new;
+recorder COSTRATE_83_REC costrate COMPGROUP.083 1E-4:4.8E-3:1.2 results/cost_rate_83 --new;
 
 
-recorder COSTEDP.84_REC costedp COMPGROUP.084 $costedpvalues3 results/cost_84_edp.txt --new;
-recorder COSTIM_84_REC costim COMPGROUP.084 $costimvalues results/cost_84_im.txt --new;
-recorder DSRATE_084_REC dsrate COMPGROUP.084 results/ds_rate_084.txt --new;
-recorder DSEDP.84_REC dsedp COMPGROUP.084 0.0:0.01:0.200 results/ds_edp_84.txt --new;
-recorder DSIM.84_REC dsim COMPGROUP.084 $linvalues results/ds_im_84.txt --new;
-recorder COSTRATE_84_REC costrate COMPGROUP.084 1E-4:4.8E-3:1.2 results/cost_rate_84.txt --new;
+recorder COSTEDP.84_REC costedp COMPGROUP.084 $costedpvalues3 results/cost_84_edp --new;
+recorder COSTIM_84_REC costim COMPGROUP.084 $costimvalues results/cost_84_im --new;
+recorder DSRATE_084_REC dsrate COMPGROUP.084 results/ds_rate_084 --new;
+recorder DSEDP.84_REC dsedp COMPGROUP.084 0.0:0.01:0.200 results/ds_edp_84 --new;
+recorder DSIM.84_REC dsim COMPGROUP.084 $linvalues results/ds_im_84 --new;
+recorder COSTRATE_84_REC costrate COMPGROUP.084 1E-4:4.8E-3:1.2 results/cost_rate_84 --new;
 
 
-recorder COSTEDP.85_REC costedp COMPGROUP.085 $costedpvalues4 results/cost_85_edp.txt --new;
-recorder COSTIM_85_REC costim COMPGROUP.085 $costimvalues results/cost_85_im.txt --new;
-recorder DSRATE_085_REC dsrate COMPGROUP.085 results/ds_rate_085.txt --new;
-recorder DSEDP.85_REC dsedp COMPGROUP.085 0.0:0.01:0.200 results/ds_edp_85.txt --new;
-recorder DSIM.85_REC dsim COMPGROUP.085 $linvalues results/ds_im_85.txt --new;
-recorder COSTRATE_85_REC costrate COMPGROUP.085 1E-4:4.8E-3:1.2 results/cost_rate_85.txt --new;
+recorder COSTEDP.85_REC costedp COMPGROUP.085 $costedpvalues4 results/cost_85_edp --new;
+recorder COSTIM_85_REC costim COMPGROUP.085 $costimvalues results/cost_85_im --new;
+recorder DSRATE_085_REC dsrate COMPGROUP.085 results/ds_rate_085 --new;
+recorder DSEDP.85_REC dsedp COMPGROUP.085 0.0:0.01:0.200 results/ds_edp_85 --new;
+recorder DSIM.85_REC dsim COMPGROUP.085 $linvalues results/ds_im_85 --new;
+recorder COSTRATE_85_REC costrate COMPGROUP.085 1E-4:4.8E-3:1.2 results/cost_rate_85 --new;
 
 
-recorder COSTEDP.86_REC costedp COMPGROUP.086 $costedpvalues1 results/cost_86_edp.txt --new;
-recorder COSTIM_86_REC costim COMPGROUP.086 $costimvalues results/cost_86_im.txt --new;
-recorder DSRATE_086_REC dsrate COMPGROUP.086 results/ds_rate_086.txt --new;
-recorder DSEDP.86_REC dsedp COMPGROUP.086 0.0:0.01:0.200 results/ds_edp_86.txt --new;
-recorder DSIM.86_REC dsim COMPGROUP.086 $linvalues results/ds_im_86.txt --new;
-recorder COSTRATE_86_REC costrate COMPGROUP.086 1E-4:4.8E-3:1.2 results/cost_rate_86.txt --new;
+recorder COSTEDP.86_REC costedp COMPGROUP.086 $costedpvalues1 results/cost_86_edp --new;
+recorder COSTIM_86_REC costim COMPGROUP.086 $costimvalues results/cost_86_im --new;
+recorder DSRATE_086_REC dsrate COMPGROUP.086 results/ds_rate_086 --new;
+recorder DSEDP.86_REC dsedp COMPGROUP.086 0.0:0.01:0.200 results/ds_edp_86 --new;
+recorder DSIM.86_REC dsim COMPGROUP.086 $linvalues results/ds_im_86 --new;
+recorder COSTRATE_86_REC costrate COMPGROUP.086 1E-4:4.8E-3:1.2 results/cost_rate_86 --new;
 
 
-recorder COSTEDP.87_REC costedp COMPGROUP.087 $costedpvalues2 results/cost_87_edp.txt --new;
-recorder COSTIM_87_REC costim COMPGROUP.087 $costimvalues results/cost_87_im.txt --new;
-recorder DSRATE_087_REC dsrate COMPGROUP.087 results/ds_rate_087.txt --new;
-recorder DSEDP.87_REC dsedp COMPGROUP.087 0.0:0.01:0.200 results/ds_edp_87.txt --new;
-recorder DSIM.87_REC dsim COMPGROUP.087 $linvalues results/ds_im_87.txt --new;
-recorder COSTRATE_87_REC costrate COMPGROUP.087 1E-4:4.8E-3:1.2 results/cost_rate_87.txt --new;
+recorder COSTEDP.87_REC costedp COMPGROUP.087 $costedpvalues2 results/cost_87_edp --new;
+recorder COSTIM_87_REC costim COMPGROUP.087 $costimvalues results/cost_87_im --new;
+recorder DSRATE_087_REC dsrate COMPGROUP.087 results/ds_rate_087 --new;
+recorder DSEDP.87_REC dsedp COMPGROUP.087 0.0:0.01:0.200 results/ds_edp_87 --new;
+recorder DSIM.87_REC dsim COMPGROUP.087 $linvalues results/ds_im_87 --new;
+recorder COSTRATE_87_REC costrate COMPGROUP.087 1E-4:4.8E-3:1.2 results/cost_rate_87 --new;
 
 
-recorder COSTEDP.88_REC costedp COMPGROUP.088 $costedpvalues2 results/cost_88_edp.txt --new;
-recorder COSTIM_88_REC costim COMPGROUP.088 $costimvalues results/cost_88_im.txt --new;
-recorder DSRATE_088_REC dsrate COMPGROUP.088 results/ds_rate_088.txt --new;
-recorder DSEDP.88_REC dsedp COMPGROUP.088 0.0:0.01:0.200 results/ds_edp_88.txt --new;
-recorder DSIM.88_REC dsim COMPGROUP.088 $linvalues results/ds_im_88.txt --new;
-recorder COSTRATE_88_REC costrate COMPGROUP.088 1E-4:4.8E-3:1.2 results/cost_rate_88.txt --new;
+recorder COSTEDP.88_REC costedp COMPGROUP.088 $costedpvalues2 results/cost_88_edp --new;
+recorder COSTIM_88_REC costim COMPGROUP.088 $costimvalues results/cost_88_im --new;
+recorder DSRATE_088_REC dsrate COMPGROUP.088 results/ds_rate_088 --new;
+recorder DSEDP.88_REC dsedp COMPGROUP.088 0.0:0.01:0.200 results/ds_edp_88 --new;
+recorder DSIM.88_REC dsim COMPGROUP.088 $linvalues results/ds_im_88 --new;
+recorder COSTRATE_88_REC costrate COMPGROUP.088 1E-4:4.8E-3:1.2 results/cost_rate_88 --new;
 
 
-recorder COSTEDP.89_REC costedp COMPGROUP.089 $costedpvalues2 results/cost_89_edp.txt --new;
-recorder COSTIM_89_REC costim COMPGROUP.089 $costimvalues results/cost_89_im.txt --new;
-recorder DSRATE_089_REC dsrate COMPGROUP.089 results/ds_rate_089.txt --new;
-recorder DSEDP.89_REC dsedp COMPGROUP.089 0.0:0.01:0.200 results/ds_edp_89.txt --new;
-recorder DSIM.89_REC dsim COMPGROUP.089 $linvalues results/ds_im_89.txt --new;
-recorder COSTRATE_89_REC costrate COMPGROUP.089 1E-4:4.8E-3:1.2 results/cost_rate_89.txt --new;
+recorder COSTEDP.89_REC costedp COMPGROUP.089 $costedpvalues2 results/cost_89_edp --new;
+recorder COSTIM_89_REC costim COMPGROUP.089 $costimvalues results/cost_89_im --new;
+recorder DSRATE_089_REC dsrate COMPGROUP.089 results/ds_rate_089 --new;
+recorder DSEDP.89_REC dsedp COMPGROUP.089 0.0:0.01:0.200 results/ds_edp_89 --new;
+recorder DSIM.89_REC dsim COMPGROUP.089 $linvalues results/ds_im_89 --new;
+recorder COSTRATE_89_REC costrate COMPGROUP.089 1E-4:4.8E-3:1.2 results/cost_rate_89 --new;
 
 
-recorder COSTEDP.90_REC costedp COMPGROUP.090 $costedpvalues2 results/cost_90_edp.txt --new;
-recorder COSTIM_90_REC costim COMPGROUP.090 $costimvalues results/cost_90_im.txt --new;
-recorder DSRATE_090_REC dsrate COMPGROUP.090 results/ds_rate_090.txt --new;
-recorder DSEDP.90_REC dsedp COMPGROUP.090 0.0:0.01:0.200 results/ds_edp_90.txt --new;
-recorder DSIM.90_REC dsim COMPGROUP.090 $linvalues results/ds_im_90.txt --new;
-recorder COSTRATE_90_REC costrate COMPGROUP.090 1E-4:4.8E-3:1.2 results/cost_rate_90.txt --new;
+recorder COSTEDP.90_REC costedp COMPGROUP.090 $costedpvalues2 results/cost_90_edp --new;
+recorder COSTIM_90_REC costim COMPGROUP.090 $costimvalues results/cost_90_im --new;
+recorder DSRATE_090_REC dsrate COMPGROUP.090 results/ds_rate_090 --new;
+recorder DSEDP.90_REC dsedp COMPGROUP.090 0.0:0.01:0.200 results/ds_edp_90 --new;
+recorder DSIM.90_REC dsim COMPGROUP.090 $linvalues results/ds_im_90 --new;
+recorder COSTRATE_90_REC costrate COMPGROUP.090 1E-4:4.8E-3:1.2 results/cost_rate_90 --new;
 
 
-recorder COSTEDP.91_REC costedp COMPGROUP.091 $costedpvalues2 results/cost_91_edp.txt --new;
-recorder COSTIM_91_REC costim COMPGROUP.091 $costimvalues results/cost_91_im.txt --new;
-recorder DSRATE_091_REC dsrate COMPGROUP.091 results/ds_rate_091.txt --new;
-recorder DSEDP.91_REC dsedp COMPGROUP.091 0.0:0.01:0.200 results/ds_edp_91.txt --new;
-recorder DSIM.91_REC dsim COMPGROUP.091 $linvalues results/ds_im_91.txt --new;
-recorder COSTRATE_91_REC costrate COMPGROUP.091 1E-4:4.8E-3:1.2 results/cost_rate_91.txt --new;
+recorder COSTEDP.91_REC costedp COMPGROUP.091 $costedpvalues2 results/cost_91_edp --new;
+recorder COSTIM_91_REC costim COMPGROUP.091 $costimvalues results/cost_91_im --new;
+recorder DSRATE_091_REC dsrate COMPGROUP.091 results/ds_rate_091 --new;
+recorder DSEDP.91_REC dsedp COMPGROUP.091 0.0:0.01:0.200 results/ds_edp_91 --new;
+recorder DSIM.91_REC dsim COMPGROUP.091 $linvalues results/ds_im_91 --new;
+recorder COSTRATE_91_REC costrate COMPGROUP.091 1E-4:4.8E-3:1.2 results/cost_rate_91 --new;
 
 
-recorder COSTEDP.92_REC costedp COMPGROUP.092 $costedpvalues2 results/cost_92_edp.txt --new;
-recorder COSTIM_92_REC costim COMPGROUP.092 $costimvalues results/cost_92_im.txt --new;
-recorder DSRATE_092_REC dsrate COMPGROUP.092 results/ds_rate_092.txt --new;
-recorder DSEDP.92_REC dsedp COMPGROUP.092 0.0:0.01:0.200 results/ds_edp_92.txt --new;
-recorder DSIM.92_REC dsim COMPGROUP.092 $linvalues results/ds_im_92.txt --new;
-recorder COSTRATE_92_REC costrate COMPGROUP.092 1E-4:4.8E-3:1.2 results/cost_rate_92.txt --new;
+recorder COSTEDP.92_REC costedp COMPGROUP.092 $costedpvalues2 results/cost_92_edp --new;
+recorder COSTIM_92_REC costim COMPGROUP.092 $costimvalues results/cost_92_im --new;
+recorder DSRATE_092_REC dsrate COMPGROUP.092 results/ds_rate_092 --new;
+recorder DSEDP.92_REC dsedp COMPGROUP.092 0.0:0.01:0.200 results/ds_edp_92 --new;
+recorder DSIM.92_REC dsim COMPGROUP.092 $linvalues results/ds_im_92 --new;
+recorder COSTRATE_92_REC costrate COMPGROUP.092 1E-4:4.8E-3:1.2 results/cost_rate_92 --new;
 
 
-recorder COSTEDP.93_REC costedp COMPGROUP.093 $costedpvalues2 results/cost_93_edp.txt --new;
-recorder COSTIM_93_REC costim COMPGROUP.093 $costimvalues results/cost_93_im.txt --new;
-recorder DSRATE_093_REC dsrate COMPGROUP.093 results/ds_rate_093.txt --new;
-recorder DSEDP.93_REC dsedp COMPGROUP.093 0.0:0.01:0.200 results/ds_edp_93.txt --new;
-recorder DSIM.93_REC dsim COMPGROUP.093 $linvalues results/ds_im_93.txt --new;
-recorder COSTRATE_93_REC costrate COMPGROUP.093 1E-4:4.8E-3:1.2 results/cost_rate_93.txt --new;
+recorder COSTEDP.93_REC costedp COMPGROUP.093 $costedpvalues2 results/cost_93_edp --new;
+recorder COSTIM_93_REC costim COMPGROUP.093 $costimvalues results/cost_93_im --new;
+recorder DSRATE_093_REC dsrate COMPGROUP.093 results/ds_rate_093 --new;
+recorder DSEDP.93_REC dsedp COMPGROUP.093 0.0:0.01:0.200 results/ds_edp_93 --new;
+recorder DSIM.93_REC dsim COMPGROUP.093 $linvalues results/ds_im_93 --new;
+recorder COSTRATE_93_REC costrate COMPGROUP.093 1E-4:4.8E-3:1.2 results/cost_rate_93 --new;
 
 
-recorder COSTEDP.94_REC costedp COMPGROUP.094 $costedpvalues2 results/cost_94_edp.txt --new;
-recorder COSTIM_94_REC costim COMPGROUP.094 $costimvalues results/cost_94_im.txt --new;
-recorder DSRATE_094_REC dsrate COMPGROUP.094 results/ds_rate_094.txt --new;
-recorder DSEDP.94_REC dsedp COMPGROUP.094 0.0:0.01:0.200 results/ds_edp_94.txt --new;
-recorder DSIM.94_REC dsim COMPGROUP.094 $linvalues results/ds_im_94.txt --new;
-recorder COSTRATE_94_REC costrate COMPGROUP.094 1E-4:4.8E-3:1.2 results/cost_rate_94.txt --new;
+recorder COSTEDP.94_REC costedp COMPGROUP.094 $costedpvalues2 results/cost_94_edp --new;
+recorder COSTIM_94_REC costim COMPGROUP.094 $costimvalues results/cost_94_im --new;
+recorder DSRATE_094_REC dsrate COMPGROUP.094 results/ds_rate_094 --new;
+recorder DSEDP.94_REC dsedp COMPGROUP.094 0.0:0.01:0.200 results/ds_edp_94 --new;
+recorder DSIM.94_REC dsim COMPGROUP.094 $linvalues results/ds_im_94 --new;
+recorder COSTRATE_94_REC costrate COMPGROUP.094 1E-4:4.8E-3:1.2 results/cost_rate_94 --new;
 
 
-recorder COSTEDP.95_REC costedp COMPGROUP.095 $costedpvalues2 results/cost_95_edp.txt --new;
-recorder COSTIM_95_REC costim COMPGROUP.095 $costimvalues results/cost_95_im.txt --new;
-recorder DSRATE_095_REC dsrate COMPGROUP.095 results/ds_rate_095.txt --new;
-recorder DSEDP.95_REC dsedp COMPGROUP.095 0.0:0.01:0.200 results/ds_edp_95.txt --new;
-recorder DSIM.95_REC dsim COMPGROUP.095 $linvalues results/ds_im_95.txt --new;
-recorder COSTRATE_95_REC costrate COMPGROUP.095 1E-4:4.8E-3:1.2 results/cost_rate_95.txt --new;
+recorder COSTEDP.95_REC costedp COMPGROUP.095 $costedpvalues2 results/cost_95_edp --new;
+recorder COSTIM_95_REC costim COMPGROUP.095 $costimvalues results/cost_95_im --new;
+recorder DSRATE_095_REC dsrate COMPGROUP.095 results/ds_rate_095 --new;
+recorder DSEDP.95_REC dsedp COMPGROUP.095 0.0:0.01:0.200 results/ds_edp_95 --new;
+recorder DSIM.95_REC dsim COMPGROUP.095 $linvalues results/ds_im_95 --new;
+recorder COSTRATE_95_REC costrate COMPGROUP.095 1E-4:4.8E-3:1.2 results/cost_rate_95 --new;
 
 
-recorder COSTEDP.96_REC costedp COMPGROUP.096 $costedpvalues1 results/cost_96_edp.txt --new;
-recorder COSTIM_96_REC costim COMPGROUP.096 $costimvalues results/cost_96_im.txt --new;
-recorder DSRATE_096_REC dsrate COMPGROUP.096 results/ds_rate_096.txt --new;
-recorder DSEDP.96_REC dsedp COMPGROUP.096 0.0:0.01:0.200 results/ds_edp_96.txt --new;
-recorder DSIM.96_REC dsim COMPGROUP.096 $linvalues results/ds_im_96.txt --new;
-recorder COSTRATE_96_REC costrate COMPGROUP.096 1E-4:4.8E-3:1.2 results/cost_rate_96.txt --new;
+recorder COSTEDP.96_REC costedp COMPGROUP.096 $costedpvalues1 results/cost_96_edp --new;
+recorder COSTIM_96_REC costim COMPGROUP.096 $costimvalues results/cost_96_im --new;
+recorder DSRATE_096_REC dsrate COMPGROUP.096 results/ds_rate_096 --new;
+recorder DSEDP.96_REC dsedp COMPGROUP.096 0.0:0.01:0.200 results/ds_edp_96 --new;
+recorder DSIM.96_REC dsim COMPGROUP.096 $linvalues results/ds_im_96 --new;
+recorder COSTRATE_96_REC costrate COMPGROUP.096 1E-4:4.8E-3:1.2 results/cost_rate_96 --new;
 
 
-recorder COSTEDP.97_REC costedp COMPGROUP.097 $costedpvalues2 results/cost_97_edp.txt --new;
-recorder COSTIM_97_REC costim COMPGROUP.097 $costimvalues results/cost_97_im.txt --new;
-recorder DSRATE_097_REC dsrate COMPGROUP.097 results/ds_rate_097.txt --new;
-recorder DSEDP.97_REC dsedp COMPGROUP.097 0.0:0.01:0.200 results/ds_edp_97.txt --new;
-recorder DSIM.97_REC dsim COMPGROUP.097 $linvalues results/ds_im_97.txt --new;
-recorder COSTRATE_97_REC costrate COMPGROUP.097 1E-4:4.8E-3:1.2 results/cost_rate_97.txt --new;
+recorder COSTEDP.97_REC costedp COMPGROUP.097 $costedpvalues2 results/cost_97_edp --new;
+recorder COSTIM_97_REC costim COMPGROUP.097 $costimvalues results/cost_97_im --new;
+recorder DSRATE_097_REC dsrate COMPGROUP.097 results/ds_rate_097 --new;
+recorder DSEDP.97_REC dsedp COMPGROUP.097 0.0:0.01:0.200 results/ds_edp_97 --new;
+recorder DSIM.97_REC dsim COMPGROUP.097 $linvalues results/ds_im_97 --new;
+recorder COSTRATE_97_REC costrate COMPGROUP.097 1E-4:4.8E-3:1.2 results/cost_rate_97 --new;
 
 
-recorder COSTEDP.98_REC costedp COMPGROUP.098 $costedpvalues2 results/cost_98_edp.txt --new;
-recorder COSTIM_98_REC costim COMPGROUP.098 $costimvalues results/cost_98_im.txt --new;
-recorder DSRATE_098_REC dsrate COMPGROUP.098 results/ds_rate_098.txt --new;
-recorder DSEDP.98_REC dsedp COMPGROUP.098 0.0:0.01:0.200 results/ds_edp_98.txt --new;
-recorder DSIM.98_REC dsim COMPGROUP.098 $linvalues results/ds_im_98.txt --new;
-recorder COSTRATE_98_REC costrate COMPGROUP.098 1E-4:4.8E-3:1.2 results/cost_rate_98.txt --new;
+recorder COSTEDP.98_REC costedp COMPGROUP.098 $costedpvalues2 results/cost_98_edp --new;
+recorder COSTIM_98_REC costim COMPGROUP.098 $costimvalues results/cost_98_im --new;
+recorder DSRATE_098_REC dsrate COMPGROUP.098 results/ds_rate_098 --new;
+recorder DSEDP.98_REC dsedp COMPGROUP.098 0.0:0.01:0.200 results/ds_edp_98 --new;
+recorder DSIM.98_REC dsim COMPGROUP.098 $linvalues results/ds_im_98 --new;
+recorder COSTRATE_98_REC costrate COMPGROUP.098 1E-4:4.8E-3:1.2 results/cost_rate_98 --new;
 
 
-recorder COSTEDP.99_REC costedp COMPGROUP.099 $costedpvalues2 results/cost_99_edp.txt --new;
-recorder COSTIM_99_REC costim COMPGROUP.099 $costimvalues results/cost_99_im.txt --new;
-recorder DSRATE_099_REC dsrate COMPGROUP.099 results/ds_rate_099.txt --new;
-recorder DSEDP.99_REC dsedp COMPGROUP.099 0.0:0.01:0.200 results/ds_edp_99.txt --new;
-recorder DSIM.99_REC dsim COMPGROUP.099 $linvalues results/ds_im_99.txt --new;
-recorder COSTRATE_99_REC costrate COMPGROUP.099 1E-4:4.8E-3:1.2 results/cost_rate_99.txt --new;
+recorder COSTEDP.99_REC costedp COMPGROUP.099 $costedpvalues2 results/cost_99_edp --new;
+recorder COSTIM_99_REC costim COMPGROUP.099 $costimvalues results/cost_99_im --new;
+recorder DSRATE_099_REC dsrate COMPGROUP.099 results/ds_rate_099 --new;
+recorder DSEDP.99_REC dsedp COMPGROUP.099 0.0:0.01:0.200 results/ds_edp_99 --new;
+recorder DSIM.99_REC dsim COMPGROUP.099 $linvalues results/ds_im_99 --new;
+recorder COSTRATE_99_REC costrate COMPGROUP.099 1E-4:4.8E-3:1.2 results/cost_rate_99 --new;
 
 
-recorder COSTEDP.100_REC costedp COMPGROUP.100 $costedpvalues2 results/cost_100_edp.txt --new;
-recorder COSTIM.100_REC costim COMPGROUP.100 $costimvalues results/cost_100_im.txt --new;
-recorder DSRATE_100_REC dsrate COMPGROUP.100 results/ds_rate_100.txt --new;
-recorder DSEDP.100_REC dsedp COMPGROUP.100 0.0:0.01:0.200 results/ds_edp_100.txt --new;
-recorder DSIM.100_REC dsim COMPGROUP.100 $linvalues results/ds_im_100.txt --new;
-recorder COSTRATE_100_REC costrate COMPGROUP.100 1E-4:4.8E-3:1.2 results/cost_rate_100.txt --new;
+recorder COSTEDP.100_REC costedp COMPGROUP.100 $costedpvalues2 results/cost_100_edp --new;
+recorder COSTIM.100_REC costim COMPGROUP.100 $costimvalues results/cost_100_im --new;
+recorder DSRATE_100_REC dsrate COMPGROUP.100 results/ds_rate_100 --new;
+recorder DSEDP.100_REC dsedp COMPGROUP.100 0.0:0.01:0.200 results/ds_edp_100 --new;
+recorder DSIM.100_REC dsim COMPGROUP.100 $linvalues results/ds_im_100 --new;
+recorder COSTRATE_100_REC costrate COMPGROUP.100 1E-4:4.8E-3:1.2 results/cost_rate_100 --new;
 
 
-recorder COSTEDP.101_REC costedp COMPGROUP.101 $costedpvalues2 results/cost_101_edp.txt --new;
-recorder COSTIM.101_REC costim COMPGROUP.101 $costimvalues results/cost_101_im.txt --new;
-recorder DSRATE_101_REC dsrate COMPGROUP.101 results/ds_rate_101.txt --new;
-recorder DSEDP.101_REC dsedp COMPGROUP.101 0.0:0.01:0.200 results/ds_edp_101.txt --new;
-recorder DSIM.101_REC dsim COMPGROUP.101 $linvalues results/ds_im_101.txt --new;
-recorder COSTRATE_101_REC costrate COMPGROUP.101 1E-4:4.8E-3:1.2 results/cost_rate_101.txt --new;
+recorder COSTEDP.101_REC costedp COMPGROUP.101 $costedpvalues2 results/cost_101_edp --new;
+recorder COSTIM.101_REC costim COMPGROUP.101 $costimvalues results/cost_101_im --new;
+recorder DSRATE_101_REC dsrate COMPGROUP.101 results/ds_rate_101 --new;
+recorder DSEDP.101_REC dsedp COMPGROUP.101 0.0:0.01:0.200 results/ds_edp_101 --new;
+recorder DSIM.101_REC dsim COMPGROUP.101 $linvalues results/ds_im_101 --new;
+recorder COSTRATE_101_REC costrate COMPGROUP.101 1E-4:4.8E-3:1.2 results/cost_rate_101 --new;
 
 
-recorder COSTEDP.102_REC costedp COMPGROUP.102 $costedpvalues2 results/cost_102_edp.txt --new;
-recorder COSTIM.102_REC costim COMPGROUP.102 $costimvalues results/cost_102_im.txt --new;
-recorder DSRATE_102_REC dsrate COMPGROUP.102 results/ds_rate_102.txt --new;
-recorder DSEDP.102_REC dsedp COMPGROUP.102 0.0:0.01:0.200 results/ds_edp_102.txt --new;
-recorder DSIM.102_REC dsim COMPGROUP.102 $linvalues results/ds_im_102.txt --new;
-recorder COSTRATE_102_REC costrate COMPGROUP.102 1E-4:4.8E-3:1.2 results/cost_rate_102.txt --new;
+recorder COSTEDP.102_REC costedp COMPGROUP.102 $costedpvalues2 results/cost_102_edp --new;
+recorder COSTIM.102_REC costim COMPGROUP.102 $costimvalues results/cost_102_im --new;
+recorder DSRATE_102_REC dsrate COMPGROUP.102 results/ds_rate_102 --new;
+recorder DSEDP.102_REC dsedp COMPGROUP.102 0.0:0.01:0.200 results/ds_edp_102 --new;
+recorder DSIM.102_REC dsim COMPGROUP.102 $linvalues results/ds_im_102 --new;
+recorder COSTRATE_102_REC costrate COMPGROUP.102 1E-4:4.8E-3:1.2 results/cost_rate_102 --new;
 
 
-recorder COSTEDP.103_REC costedp COMPGROUP.103 $costedpvalues2 results/cost_103_edp.txt --new;
-recorder COSTIM.103_REC costim COMPGROUP.103 $costimvalues results/cost_103_im.txt --new;
-recorder DSRATE_103_REC dsrate COMPGROUP.103 results/ds_rate_103.txt --new;
-recorder DSEDP.103_REC dsedp COMPGROUP.103 0.0:0.01:0.200 results/ds_edp_103.txt --new;
-recorder DSIM.103_REC dsim COMPGROUP.103 $linvalues results/ds_im_103.txt --new;
-recorder COSTRATE_103_REC costrate COMPGROUP.103 1E-4:4.8E-3:1.2 results/cost_rate_103.txt --new;
-
-
-recorder COSTEDP.104_REC costedp COMPGROUP.104 $costedpvalues2 results/cost_104_edp.txt --new;
-recorder COSTIM.104_REC costim COMPGROUP.104 $costimvalues results/cost_104_im.txt --new;
-recorder DSRATE_104_REC dsrate COMPGROUP.104 results/ds_rate_104.txt --new;
-recorder DSEDP.104_REC dsedp COMPGROUP.104 0.0:0.01:0.200 results/ds_edp_104.txt --new;
-recorder DSIM.104_REC dsim COMPGROUP.104 $linvalues results/ds_im_104.txt --new;
-recorder COSTRATE_104_REC costrate COMPGROUP.104 1E-4:4.8E-3:1.2 results/cost_rate_104.txt --new;
-
-
-recorder COSTEDP.105_REC costedp COMPGROUP.105 $costedpvalues2 results/cost_105_edp.txt --new;
-recorder COSTIM.105_REC costim COMPGROUP.105 $costimvalues results/cost_105_im.txt --new;
-recorder DSRATE_105_REC dsrate COMPGROUP.105 results/ds_rate_105.txt --new;
-recorder DSEDP.105_REC dsedp COMPGROUP.105 0.0:0.01:0.200 results/ds_edp_105.txt --new;
-recorder DSIM.105_REC dsim COMPGROUP.105 $linvalues results/ds_im_105.txt --new;
-recorder COSTRATE_105_REC costrate COMPGROUP.105 1E-4:4.8E-3:1.2 results/cost_rate_105.txt --new;
-
-
-recorder COSTEDP.106_REC costedp COMPGROUP.106 $costedpvalues4 results/cost_106_edp.txt --new;
-recorder COSTIM.106_REC costim COMPGROUP.106 $costimvalues results/cost_106_im.txt --new;
-recorder DSRATE_106_REC dsrate COMPGROUP.106 results/ds_rate_106.txt --new;
-recorder DSEDP.106_REC dsedp COMPGROUP.106 0.0:0.01:0.200 results/ds_edp_106.txt --new;
-recorder DSIM.106_REC dsim COMPGROUP.106 $linvalues results/ds_im_106.txt --new;
-recorder COSTRATE_106_REC costrate COMPGROUP.106 1E-4:4.8E-3:1.2 results/cost_rate_106.txt --new;
-
-
-recorder COSTEDP.107_REC costedp COMPGROUP.107 $costedpvalues3 results/cost_107_edp.txt --new;
-recorder COSTIM.107_REC costim COMPGROUP.107 $costimvalues results/cost_107_im.txt --new;
-recorder DSRATE_107_REC dsrate COMPGROUP.107 results/ds_rate_107.txt --new;
-recorder DSEDP.107_REC dsedp COMPGROUP.107 0.0:0.01:0.200 results/ds_edp_107.txt --new;
-recorder DSIM.107_REC dsim COMPGROUP.107 $linvalues results/ds_im_107.txt --new;
-recorder COSTRATE_107_REC costrate COMPGROUP.107 1E-4:4.8E-3:1.2 results/cost_rate_107.txt --new;
-
-
-recorder COSTEDP.108_REC costedp COMPGROUP.108 $costedpvalues3 results/cost_108_edp.txt --new;
-recorder COSTIM.108_REC costim COMPGROUP.108 $costimvalues results/cost_108_im.txt --new;
-recorder DSRATE_108_REC dsrate COMPGROUP.108 results/ds_rate_108.txt --new;
-recorder DSEDP.108_REC dsedp COMPGROUP.108 0.0:0.01:0.200 results/ds_edp_108.txt --new;
-recorder DSIM.108_REC dsim COMPGROUP.108 $linvalues results/ds_im_108.txt --new;
-recorder COSTRATE_108_REC costrate COMPGROUP.108 1E-4:4.8E-3:1.2 results/cost_rate_108.txt --new;
-
-
-recorder COSTEDP.109_REC costedp COMPGROUP.109 $costedpvalues3 results/cost_109_edp.txt --new;
-recorder COSTIM.109_REC costim COMPGROUP.109 $costimvalues results/cost_109_im.txt --new;
-recorder DSRATE_109_REC dsrate COMPGROUP.109 results/ds_rate_109.txt --new;
-recorder DSEDP.109_REC dsedp COMPGROUP.109 0.0:0.01:0.200 results/ds_edp_109.txt --new;
-recorder DSIM.109_REC dsim COMPGROUP.109 $linvalues results/ds_im_109.txt --new;
-recorder COSTRATE_109_REC costrate COMPGROUP.109 1E-4:4.8E-3:1.2 results/cost_rate_109.txt --new;
-
-
-recorder COSTEDP.110_REC costedp COMPGROUP.110 $costedpvalues3 results/cost_110_edp.txt --new;
-recorder COSTIM.110_REC costim COMPGROUP.110 $costimvalues results/cost_110_im.txt --new;
-recorder DSRATE_110_REC dsrate COMPGROUP.110 results/ds_rate_110.txt --new;
-recorder DSEDP.110_REC dsedp COMPGROUP.110 0.0:0.01:0.200 results/ds_edp_110.txt --new;
-recorder DSIM.110_REC dsim COMPGROUP.110 $linvalues results/ds_im_110.txt --new;
-recorder COSTRATE_110_REC costrate COMPGROUP.110 1E-4:4.8E-3:1.2 results/cost_rate_110.txt --new;
-
-
-recorder COSTEDP.111_REC costedp COMPGROUP.111 $costedpvalues3 results/cost_111_edp.txt --new;
-recorder COSTIM.111_REC costim COMPGROUP.111 $costimvalues results/cost_111_im.txt --new;
-recorder DSRATE_111_REC dsrate COMPGROUP.111 results/ds_rate_111.txt --new;
-recorder DSEDP.111_REC dsedp COMPGROUP.111 0.0:0.01:0.200 results/ds_edp_111.txt --new;
-recorder DSIM.111_REC dsim COMPGROUP.111 $linvalues results/ds_im_111.txt --new;
-recorder COSTRATE_111_REC costrate COMPGROUP.111 1E-4:4.8E-3:1.2 results/cost_rate_111.txt --new;
-
-
-recorder COSTEDP.112_REC costedp COMPGROUP.112 $costedpvalues3 results/cost_112_edp.txt --new;
-recorder COSTIM.112_REC costim COMPGROUP.112 $costimvalues results/cost_112_im.txt --new;
-recorder DSRATE_112_REC dsrate COMPGROUP.112 results/ds_rate_112.txt --new;
-recorder DSEDP.112_REC dsedp COMPGROUP.112 0.0:0.01:0.200 results/ds_edp_112.txt --new;
-recorder DSIM.112_REC dsim COMPGROUP.112 $linvalues results/ds_im_112.txt --new;
-recorder COSTRATE_112_REC costrate COMPGROUP.112 1E-4:4.8E-3:1.2 results/cost_rate_112.txt --new;
-
-
-recorder COSTEDP.113_REC costedp COMPGROUP.113 $costedpvalues3 results/cost_113_edp.txt --new;
-recorder COSTIM.113_REC costim COMPGROUP.113 $costimvalues results/cost_113_im.txt --new;
-recorder DSRATE_113_REC dsrate COMPGROUP.113 results/ds_rate_113.txt --new;
-recorder DSEDP.113_REC dsedp COMPGROUP.113 0.0:0.01:0.200 results/ds_edp_113.txt --new;
-recorder DSIM.113_REC dsim COMPGROUP.113 $linvalues results/ds_im_113.txt --new;
-recorder COSTRATE_113_REC costrate COMPGROUP.113 1E-4:4.8E-3:1.2 results/cost_rate_113.txt --new;
-
-
-recorder COSTEDP.114_REC costedp COMPGROUP.114 $costedpvalues3 results/cost_114_edp.txt --new;
-recorder COSTIM.114_REC costim COMPGROUP.114 $costimvalues results/cost_114_im.txt --new;
-recorder DSRATE_114_REC dsrate COMPGROUP.114 results/ds_rate_114.txt --new;
-recorder DSEDP.114_REC dsedp COMPGROUP.114 0.0:0.01:0.200 results/ds_edp_114.txt --new;
-recorder DSIM.114_REC dsim COMPGROUP.114 $linvalues results/ds_im_114.txt --new;
-recorder COSTRATE_114_REC costrate COMPGROUP.114 1E-4:4.8E-3:1.2 results/cost_rate_114.txt --new;
-
-
-recorder COSTEDP.115_REC costedp COMPGROUP.115 $costedpvalues3 results/cost_115_edp.txt --new;
-recorder COSTIM.115_REC costim COMPGROUP.115 $costimvalues results/cost_115_im.txt --new;
-recorder DSRATE_115_REC dsrate COMPGROUP.115 results/ds_rate_115.txt --new;
-recorder DSEDP.115_REC dsedp COMPGROUP.115 0.0:0.01:0.200 results/ds_edp_115.txt --new;
-recorder DSIM.115_REC dsim COMPGROUP.115 $linvalues results/ds_im_115.txt --new;
-recorder COSTRATE_115_REC costrate COMPGROUP.115 1E-4:4.8E-3:1.2 results/cost_rate_115.txt --new;
+recorder COSTEDP.103_REC costedp COMPGROUP.103 $costedpvalues2 results/cost_103_edp --new;
+recorder COSTIM.103_REC costim COMPGROUP.103 $costimvalues results/cost_103_im --new;
+recorder DSRATE_103_REC dsrate COMPGROUP.103 results/ds_rate_103 --new;
+recorder DSEDP.103_REC dsedp COMPGROUP.103 0.0:0.01:0.200 results/ds_edp_103 --new;
+recorder DSIM.103_REC dsim COMPGROUP.103 $linvalues results/ds_im_103 --new;
+recorder COSTRATE_103_REC costrate COMPGROUP.103 1E-4:4.8E-3:1.2 results/cost_rate_103 --new;
+
+
+recorder COSTEDP.104_REC costedp COMPGROUP.104 $costedpvalues2 results/cost_104_edp --new;
+recorder COSTIM.104_REC costim COMPGROUP.104 $costimvalues results/cost_104_im --new;
+recorder DSRATE_104_REC dsrate COMPGROUP.104 results/ds_rate_104 --new;
+recorder DSEDP.104_REC dsedp COMPGROUP.104 0.0:0.01:0.200 results/ds_edp_104 --new;
+recorder DSIM.104_REC dsim COMPGROUP.104 $linvalues results/ds_im_104 --new;
+recorder COSTRATE_104_REC costrate COMPGROUP.104 1E-4:4.8E-3:1.2 results/cost_rate_104 --new;
+
+
+recorder COSTEDP.105_REC costedp COMPGROUP.105 $costedpvalues2 results/cost_105_edp --new;
+recorder COSTIM.105_REC costim COMPGROUP.105 $costimvalues results/cost_105_im --new;
+recorder DSRATE_105_REC dsrate COMPGROUP.105 results/ds_rate_105 --new;
+recorder DSEDP.105_REC dsedp COMPGROUP.105 0.0:0.01:0.200 results/ds_edp_105 --new;
+recorder DSIM.105_REC dsim COMPGROUP.105 $linvalues results/ds_im_105 --new;
+recorder COSTRATE_105_REC costrate COMPGROUP.105 1E-4:4.8E-3:1.2 results/cost_rate_105 --new;
+
+
+recorder COSTEDP.106_REC costedp COMPGROUP.106 $costedpvalues4 results/cost_106_edp --new;
+recorder COSTIM.106_REC costim COMPGROUP.106 $costimvalues results/cost_106_im --new;
+recorder DSRATE_106_REC dsrate COMPGROUP.106 results/ds_rate_106 --new;
+recorder DSEDP.106_REC dsedp COMPGROUP.106 0.0:0.01:0.200 results/ds_edp_106 --new;
+recorder DSIM.106_REC dsim COMPGROUP.106 $linvalues results/ds_im_106 --new;
+recorder COSTRATE_106_REC costrate COMPGROUP.106 1E-4:4.8E-3:1.2 results/cost_rate_106 --new;
+
+
+recorder COSTEDP.107_REC costedp COMPGROUP.107 $costedpvalues3 results/cost_107_edp --new;
+recorder COSTIM.107_REC costim COMPGROUP.107 $costimvalues results/cost_107_im --new;
+recorder DSRATE_107_REC dsrate COMPGROUP.107 results/ds_rate_107 --new;
+recorder DSEDP.107_REC dsedp COMPGROUP.107 0.0:0.01:0.200 results/ds_edp_107 --new;
+recorder DSIM.107_REC dsim COMPGROUP.107 $linvalues results/ds_im_107 --new;
+recorder COSTRATE_107_REC costrate COMPGROUP.107 1E-4:4.8E-3:1.2 results/cost_rate_107 --new;
+
+
+recorder COSTEDP.108_REC costedp COMPGROUP.108 $costedpvalues3 results/cost_108_edp --new;
+recorder COSTIM.108_REC costim COMPGROUP.108 $costimvalues results/cost_108_im --new;
+recorder DSRATE_108_REC dsrate COMPGROUP.108 results/ds_rate_108 --new;
+recorder DSEDP.108_REC dsedp COMPGROUP.108 0.0:0.01:0.200 results/ds_edp_108 --new;
+recorder DSIM.108_REC dsim COMPGROUP.108 $linvalues results/ds_im_108 --new;
+recorder COSTRATE_108_REC costrate COMPGROUP.108 1E-4:4.8E-3:1.2 results/cost_rate_108 --new;
+
+
+recorder COSTEDP.109_REC costedp COMPGROUP.109 $costedpvalues3 results/cost_109_edp --new;
+recorder COSTIM.109_REC costim COMPGROUP.109 $costimvalues results/cost_109_im --new;
+recorder DSRATE_109_REC dsrate COMPGROUP.109 results/ds_rate_109 --new;
+recorder DSEDP.109_REC dsedp COMPGROUP.109 0.0:0.01:0.200 results/ds_edp_109 --new;
+recorder DSIM.109_REC dsim COMPGROUP.109 $linvalues results/ds_im_109 --new;
+recorder COSTRATE_109_REC costrate COMPGROUP.109 1E-4:4.8E-3:1.2 results/cost_rate_109 --new;
+
+
+recorder COSTEDP.110_REC costedp COMPGROUP.110 $costedpvalues3 results/cost_110_edp --new;
+recorder COSTIM.110_REC costim COMPGROUP.110 $costimvalues results/cost_110_im --new;
+recorder DSRATE_110_REC dsrate COMPGROUP.110 results/ds_rate_110 --new;
+recorder DSEDP.110_REC dsedp COMPGROUP.110 0.0:0.01:0.200 results/ds_edp_110 --new;
+recorder DSIM.110_REC dsim COMPGROUP.110 $linvalues results/ds_im_110 --new;
+recorder COSTRATE_110_REC costrate COMPGROUP.110 1E-4:4.8E-3:1.2 results/cost_rate_110 --new;
+
+
+recorder COSTEDP.111_REC costedp COMPGROUP.111 $costedpvalues3 results/cost_111_edp --new;
+recorder COSTIM.111_REC costim COMPGROUP.111 $costimvalues results/cost_111_im --new;
+recorder DSRATE_111_REC dsrate COMPGROUP.111 results/ds_rate_111 --new;
+recorder DSEDP.111_REC dsedp COMPGROUP.111 0.0:0.01:0.200 results/ds_edp_111 --new;
+recorder DSIM.111_REC dsim COMPGROUP.111 $linvalues results/ds_im_111 --new;
+recorder COSTRATE_111_REC costrate COMPGROUP.111 1E-4:4.8E-3:1.2 results/cost_rate_111 --new;
+
+
+recorder COSTEDP.112_REC costedp COMPGROUP.112 $costedpvalues3 results/cost_112_edp --new;
+recorder COSTIM.112_REC costim COMPGROUP.112 $costimvalues results/cost_112_im --new;
+recorder DSRATE_112_REC dsrate COMPGROUP.112 results/ds_rate_112 --new;
+recorder DSEDP.112_REC dsedp COMPGROUP.112 0.0:0.01:0.200 results/ds_edp_112 --new;
+recorder DSIM.112_REC dsim COMPGROUP.112 $linvalues results/ds_im_112 --new;
+recorder COSTRATE_112_REC costrate COMPGROUP.112 1E-4:4.8E-3:1.2 results/cost_rate_112 --new;
+
+
+recorder COSTEDP.113_REC costedp COMPGROUP.113 $costedpvalues3 results/cost_113_edp --new;
+recorder COSTIM.113_REC costim COMPGROUP.113 $costimvalues results/cost_113_im --new;
+recorder DSRATE_113_REC dsrate COMPGROUP.113 results/ds_rate_113 --new;
+recorder DSEDP.113_REC dsedp COMPGROUP.113 0.0:0.01:0.200 results/ds_edp_113 --new;
+recorder DSIM.113_REC dsim COMPGROUP.113 $linvalues results/ds_im_113 --new;
+recorder COSTRATE_113_REC costrate COMPGROUP.113 1E-4:4.8E-3:1.2 results/cost_rate_113 --new;
+
+
+recorder COSTEDP.114_REC costedp COMPGROUP.114 $costedpvalues3 results/cost_114_edp --new;
+recorder COSTIM.114_REC costim COMPGROUP.114 $costimvalues results/cost_114_im --new;
+recorder DSRATE_114_REC dsrate COMPGROUP.114 results/ds_rate_114 --new;
+recorder DSEDP.114_REC dsedp COMPGROUP.114 0.0:0.01:0.200 results/ds_edp_114 --new;
+recorder DSIM.114_REC dsim COMPGROUP.114 $linvalues results/ds_im_114 --new;
+recorder COSTRATE_114_REC costrate COMPGROUP.114 1E-4:4.8E-3:1.2 results/cost_rate_114 --new;
+
+
+recorder COSTEDP.115_REC costedp COMPGROUP.115 $costedpvalues3 results/cost_115_edp --new;
+recorder COSTIM.115_REC costim COMPGROUP.115 $costimvalues results/cost_115_im --new;
+recorder DSRATE_115_REC dsrate COMPGROUP.115 results/ds_rate_115 --new;
+recorder DSEDP.115_REC dsedp COMPGROUP.115 0.0:0.01:0.200 results/ds_edp_115 --new;
+recorder DSIM.115_REC dsim COMPGROUP.115 $linvalues results/ds_im_115 --new;
+recorder COSTRATE_115_REC costrate COMPGROUP.115 1E-4:4.8E-3:1.2 results/cost_rate_115 --new;
 
 
 #recorder STRUCTCOST_ANNUAL_REC structcost BUILDING --annual results/ann_cost --new;

@@ -6,7 +6,10 @@ import filecmp
 pyslat.LogToStdErr(True)  # Log errors to stderr (on by default)
 pyslat.SetLogFile("exercise2.log") # Save errors in 'exercise2.log'
 
-IM1 = pyslat.ImportIMFn("IM.1", "imfunc.txt")
+pyslat.set_input_directory("input")
+pyslat.set_output_directory("py-results")
+
+IM1 = pyslat.ImportIMFn("IM.1", "imfunc.csv")
 IM1.SetCollapse(pyslat.MakeLogNormalDist(
     1.2, pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
     0.470, pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X))
@@ -37,24 +40,23 @@ pyslat.MakeRecorder('imrate-lin-rec', 'imrate', IM1,
                     None, linvalues)
 
 pyslat.MakeRecorder('collapse-rec', 'collapse', IM1,
-                {'filename': ResultsFile("collapse.txt")},
+                {'filename': ResultsFile("collapse")},
                 None, pyslat.linrange(0.01, 3.0, 199))
 
 pyslat.MakeRecorder('collrate-rec', 'collrate', IM1,
-                {'filename': ResultsFile("collrate.txt")},
+                {'filename': ResultsFile("collrate")},
                 None, None)
 
 N_EDPS=21
-DATA_DIR = "."
 
 for i in range(1, N_EDPS + 1):
     pyslat.ImportProbFn("EDP_FUNC_{:>02}".format(i),
-                        "{}/RB_EDP{}.txt".format(DATA_DIR, i))
+                        "RB_EDP{}.csv".format(i))
     edp = pyslat.edp("EDP.{:>02}".format(i), IM1,
                      pyslat.probfn.lookup("EDP_FUNC_{:>02}".format(i)))
                                    
     pyslat.MakeRecorder('edpim-{:>02}'.format(i), 'edpim', edp,
-                    {'filename': ResultsFile("im_edp_{}.txt".format(i))},
+                    {'filename': ResultsFile("im_edp_{}".format(i))},
                     ['mean_x', 'sd_ln_x'],
                     linvalues)
     
@@ -68,7 +70,7 @@ for i in range(1, N_EDPS + 1):
         at = edpevenvalues
         
     pyslat.MakeRecorder('edprate-{:>02}'.format(i), 'edprate', edp,
-                    {'filename': ResultsFile("edp_{}_rate.txt".format(i))},
+                    {'filename': ResultsFile("edp_{}_rate".format(i))},
                      None,
                     at)
 
@@ -289,43 +291,43 @@ for comp in COMPONENT_DATA:
         at_values = costedpvalues2
         
     pyslat.MakeRecorder("COSTEDP_{:>03}_REC".format(id), 'costedp', cg,
-                    {'filename': ResultsFile("cost_{}_edp.txt".format(id))},
+                    {'filename': ResultsFile("cost_{}_edp".format(id))},
                     None, 
                     at_values)
 
     pyslat.MakeRecorder("COSTIM_{:>03}_REC".format(id), 'costim', cg,
-                    {'filename': ResultsFile("cost_{}_im.txt".format(id))},
+                    {'filename': ResultsFile("cost_{}_im".format(id))},
                     None, 
                     costimvalues)
 
     if id == 1:
         pyslat.MakeRecorder("DELAYEDP_{:>03}_REC".format(id), 'delayedp', cg,
-                            {'filename': ResultsFile("delay_{}_edp.txt".format(id))},
+                            {'filename': ResultsFile("delay_{}_edp".format(id))},
                             None, 
                             at_values)
 
         pyslat.MakeRecorder("DELAYIM_{:>03}_REC".format(id), 'delayim', cg,
-                            {'filename': ResultsFile("delay_{}_im.txt".format(id))},
+                            {'filename': ResultsFile("delay_{}_im".format(id))},
                             None, 
                             costimvalues)
     
     pyslat.MakeRecorder("DSEDP_{:>03}_REC".format(id), 'dsedp', cg,
-                    {'filename': ResultsFile("ds_edp_{}.txt".format(id))},
+                    {'filename': ResultsFile("ds_edp_{}".format(id))},
                     None, 
                     pyslat.frange(0.0, 0.200, 0.01))
 
     pyslat.MakeRecorder("DSIM_{:>03}_REC".format(id), 'dsim', cg,
-                    {'filename': ResultsFile("ds_im_{}.txt".format(id))},
+                    {'filename': ResultsFile("ds_im_{}".format(id))},
                     None, 
                     linvalues)
 
     pyslat.MakeRecorder("DSRATE_{:>03}_REC".format(id), 'dsrate', cg,
-                    {'filename': ResultsFile("ds_rate_{:>03}.txt".format(id))},
+                    {'filename': ResultsFile("ds_rate_{:>03}".format(id))},
                     None, 
                     None)
 
     pyslat.MakeRecorder("COSTRATE_{:>03}_REC".format(id), 'costrate', cg,
-                    {'filename': ResultsFile("cost_rate_{}.txt".format(id))},
+                    {'filename': ResultsFile("cost_rate_{}".format(id))},
                     None, 
                     pyslat.frange(1E-4, 1.2, 4.8E-3))
 

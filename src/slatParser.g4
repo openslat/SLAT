@@ -9,12 +9,14 @@ command : (title_command | detfn_command | probfn_command | im_command | edp_com
 	| integration_command | recorder_command | analyze_command | set_command 
 	| importprobfn_command | collapse_command | demolition_command |structure_command
 	| importimfn_command | rebuildcost_command | demolitioncost_command
-	| log_command | intstats_command) SEMICOLON;
+	| log_command | intstats_command | inputdir_command | outputdir_command) SEMICOLON;
 
 log_command : LOG (STDERR_FLAG | NOSTDERR_FLAG)? file_spec?;
 intstats_command : INTSTATS (PRINT | RESET);
 
 title_command : TITLE STRING;
+inputdir_command : INPUTDIR file_spec;
+outputdir_command : OUTPUTDIR file_spec;
 
 detfn_command : DETFN ID (hyperbolic_args | powerlaw_args | loglog_args | linear_args);
 hyperbolic_args : HYPERBOLIC scalar3;

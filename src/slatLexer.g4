@@ -24,6 +24,8 @@ RBRACKET : ']';
 LPAREN : '(';
 RPAREN : ')';
 
+INPUTDIR: 'inputdir';
+OUTPUTDIR: 'outputdir';
 TITLE: 'title';
 PRINT : 'print';
 DETFN : 'detfn';
@@ -180,3 +182,4 @@ mode NESTEDPYMODE;
 NESTEDLPAREN: '(' -> pushMode(NESTEDPYMODE);
 NESTEDRPAREN: ')' -> popMode;
 NESTEDOTHER: .;
+

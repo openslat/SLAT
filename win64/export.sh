@@ -26,11 +26,7 @@ done
 cp -r scripts $DEST
 
 mkdir $DEST/example2
-mkdir $DEST/example2/results
-mkdir $DEST/example2/py-results
-mkdir $DEST/example2/c-results
-cp ../parser/example2/*.txt $DEST/example2
-cp  ../parser/example2/*.dat $DEST/example2
+ cp -r ../parser/example2/input $DEST/example2
 cp  ../parser/example2/example2.py $DEST/example2
 cp  ../parser/example2/example2.slat $DEST/example2
 

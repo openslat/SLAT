@@ -12,10 +12,46 @@ import numpy as np
 from contextlib import redirect_stdout
 import numbers
 import sys
+import os.path
 
 pyslatcore.Initialise()
 
+_DEFAULT_INPUT_EXTENSION = ".csv"
+_DEFAULT_INPUT_DIRECTORY = "."
+_Input_directory = None
 
+def set_input_directory(path):
+    global _Input_directory
+    _Input_directory = path
+
+def full_input_path(path):
+    if not os.path.dirname(path):
+        path = os.path.join(_Input_directory or _DEFAULT_INPUT_DIRECTORY, path)
+
+    if not os.path.splitext(path)[1]:
+        return path + _DEFAULT_INPUT_EXTENSION
+    else:
+        return path
+
+_DEFAULT_OUTPUT_EXTENSION = ".csv"
+_DEFAULT_OUTPUT_DIRECTORY = "."
+_Output_directory = None
+
+def set_output_directory(path):
+    global _Output_directory
+    _Output_directory = path
+    if not os.path.exists(_Output_directory):
+        os.makedirs(_Output_directory)    
+
+def full_output_path(path):
+    if not os.path.dirname(path):
+        path = os.path.join(_Output_directory or _DEFAULT_OUTPUT_DIRECTORY, path)
+
+    if not os.path.splitext(path)[1]:
+        return path + _DEFAULT_OUTPUT_EXTENSION
+    else:
+        return path
+    
 ## Create a generate for a range of values.
 # @param start The initial value.
 # @param stop The ending value.
@@ -1487,7 +1523,7 @@ class recorder:
     #  as required.
     def run(self):
         #print("RUN {}".format(self))
-        destination = self._options.get('filename')
+        destination = full_output_path(self._options.get('filename'))
         if destination != None:
             if self._options.get('append'):
                 f = open(destination, "a")
@@ -1764,6 +1800,7 @@ def MakeRecorder(id, type, function, options, columns, at):
 #        the file must be in the format supported by the original SLAT code.
 # @return A pyslat.probfn constructed using the data in the file.
 def ImportProbFn(id, filename):
+    filename = full_input_path(filename)
     data = np.loadtxt(filename, skiprows=2)
     # Add a point at 0, 0 to support interpolation down to zero
     x = [0]
@@ -1801,6 +1838,7 @@ def ImportProbFn(id, filename):
 #        the file must be in the format supported by the original SLAT code.
 # @return A pyslat.im constructed using the data in the file.
 def ImportIMFn(id, filename):
+    filename = full_input_path(filename)
     data = np.loadtxt(filename, skiprows=2)
     x = []
     y = []

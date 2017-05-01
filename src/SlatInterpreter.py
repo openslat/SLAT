@@ -682,6 +682,14 @@ class SlatInterpreter(slatParserListener):
         if ctx.RESET():
             pyslat.Reset_Statistics()
 
+    def exitInputdir_command(self, ctx:slatParser.Inputdir_commandContext):
+        filename = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"')
+        pyslat.set_input_directory(filename)
+
+    def exitOutputdir_command(self, ctx:slatParser.Outputdir_commandContext):
+        filename = (ctx.file_spec().FILE_NAME() or ctx.file_spec().ID()).getText().strip('\'"')
+        pyslat.set_output_directory(filename)
+        
 def main(argv):
     for file in argv[1:]:
         print("File:", file)

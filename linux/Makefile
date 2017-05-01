@@ -7,7 +7,7 @@ CFLAGS=-g -O3 -fopenmp -Wall -Werror -fbounds-check -Warray-bounds -std=gnu++11 
 CFLAGS+=`pkg-config --cflags python3`
 CFLAGS +=  -fPIC `pkg-config --cflags gsl`
 
-LDFLAGS=-lboost_log -lboost_thread -lboost_system -lpthread -lboost_unit_test_framework
+LDFLAGS=-lboost_log -lboost_thread -lboost_system -lpthread -lboost_unit_test_framework -lboost_filesystem
 LDFLAGS += `pkg-config --libs gsl`
 LDFLAGS += -lpthread -fopenmp
 
