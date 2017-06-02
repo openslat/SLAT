@@ -132,7 +132,7 @@ class INTEGRATION_METHOD:
 #          handles non-interpolated functions.
 # @param params A vector of numbers, specifying the control parameters
 #  of the function.
-def factory(t, params):
+def factory2(t, params):
     return pyslatcore.factory(t, params)
 
 ## Create an interpolated deterministic function.
@@ -143,7 +143,7 @@ def factory(t, params):
 #          handles interpolated functions.
 # @param params A vector of numbers, specifying the x and y values for
 #          the interpolation.
-def factory(t, param1, param2):
+def factory3(t, param1, param2):
     return pyslatcore.factory(t, param1, param2)
 
 ## Create a log normal function.
@@ -358,9 +358,9 @@ class detfn:
         self._parameters = parameters.copy()
 
         if fntype == FUNCTION_TYPE.LOGLOG or fntype == FUNCTION_TYPE.LIN:
-            self._func = factory(fntype, parameters[0], parameters[1])
+            self._func = factory3(fntype, parameters[0], parameters[1])
         else:
-            self._func = factory(fntype, parameters)
+            self._func = factory2(fntype, parameters)
 
         if id != None:
             detfn.defs[id] = self
