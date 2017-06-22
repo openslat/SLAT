@@ -127,11 +127,11 @@ public:
     double Median(double x);
     double SD_ln(double x);
     double SD(double x);
-    std::vector<double> Mean(std::vector<double> x);
-    std::vector<double> MeanLn(std::vector<double> x);
-    std::vector<double> Median(std::vector<double> x);
-    std::vector<double> SD_ln(std::vector<double> x);
-    std::vector<double> SD(std::vector<double> x);
+    std::vector<double> bulk_Mean(std::vector<double> x);
+    std::vector<double> bulk_MeanLn(std::vector<double> x);
+    std::vector<double> bulk_Median(std::vector<double> x);
+    std::vector<double> bulk_SD_ln(std::vector<double> x);
+    std::vector<double> bulk_SD(std::vector<double> x);
     std::string get_Name(void);
     bool AreSame(const EDP &other);
 public:

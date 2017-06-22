@@ -553,6 +553,7 @@ class im:
         self._func = MakeIM(detfn.function())
         self._collapse = None
         self._demolition = None
+        self._plot_max = None
         if id != None:
             old = im.lookup(id)
             if old:
@@ -560,7 +561,16 @@ class im:
                 im.defs[id]._func.replace(self._func)
             im.defs[id] = self
 
-    
+    ## Return the 'max' value, which is used by the GUI as a hint
+    ## for plotting IM-related functions.
+    def plot_max(self):
+        return self._plot_max
+
+    ## Set the 'max' value, which is used by the GUI as a hint
+    ## for plotting IM-related functions.
+    def set_plot_max(self, value):
+        self._plot_max = value
+
             
     ## Return the im object with the corresponding id.
     # @param id The identifier provided to the constructor of a probfn object.
@@ -676,7 +686,7 @@ class edp:
         self._id = id
         self._im = im
         self._fn = fn
-        self._func = MakeEDP(im.function(), fn.function(), id)
+        self._func = MakeEDP(im.function(), fn.function(), "{}".format(id))
         if id != None:
             edp.defs[id] = self
 
@@ -694,6 +704,16 @@ class edp:
     ## Return the id provided to the constructor.
     def id(self):
         return self._id
+
+    ## Return the 'max' value, which is used by the GUI as a hint
+    ## for plotting IM-related functions.
+    def plot_max(self):
+        return self._plot_max
+
+    ## Set the 'max' value, which is used by the GUI as a hint
+    ## for plotting IM-related functions.
+    def set_plot_max(self, value):
+        self._plot_max = value
 
     ## Return the IM driving the EDP.
     def get_IM(self):

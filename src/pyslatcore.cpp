@@ -145,8 +145,8 @@ DeterministicFn *factory(FUNCTION_TYPE t, std::vector<double> params)
     switch (t) {
     case PLC:
     {
-        double b = params[0];
-        double a = params[1];
+        double a = params[0];
+        double b = params[1];
         result = std::make_shared<SLAT::PowerLawParametricCurve>(a, b);
         break;
     }
@@ -429,7 +429,7 @@ double EDP::SD(double x)
     return relationship->SD(x);
 }
 
-std::vector<double> EDP::Mean(std::vector<double> x)
+std::vector<double> EDP::bulk_Mean(std::vector<double> x)
 {
     std::vector<double> result(x.size());
 #pragma omp parallel for
@@ -439,7 +439,7 @@ std::vector<double> EDP::Mean(std::vector<double> x)
     return result;
 }
 
-std::vector<double> EDP::MeanLn(std::vector<double> x)
+std::vector<double> EDP::bulk_MeanLn(std::vector<double> x)
 {
     std::vector<double> result(x.size());
 #pragma omp parallel for
@@ -449,7 +449,7 @@ std::vector<double> EDP::MeanLn(std::vector<double> x)
     return result;
 }
 
-std::vector<double> EDP::Median(std::vector<double> x)
+std::vector<double> EDP::bulk_Median(std::vector<double> x)
 {
     std::vector<double> result(x.size());
 #pragma omp parallel for
@@ -459,7 +459,7 @@ std::vector<double> EDP::Median(std::vector<double> x)
     return result;
 }
 
-std::vector<double> EDP::SD_ln(std::vector<double> x)
+std::vector<double> EDP::bulk_SD_ln(std::vector<double> x)
 {
     std::vector<double> result(x.size());
 #pragma omp parallel for
@@ -469,7 +469,7 @@ std::vector<double> EDP::SD_ln(std::vector<double> x)
     return result;
 }
 
-std::vector<double> EDP::SD(std::vector<double> x)
+std::vector<double> EDP::bulk_SD(std::vector<double> x)
 {
     std::vector<double> result(x.size());
 #pragma omp parallel for
