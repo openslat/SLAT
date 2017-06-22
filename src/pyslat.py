@@ -554,8 +554,13 @@ class im:
         self._collapse = None
         self._demolition = None
         if id != None:
+            old = im.lookup(id)
+            if old:
+                print(old)
+                im.defs[id]._func.replace(self._func)
             im.defs[id] = self
 
+    
             
     ## Return the im object with the corresponding id.
     # @param id The identifier provided to the constructor of a probfn object.

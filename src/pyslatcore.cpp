@@ -370,6 +370,11 @@ std::vector<double> IM::pRepair(std::vector<double> im)
     return relationship->pRepair(im);
 }
 
+void IM::replace(IM *im)
+{
+    relationship->replace(im->relationship);
+}
+
 EDP::EDP() : relationship(NULL)
 {
 }

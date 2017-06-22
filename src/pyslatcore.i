@@ -84,7 +84,7 @@ public:
     double DemolitionRate(void);
     double pRepair(double im);
     std::vector<double> pRepair(std::vector<double> im);
-        
+    void replace(IM *im);
 };
 
 IM *MakeIM(DeterministicFn f);
