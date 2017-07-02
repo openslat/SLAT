@@ -727,7 +727,7 @@ class edp:
     #  @param x The IM value at which to calculate mean(x).
     def Mean(self, x):
         if type(x) == list:
-            result = list(self._func.Mean(x))
+            result = list(self._func.bulk_Mean(x))
         else:
             result = self._func.Mean(x)
         return result
@@ -754,7 +754,7 @@ class edp:
     #  @param x The IM value at which to calculate standard deviation(ln(x)).
     def SD_ln(self, x):
         if type(x) == list:
-            result = list(self._func.SD_ln(x))
+            result = list(self._func.bulk_SD_ln(x))
         else:
             result = self._func.SD_ln(x)
         return result

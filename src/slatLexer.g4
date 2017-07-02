@@ -133,7 +133,7 @@ fragment
 SINGLE_QUOTE : '\'';
 
 fragment
-SQ_UNESCAPED_CHAR : ~[\\\'];
+SQ_UNESCAPED_CHAR : ~['];
 
 fragment
 SQ_ESCAPED_CHAR : '\\\'' | '\\\\';
