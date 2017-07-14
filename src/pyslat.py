@@ -687,6 +687,7 @@ class edp:
         self._im = im
         self._fn = fn
         self._func = MakeEDP(im.function(), fn.function(), "{}".format(id))
+        self._plot_max = None
         if id != None:
             edp.defs[id] = self
 
