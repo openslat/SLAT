@@ -71,7 +71,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo.im) = c("IM", "lambda")
 
-    neo.im <- read.csv("results/im_rate", 
+    neo.im <- read.csv("py-results/im_rate.csv", 
                        header=TRUE, sep="")
 
     ## Read the EDP-IM data
@@ -86,7 +86,7 @@
         names(paleo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
 
         neo.edp.im[[i]] <- read.csv(
-            sprintf("results/im_edp_%d.txt", i),
+            sprintf("py-results/im_edp_%d.csv", i),
             header=TRUE, sep="")
         names(neo.edp.im[[i]]) = c("IM", "mean.x", "sd.lnx")
 
@@ -113,7 +113,7 @@
         names(paleo.edp.rate[[i]]) = c("EDP", "lambda")
 
         neo.edp.rate[[i]] <- read.csv(
-            sprintf("results/edp_%d_rate.txt", i),
+            sprintf("py-results/edp_%d_rate.csv", i),
             header=TRUE, sep="")
         names(neo.edp.rate[[i]]) = c("EDP", "lambda")
 
@@ -135,7 +135,7 @@
         skip=3, header=FALSE, sep="")
     names(paleo.collapse.im) = c("IM", "pCollapse")
 
-    neo.collapse.im <- read.csv("results/collapse.txt", 
+    neo.collapse.im <- read.csv("py-results/collapse.csv", 
                                 header=TRUE, sep="")
     names(neo.collapse.im) = c("IM", "pDemolition", "pCollapse")
 
@@ -162,7 +162,7 @@
         names(paleo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
         neo.loss.im[[i]] <- read.csv(
-            sprintf("results/cost_%d_im.txt", i),
+            sprintf("py-results/cost_%d_im.csv", i),
             header=TRUE, sep="")
         names(neo.loss.im[[i]]) = c("IM","mean.x","sd.lnx")
 
@@ -183,7 +183,7 @@
         names(paleo.loss.edp[[i]])=c("EDP","mean.x","sd.lnx")
 
         neo.loss.edp[[i]] <- read.csv(
-            sprintf("results/cost_%d_edp.txt", i),
+            sprintf("py-results/cost_%d_edp.csv", i),
             header=TRUE, sep="")
         names(neo.loss.edp[[i]]) = c("EDP","mean.x","sd.lnx")
 
@@ -218,18 +218,6 @@
   #+END_SRC
 
   #+RESULTS:
-  #+begin_example
-  Error in file(file, "rt") (from #2) : cannot open the connection
-  In addition: Warning message:
-  In file(file, "rt") :
-    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/cost_1_im.txt': No such file or directory
-  Error in file(file, "rt") : cannot open the connection
-  In addition: Warning message:
-  In file(file, "rt") :
-    cannot open file '/home/mag109/SLATv1.15_Public/example2_10storeybuilding/results/cost_nc_total': No such file or directory
-  Error in names(paleo.structloss.nc) = c("IM", "mean.x", "sd.lnx") : 
-    object 'paleo.structloss.nc' not found
-#+end_example
 
 
 \clearpage
@@ -243,8 +231,8 @@
 
   #+RESULTS:
   #+BEGIN_EXPORT latex
-  % latex table generated in R 3.2.2 by xtable 1.8-2 package
-  % Mon Aug 29 14:09:31 2016
+  % latex table generated in R 3.1.1 by xtable 1.8-2 package
+  % Wed Jul 26 22:32:51 2017
   \begin{table}[ht]
   \centering
   \begin{tabular}{rr}
@@ -826,7 +814,7 @@
   #+BEGIN_SRC R  :results value 
     paleo.rate <- scan(paste(results.dir, "collrate.txt", 
                              sep=""), skip=3)
-    neo.rate <- as.numeric(scan("results/collrate.txt", 
+    neo.rate <- as.numeric(scan("py-results/collrate.csv", 
                                 what="string")[8])
     paste(
         sprintf("Paleo: %5.3e; Neo: %5.3e; error: %3.2f%%", 
@@ -2311,7 +2299,7 @@
     #+HEADER: :results graphics
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
     #+BEGIN_SRC R :session *R-2*
-      loss.by.fate <- read.csv("results/cost_by_fate", header=TRUE, sep="")
+      loss.by.fate <- read.csv("py-results/cost_by_fate", header=TRUE, sep="")
       fate.names = names(loss.by.fate)
       fate.im.name = fate.names[1]
       fate.names = fate.names[2:length(fate.names)]
@@ -2338,7 +2326,7 @@
     #+HEADER: :results graphics
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
     #+BEGIN_SRC R :session *R-2*
-      loss.by.fate.summed <- read.csv("results/cost_by_fate", header=TRUE, sep="")
+      loss.by.fate.summed <- read.csv("py-results/cost_by_fate", header=TRUE, sep="")
       names(loss.by.fate.summed) = c("IM", "Repair", "Demolition", "Collapse")
       fate.names = names(loss.by.fate.summed)
       fate.im.name = fate.names[1]
@@ -2381,7 +2369,7 @@
     #+HEADER: :results graphics
     #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
     #+BEGIN_SRC R :session *R-2*
-      loss.by.fate.normalised <- read.csv("results/cost_by_fate", header=TRUE, sep="")
+      loss.by.fate.normalised <- read.csv("py-results/cost_by_fate", header=TRUE, sep="")
       names(loss.by.fate.normalised) = c("IM", "Repair", "Demolition", "Collapse")
       fate.names = names(loss.by.fate.normalised)
       fate.im.name = fate.names[1]
@@ -2389,7 +2377,7 @@
       loss.by.fate.normalised$Total = loss.by.fate.normalised$Repair +
           loss.by.fate.normalised$Demolition + loss.by.fate.normalised$Collapse
 
-      im.linear <- read.csv("results/im_rate_lin", header=TRUE, sep="")
+      im.linear <- read.csv("py-results/im_rate_lin", header=TRUE, sep="")
       loss.by.fate.normalised$Scaled = loss.by.fate.normalised$Total * im.linear$lambda
 
       loss.by.fate.normalised$Normalised = loss.by.fate.normalised$Scaled / max(loss.by.fate.normalised$Scaled)
@@ -2409,7 +2397,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.edp <- read.csv("results/cost_by_edp", header=TRUE, sep="")
+     loss.by.edp <- read.csv("py-results/cost_by_edp", header=TRUE, sep="")
      edp.names = names(loss.by.edp)
      edp.im.name = edp.names[1]
      edp.names = edp.names[2:length(edp.names)]
@@ -2434,7 +2422,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.edp <- read.csv("results/cost_by_edp", header=TRUE, sep="")
+     loss.by.edp <- read.csv("py-results/cost_by_edp", header=TRUE, sep="")
      edp.table = data.frame(c("Accel", "Drift"))
 
      for (i in seq(1:11)) {
@@ -2471,7 +2459,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.edp <- read.csv("results/cost_by_edp", header=TRUE, sep="")
+     loss.by.edp <- read.csv("py-results/cost_by_edp", header=TRUE, sep="")
      edp.table = data.frame(c("Accel", "Drift"))
 
      for (i in seq(1:11)) {
@@ -2509,7 +2497,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.comp <- read.csv("results/cost_by_frag", 
+     loss.by.comp <- read.csv("py-results/cost_by_frag", 
                               header=TRUE, sep="")
      comp.names = names(loss.by.comp)
      comp.im.name = comp.names[1]
@@ -2553,7 +2541,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.comp <- read.csv("results/cost_by_frag", header=TRUE, sep="")
+     loss.by.comp <- read.csv("py-results/cost_by_frag", header=TRUE, sep="")
      palette(rainbow(length(comp.names)))
      pie(as.vector(loss.by.comp[20,2:length(comp.names)], mode="numeric"),
          label=lapply(comp.names, function(s) sprintf("#%s", strsplit(s, "\\.")[[1]][[2]])),
@@ -2570,7 +2558,7 @@
    #+HEADER: :results graphics
    #+HEADER: :file (org-babel-temp-file "./figure-" ".pdf")
    #+BEGIN_SRC R :session *R-2*
-     loss.by.comp <- read.csv("results/cost_by_frag", header=TRUE, sep="")
+     loss.by.comp <- read.csv("py-results/cost_by_frag", header=TRUE, sep="")
      palette(rainbow(length(comp.names)))
      pie(as.vector(loss.by.comp[67,2:length(comp.names)], mode="numeric"),
          label=lapply(comp.names, function(s) sprintf("#%s", strsplit(s, "\\.")[[1]][[2]])),
@@ -2626,7 +2614,7 @@
    EDP-IM relationships:
    #+BEGIN_SRC sh :results output
    for i in $(seq 21); do    
-      f=example1a_im_edp_${i}.txt
+      f=example1a_im_edp_${i}.csv
       min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
       max_n=$(tail -1 $f | awk -e '{print $1}')
       count_n=$(wc -l $f | awk -e '{print $1 - 1}')
@@ -2667,12 +2655,12 @@
    EDP-rate relationships
    #+BEGIN_SRC sh :results output
    for i in $(seq 21); do    
-      f=example1a_edp_${i}_rate.txt
+      f=example1a_edp_${i}_rate.csv
       min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
       max_n=$(tail -1 $f | awk -e '{print $1}')
       count_n=$(wc -l $f | awk -e '{print $1 - 1}')
 
-      f=~/SLATv1.15_Public/example1a_collapse/results/edp-${i}-rate.txt
+      f=~/SLATv1.15_Public/example1a_collapse/results/edp-${i}-rate.csv
       min_p=$(head -4 $f | tail -1 | awk -e '{print $1}')
       max_p=$(tail -2 $f | awk -e 'BEGIN{RS="\r\n"} {print $1}')
       count_p=$(wc -l $f | awk -e '{print $1 - 4}')
@@ -2708,7 +2696,7 @@
    Loss-edp
    #+BEGIN_SRC sh :results output
    for i in $(seq 115); do    
-      f=example1a_cost_${i}_edp.txt
+      f=example1a_cost_${i}_edp.csv
       min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
       max_n=$(tail -1 $f | awk -e '{print $1}')
       count_n=$(wc -l $f | awk -e '{print $1 - 1}')
@@ -2963,7 +2951,7 @@
    Loss-im
    #+BEGIN_SRC sh :results output
    for i in $(seq 115); do    
-      f=example1a_cost_${i}_im.txt
+      f=example1a_cost_${i}_im.csv
       min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
       max_n=$(tail -1 $f | awk -e '{print $1}')
       count_n=$(wc -l $f | awk -e '{print $1 - 1}')
@@ -3193,7 +3181,7 @@
          for (i in 1:length(cgs$Index)) {
              cg = cgs$Index[i]
              ds.im <- read.csv(
-                 sprintf("c-results/ds_im_%d.txt", cg), header=TRUE, sep="")
+                 sprintf("py-results/ds_im_%d.csv", cg), header=TRUE, sep="")
              N = length(names(ds.im)) - 1
              for (j in 1:N) {
                  points(ds.im[,(j+1)] ~ ds.im$IM.1, col=i, pch=j);
