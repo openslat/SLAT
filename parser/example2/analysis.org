@@ -814,7 +814,7 @@
   #+BEGIN_SRC R  :results value 
     paleo.rate <- scan(paste(results.dir, "collrate.txt", 
                              sep=""), skip=3)
-    neo.rate <- as.numeric(scan("results/collrate.txt", 
+    neo.rate <- as.numeric(scan("py-results/collrate.csv", 
                                 what="string")[8])
     paste(
         sprintf("Paleo: %5.3e; Neo: %5.3e; error: %3.2f%%", 
@@ -2614,7 +2614,7 @@
    EDP-IM relationships:
    #+BEGIN_SRC sh :results output
    for i in $(seq 21); do    
-      f=example1a_im_edp_${i}.txt
+      f=example1a_im_edp_${i}.csv
       min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
       max_n=$(tail -1 $f | awk -e '{print $1}')
       count_n=$(wc -l $f | awk -e '{print $1 - 1}')
@@ -2655,12 +2655,12 @@
    EDP-rate relationships
    #+BEGIN_SRC sh :results output
    for i in $(seq 21); do    
-      f=example1a_edp_${i}_rate.txt
+      f=example1a_edp_${i}_rate.csv
       min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
       max_n=$(tail -1 $f | awk -e '{print $1}')
       count_n=$(wc -l $f | awk -e '{print $1 - 1}')
 
-      f=~/SLATv1.15_Public/example1a_collapse/results/edp-${i}-rate.txt
+      f=~/SLATv1.15_Public/example1a_collapse/results/edp-${i}-rate.csv
       min_p=$(head -4 $f | tail -1 | awk -e '{print $1}')
       max_p=$(tail -2 $f | awk -e 'BEGIN{RS="\r\n"} {print $1}')
       count_p=$(wc -l $f | awk -e '{print $1 - 4}')
@@ -2696,7 +2696,7 @@
    Loss-edp
    #+BEGIN_SRC sh :results output
    for i in $(seq 115); do    
-      f=example1a_cost_${i}_edp.txt
+      f=example1a_cost_${i}_edp.csv
       min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
       max_n=$(tail -1 $f | awk -e '{print $1}')
       count_n=$(wc -l $f | awk -e '{print $1 - 1}')
@@ -2951,7 +2951,7 @@
    Loss-im
    #+BEGIN_SRC sh :results output
    for i in $(seq 115); do    
-      f=example1a_cost_${i}_im.txt
+      f=example1a_cost_${i}_im.csv
       min_n=$(head -2 $f | tail -1 | awk -e '{print $1}')
       max_n=$(tail -1 $f | awk -e '{print $1}')
       count_n=$(wc -l $f | awk -e '{print $1 - 1}')
