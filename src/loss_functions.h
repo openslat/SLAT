@@ -24,7 +24,8 @@ namespace SLAT {
         
         ~LossFn() {};
         std::size_t n_states(void);
-        const std::vector<LogNormalDist> LossFns(void);
+
+        LogNormalDist CalculateLoss(std::vector<double> probabilities, int count);
 
         /**
          * Overloaded << operator for printing a LossFn to a stream. Intended

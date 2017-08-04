@@ -51,16 +51,14 @@ namespace SLAT {
                  if (this->cost_fn  == NULL) {
                      return LogNormalDist();
                  } else {
-                     return LogNormalDist::AddWeightedDistributions(this->cost_fn->LossFns(), 
-                                                                    this->frag_fn->pHighest(edp)); 
+                     return this->cost_fn->CalculateLoss(this->frag_fn->pHighest(edp), this->count); 
                  }
              }, name + std::string("::cost_EDP_dist")),
          delay_EDP_dist([this] (double edp) {
                  if (this->delay_fn  == NULL) {
                      return LogNormalDist();
                  } else {
-                     return LogNormalDist::AddWeightedDistributions(this->delay_fn->LossFns(), 
-                                                                    this->frag_fn->pHighest(edp)); 
+                     return this->delay_fn->CalculateLoss(this->frag_fn->pHighest(edp), this->count); 
                  }
              }, name + std::string("::delay_EDP_dist")),
          Rate([this] (void) {
@@ -104,12 +102,12 @@ namespace SLAT {
 
     double CompGroup::E_cost_EDP(double edp)
     {
-        return this->count * cost_EDP_dist(edp).get_mean_X();
+        return cost_EDP_dist(edp).get_mean_X();
     }
 
     double CompGroup::mean_ln_cost_EDP(double edp)
     {
-        return this->count * cost_EDP_dist(edp).get_mu_lnX();
+        return cost_EDP_dist(edp).get_mu_lnX();
     }
 
     double CompGroup::SD_ln_cost_EDP(double edp)
@@ -124,7 +122,7 @@ namespace SLAT {
 
     double CompGroup::E_delay_EDP(double edp)
     {
-        return this->count * delay_EDP_dist(edp).get_mean_X();
+        return delay_EDP_dist(edp).get_mean_X();
     }
 
     double CompGroup::SD_ln_delay_EDP(double edp)

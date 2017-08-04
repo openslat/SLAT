@@ -37,7 +37,7 @@ namespace SLAT {
         double get_sigma_lnX(void) const;
         double get_sigma_X(void) const;
 
-        LogNormalDist WeighDistribution(double weight);
+        LogNormalDist ScaleDistribution(double probability);
 
         static LogNormalDist AddWeightedDistributions(
             const std::vector<LogNormalDist> distributions, 

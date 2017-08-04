@@ -29,9 +29,11 @@ namespace SLAT {
         return loss_functions.size();
     }
 
-    const std::vector<LogNormalDist> LossFn::LossFns(void)
+    LogNormalDist LossFn::CalculateLoss(std::vector<double> probabilities, int count)
     {
-        return loss_functions;
+        LogNormalDist result = LogNormalDist::AddWeightedDistributions(loss_functions,
+                                                                       probabilities);
+        return result.ScaleDistribution(count);
     }
 
     std::ostream& operator<<(std::ostream& out, LossFn& o)
