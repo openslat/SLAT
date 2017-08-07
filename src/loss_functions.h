@@ -18,11 +18,32 @@
 
 namespace SLAT {
     class LossFn {
-    public:
+    protected:
         LossFn() {};
-        LossFn(std::vector<LogNormalDist> distributions);
-        
+    public:
         ~LossFn() {};
+
+        virtual LogNormalDist CalculateLoss(std::vector<double> probabilities, int count);
+
+        virtual std::size_t n_states(void) {
+            throw std::invalid_argument("LossFn::n_states()");
+            return 0;
+        };
+
+        
+        /**
+         * Overloaded << operator for printing a LossFn to a stream. Intended
+         * for debugging.
+         */
+        friend std::ostream& operator<<(std::ostream& out, LossFn& o);
+    };
+    
+    class SimpleLossFn: public LossFn {
+    public:
+        SimpleLossFn() {};
+        SimpleLossFn(std::vector<LogNormalDist> distributions);
+        
+        ~SimpleLossFn() {};
         std::size_t n_states(void);
 
         LogNormalDist CalculateLoss(std::vector<double> probabilities, int count);
@@ -31,7 +52,7 @@ namespace SLAT {
          * Overloaded << operator for printing a LossFn to a stream. Intended
          * for debugging.
          */
-        friend std::ostream& operator<<(std::ostream& out, LossFn& o);
+        friend std::ostream& operator<<(std::ostream& out, SimpleLossFn& o);
     private:
         std::vector<LogNormalDist> loss_functions;
     };

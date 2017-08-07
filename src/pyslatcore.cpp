@@ -588,7 +588,7 @@ LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
     for (size_t i=0; i < distributions.size(); i++) {
         slat_distributions[i] = *(distributions[i]->dist);
     };
-    return new LossFn(std::make_shared<SLAT::LossFn>(slat_distributions));
+    return new LossFn(std::make_shared<SLAT::SimpleLossFn>(slat_distributions));
 }
 
 

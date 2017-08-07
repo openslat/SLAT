@@ -498,7 +498,7 @@ int main(int argc, char **argv)
                                             data[i].cost[j].first, data[i].cost[j].second);
                                     }
 #pragma omp critical
-                                    cost_functions[data[i].id] = make_shared<LossFn>(dists);
+                                    cost_functions[data[i].id] = make_shared<SimpleLossFn>(dists);
                                 }
                                 {
                                     vector<LogNormalDist> dists(data[i].frag.size());
@@ -508,7 +508,7 @@ int main(int argc, char **argv)
                                             data[i].delay[j].first, data[i].delay[j].second);
                                     }
 #pragma omp critical
-                                    delay_functions[data[i].id] = make_shared<LossFn>(dists);
+                                    delay_functions[data[i].id] = make_shared<SimpleLossFn>(dists);
                                 }
                             }
                         }

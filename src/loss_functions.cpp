@@ -15,7 +15,20 @@
 
 namespace SLAT {
 
-    LossFn::LossFn(std::vector<LogNormalDist> distributions)
+    LogNormalDist LossFn::CalculateLoss(std::vector<double> probabilities, int count)
+    {
+        throw std::invalid_argument("LossFn::CalculateLoss()");
+        return LogNormalDist();
+    }
+
+    std::ostream& operator<<(std::ostream& out, LossFn& o)
+    {
+        out << "LossFn: ";
+        out << std::endl;
+        return out;
+    }
+
+    SimpleLossFn::SimpleLossFn(std::vector<LogNormalDist> distributions)
     {
         if (distributions.size() == 0) {
             throw std::invalid_argument("distributions");
@@ -24,21 +37,21 @@ namespace SLAT {
         }
     }
 
-    std::size_t LossFn::n_states(void)
+    std::size_t SimpleLossFn::n_states(void)
     {
         return loss_functions.size();
     }
 
-    LogNormalDist LossFn::CalculateLoss(std::vector<double> probabilities, int count)
+    LogNormalDist SimpleLossFn::CalculateLoss(std::vector<double> probabilities, int count)
     {
         LogNormalDist result = LogNormalDist::AddWeightedDistributions(loss_functions,
                                                                        probabilities);
         return result.ScaleDistribution(count);
     }
 
-    std::ostream& operator<<(std::ostream& out, LossFn& o)
+    std::ostream& operator<<(std::ostream& out, SimpleLossFn& o)
     {
-        out << "LossFn: ";
+        out << "SimpleLossFn: ";
         for (size_t i=0; i < o.n_states(); i++) {
             out << o.loss_functions[i] << "; ";
         }
