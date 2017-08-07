@@ -102,7 +102,7 @@ namespace SLAT {
 
     double CompGroup::E_cost_EDP(double edp)
     {
-        return cost_EDP_dist(edp).get_mean_X();
+        return /*this->count */ cost_EDP_dist(edp).get_mean_X();
     }
 
     double CompGroup::mean_ln_cost_EDP(double edp)
@@ -122,7 +122,7 @@ namespace SLAT {
 
     double CompGroup::E_delay_EDP(double edp)
     {
-        return delay_EDP_dist(edp).get_mean_X();
+        return /* this->count */ delay_EDP_dist(edp).get_mean_X();
     }
 
     double CompGroup::SD_ln_delay_EDP(double edp)
@@ -238,7 +238,7 @@ namespace SLAT {
                     //double d = this->edp->P_exceedence(im, edp);
                     double e = this->E_cost_EDP(edp) / this->count;
                     double sd;
-                    sd = this->SD_cost_EDP(edp);
+                    sd = this->SD_cost_EDP(edp) / this->count;
                     
                     result = (e * e + sd * sd) * std::abs(d);
                 }
