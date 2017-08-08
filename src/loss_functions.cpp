@@ -46,7 +46,7 @@ namespace SLAT {
     {
         LogNormalDist result = LogNormalDist::AddWeightedDistributions(loss_functions,
                                                                        probabilities);
-        return result.ScaleDistribution(count);
+        return result.ScaleDistributionByNumComponents(count);
     }
 
     std::ostream& operator<<(std::ostream& out, SimpleLossFn& o)
