@@ -58,4 +58,61 @@ namespace SLAT {
         out << std::endl;
         return out;
     }
+
+    std::ostream& operator<<(std::ostream& out, BiLevelLoss& o)
+    {
+        out << "BiLevelLoss: " << o.cost_at_min << " @ " << o.count_min
+            << "; " << o.cost_at_max << " @ " << o.count_max
+            << "; dispersion=" << o.dispersion;
+        return out;
+    }
+
+    BiLevelLossFn::BiLevelLossFn(std::vector<BiLevelLoss> distributions)
+    {
+        if (distributions.size() == 0) {
+            throw std::invalid_argument("distributions");
+        } else {
+            this->distributions = distributions;
+        }
+    }
+
+    LogNormalDist BiLevelLoss::LossFunctionsForCount_calc(int count)
+    {
+        double mean;
+        if (count <= count_min) {
+            mean = cost_at_min;
+        } else if (count >= count_max) {
+            mean = cost_at_max;
+        } else {
+            mean = cost_at_min + float(count - count_min)/(count_max - count_min) * (cost_at_max - cost_at_min);
+        }
+        return LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mean, dispersion);
+    }
+
+        
+    std::size_t BiLevelLossFn::n_states(void)
+    {
+        return distributions.size();
+    }
+
+    LogNormalDist BiLevelLossFn::CalculateLoss(std::vector<double> probabilities, int count)
+    {
+        std::vector<LogNormalDist> dists_for_count(distributions.size());
+        for (unsigned int i=0; i < distributions.size(); i++) {
+            dists_for_count[i] = distributions[i].LossFunctionsForCount(count);
+        }
+        LogNormalDist result = LogNormalDist::AddWeightedDistributions(dists_for_count,
+                                                                       probabilities);
+        return result.ScaleDistributionByNumComponents(count);
+    }
+
+    std::ostream& operator<<(std::ostream& out, BiLevelLossFn& o)
+    {
+        out << "BiLevelLossFn: ";
+        for (size_t i=0; i < o.n_states(); i++) {
+            out << "<" << o.distributions[i] << ">, ";
+        }
+        out << std::endl;
+        return out;
+    }
 }

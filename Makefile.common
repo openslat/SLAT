@@ -23,7 +23,7 @@ LIBOBJS=$(addprefix $(OBJDIR)/,$(LIBSRCS:.cpp=.o))
 
 UNIT_SRCS = unit_test.cpp functions_test.cpp relationships_test.cpp maq_test.cpp \
 	fragility_test.cpp lognormaldist_test.cpp comp_group_test.cpp structure_test.cpp \
-	caching_test.cpp replaceable_test.cpp
+	loss_function_test.cpp caching_test.cpp replaceable_test.cpp
 UNIT_OBJS = $(addprefix $(OBJDIR)/,$(UNIT_SRCS:.cpp=.o))
 
 all: $(OBJDIR) $(BINDIR) $(LIBDIR) $(SCRIPTDIR) \
@@ -80,6 +80,7 @@ $(OBJDIR)/structure_test.o: $(SRCDIR)/structure_test.cpp $(SRCDIR)/structure.h
 $(OBJDIR)/caching_test.o: $(SRCDIR)/caching_test.cpp $(SRCDIR)/caching.h $(SRCDIR)/context.h
 $(OBJDIR)/replaceable_test.o: $(SRCDIR)/replaceable_test.cpp $(SRCDIR)/replaceable.h
 $(OBJDIR)/unit_test.o: $(SRCDIR)/unit_test.cpp
+$(OBJDIR)/loss_function_test.o: $(SRCDIR)/loss_function_test.cpp $(SRCDIR)/caching.h
 
 $(BINDIR)/unit_tests$(EXECEXT): $(OBJDIR)/unit_test.o $(UNIT_OBJS) $(LIBDIR)/libslat$(LIBEXT)
 	$(CC) -fPIC $(UNIT_OBJS) -L$(LIBDIR) -lslat -o $(BINDIR)/unit_tests$(EXECEXT) ${LDFLAGS}

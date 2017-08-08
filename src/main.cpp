@@ -4,6 +4,7 @@
 #include "relationships.h"
 #include "fragility.h"
 #include "lognormaldist.h"
+
 #include "loss_functions.h"
 #include "comp_group.h"
 #include "structure.h"
