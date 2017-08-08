@@ -102,7 +102,7 @@ namespace SLAT {
 
     double CompGroup::E_cost_EDP(double edp)
     {
-        return /*this->count */ cost_EDP_dist(edp).get_mean_X();
+        return cost_EDP_dist(edp).get_mean_X();
     }
 
     double CompGroup::mean_ln_cost_EDP(double edp)
@@ -122,7 +122,7 @@ namespace SLAT {
 
     double CompGroup::E_delay_EDP(double edp)
     {
-        return /* this->count */ delay_EDP_dist(edp).get_mean_X();
+        return delay_EDP_dist(edp).get_mean_X();
     }
 
     double CompGroup::SD_ln_delay_EDP(double edp)
@@ -236,16 +236,16 @@ namespace SLAT {
 
                     double d = deriv;
                     //double d = this->edp->P_exceedence(im, edp);
-                    double e = this->E_cost_EDP(edp) / this->count;
+                    double e = this->E_cost_EDP(edp); // / this->count;
                     double sd;
-                    sd = this->SD_cost_EDP(edp) / this->count;
+                    sd = this->SD_cost_EDP(edp);// / this->count;
                     
                     result = (e * e + sd * sd) * std::abs(d);
                 }
                 return result;
             }); 
         if (result.successful) {
-            double mean_x = E_cost_IM(im) / this->count;
+            double mean_x = E_cost_IM(im); /// this->count;
 
             double sigma_x = sqrt(result.integral  - mean_x * mean_x);
             ///@todo What happens if sigma_x is NAN?
