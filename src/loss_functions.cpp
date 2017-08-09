@@ -59,6 +59,18 @@ namespace SLAT {
         return out;
     }
 
+    BiLevelLoss::BiLevelLoss(int count_min, int count_max, double cost_at_min, double cost_at_max, double dispersion)
+            : LossFunctionsForCount([this] (int count) {
+                    return this->LossFunctionsForCount_calc(count);
+                }, std::string("BiLevelLoss::LossFunctionsForCount"))
+    {
+        this->count_min = count_min;
+        this->count_max = count_max;
+        this->cost_at_min = cost_at_min;
+        this->cost_at_max = cost_at_max;
+        this->dispersion = dispersion;
+    };
+
     std::ostream& operator<<(std::ostream& out, BiLevelLoss& o)
     {
         out << "BiLevelLoss: " << o.cost_at_min << " @ " << o.count_min
@@ -67,12 +79,11 @@ namespace SLAT {
         return out;
     }
 
-    BiLevelLossFn::BiLevelLossFn(std::vector<BiLevelLoss> distributions)
+    BiLevelLossFn::BiLevelLossFn(std::vector<std::shared_ptr<BiLevelLoss>> distributions) :
+        distributions(distributions)
     {
         if (distributions.size() == 0) {
             throw std::invalid_argument("distributions");
-        } else {
-            this->distributions = distributions;
         }
     }
 
@@ -84,7 +95,7 @@ namespace SLAT {
         } else if (count >= count_max) {
             mean = cost_at_max;
         } else {
-            mean = cost_at_min + float(count - count_min)/(count_max - count_min) * (cost_at_max - cost_at_min);
+            mean = cost_at_min + double(count - count_min)/(count_max - count_min) * (cost_at_max - cost_at_min);
         }
         return LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mean, dispersion);
     }
@@ -97,9 +108,13 @@ namespace SLAT {
 
     LogNormalDist BiLevelLossFn::CalculateLoss(std::vector<double> probabilities, int count)
     {
+        if (probabilities.size() != distributions.size()) {
+            throw std::invalid_argument("BiLevelLossFn::CalculateLoss()");
+        }
+
         std::vector<LogNormalDist> dists_for_count(distributions.size());
         for (unsigned int i=0; i < distributions.size(); i++) {
-            dists_for_count[i] = distributions[i].LossFunctionsForCount(count);
+            dists_for_count[i] = distributions[i]->LossFunctionsForCount(count);
         }
         LogNormalDist result = LogNormalDist::AddWeightedDistributions(dists_for_count,
                                                                        probabilities);

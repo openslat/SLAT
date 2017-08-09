@@ -264,3 +264,4 @@ BOOST_AUTO_TEST_CASE(Cached_Function_and_Value)
     BOOST_CHECK_EQUAL(f(1.0), 6);
 }
 
+    

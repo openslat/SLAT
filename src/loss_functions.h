@@ -60,32 +60,23 @@ namespace SLAT {
 
     class BiLevelLoss {
     public:
-        BiLevelLoss(int count_min, int count_max, double cost_at_min, double cost_at_max, double dispersion)
-            : LossFunctionsForCount([this] (int count) {
-                    return this->LossFunctionsForCount_calc(count);
-                }, std::string("BiLevelLoss::LossFunctionsForCount"))
-        {
-            this->count_min = count_min;
-            this->count_max = count_max;
-            this->cost_at_min = cost_at_min;
-            this->cost_at_max = cost_at_max;
-            this->dispersion = dispersion;
-        };
+        BiLevelLoss(int count_min, int count_max, double cost_at_min, double cost_at_max, double dispersion);
         ~BiLevelLoss() {};
 
         int count_min, count_max;
         double cost_at_min, cost_at_max, dispersion;
 
         friend std::ostream& operator<<(std::ostream& out, BiLevelLoss& o);
-
         Caching::CachedFunction<LogNormalDist, int> LossFunctionsForCount;
     private:
         LogNormalDist LossFunctionsForCount_calc(int count);
+        BiLevelLoss(const BiLevelLoss &other);
     };
     
     class BiLevelLossFn: public LossFn {
+    public:
         BiLevelLossFn();
-        BiLevelLossFn(std::vector<BiLevelLoss> distributions);
+        BiLevelLossFn(std::vector<std::shared_ptr<BiLevelLoss>> distributions);
         
         ~BiLevelLossFn() {};
         std::size_t n_states(void);
@@ -98,7 +89,7 @@ namespace SLAT {
          */
         friend std::ostream& operator<<(std::ostream& out, BiLevelLossFn& o);
     private:
-        std::vector<BiLevelLoss> distributions;
+        std::vector<std::shared_ptr<BiLevelLoss>> distributions;
     };
 }
 #endif
