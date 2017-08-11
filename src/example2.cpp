@@ -473,10 +473,11 @@ int main(int argc, char **argv)
                                  { {NAN, NAN}, {NAN, NAN}}}, //delay
 
                                 
-                                {203, // oCeiling Systems Suspended acoustical tile type1
+                                {203, // Ceiling Systems Suspended acoustical tile type1
                                  {{0.55, 0.4}, {1.0, 0.4}}, // frag
-                                 { {{46.73131, 0.4}, {282.4967, 0.4}}, //simple
-                                   {}, //bilevel
+                                 { {}, //simple
+                                   {{9, 900, 58.4, 43.2, 0.4},
+                                    {9, 900, 297.9, 277.8, 0.4}}, //bilevel
                                  }, //cost
                                  {{NAN, NAN}, {NAN, NAN}}}, //delay
 
@@ -489,29 +490,29 @@ int main(int argc, char **argv)
                                 
                                 {208, // Desktop Computers - unfastened
                                  {{1.2, 0.6}}, // frag
-                                 { {{1783.333, 0.4}}, //simple
-                                   {}, // bilevel
+                                 { {}, //simple
+                                   {{10, 100, 2500, 1000, 0.4}}, // bilevel
                                  }, // cost
                                  {{NAN, NAN}}}, //delay
                                 
                                 {209, // Servers and network Equipment
                                  {{0.8, 0.5}},
-                                 { {{40000, 0.4}}, //simple
-                                   {}, // bilevel
+                                 { {}, //simple
+                                   {{ 2, 6, 50000, 40000, 0.4}}, // bilevel
                                  }, // cost
                                  {{NAN, NAN}}}, //delay
                                 
                                 {205, // Roof Mounted Equipment
                                  {{1.6, 0.5}}, // frag
-                                 { {{196666.7, 0.6}}, // simple
-                                   {}, // bilevel
+                                 { {}, // simple
+                                   {{ 2, 8, 220000, 150000, 0.6}}, // bilevel
                                  }, // cost
                                  {{NAN, NAN}}}, // delay
                                 
                                 {204, // Hydraulic elevator
                                  {{0.4, 0.3}}, // frag
-                                 { {{56000, 0.2}}, // simple
-                                   {}, // bilevel
+                                 { {}, // simple
+                                   {{3, 5, 56000, 33600, 0.2}}, // bilevel
                                  }, // cost
                                  {{NAN, NAN}}}, // delay
                                 
