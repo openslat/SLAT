@@ -210,7 +210,7 @@ def MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, name):
     #print("MakeCompGroup: {} {} {} {} {} {}".format(edp, frag_fn, cost_fn, delay_fn, count, name))
     if (delay_fn == None):
         delay_fn = MakeSimpleLossFn([DefaultLogNormalDist()])
-    return pyslatcore.MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, name)
+    return pyslatcore.MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, str(name))
 
 ## Create a structure
 # This function wraps SLAT::MakeStructure(), which returns an empty structure.
@@ -989,19 +989,24 @@ class bilevellossfn(lossfn):
     #         debugging, warning, and error messages.
     #  @param data A list of [lower_limit, upper_limit, min_cost, max_cost, dispersion], values,
     #         one per damage state. Costs are median; dispersion is sd(ln(x)).
+    #      OR a list of BiLevelLoss objects.
     def __init__(self, id, data):
         super().__init__(id)
         self._options = None
         self._data = data
         
-        params = []
-        for d in data:
-            params.append(MakeBiLevelLoss(d[0],
-                                          d[1],
-                                          d[2],
-                                          d[3],
-                                          d[4]))
-        self._func = MakeBiLevelLossFn(params)
+        if type(data[0]) == pyslatcore.BiLevelLoss:
+            self._func = MakeBiLevelLossFn(data)
+        else:
+            params = []
+            for d in data:
+                print(d)
+                params.append(MakeBiLevelLoss(d[0],
+                                              d[1],
+                                              d[2],
+                                              d[3],
+                                              d[4]))
+                self._func = MakeBiLevelLossFn(params)
         if id != None:
             lossfn.defs[id] = self
 
