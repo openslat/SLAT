@@ -1,4 +1,4 @@
-##@file
+#@file
 # Python interface to the C++ libslat library.
 
 ##@package pyslat
@@ -178,13 +178,22 @@ def MakeFragilityFn(parameters):
     return pyslatcore.MakeFragilityFn(parameters)
 
 ## Create a loss function.
-# This function wraps the library function SLAT::MakeLossFn(). It
+# This function wraps the library function SLAT::MakeSimpleLossFn(). It
 # returns a loss function, given a list of log normal distributions.
 #
 # @param parameters A list of log normal distributions (one per damage state).
 # @todo Add a 'name' parameter.
-def MakeLossFn(parameters):
-    return pyslatcore.MakeLossFn(parameters)
+def MakeSimpleLossFn(parameters):
+    return pyslatcore.MakeSimpleLossFn(parameters)
+
+## Create a loss function.
+# This function wraps the library function SLAT::MakeBiLevelLossFn(). It
+# returns a loss function, given a list of bi-level specifications.
+#
+# @param parameters A list of bi-level specifications
+# @todo Add a 'name' parameter.
+def MakeBiLevelLossFn(parameters):
+    return pyslatcore.MakeBiLevelLossFn(parameters)
 
 ## Create a component group
 # This function wraps SLAT::MakeCompGroup(). It returns a component group,
@@ -198,9 +207,9 @@ def MakeLossFn(parameters):
 # @param count The number of components
 # @param name  The name of the component group
 def MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, name):
-    print("MakeCompGroup: {} {} {} {} {} {}".format(edp, frag_fn, cost_fn, delay_fn, count, name))
+    #print("MakeCompGroup: {} {} {} {} {} {}".format(edp, frag_fn, cost_fn, delay_fn, count, name))
     if (delay_fn == None):
-        delay_fn = MakeLossFn([DefaultLogNormalDist()])
+        delay_fn = MakeSimpleLossFn([DefaultLogNormalDist()])
     return pyslatcore.MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, name)
 
 ## Create a structure
@@ -915,29 +924,15 @@ class lossfn:
     ## @var _func
     #  The wrapped pyslatcore::LossFn
 
-    ## Consructor
+    ## Constructor
     #  @param id A string identifying the object. This will be used in 
     #         debugging, warning, and error messages.
-    #  @param options A dictionary mapping 'mu' and 'sd' to a LOGNORMAL_MU_TYPE
-    #         and a LOGNORMAL_SIGMA_TYPE. 
-    #  @param data A list of [mu, sigma] pairs (one per damage state). These
-    #         describe the onset of each damage state as a log normal 
-    #         distribution, with mu and sigma interpreted based on 'options'.
-    def __init__(self, id, options, data):
+    def __init__(self, id):
         self._id = id
-        self._options = options
-        self._data = data
-
-        params = []
-        for d in data:
-            if d[0]:
-                params.append(MakeLogNormalDist(d[0], options['mu'], d[1], options['sd']))
-            else:
-                params.append(DefaultLogNormalDist())
-        self._func = MakeLossFn(params)
+        self._func = None
         if id != None:
             lossfn.defs[id] = self
-
+            
     ## Return the lossfn object with the corresponding id.
     #  @param id The identifier provided to the constructor of a lossfn object.
     def lookup(id):
@@ -950,6 +945,66 @@ class lossfn:
     ## Return the wrapped pyslatcore::LossFn
     def function(self):
         return self._func
+
+class simplelossfn(lossfn):
+    ## Consructor
+    #  @param id A string identifying the object. This will be used in 
+    #         debugging, warning, and error messages.
+    #  @param options A dictionary mapping 'mu' and 'sd' to a LOGNORMAL_MU_TYPE
+    #         and a LOGNORMAL_SIGMA_TYPE. 
+    #  @param data A list of [mu, sigma] pairs (one per damage state). These
+    #         describe the onset of each damage state as a log normal 
+    #         distribution, with mu and sigma interpreted based on 'options'.
+    def __init__(self, id, options, data):
+        super().__init__(id)
+        self._options = options
+        self._data = data
+
+        params = []
+        for d in data:
+            if d[0]:
+                params.append(MakeLogNormalDist(d[0], options['mu'], d[1], options['sd']))
+            else:
+                params.append(DefaultLogNormalDist())
+        self._func = MakeSimpleLossFn(params)
+        if id != None:
+            lossfn.defs[id] = self
+
+
+    ## Return a string describing the im object.
+    #  Used for debugging, warning, and error messages.
+    def __str__(self):
+        return("Loss Function '{}', from {} as {}.".format(self._id, self._data, self._options))
+
+
+def MakeBiLevelLoss(lower_limit, upper_limit, cost_at_min, cost_at_max, dispersion):
+    return pyslatcore.MakeBiLevelLoss(lower_limit, upper_limit,
+                                      cost_at_min, cost_at_max, 
+                                      dispersion);
+
+    
+class bilevellossfn(lossfn):
+    ## Consructor
+    #  @param id A string identifying the object. This will be used in 
+    #         debugging, warning, and error messages.
+    #  @param data A list of [lower_limit, upper_limit, min_cost, max_cost, dispersion], values,
+    #         one per damage state. Costs are median; dispersion is sd(ln(x)).
+    def __init__(self, id, data):
+        super().__init__(id)
+        self._options = None
+        self._data = data
+        
+        params = []
+        for d in data:
+            params.append(MakeBiLevelLoss(d[0],
+                                          d[1],
+                                          d[2],
+                                          d[3],
+                                          d[4]))
+        self._func = MakeBiLevelLossFn(params)
+        if id != None:
+            lossfn.defs[id] = self
+
 
     ## Return a string describing the im object.
     #  Used for debugging, warning, and error messages.

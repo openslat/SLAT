@@ -14,7 +14,8 @@ namespace std{
     %template(VectorLogNormal) std::vector<LogNormalDist>;
     %template(ListCompGroup) std::list<CompGroup *>;
     %template(ListCompGroups) std::list<std::list<CompGroup *>>;
-}
+    %template(VectorBiLevelLoss) std::vector<BiLevelLoss *>;
+ }
 
 
 void IntegrationSettings(double tolerance, unsigned int max_evals);
@@ -128,7 +129,18 @@ public:
     int n_states();
 };
 
-LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions);
+class BiLevelLoss {
+public:
+    BiLevelLoss(int count_min, int count_max, double cost_at_min, double cost_at_max, double dispersion);
+};
+BiLevelLoss * MakeBiLevelLoss(int lower_limit,
+                              int upper_limit,
+                              double cost_at_min,
+                              double cost_at_max, 
+                              double dispersion);
+
+LossFn *MakeSimpleLossFn(std::vector<LogNormalDist *> distributions);
+LossFn *MakeBiLevelLossFn(std::vector<BiLevelLoss *> distributions);
 
 class CompGroup {
 public:
