@@ -142,11 +142,10 @@ fragfn FRAG.002 [0.005, 0.40],
 	      [0.060, 0.60]
         --mu mean_x --sd sd_ln_x;
 
-lossfn COST.002 simple [1143, 0.42],
-                     [3214, 0.40],
-		     [4900, 0.37],
-		     [4900, 0.37]
-              --mu mean_x --sd sd_ln_x;
+lossfn COST.002 bilevel [6, 12, 1143, 1143, 0.42],
+                     [6, 12, 3214, 3214, 0.40],
+		     [6, 12, 4900, 4900, 0.37],
+		     [6, 12, 4900, 4900, 0.37];
 
 lossfn DELAY.002 simple [  57.772, 0.39],
                         [ 91.2312, 0.3097],
@@ -210,38 +209,32 @@ fragfn FRAG.203 [0.55, 0.4],
                 [1.0, 0.4]
         --mu mean_x --sd sd_ln_x;
 
-lossfn COST.203 simple [46.73131, 0.4],
-                     [282.4967, 0.4]
-              --mu mean_x --sd sd_ln_x;
+lossfn COST.203 bilevel [9, 900, 58.4, 43.2, 0.4], 
+                        [9, 900, 297.9, 277.8,  0.4];
 
 # Component #204: Conveying - Hydraulic Elevator
 fragfn FRAG.204 [0.4, 0.3]
         --mu mean_x --sd sd_ln_x;
 
-lossfn COST.204 simple [56000, 0.2]
-              --mu mean_x --sd sd_ln_x;
+lossfn COST.204 bilevel [3, 5, 56000, 33600, 0.2];
 
 # Component #205: Roof-mounted Equipment
 fragfn FRAG.205 [1.6, 0.5]
         --mu mean_x --sd sd_ln_x;
 
-lossfn COST.205 simple [196666.7, 0.6]
-              --mu mean_x --sd sd_ln_x;
+lossfn COST.205 bilevel [2, 8, 220000, 150000, 0.6];
 
 # Component #208: Desktop Computers - unfastened
 fragfn FRAG.208 [1.2, 0.6]
         --mu mean_x --sd sd_ln_x;
 
-#lossfn COST.208 simple [1000, 0.4]
-lossfn COST.208 simple [1783.333, 0.4]
-              --mu mean_x --sd sd_ln_x;
+lossfn COST.208 bilevel [10, 100, 2500, 1000, 0.4];
 
 # Component #209: Servers and network Equipment
 fragfn FRAG.209 [0.8, 0.5]
         --mu mean_x --sd sd_ln_x;
 
-lossfn COST.209 simple [40000, 0.4]
-              --mu mean_x --sd sd_ln_x;
+lossfn COST.209 bilevel [2, 6, 50000, 40000, 0.4];
 
 # Component #211: Automatic sprinklers
 fragfn FRAG.211 [32, 1.4]

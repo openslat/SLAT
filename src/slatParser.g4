@@ -71,8 +71,11 @@ lognormal_parameter_array : LBRACKET lognormal_dist (COMMA lognormal_dist)* RBRA
 array_array : LBRACKET parameter_array (COMMA parameter_array)* RBRACKET;	       
 db_key :  ID;
 
-lossfn_command : LOSSFN ID simple_loss_command;
+lossfn_command : LOSSFN ID (simple_loss_command | bilevel_loss_command);
 simple_loss_command : SIMPLE scalar2_sequence lognormal_options;
+bilevel_spec : LBRACKET numerical_scalar COMMA numerical_scalar COMMA numerical_scalar COMMA numerical_scalar COMMA numerical_scalar RBRACKET;
+bilevel_spec_sequence : bilevel_spec (COMMA bilevel_spec)*; 
+bilevel_loss_command: BILEVEL bilevel_spec_sequence;
 scalar2_sequence: LBRACKET scalar2 RBRACKET (COMMA LBRACKET scalar2 RBRACKET)*;
 
 lossfn_heading : COST | DISP | UPPER_COST | LOWER_COST | LOWER_N | UPPER_N | MEAN_UNCERT | VAR_UNCERT;

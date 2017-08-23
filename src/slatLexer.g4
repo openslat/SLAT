@@ -99,6 +99,7 @@ STDFUNC_FLAG: '--stdfunc';
 MU_FLAG: '--mu';
 SD_FLAG: '--sd';
 SIMPLE: 'simple';
+BILEVEL: 'bilevel';
 COST: 'cost';
 DISP: 'disp';
 UPPER_COST: 'upper_cost';
