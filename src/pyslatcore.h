@@ -155,6 +155,7 @@ public:
     std::vector<double> bulk_SD(std::vector<double> x);
     std::string get_Name(void);
     bool AreSame(const EDP &other);
+    void replace(EDP *edp);
 public:
     std::shared_ptr<SLAT::EDP> relationship;
     // friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,

@@ -108,6 +108,7 @@ public:
     std::vector<double> bulk_SD(std::vector<double> x);
     std::string get_Name(void);
     bool AreSame(const EDP &other);
+    void replace(EDP *edp);
 };
 
 EDP *MakeEDP(IM base_wrate, ProbabilisticFn dependent_rate, std::string name);

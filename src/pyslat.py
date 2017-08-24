@@ -207,10 +207,9 @@ def MakeBiLevelLossFn(parameters):
 # @param count The number of components
 # @param name  The name of the component group
 def MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, name):
-    #print("MakeCompGroup: {} {} {} {} {} {}".format(edp, frag_fn, cost_fn, delay_fn, count, name))
     if (delay_fn == None):
         delay_fn = MakeSimpleLossFn([DefaultLogNormalDist()])
-    return pyslatcore.MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, str(name))
+    return pyslatcore.MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, name)
 
 ## Create a structure
 # This function wraps SLAT::MakeStructure(), which returns an empty structure.
@@ -566,7 +565,6 @@ class im:
         if id != None:
             old = im.lookup(id)
             if old:
-                print(old)
                 im.defs[id]._func.replace(self._func)
             im.defs[id] = self
 
@@ -698,7 +696,10 @@ class edp:
         self._func = MakeEDP(im.function(), fn.function(), "{}".format(id))
         self._plot_max = None
         if id != None:
-            edp.defs[id] = self
+            old = edp.lookup(id)
+            if old:
+                edp.defs[id]._func.replace(self._func)
+        edp.defs[id] = self
 
     ## Return the edp object with the corresponding id.
     #  @param id The identifier provided to the constructor of a edp object.
@@ -1000,7 +1001,6 @@ class bilevellossfn(lossfn):
         else:
             params = []
             for d in data:
-                print(d)
                 params.append(MakeBiLevelLoss(d[0],
                                               d[1],
                                               d[2],
@@ -1065,7 +1065,7 @@ class compgroup:
                                    frag.function(),
                                    cost and cost.function(),
                                    delay and delay.function(),
-                                   count, id)
+                                   count, str(id))
         if id != None:
             compgroup.defs[id] = self
 

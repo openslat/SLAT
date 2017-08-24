@@ -490,6 +490,11 @@ bool EDP::AreSame(const EDP &other)
     return this->relationship == other.relationship;
 }
 
+void EDP::replace(EDP *edp)
+{
+    relationship->replace(edp->relationship);
+}
+
 IM *MakeIM(DeterministicFn f)
 {
     std::shared_ptr<SLAT::IM> im = std::make_shared<SLAT::IM>(f.function);
