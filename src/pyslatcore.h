@@ -63,6 +63,25 @@ ProbabilisticFn *MakeLogNormalProbabilisticFn(const DeterministicFn &mu_function
                                               LOGNORMAL_SIGMA_TYPE sigma_type);
 
 
+class BiLevelLoss {
+public:
+    BiLevelLoss(int count_min, int count_max, double cost_at_min, double cost_at_max, double dispersion)
+    {
+        loss = std::make_shared<SLAT::BiLevelLoss>(count_min, count_max, cost_at_min, cost_at_max, dispersion);
+    }
+    BiLevelLoss(std::shared_ptr<SLAT::BiLevelLoss> loss) {
+        this->loss = loss;
+    }
+    friend LossFn *MakeBiLevelLossFn(std::vector<BiLevelLoss *> distributions);
+private:
+    std::shared_ptr<SLAT::BiLevelLoss> loss;
+};
+BiLevelLoss * MakeBiLevelLoss(int lower_limit,
+                              int upper_limit,
+                              double cost_at_min,
+                              double cost_at_max, 
+                              double dispersion);
+
 class LogNormalDist {
 public:
     LogNormalDist(std::shared_ptr<SLAT::LogNormalDist> dist);
@@ -79,7 +98,8 @@ public:
 private:
     std::shared_ptr<SLAT::LogNormalDist> dist;
     friend FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions);
-    friend LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions);
+    friend LossFn *MakeSimpleLossFn(std::vector<LogNormalDist *> distributions);
+
     friend class Structure;
     friend class IM;
     friend LogNormalDist AddDistributions(std::vector<LogNormalDist> dists);
@@ -88,6 +108,7 @@ private:
 LogNormalDist *MakeLogNormalDist(double mu, LOGNORMAL_MU_TYPE mu_type,
                                  double sigma, LOGNORMAL_SIGMA_TYPE sigma_type);
 LogNormalDist *MakeLogNormalDist(void);
+LossFn *MakeBiLevelLossFn(std::vector<BiLevelLoss *> distributions);
 
 
 
@@ -107,6 +128,7 @@ public:
     double DemolitionRate(void);
     double pRepair(double im);
     std::vector<double> pRepair(std::vector<double> im);
+    void replace(IM *im);
 public:
     std::shared_ptr<SLAT::IM> relationship;
         
@@ -126,13 +148,14 @@ public:
     double Median(double x);
     double SD_ln(double x);
     double SD(double x);
-    std::vector<double> Mean(std::vector<double> x);
-    std::vector<double> MeanLn(std::vector<double> x);
-    std::vector<double> Median(std::vector<double> x);
-    std::vector<double> SD_ln(std::vector<double> x);
-    std::vector<double> SD(std::vector<double> x);
+    std::vector<double> bulk_Mean(std::vector<double> x);
+    std::vector<double> bulk_MeanLn(std::vector<double> x);
+    std::vector<double> bulk_Median(std::vector<double> x);
+    std::vector<double> bulk_SD_ln(std::vector<double> x);
+    std::vector<double> bulk_SD(std::vector<double> x);
     std::string get_Name(void);
     bool AreSame(const EDP &other);
+    void replace(EDP *edp);
 public:
     std::shared_ptr<SLAT::EDP> relationship;
     // friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,

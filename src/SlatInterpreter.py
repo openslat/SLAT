@@ -299,11 +299,18 @@ class SlatInterpreter(slatParserListener):
 
     ## Exit a parse tree produced by slatParser#lossfn_command.
     def exitLossfn_command(self, ctx:slatParser.Lossfn_commandContext):
+        print("--> exitLossfn_command()")
         id = ctx.ID().getText()
+        print(ctx)
         if ctx.simple_loss_command():
             options = self._stack.pop()
             data = self._stack.pop()
-            pyslat.lossfn(id, options, data)
+            print(options)
+            print(data)
+            pyslat.simplelossfn(id, options, data)
+        elif ctx.bilevel_loss_command():
+            data = self._stack.pop()
+            pyslat.bilevellossfn(id, data)
         else:
             raise ValueError("Unhanlded type of lossfn")
 
@@ -313,6 +320,24 @@ class SlatInterpreter(slatParserListener):
 
     ## Exit a parse tree produced by slatParser#scalar2_sequence.
     def exitScalar2_sequence(self, ctx:slatParser.Scalar2_sequenceContext):
+        values = self._pop_stack()
+        self._stack.append(values)
+
+    ## Enter a parse tree produced by slatParser#bilevel_spec.
+    def enterBilevel_spec(self, ctx:slatParser.Bilevel_specContext):
+        self._push_stack()
+
+    ## Exit a parse tree produced by slatParser#bilevel_spec.
+    def exitBilevel_spec(self, ctx:slatParser.Bilevel_specContext):
+        values = self._pop_stack()
+        self._stack.append(values)
+
+    ## Enter a parse tree produced by slatParser#bilevel_sequence.
+    def enterBilevel_spec_sequence(self, ctx:slatParser.Bilevel_spec_sequenceContext):
+        self._push_stack()
+
+    ## Exit a parse tree produced by slatParser#bilevel_sequence.
+    def exitBilevel_spec_sequence(self, ctx:slatParser.Bilevel_spec_sequenceContext):
         values = self._pop_stack()
         self._stack.append(values)
 

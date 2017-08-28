@@ -151,7 +151,7 @@ namespace SLAT {
                  * Lock to prevent conflicts if different threads try to use
                  * this cache at the same time.
                  */
-                omp_set_lock(&lock); 
+                omp_set_lock(&lock);
                 total_calls++;  // For development diagnostics
                 
                 /*
@@ -275,8 +275,9 @@ namespace SLAT {
                      *  function.
                      */
                     omp_unset_lock(&lock);
+                    T result = func(v);
                     //Context::PopText();
-                    return func(v);
+                    return result;
                 }
             }
 

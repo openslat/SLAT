@@ -50,7 +50,7 @@ std::shared_ptr<CompGroup> CreateCG(double a, double count)
                                                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0230, 0.4),
                                                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0440, 0.4),
                                                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.0564, 0.4)}));
-    std::shared_ptr<LossFn> lossFn(new LossFn(
+    std::shared_ptr<LossFn> lossFn(new SimpleLossFn(
                                        { LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
                                                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),

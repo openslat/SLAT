@@ -10,7 +10,7 @@
  * ©2015 Canterbury University
  */
 #include <sstream>
-#include <math.h>
+#include <cmath>
 #include <vector>
 #include <functional>
 #include <gsl/gsl_deriv.h>

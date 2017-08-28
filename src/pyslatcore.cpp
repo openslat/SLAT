@@ -2,6 +2,7 @@
 #include "maq.h"
 #include "pyslatcore.h"
 #include "context.h"
+#include "loss_functions.h"
 #include <iostream>
 #include <set>
 #include <boost/log/sinks/text_ostream_backend.hpp>
@@ -145,8 +146,8 @@ DeterministicFn *factory(FUNCTION_TYPE t, std::vector<double> params)
     switch (t) {
     case PLC:
     {
-        double b = params[0];
-        double a = params[1];
+        double a = params[0];
+        double b = params[1];
         result = std::make_shared<SLAT::PowerLawParametricCurve>(a, b);
         break;
     }
@@ -370,6 +371,11 @@ std::vector<double> IM::pRepair(std::vector<double> im)
     return relationship->pRepair(im);
 }
 
+void IM::replace(IM *im)
+{
+    relationship->replace(im->relationship);
+}
+
 EDP::EDP() : relationship(NULL)
 {
 }
@@ -424,7 +430,7 @@ double EDP::SD(double x)
     return relationship->SD(x);
 }
 
-std::vector<double> EDP::Mean(std::vector<double> x)
+std::vector<double> EDP::bulk_Mean(std::vector<double> x)
 {
     std::vector<double> result(x.size());
 #pragma omp parallel for
@@ -434,7 +440,7 @@ std::vector<double> EDP::Mean(std::vector<double> x)
     return result;
 }
 
-std::vector<double> EDP::MeanLn(std::vector<double> x)
+std::vector<double> EDP::bulk_MeanLn(std::vector<double> x)
 {
     std::vector<double> result(x.size());
 #pragma omp parallel for
@@ -444,7 +450,7 @@ std::vector<double> EDP::MeanLn(std::vector<double> x)
     return result;
 }
 
-std::vector<double> EDP::Median(std::vector<double> x)
+std::vector<double> EDP::bulk_Median(std::vector<double> x)
 {
     std::vector<double> result(x.size());
 #pragma omp parallel for
@@ -454,7 +460,7 @@ std::vector<double> EDP::Median(std::vector<double> x)
     return result;
 }
 
-std::vector<double> EDP::SD_ln(std::vector<double> x)
+std::vector<double> EDP::bulk_SD_ln(std::vector<double> x)
 {
     std::vector<double> result(x.size());
 #pragma omp parallel for
@@ -464,7 +470,7 @@ std::vector<double> EDP::SD_ln(std::vector<double> x)
     return result;
 }
 
-std::vector<double> EDP::SD(std::vector<double> x)
+std::vector<double> EDP::bulk_SD(std::vector<double> x)
 {
     std::vector<double> result(x.size());
 #pragma omp parallel for
@@ -482,6 +488,11 @@ std::string EDP::get_Name(void)
 bool EDP::AreSame(const EDP &other)
 {
     return this->relationship == other.relationship;
+}
+
+void EDP::replace(EDP *edp)
+{
+    relationship->replace(edp->relationship);
 }
 
 IM *MakeIM(DeterministicFn f)
@@ -577,15 +588,33 @@ int LossFn::n_states()
 };
 
 
-LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions)
+LossFn *MakeSimpleLossFn(std::vector<LogNormalDist *> distributions)
 {
     std::vector<SLAT::LogNormalDist> slat_distributions(distributions.size());
     for (size_t i=0; i < distributions.size(); i++) {
         slat_distributions[i] = *(distributions[i]->dist);
     };
-    return new LossFn(std::make_shared<SLAT::LossFn>(slat_distributions));
+    return new LossFn(std::make_shared<SLAT::SimpleLossFn>(slat_distributions));
 }
 
+BiLevelLoss * MakeBiLevelLoss(int lower_limit, 
+                              int upper_limit, 
+                              double cost_at_min,
+                              double cost_at_max, 
+                              double dispersion)
+{
+    std::shared_ptr<SLAT::BiLevelLoss> temp = std::make_shared<SLAT::BiLevelLoss>(lower_limit, upper_limit, cost_at_min, cost_at_max, dispersion);
+    return new BiLevelLoss(temp);
+}
+
+LossFn *MakeBiLevelLossFn(std::vector<BiLevelLoss *> losses)
+{
+    std::vector<std::shared_ptr<SLAT::BiLevelLoss>> slat_losses(losses.size());
+    for (size_t i=0; i < losses.size(); i++) {
+        slat_losses[i] = losses[i]->loss;
+    };
+    return new LossFn(std::make_shared<SLAT::BiLevelLossFn>(slat_losses));
+}
 
 CompGroup::CompGroup(std::shared_ptr<SLAT::CompGroup> group)
 {

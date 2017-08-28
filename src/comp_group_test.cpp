@@ -67,13 +67,13 @@ struct fixture {
                         from_mean_X_and_sigma_lnX(0.0230, 0.4),
                         from_mean_X_and_sigma_lnX(0.0440, 0.4),
                         from_mean_X_and_sigma_lnX(0.0564, 0.4)}));
-        std::shared_ptr<LossFn> costFn(new LossFn( {
+        std::shared_ptr<LossFn> costFn(new SimpleLossFn( {
                     from_mean_X_and_sigma_lnX(0.03, 0.4),
                         from_mean_X_and_sigma_lnX(0.08, 0.4),
                         from_mean_X_and_sigma_lnX(0.25, 0.4),
                         from_mean_X_and_sigma_lnX(1.00, 0.4)}));
     
-        std::shared_ptr<LossFn> delayFn(new LossFn( {
+        std::shared_ptr<LossFn> delayFn(new SimpleLossFn( {
                     from_mean_X_and_sigma_lnX(1.50, 0.20),
                         from_mean_X_and_sigma_lnX(3.75, 0.25), 
                         from_mean_X_and_sigma_lnX(10.0, 0.30),

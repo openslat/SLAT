@@ -176,12 +176,18 @@ namespace SLAT {
         return LogNormalDist_from_mean_X_and_sigma_X(new_mean_X, sqrt(new_var_X));
     }
 
-    LogNormalDist LogNormalDist::WeighDistribution(double weight)
+    LogNormalDist LogNormalDist::ScaleDistributionByProbability(double probability)
     {
-        double new_mean_X = weight * get_mean_X();
-        double new_sigma_X = sqrt(weight * get_sigma_X() * get_sigma_X());
-
-        return LogNormalDist_from_mean_X_and_sigma_X(new_mean_X, new_sigma_X);
+        return LogNormalDist_from_mean_X_and_sigma_X(
+            probability * get_mean_X(),
+            get_sigma_X());
+    }
+    
+    LogNormalDist LogNormalDist::ScaleDistributionByNumComponents(double count)
+    {
+        return LogNormalDist_from_mean_X_and_sigma_lnX(
+            count * get_mean_X(), 
+            get_sigma_lnX());
     }
 
     LogNormalDist LogNormalDist::AddDistributions(

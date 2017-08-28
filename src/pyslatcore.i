@@ -14,7 +14,8 @@ namespace std{
     %template(VectorLogNormal) std::vector<LogNormalDist>;
     %template(ListCompGroup) std::list<CompGroup *>;
     %template(ListCompGroups) std::list<std::list<CompGroup *>>;
-}
+    %template(VectorBiLevelLoss) std::vector<BiLevelLoss *>;
+ }
 
 
 void IntegrationSettings(double tolerance, unsigned int max_evals);
@@ -84,7 +85,7 @@ public:
     double DemolitionRate(void);
     double pRepair(double im);
     std::vector<double> pRepair(std::vector<double> im);
-        
+    void replace(IM *im);
 };
 
 IM *MakeIM(DeterministicFn f);
@@ -100,13 +101,14 @@ public:
     double Median(double x);
     double SD_ln(double x);
     double SD(double x);
-    std::vector<double> Mean(std::vector<double> x);
-    std::vector<double> MeanLn(std::vector<double> x);
-    std::vector<double> Median(std::vector<double> x);
-    std::vector<double> SD_ln(std::vector<double> x);
-    std::vector<double> SD(std::vector<double> x);
+    std::vector<double> bulk_Mean(std::vector<double> x);
+    std::vector<double> bulk_MeanLn(std::vector<double> x);
+    std::vector<double> bulk_Median(std::vector<double> x);
+    std::vector<double> bulk_SD_ln(std::vector<double> x);
+    std::vector<double> bulk_SD(std::vector<double> x);
     std::string get_Name(void);
     bool AreSame(const EDP &other);
+    void replace(EDP *edp);
 };
 
 EDP *MakeEDP(IM base_wrate, ProbabilisticFn dependent_rate, std::string name);
@@ -128,7 +130,18 @@ public:
     int n_states();
 };
 
-LossFn *MakeLossFn(std::vector<LogNormalDist *> distributions);
+class BiLevelLoss {
+public:
+    BiLevelLoss(int count_min, int count_max, double cost_at_min, double cost_at_max, double dispersion);
+};
+BiLevelLoss * MakeBiLevelLoss(int lower_limit,
+                              int upper_limit,
+                              double cost_at_min,
+                              double cost_at_max, 
+                              double dispersion);
+
+LossFn *MakeSimpleLossFn(std::vector<LogNormalDist *> distributions);
+LossFn *MakeBiLevelLossFn(std::vector<BiLevelLoss *> distributions);
 
 class CompGroup {
 public:

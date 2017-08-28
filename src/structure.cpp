@@ -121,16 +121,16 @@ namespace SLAT {
         LogNormalDist cost_demo = demolition_cost;
         double p = this->im->pCollapse(im);
 
-        return std::make_pair(cost_nc.WeighDistribution(1.0 - p),
-                              cost_c.WeighDistribution(p));
+        return std::make_pair(cost_nc.ScaleDistributionByProbability(1.0 - p),
+                              cost_c.ScaleDistributionByProbability(p));
     }
 
     Structure::COSTS Structure::CostsByFate(double im)
     {
         COSTS result;
-        result.repair = CostNC(im).WeighDistribution(this->im->pRepair(im));
-        result.demolition = demolition_cost.WeighDistribution(this->im->pDemolition(im));
-        result.collapse = rebuild_cost.WeighDistribution(this->im->pCollapse(im));
+        result.repair = CostNC(im).ScaleDistributionByProbability(this->im->pRepair(im));
+        result.demolition = demolition_cost.ScaleDistributionByProbability(this->im->pDemolition(im));
+        result.collapse = rebuild_cost.ScaleDistributionByProbability(this->im->pCollapse(im));
         return result;
     }
 

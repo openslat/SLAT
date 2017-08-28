@@ -99,6 +99,7 @@ STDFUNC_FLAG: '--stdfunc';
 MU_FLAG: '--mu';
 SD_FLAG: '--sd';
 SIMPLE: 'simple';
+BILEVEL: 'bilevel';
 COST: 'cost';
 DISP: 'disp';
 UPPER_COST: 'upper_cost';
@@ -133,7 +134,7 @@ fragment
 SINGLE_QUOTE : '\'';
 
 fragment
-SQ_UNESCAPED_CHAR : ~[\\\'];
+SQ_UNESCAPED_CHAR : ~['];
 
 fragment
 SQ_ESCAPED_CHAR : '\\\'' | '\\\\';

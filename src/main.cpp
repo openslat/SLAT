@@ -4,6 +4,7 @@
 #include "relationships.h"
 #include "fragility.h"
 #include "lognormaldist.h"
+
 #include "loss_functions.h"
 #include "comp_group.h"
 #include "structure.h"
@@ -178,7 +179,7 @@ int main(int argc, char **argv)
         BOOST_LOG(logger) << "DS-EDP table written.";
     }
 
-    std::shared_ptr<LossFn> costFn = std::make_shared<LossFn>(
+    std::shared_ptr<LossFn> costFn = std::make_shared<SimpleLossFn>(
         std::vector<LogNormalDist>({ LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.03, 0.4),
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.08, 0.4),
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.25, 0.4),
