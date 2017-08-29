@@ -642,3 +642,26 @@ BOOST_FIXTURE_TEST_CASE(comp_group_misc_tests, fixture)
 }
 
 
+/**
+ * Miscellaneous tests for the comp_group class.
+ *
+ * @todo Split this up? Document each test.
+ * @todo Use three component groups as in earlier tests?
+ */
+BOOST_FIXTURE_TEST_CASE(comp_group_frag_reg_test, fixture)
+{
+    double value = component_group->E_annual_cost();
+    BOOST_CHECK_CLOSE(component_group->E_annual_cost(), 6.76E-4, 0.1);
+    std::shared_ptr<FragilityFn> fragFn(
+        new FragilityFn( {
+                from_mean_X_and_sigma_lnX(0.062, 0.4),
+                    from_mean_X_and_sigma_lnX(0.230, 0.4),
+                    from_mean_X_and_sigma_lnX(0.440, 0.4),
+                    from_mean_X_and_sigma_lnX(0.564, 0.4)}));
+    component_group->FragFn()->replace(fragFn);
+
+    /*
+     * We've changed the fragility function, so the result should be different:
+     */
+    BOOST_CHECK(component_group->E_annual_cost() != value);
+}

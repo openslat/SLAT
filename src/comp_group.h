@@ -65,6 +65,7 @@ namespace SLAT {
         ~CompGroup()
         {
             edp->remove_callbacks(edp_callback_id);
+            frag_fn->remove_callbacks(frag_fn_callback_id);
         };
 
         /*
@@ -248,6 +249,12 @@ namespace SLAT {
          * EDP is changed or replaced, clear the caches.
          */
         int edp_callback_id;
+
+        /**
+         * ID returned when installing a callback for the fragility function. When the
+         * fragility function is changed or replaced, clear the caches.
+         */
+        int frag_fn_callback_id;
 
         /*
          * Functions used to calculate cached values 

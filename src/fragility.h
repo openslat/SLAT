@@ -13,11 +13,12 @@
 #define _FRAGILITY_H_
 
 #include "lognormaldist.h"
+#include "replaceable.h"
 #include <vector>
 #include <omp.h>
 
 namespace SLAT {
-    class FragilityFn {
+    class FragilityFn : public Replaceable<FragilityFn> {
     public:
         FragilityFn(std::vector<LogNormalDist> distributions);
         

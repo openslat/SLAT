@@ -98,6 +98,33 @@ namespace SLAT {
                 this->Rate.ClearCache();
                 this->edp = new_edp;
             });
+        /*
+         * When the fragility changes or is replaced, clear the cached values.
+         */
+        frag_fn_callback_id = frag_fn->add_callbacks(
+            [this] (void) {
+                this->E_cost_IM.ClearCache();
+                this->SD_ln_cost_IM.ClearCache();
+                this->E_delay_IM.ClearCache();
+                this->SD_ln_delay_IM.ClearCache();
+                this->E_annual_cost.ClearCache();
+                this->lambda_cost.ClearCache();
+                this->cost_EDP_dist.ClearCache();
+                this->delay_EDP_dist.ClearCache();
+                this->Rate.ClearCache();
+            },
+            [this] (std::shared_ptr<FragilityFn> new_frag_fn) {
+                this->E_cost_IM.ClearCache();
+                this->SD_ln_cost_IM.ClearCache();
+                this->E_delay_IM.ClearCache();
+                this->SD_ln_delay_IM.ClearCache();
+                this->E_annual_cost.ClearCache();
+                this->lambda_cost.ClearCache();
+                this->cost_EDP_dist.ClearCache();
+                this->delay_EDP_dist.ClearCache();
+                this->Rate.ClearCache();
+                this->frag_fn = new_frag_fn;
+            });
     };
 
     double CompGroup::E_cost_EDP(double edp)
