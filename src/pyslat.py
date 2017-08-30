@@ -831,6 +831,9 @@ class fragfn:
         self._id = id
         self._func = None
         if id != None:
+            old = fragfn.lookup(id)
+            if old:
+                fragfn.defs[id]._func.replace(self._func)
             fragfn.defs[id] = self
 
     ## Return the fragfn object with the corresponding id.
