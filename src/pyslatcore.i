@@ -120,6 +120,7 @@ public:
     std::vector<double> pHighest(double edp);
     int n_states();
     bool AreSame(const FragilityFn &other);
+    void replace(FragilityFn *fragfn);
 };
 
 FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions);
@@ -128,6 +129,7 @@ class LossFn {
 public:
     LossFn(std::shared_ptr<SLAT::LossFn> function);
     int n_states();
+    void replace(LossFn *lossfn);
 };
 
 class BiLevelLoss {

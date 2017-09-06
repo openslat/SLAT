@@ -665,3 +665,47 @@ BOOST_FIXTURE_TEST_CASE(comp_group_frag_reg_test, fixture)
      */
     BOOST_CHECK(component_group->E_annual_cost() != value);
 }
+
+BOOST_FIXTURE_TEST_CASE(comp_group_cost_rep_test, fixture)
+{
+    double cost = component_group->E_annual_cost();
+    double delay = component_group->E_delay_IM(0.5);
+    
+    BOOST_CHECK_CLOSE(cost, 6.76E-4, 0.1);
+    BOOST_CHECK_CLOSE(delay, 8.01, 0.1);
+    
+    std::shared_ptr<LossFn> costFn(new SimpleLossFn( {
+                from_mean_X_and_sigma_lnX(0.3, 0.4),
+                    from_mean_X_and_sigma_lnX(0.8, 0.4),
+                    from_mean_X_and_sigma_lnX(2.5, 0.4),
+                    from_mean_X_and_sigma_lnX(10.0, 0.4)}));
+    component_group->CostFn()->replace(costFn);
+
+    /*
+     * We've changed the cost function, so the result should be different:
+     */
+    BOOST_CHECK(component_group->E_annual_cost() != cost);
+    BOOST_CHECK(component_group->E_delay_IM(0.5) == delay);
+}
+
+BOOST_FIXTURE_TEST_CASE(comp_group_delay_rep_test, fixture)
+{
+    double cost = component_group->E_annual_cost();
+    double delay = component_group->E_delay_IM(0.5);
+    
+    BOOST_CHECK_CLOSE(cost, 6.76E-4, 0.1);
+    BOOST_CHECK_CLOSE(delay, 8.01, 0.1);
+    
+    std::shared_ptr<LossFn> delayFn(new SimpleLossFn( {
+                from_mean_X_and_sigma_lnX(0.150, 0.20),
+                    from_mean_X_and_sigma_lnX(0.375, 0.25), 
+                    from_mean_X_and_sigma_lnX(1.00, 0.30),
+                    from_mean_X_and_sigma_lnX(2.30, 0.35)}));
+    component_group->DelayFn()->replace(delayFn);
+
+    /*
+     * We've changed the cost function, so the result should be different:
+     */
+    BOOST_CHECK(component_group->E_annual_cost() == cost);
+    BOOST_CHECK(component_group->E_delay_IM(0.5) != delay);
+}

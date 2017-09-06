@@ -568,6 +568,11 @@ std::vector<double> FragilityFn::pHighest(double edp)
     return fragility->pHighest(edp);
 }
 
+void FragilityFn::replace(FragilityFn *frag)
+{
+    fragility->replace(frag->fragility);
+}
+
 FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions)
 {
     std::vector<SLAT::LogNormalDist> slat_distributions(distributions.size());
@@ -587,6 +592,11 @@ int LossFn::n_states()
     return loss->n_states(); 
 };
 
+
+void LossFn::replace(LossFn *lossfn)
+{
+    loss->replace(lossfn->loss);
+}
 
 LossFn *MakeSimpleLossFn(std::vector<LogNormalDist *> distributions)
 {

@@ -171,6 +171,7 @@ public:
     std::vector<double> pHighest(double edp);
     int n_states();
     bool AreSame(const FragilityFn &other);
+    void replace(FragilityFn *frag);
 private:
     std::shared_ptr<SLAT::FragilityFn> fragility;
     friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
@@ -184,6 +185,7 @@ class LossFn {
 public:
     LossFn(std::shared_ptr<SLAT::LossFn> function);
     int n_states();
+    void replace(LossFn *lossfn);
 private:
     std::shared_ptr<SLAT::LossFn> loss;
     friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,

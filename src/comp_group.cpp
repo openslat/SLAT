@@ -125,6 +125,49 @@ namespace SLAT {
                 this->Rate.ClearCache();
                 this->frag_fn = new_frag_fn;
             });
+        /*
+         * When the cost changes or is replaced, clear the cached values.
+         */
+        if (cost_fn) {
+            cost_fn_callback_id = cost_fn->add_callbacks(
+                [this] (void) {
+                    this->E_cost_IM.ClearCache();
+                    this->SD_ln_cost_IM.ClearCache();
+                    this->E_annual_cost.ClearCache();
+                    this->lambda_cost.ClearCache();
+                    this->cost_EDP_dist.ClearCache();
+                    this->delay_EDP_dist.ClearCache();
+                    this->Rate.ClearCache();
+                },
+                [this] (std::shared_ptr<LossFn> new_cost_fn) {
+                    this->E_cost_IM.ClearCache();
+                    this->SD_ln_cost_IM.ClearCache();
+                    this->E_annual_cost.ClearCache();
+                    this->lambda_cost.ClearCache();
+                    this->cost_EDP_dist.ClearCache();
+                    this->delay_EDP_dist.ClearCache();
+                    this->Rate.ClearCache();
+                    this->cost_fn = new_cost_fn;
+                });
+        }
+
+        /*
+         * When the delay changes or is replaced, clear the cached values.
+         */
+        if (delay_fn) {
+            delay_fn_callback_id = delay_fn->add_callbacks(
+                [this] (void) {
+                    this->E_delay_IM.ClearCache();
+                    this->SD_ln_delay_IM.ClearCache();
+                    this->delay_EDP_dist.ClearCache();
+                },
+                [this] (std::shared_ptr<LossFn> new_delay_fn) {
+                    this->E_delay_IM.ClearCache();
+                    this->SD_ln_delay_IM.ClearCache();
+                    this->delay_EDP_dist.ClearCache();
+                    this->delay_fn = new_delay_fn;
+                });
+        }
     };
 
     double CompGroup::E_cost_EDP(double edp)
@@ -431,6 +474,24 @@ namespace SLAT {
     std::shared_ptr<FragilityFn> CompGroup::FragFn(void)
     {
         return frag_fn;
+    }
+
+    /**
+     * Retrieve the cost function of the component group.
+     * @return The cost_fn.
+     */
+    std::shared_ptr<LossFn> CompGroup::CostFn(void)
+    {
+        return cost_fn;
+    }
+        
+    /**
+     * Retrieve the delay function of the component group.
+     * @return The delay_fn.
+     */
+    std::shared_ptr<LossFn> CompGroup::DelayFn(void)
+    {
+        return delay_fn;
     }
 
     double CompGroup::pDS_IM_calc(std::pair<int, double> params)

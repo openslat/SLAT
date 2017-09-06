@@ -64,8 +64,17 @@ namespace SLAT {
          */
         ~CompGroup()
         {
+            
             edp->remove_callbacks(edp_callback_id);
             frag_fn->remove_callbacks(frag_fn_callback_id);
+
+            if (cost_fn) {
+                cost_fn->remove_callbacks(cost_fn_callback_id);
+            }
+
+            if (delay_fn) {
+                delay_fn->remove_callbacks(delay_fn_callback_id);
+            }
         };
 
         /*
@@ -181,6 +190,18 @@ namespace SLAT {
         std::shared_ptr<FragilityFn> FragFn(void);
 
         /**
+         * Retrieve the cost function of the component group.
+         * @return The cost_fn.
+         */
+        std::shared_ptr<LossFn> CostFn(void);
+        
+        /**
+         * Retrieve the delay function of the component group.
+         * @return The delay_fn.
+         */
+        std::shared_ptr<LossFn> DelayFn(void);
+        
+        /**
          * Retrieve eh intensity measure that affects the component group.
          * @return The IM.
          */
@@ -256,6 +277,18 @@ namespace SLAT {
          */
         int frag_fn_callback_id;
 
+        /**
+         * ID returned when installing a callback for the cost function. When the
+         * cost function is changed or replaced, clear the caches.
+         */
+        int cost_fn_callback_id;
+
+        /**
+         * ID returned when installing a callback for the delay function. When the
+         * delay function is changed or replaced, clear the caches.
+         */
+        int delay_fn_callback_id;
+        
         /*
          * Functions used to calculate cached values 
          */

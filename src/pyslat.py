@@ -934,7 +934,10 @@ class lossfn:
     def __init__(self, id):
         self._id = id
         self._func = None
-        if id != None:
+        if id != None: 
+            old = lossfn.lookup(id)
+            if old:
+                lossfn.defs[id]._func.replace(self._func)
             lossfn.defs[id] = self
             
     ## Return the lossfn object with the corresponding id.
@@ -972,6 +975,12 @@ class simplelossfn(lossfn):
                 params.append(DefaultLogNormalDist())
         self._func = MakeSimpleLossFn(params)
         if id != None:
+            old = lossfn.lookup(id)
+            if old:
+                print(dir(old))
+                print(type(old._func))
+                print(dir(old._func))
+                lossfn.defs[id]._func.replace(self._func)
             lossfn.defs[id] = self
 
 
@@ -1011,6 +1020,9 @@ class bilevellossfn(lossfn):
                                               d[4]))
                 self._func = MakeBiLevelLossFn(params)
         if id != None:
+            old = lossfn.lookup(id)
+            if old:
+                lossfn.defs[id]._func.replace(self._func)
             lossfn.defs[id] = self
 
 

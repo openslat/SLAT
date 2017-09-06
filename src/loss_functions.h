@@ -14,11 +14,12 @@
 
 #include "lognormaldist.h"
 #include "caching.h"
+#include "replaceable.h"
 #include <memory>
 #include <vector>
 
 namespace SLAT {
-    class LossFn {
+    class LossFn : public Replaceable<LossFn> {
     protected:
         LossFn() {};
     public:
