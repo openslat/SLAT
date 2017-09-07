@@ -309,3 +309,50 @@ BOOST_AUTO_TEST_CASE(structure_one_cg)
     }
     
 }
+
+/**
+ * Add component groups one by one; make sure results change each time (cache is cleared). 
+ * Replace a component group, and make sure the result changes.
+ */
+BOOST_AUTO_TEST_CASE(structure_cg_replace)
+{
+    Structure s("one cg");
+    
+    std::shared_ptr<IM> im = CreateIM();
+
+
+    s.setRebuildCost(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(20, 0.35));
+    CreateIM()->SetCollapse(LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(0.9, 0.470));
+    BOOST_CHECK(std::isnan(s.AnnualCost().get_mean_X()));
+    BOOST_CHECK(std::isnan(s.AnnualCost().get_sigma_lnX()));
+    //std::cout << "s: " << s.AnnualCost() << std::endl;
+
+    std::shared_ptr<CompGroup> cg1 = CreateCG(0.1, 1);
+    s.AddCompGroup(cg1);
+    BOOST_CHECK_CLOSE(s.AnnualCost().get_mean_X(), 0.00438, 0.1);
+    BOOST_CHECK_CLOSE(s.AnnualCost().get_sigma_lnX(), 2.90, 0.1);
+    //std::cout << "add cg1: " << s.AnnualCost() << std::endl;
+    
+    std::shared_ptr<CompGroup> cg2 = CreateCG(0.05, 5);
+    s.AddCompGroup(cg2);
+    BOOST_CHECK_CLOSE(s.AnnualCost().get_mean_X(), 0.00522, 0.1);
+    BOOST_CHECK_CLOSE(s.AnnualCost().get_sigma_lnX(), 2.84, 0.1);
+    //std::cout << "add cg2: " << s.AnnualCost() << std::endl;
+
+    std::shared_ptr<CompGroup> cg3 = CreateCG(0.03, 10);
+    s.AddCompGroup(cg3);
+    BOOST_CHECK_CLOSE(s.AnnualCost().get_mean_X(), 0.00582, 0.1);
+    BOOST_CHECK_CLOSE(s.AnnualCost().get_sigma_lnX(), 2.804, 0.1);
+    //std::cout << "add cg3: " << s.AnnualCost() << std::endl;
+    
+    std::shared_ptr<CompGroup> cg4 = CreateCG(0.01, 50);
+    cg3->replace(cg4);
+    BOOST_CHECK_CLOSE(s.AnnualCost().get_mean_X(), 0.00545, 0.1);
+    BOOST_CHECK_CLOSE(s.AnnualCost().get_sigma_lnX(), 2.826, 0.1);
+    //std::cout << "replace cg3: " << s.AnnualCost() << std::endl;
+
+    Caching::Clear_Caches();
+    BOOST_CHECK_CLOSE(s.AnnualCost().get_mean_X(), 0.00545, 0.1);
+    BOOST_CHECK_CLOSE(s.AnnualCost().get_sigma_lnX(), 2.826, 0.1);
+    //std::cout << "clear cache: " << s.AnnualCost() << std::endl;
+}

@@ -39,10 +39,10 @@ namespace SLAT {
         Caching::CachedValue<LogNormalDist> AnnualCost;
         std::pair<LogNormalDist, LogNormalDist> DeaggregatedCost(double im);
         void setRebuildCost(LogNormalDist dist) { rebuild_cost = dist; };
+        const std::vector<std::shared_ptr<CompGroup>> Components(void);
         LogNormalDist getRebuildCost(void) { return rebuild_cost; };
         void setDemolitionCost(LogNormalDist dist) { demolition_cost = dist; };
         LogNormalDist getDemolitionCost(void) { return demolition_cost; };
-        const std::vector<std::shared_ptr<CompGroup>> Components(void);
         std::string get_Name(void) const { return name; };
 
         double pdf(double im);
@@ -50,10 +50,12 @@ namespace SLAT {
         std::string name;
         LogNormalDist calc_AnnualCost(void);
         LogNormalDist CostNC(double im);
-        std::vector<std::shared_ptr<CompGroup>> components;
+        typedef std::pair<std::shared_ptr<CompGroup>, int> CG_ENTRY;
+        std::vector<std::shared_ptr<CG_ENTRY>> components;
         std::shared_ptr<IM> im;
         LogNormalDist rebuild_cost;
         LogNormalDist demolition_cost;
+        void Clear_Cache(void);
     };
 }
 #endif

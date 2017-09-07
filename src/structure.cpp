@@ -27,7 +27,11 @@ namespace SLAT {
     
     const std::vector<std::shared_ptr<CompGroup>> Structure::Components(void)
     {
-        return components;
+        std::vector<std::shared_ptr<CompGroup>> result(components.size());
+        for (size_t i=0; i < components.size(); i++) {
+            result[i] = components[i]->first;
+        }        
+        return result;
     };
     
     double Structure::pdf(double im) 
@@ -47,7 +51,17 @@ namespace SLAT {
         if (cg->getIM() != im) {
             throw std::invalid_argument("WRONG IM");
         }
-        components.push_back(cg);
+        std::shared_ptr<CG_ENTRY> entry = std::make_shared<CG_ENTRY>(cg, 0);
+        entry->second = cg->add_callbacks(
+            [this] (void) {
+                this->Clear_Cache();
+            },
+            [this, entry] (std::shared_ptr<CompGroup> new_cg) {
+                this->Clear_Cache();
+                entry->first = new_cg;
+            });
+        components.push_back(entry);
+        this->Clear_Cache();
     }
     
     LogNormalDist Structure::CostNC(double im)
@@ -56,9 +70,9 @@ namespace SLAT {
         int num_components = 0;
         for_each(components.begin(),
                  components.end(), 
-                 [&num_components, &dists, im] (std::shared_ptr<CompGroup> cg) {
+                 [&num_components, &dists, im] (std::shared_ptr<CG_ENTRY> cg_entry) {
                      num_components++;
-                     LogNormalDist dist = cg->CostDist_IM(im);
+                     LogNormalDist dist = cg_entry->first->CostDist_IM(im);
                      dists.push_back(dist);
                  });
         return LogNormalDist::AddDistributions(dists);
@@ -151,38 +165,45 @@ namespace SLAT {
                 o << "Structure::calc_AnnualCost() [" << this->name << "]";
             });
         double mu=NAN, beta=NAN;
+        if (components.size() > 0) {
 #pragma omp parallel sections
-        {
-#pragma omp section
             {
-                Integration::MAQ_RESULT result;
-                result = Integration::MAQ(
-                    [this] (double im) -> double {
-                        double cost = this->Cost(im, true).get_mean_X();
-                        double deriv = std::abs(this->im->DerivativeAt(im));
-                        return cost * deriv;
-                    });
-                if (result.successful) {
-                    mu = result.integral;
-                } 
-            }
+#pragma omp section
+                {
+                    Integration::MAQ_RESULT result;
+                    result = Integration::MAQ(
+                        [this] (double im) -> double {
+                            double cost = this->Cost(im, true).get_mean_X();
+                            double deriv = std::abs(this->im->DerivativeAt(im));
+                            return cost * deriv;
+                        });
+                    if (result.successful) {
+                        mu = result.integral;
+                    } 
+                }
 
 #pragma omp section
-            {
-                Integration::MAQ_RESULT result;
-                result = Integration::MAQ(
-                    [this] (double im) -> double {
-                        double cost = this->Cost(im, true).get_mean_X();
-                        double sd = this->Cost(im, true).get_sigma_X();
-                        double deriv = std::abs(this->im->DerivativeAt(im));
-                        return (cost * cost + sd * sd) * deriv ;
-                    });
-                if (result.successful) {
-                    beta = result.integral;
-                } 
+                {
+                    Integration::MAQ_RESULT result;
+                    result = Integration::MAQ(
+                        [this] (double im) -> double {
+                            double cost = this->Cost(im, true).get_mean_X();
+                            double sd = this->Cost(im, true).get_sigma_X();
+                            double deriv = std::abs(this->im->DerivativeAt(im));
+                            return (cost * cost + sd * sd) * deriv ;
+                        });
+                    if (result.successful) {
+                        beta = result.integral;
+                    } 
+                }
             }
+            beta = sqrt(std::abs(beta - mu * mu));        
         }
-        beta = sqrt(std::abs(beta - mu * mu));        
         return LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(mu, beta);
+    }
+
+    void Structure::Clear_Cache(void)
+    {
+        AnnualCost.ClearCache();
     }
 }
