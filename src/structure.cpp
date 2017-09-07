@@ -25,6 +25,17 @@ namespace SLAT {
         this->name = name;
     };
     
+    const std::vector<std::shared_ptr<CompGroup>> Structure::Components(void)
+    {
+        return components;
+    };
+    
+    double Structure::pdf(double im) 
+    {
+        return TotalCost(im).get_mean_X() * std::abs(this->im->DerivativeAt(im));
+    };
+
+
     void  Structure::AddCompGroup(std::shared_ptr<CompGroup> cg)
     {
         //std::cout << "> Structure::AddCompGroup(): " << cg << std::endl;
