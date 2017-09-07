@@ -18,6 +18,7 @@
 #include "fragility.h"
 #include "loss_functions.h"
 #include "caching.h"
+#include "replaceable.h"
 
 namespace SLAT {
     /**
@@ -35,7 +36,7 @@ namespace SLAT {
      *   - An optional name, which will be used in error 
      *     and debugging messages
      */
-    class CompGroup {
+    class CompGroup : public Replaceable<CompGroup> {
     public:
         /**
          * Full constructor, requiring all parameters including name
@@ -54,28 +55,12 @@ namespace SLAT {
                   std::shared_ptr<FragilityFn> frag_fn,
                   std::shared_ptr<LossFn> cost_fn, 
                   std::shared_ptr<LossFn> delay_fn, 
-                  int count)
-            : CompGroup(edp, frag_fn, cost_fn, delay_fn, count, "Anonymous CompGroup")
-        {
-        }
+                  int count);
 
         /**
          * Unregister callbacks on destruction.
          */
-        ~CompGroup()
-        {
-            
-            edp->remove_callbacks(edp_callback_id);
-            frag_fn->remove_callbacks(frag_fn_callback_id);
-
-            if (cost_fn) {
-                cost_fn->remove_callbacks(cost_fn_callback_id);
-            }
-
-            if (delay_fn) {
-                delay_fn->remove_callbacks(delay_fn_callback_id);
-            }
-        };
+        ~CompGroup();
 
         /*
          * Relationships between EDP, and cost and delay. Since these are simple

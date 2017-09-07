@@ -170,6 +170,37 @@ namespace SLAT {
         }
     };
 
+    /*
+     * Abbreviated constructor; used default name ("Anonymous CompGroup").
+     */
+    CompGroup::CompGroup(std::shared_ptr<EDP> edp,
+                  std::shared_ptr<FragilityFn> frag_fn,
+                  std::shared_ptr<LossFn> cost_fn, 
+                  std::shared_ptr<LossFn> delay_fn, 
+                  int count)
+        : CompGroup(edp, frag_fn, cost_fn, delay_fn, count, "Anonymous CompGroup")
+    {
+    };
+
+    
+    /*
+     * Unregister callbacks on destruction.
+     */
+    CompGroup::~CompGroup()
+    {
+            
+        edp->remove_callbacks(edp_callback_id);
+        frag_fn->remove_callbacks(frag_fn_callback_id);
+        
+        if (cost_fn) {
+            cost_fn->remove_callbacks(cost_fn_callback_id);
+        }
+        
+        if (delay_fn) {
+            delay_fn->remove_callbacks(delay_fn_callback_id);
+        }
+    };
+
     double CompGroup::E_cost_EDP(double edp)
     {
         return cost_EDP_dist(edp).get_mean_X();
