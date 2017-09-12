@@ -631,6 +631,11 @@ CompGroup::CompGroup(std::shared_ptr<SLAT::CompGroup> group)
     wrapper = group;
 };
 
+void CompGroup::replace(CompGroup *cg)
+{
+    wrapper->replace(cg->wrapper);
+}
+
 std::string CompGroup::get_Name()
 {
     return wrapper->get_Name();

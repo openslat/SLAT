@@ -828,13 +828,20 @@ class fragfn:
     #  @param id A string identifying the object. This will be used in 
     #         debugging, warning, and error messages.
     def __init__(self, id):
-        self._id = id
         self._func = None
+        self._register(id)
+
+    ## Record the object. If an object with that name
+    # already exists, replace it. This should be the last thing
+    # called by any constructor (including subclasses):
+    def _register(self, id):
+        self._id = id
         if id != None:
             old = fragfn.lookup(id)
             if old:
                 fragfn.defs[id]._func.replace(self._func)
             fragfn.defs[id] = self
+            
 
     ## Return the fragfn object with the corresponding id.
     #  @param id The identifier provided to the constructor of a fragfn object.
@@ -860,6 +867,9 @@ class fragfn:
     def pExceeded(self, edp):
         return self._func.pExceeded(edp)
 
+    def __str__(self):
+        return "<fragfn>"
+
 ## Fragility function from a database    
 #
 # This functionality isn't implemented yet. At this point, it is a placeholder
@@ -870,8 +880,8 @@ class fragfn_db(fragfn):
     #         debugging, warning, and error messages.
     #  @param db_params Database paremeters
     def __init__(self, id, db_params):
-        super().__init__(id)
         self._db_params = db_params
+        super().__init__(id)
 
     def __str__(self):
         return("Fragility Function '{}', from database: {}.".format(self._id, self._db_params))
@@ -888,15 +898,16 @@ class fragfn_user(fragfn):
     #         distribution, with mu and sigma interpreted based on 'options'.
     #   
     def __init__(self, id, options, scalars):
-        super().__init__(id)
         self._options = options
         self._scalars = scalars
         params = []
         for s in scalars:
             params.append(MakeLogNormalDist(s[0], options['mu'], s[1], options['sd']))
         self._func = MakeFragilityFn(params)
+        self._register(id)
 
     def __str__(self):
+        print("fragfn_user::__str__")
         return("User-defined Fragility Function '{}', built from {} using options '{}'.".format(
             self._id,
             self._scalars,
@@ -932,13 +943,20 @@ class lossfn:
     #  @param id A string identifying the object. This will be used in 
     #         debugging, warning, and error messages.
     def __init__(self, id):
-        self._id = id
         self._func = None
+        self._register(id)
+            
+    ## Record the object. If an object with that name
+    # already exists, replace it. This should be the last thing
+    # called by any constructor (including subclasses):
+    def _register(self, id):
+        self._id = id
         if id != None: 
             old = lossfn.lookup(id)
             if old:
                 lossfn.defs[id]._func.replace(self._func)
             lossfn.defs[id] = self
+            
             
     ## Return the lossfn object with the corresponding id.
     #  @param id The identifier provided to the constructor of a lossfn object.
@@ -963,7 +981,6 @@ class simplelossfn(lossfn):
     #         describe the onset of each damage state as a log normal 
     #         distribution, with mu and sigma interpreted based on 'options'.
     def __init__(self, id, options, data):
-        super().__init__(id)
         self._options = options
         self._data = data
 
@@ -974,14 +991,7 @@ class simplelossfn(lossfn):
             else:
                 params.append(DefaultLogNormalDist())
         self._func = MakeSimpleLossFn(params)
-        if id != None:
-            old = lossfn.lookup(id)
-            if old:
-                print(dir(old))
-                print(type(old._func))
-                print(dir(old._func))
-                lossfn.defs[id]._func.replace(self._func)
-            lossfn.defs[id] = self
+        self._register(id)
 
 
     ## Return a string describing the im object.
@@ -1004,7 +1014,6 @@ class bilevellossfn(lossfn):
     #         one per damage state. Costs are median; dispersion is sd(ln(x)).
     #      OR a list of BiLevelLoss objects.
     def __init__(self, id, data):
-        super().__init__(id)
         self._options = None
         self._data = data
         
@@ -1019,12 +1028,8 @@ class bilevellossfn(lossfn):
                                               d[3],
                                               d[4]))
                 self._func = MakeBiLevelLossFn(params)
-        if id != None:
-            old = lossfn.lookup(id)
-            if old:
-                lossfn.defs[id]._func.replace(self._func)
-            lossfn.defs[id] = self
 
+        self._register(id)
 
     ## Return a string describing the im object.
     #  Used for debugging, warning, and error messages.
@@ -1082,6 +1087,9 @@ class compgroup:
                                    delay and delay.function(),
                                    count, str(id))
         if id != None:
+            old = compgroup.lookup(id)
+            if old:
+                compgroup.defs[id]._func.replace(self._func)
             compgroup.defs[id] = self
 
     ## Return the compgroup object with the corresponding id.

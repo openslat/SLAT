@@ -163,6 +163,7 @@ public:
     double lambda_cost(double cost);
     bool AreSame(const CompGroup &other);
     EDP *get_EDP(void);
+    void replace(CompGroup *cg);
 private:
     std::shared_ptr<SLAT::CompGroup> wrapper;
         
