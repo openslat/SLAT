@@ -2,6 +2,7 @@
 
 import pyslat
 import filecmp
+from contextlib import redirect_stdout
 
 pyslat.LogToStdErr(True)  # Log errors to stderr (on by default)
 pyslat.SetLogFile("exercise2.log") # Save errors in 'exercise2.log'
@@ -423,13 +424,36 @@ pyslat.MakeRecorder("NORM_PDF_REC",
                 pyslat.linrange(0.0, 1.5, 200))
 
 pyslat.Set_Integration_Tolerance(1.0E-3)
-pyslat.Set_Integration_Eval_Limit(256)
-pyslat.Set_Integration_Search_Limit(256)
+pyslat.Set_Integration_Eval_Limit(2048)
+pyslat.Set_Integration_Search_Limit(2048)
 pyslat.Set_Integration_Method(pyslat.INTEGRATION_METHOD.DIRECTED)
 
-for r in pyslat.recorder.all():
-    r.run()
+#for r in pyslat.recorder.all():
+#    r.run()
     
 
     
 print(pyslat.Format_Statistics())
+
+with redirect_stdout(open("cg_costs.txt", "w")):
+    # Dump expected cost by component group
+    edp_ids = list(pyslat.edp.defs.keys())
+    edp_ids.sort()
+    for edp_id in edp_ids:
+        print(edp_id)
+        cg_ids = []
+        for cg in pyslat.compgroup.defs.values():
+            if edp_id == cg._edp.id():
+                cg_ids.append(cg.id())
+        cg_ids.sort()
+        for cg_id in cg_ids:
+            cg = pyslat.compgroup.lookup(cg_id)
+
+            print("{:10} {:10} {:5} {:>15.6}".format(
+                cg_id,
+                cg.fragfn().id(),
+                cg._count,
+                cg.E_annual_cost()))
+        print()
+
+    print(building.AnnualCost())
