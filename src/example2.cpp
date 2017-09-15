@@ -545,7 +545,7 @@ int main(int argc, char **argv)
                                 vector<LogNormalDist> dists(data[i].frag.size());
                 
                                 for (size_t j=0; j < data[i].frag.size(); j++) {
-                                    dists[j] = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(
+                                    dists[j] = LogNormalDist::LogNormalDist_from_median_X_and_sigma_lnX(
                                         data[i].frag[j].first, data[i].frag[j].second);
                                 }
 

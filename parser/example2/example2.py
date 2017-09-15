@@ -106,7 +106,7 @@ for f in SIMPLE_FRAG_DATA:
     delay = f[3]
     
     pyslat.fragfn_user("FRAG.{:>03}".format(id), 
-                       {'mu': pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
+                       {'mu': pyslat.LOGNORMAL_MU_TYPE.MEDIAN_X,
                         'sd': pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X},
                        frag)
     
@@ -152,7 +152,7 @@ for f in BILEVEL_FRAG_DATA:
     delay = f[3]
     
     pyslat.fragfn_user("FRAG.{:>03}".format(id), 
-                       {'mu': pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
+                       {'mu': pyslat.LOGNORMAL_MU_TYPE.MEDIAN_X,
                         'sd': pyslat.LOGNORMAL_SIGMA_TYPE.SD_LN_X},
                        frag)
     
@@ -428,8 +428,8 @@ pyslat.Set_Integration_Eval_Limit(2048)
 pyslat.Set_Integration_Search_Limit(2048)
 pyslat.Set_Integration_Method(pyslat.INTEGRATION_METHOD.DIRECTED)
 
-#for r in pyslat.recorder.all():
-#    r.run()
+for r in pyslat.recorder.all():
+    r.run()
     
 
     

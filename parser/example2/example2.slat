@@ -140,7 +140,7 @@ fragfn FRAG.002 [0.005, 0.40],
               [0.010, 0.45],
 	      [0.030, 0.50],
 	      [0.060, 0.60]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.002 bilevel [6, 12, 1143, 1143, 0.42],
                      [6, 12, 3214, 3214, 0.40],
@@ -158,7 +158,7 @@ fragfn FRAG.003 [0.004, 0.39],
               [0.0095, 0.25],
 	      [0.02, 0.62],
 	      [0.0428, 0.36]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.003 simple [590, 0.59],
                      [2360, 0.63],
@@ -169,7 +169,7 @@ lossfn COST.003 simple [590, 0.59],
 # Component #105: Drywall partition and finish (excl painting)
 fragfn FRAG.105 [0.0039, 0.17],
                 [0.0085, 0.23]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.105 simple [29.9, 0.2],
                      [178.7, 0.2]
@@ -177,7 +177,7 @@ lossfn COST.105 simple [29.9, 0.2],
 
 # Component #106: Drywall Paint
 fragfn FRAG.106 [0.0039, 0.17]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.106 simple [16.7, 0.2]
               --mu mean_x --sd sd_ln_x;
@@ -185,7 +185,7 @@ lossfn COST.106 simple [16.7, 0.2]
 # Component #107: Exterior glazing (horizontal wall system)
 fragfn FRAG.107 [0.04, 0.36],
                 [0.046, 0.33]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.107 simple [131.7, 0.26],
                      [131.7, 0.26]
@@ -196,7 +196,7 @@ fragfn FRAG.108 [0.004, 0.5],
                 [0.008, 0.5],
 		[0.025, 0.5],
 		[0.050, 0.5]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.108 simple [  250.0, 0.63],
        		       [ 1000.0, 0.63],
@@ -207,38 +207,38 @@ lossfn COST.108 simple [  250.0, 0.63],
 # Component #203: Ceiling Systems Suspended acoustical tile type1
 fragfn FRAG.203 [0.55, 0.4],
                 [1.0, 0.4]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.203 bilevel [9, 900, 58.4, 43.2, 0.4], 
                         [9, 900, 297.9, 277.8,  0.4];
 
 # Component #204: Conveying - Hydraulic Elevator
 fragfn FRAG.204 [0.4, 0.3]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.204 bilevel [3, 5, 56000, 33600, 0.2];
 
 # Component #205: Roof-mounted Equipment
 fragfn FRAG.205 [1.6, 0.5]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.205 bilevel [2, 8, 220000, 150000, 0.6];
 
 # Component #208: Desktop Computers - unfastened
 fragfn FRAG.208 [1.2, 0.6]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.208 bilevel [10, 100, 2500, 1000, 0.4];
 
 # Component #209: Servers and network Equipment
 fragfn FRAG.209 [0.8, 0.5]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.209 bilevel [2, 6, 50000, 40000, 0.4];
 
 # Component #211: Automatic sprinklers
 fragfn FRAG.211 [32, 1.4]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.211 simple [900, 1.0]
               --mu mean_x --sd sd_ln_x;
@@ -248,7 +248,7 @@ fragfn FRAG.214 [0.25, 0.6],
                 [0.50, 0.6],
 		[1.00, 0.6],
 		[2.00, 0.6]
-        --mu mean_x --sd sd_ln_x;
+        --mu median_x --sd sd_ln_x;
 
 lossfn COST.214 simple [  200.0, 0.63],
                        [ 1200.0, 0.63],
