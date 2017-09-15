@@ -138,11 +138,11 @@ DeterministicFn *factory(FUNCTION_TYPE t, std::vector<double> params)
 {
     std::shared_ptr<SLAT::DeterministicFn> result;
     
-    std::cout << "> factory(" << t << "; ";
-    for (std::vector<double>::const_iterator i=params.begin(); i != params.end(); i++) {
-        std::cout << *i << ", ";
-    }
-    std::cout << ")" << std::endl;
+    // std::cout << "> factory(" << t << "; ";
+    // for (std::vector<double>::const_iterator i=params.begin(); i != params.end(); i++) {
+    //     std::cout << *i << ", ";
+    // }
+    // std::cout << ")" << std::endl;
     switch (t) {
     case PLC:
     {
@@ -153,7 +153,7 @@ DeterministicFn *factory(FUNCTION_TYPE t, std::vector<double> params)
     }
     case NLH:
     {
-        std::cout << "[NLH]" << std::endl;
+        // std::cout << "[NLH]" << std::endl;
         double alpha = params[0];
         double IM_asy = params[1];
         double v_asy = params[2];
@@ -702,7 +702,6 @@ bool CompGroup::AreSame(const CompGroup &other)
 
 CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn cost_fn, LossFn delay_fn, int count, std::string name)
 {
-    std::cout << "> MakeCompGroup()" << std::endl;
     return new CompGroup(std::make_shared<SLAT::CompGroup>( 
                              edp.relationship, 
                              frag_fn.fragility,

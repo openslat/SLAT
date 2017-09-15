@@ -907,7 +907,6 @@ class fragfn_user(fragfn):
         self._register(id)
 
     def __str__(self):
-        print("fragfn_user::__str__")
         return("User-defined Fragility Function '{}', built from {} using options '{}'.".format(
             self._id,
             self._scalars,
@@ -1918,15 +1917,15 @@ def ImportProbFn(id, filename):
     C = [0]
     for d in data:
         x.append(d[0])
-        values = []
+        ln_values = []
         collapse = 0
         for y in d[1:]:
             if y==0:
                 collapse = collapse + 1
             else:
-                values.append(y)
-        mu.append(np.mean(values))
-        sigma.append(np.std(values, ddof=1))
+                ln_values.append(math.log(y))
+        mu.append(math.exp(np.mean(ln_values)))
+        sigma.append(np.std(ln_values, ddof=1))
         C.append(collapse / (len(d) - 1))
         # Add points beyond the data provided to support interpolation beyond
         # the given data, up to a point:
@@ -1937,8 +1936,8 @@ def ImportProbFn(id, filename):
     mu_func = detfn(None, 'linear', [x.copy(), mu.copy()])
     sigma_func = detfn(None, 'linear', [x.copy(), sigma.copy()])
     return(probfn(id, 'lognormal', 
-                  [LOGNORMAL_MU_TYPE.MEAN_X, mu_func],
-                  [LOGNORMAL_SIGMA_TYPE.SD_X,  sigma_func]))
+                  [LOGNORMAL_MU_TYPE.MEDIAN_X, mu_func],
+                  [LOGNORMAL_SIGMA_TYPE.SD_LN_X,  sigma_func]))
 
 ## Import an intensity measure from a file.
 # This implements the 'importimfn' command in the SLAT language.

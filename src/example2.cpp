@@ -314,10 +314,10 @@ int main(int argc, char **argv)
                                     return -1;
                                 }
 
-                                vector<double> im_val, mean_edp, sd_edp;
+                                vector<double> im_val, median_edp, sd_ln_edp;
                                 im_val.push_back(0);
-                                mean_edp.push_back(0);
-                                sd_edp.push_back(0);
+                                median_edp.push_back(0);
+                                sd_ln_edp.push_back(0);
             
                                 while (!infile.eof()) {
                                     char line[2048];
@@ -331,6 +331,7 @@ int main(int argc, char **argv)
                                             double im;
                                             double edp;
                                             vector<double> edps;
+                                            vector<double> ln_edps;
 
                                             s >> im;
                                             if (s.fail()) {
@@ -342,10 +343,11 @@ int main(int argc, char **argv)
                                                 s >> edp;
                                                 if (!s.eof() && edp != 0) {
                                                     edps.push_back(edp);
+                                                    ln_edps.push_back(log(edp));
                                                 }
                                             }
-                                            mean_edp.insert(mean_edp.end(), gsl_stats_mean(edps.data(), 1, edps.size()));
-                                            sd_edp.insert(sd_edp.end(), gsl_stats_sd(edps.data(), 1, edps.size()));
+                                            median_edp.insert(median_edp.end(), exp(gsl_stats_mean(ln_edps.data(), 1, ln_edps.size())));
+                                            sd_ln_edp.insert(sd_ln_edp.end(), gsl_stats_sd(ln_edps.data(), 1, ln_edps.size()));
                                         }
                                     }
                                 }
@@ -357,10 +359,10 @@ int main(int argc, char **argv)
                                     edp_rels[n] = make_shared<EDP>(
                                         im_rel, 
                                         make_shared<LogNormalFn>(
-                                            make_shared<LinearInterpolatedFn>(im_val.data(), mean_edp.data(), im_val.size()),
-                                            LogNormalFn::MEAN_X,
-                                            make_shared<LinearInterpolatedFn>(im_val.data(), sd_edp.data(), im_val.size()),
-                                            LogNormalFn::SIGMA_X),
+                                            make_shared<LinearInterpolatedFn>(im_val.data(), median_edp.data(), im_val.size()),
+                                            LogNormalFn::MEDIAN_X,
+                                            make_shared<LinearInterpolatedFn>(im_val.data(), sd_ln_edp.data(), im_val.size()),
+                                            LogNormalFn::SIGMA_LN_X),
                                         name.str());
                                 }
                             }

@@ -281,6 +281,7 @@ namespace SLAT {
                 } else {
                     std::function<double (double)> local_lambda = [this, im] (double x) {
                         double result = this->edp->P_exceedence(im, x);
+                        if (im == 0 || x < 0) result = 0;
                         return result;
                     };
                     gsl_function F;
