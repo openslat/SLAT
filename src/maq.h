@@ -57,9 +57,9 @@ namespace SLAT {
             
             //static src::logger_mt settings_logger;
         private:
-            static const unsigned int INTEGRATION_EVAL_LIMIT_DEFAULT = 1024;
-            static const unsigned int INTEGRATION_SEARCH_LIMIT_DEFAULT = 1024;
-            static constexpr double TOLERANCE_DEFAULT = 1E-6;
+            static const unsigned int INTEGRATION_EVAL_LIMIT_DEFAULT = 2048;
+            static const unsigned int INTEGRATION_SEARCH_LIMIT_DEFAULT = 2048;
+            static constexpr double TOLERANCE_DEFAULT = 1E-3;
             static const METHOD_TYPE METHOD_DEFAULT = DIRECTED;
             
             static unsigned int integration_eval_limit;
