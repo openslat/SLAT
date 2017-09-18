@@ -180,7 +180,7 @@ namespace SLAT {
                     Integration::MAQ_RESULT result;
                     result = Integration::MAQ(
                         [this] (double im) -> double {
-                            double cost = this->Cost(im, true).get_mean_X();
+                            double cost = this->TotalCost(im).get_mean_X();
                             double deriv = std::abs(this->im->DerivativeAt(im));
                             return cost * deriv;
                         });
@@ -194,8 +194,8 @@ namespace SLAT {
                     Integration::MAQ_RESULT result;
                     result = Integration::MAQ(
                         [this] (double im) -> double {
-                            double cost = this->Cost(im, true).get_mean_X();
-                            double sd = this->Cost(im, true).get_sigma_X();
+                            double cost = this->TotalCost(im).get_mean_X();
+                            double sd = this->TotalCost(im).get_sigma_X();
                             double deriv = std::abs(this->im->DerivativeAt(im));
                             return (cost * cost + sd * sd) * deriv ;
                         });
