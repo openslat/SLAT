@@ -298,6 +298,11 @@ namespace SLAT {
         return dependent_rate->P_exceedence(base_value, min_dependent_value);
     }
 
+    double EDP::X_at_exceedence(double base_value, double p) const
+    {
+        return dependent_rate->X_at_exceedence(base_value, p);
+    }
+    
     std::vector<double> EDP::par_lambda(std::vector<double> args)
     {
         std::vector<double> result(args.size());

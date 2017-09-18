@@ -200,6 +200,7 @@ namespace SLAT {
         double calc_lambda(double x);
 
         double P_exceedence(double base_value, double min_dependent_value) const;
+        double X_at_exceedence(double x, double p) const;
         
         double Mean(double base_value) const;
         double MeanLn(double base_value) const;

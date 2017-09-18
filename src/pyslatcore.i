@@ -101,6 +101,7 @@ public:
     double Median(double x);
     double SD_ln(double x);
     double SD(double x);
+    double X_at_exceedence(double im, double p);
     std::vector<double> bulk_Mean(std::vector<double> x);
     std::vector<double> bulk_MeanLn(std::vector<double> x);
     std::vector<double> bulk_Median(std::vector<double> x);

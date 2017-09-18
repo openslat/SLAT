@@ -430,6 +430,11 @@ double EDP::SD(double x)
     return relationship->SD(x);
 }
 
+double EDP::X_at_exceedence(double im, double p)
+{
+    return relationship->X_at_exceedence(im, p);
+}
+
 std::vector<double> EDP::bulk_Mean(std::vector<double> x)
 {
     std::vector<double> result(x.size());

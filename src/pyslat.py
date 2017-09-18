@@ -801,7 +801,7 @@ class edp:
     # 
     #  @return y, such that f(im) <= y with probability p.
     def X_at_exceedence(self, im, p):
-        return self._fn.X_at_exceedence(im, p)
+        return self._func.X_at_exceedence(im, p)
 
     ## Return a string describing the im object.
     #  Used for debugging, warning, and error messages.
