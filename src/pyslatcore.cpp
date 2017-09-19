@@ -735,6 +735,11 @@ void Structure::AddCompGroup(CompGroup cg)
     wrapper->AddCompGroup(cg.wrapper);
 };
 
+void Structure::RemoveCompGroup(CompGroup cg)
+{
+    wrapper->RemoveCompGroup(cg.wrapper);
+};
+
 LogNormalDist Structure::Cost(double im, bool consider_collapse) {
     return LogNormalDist(std::make_shared<SLAT::LogNormalDist>(wrapper->Cost(im, consider_collapse)));
 };

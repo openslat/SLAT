@@ -71,6 +71,17 @@ namespace SLAT {
         this->Clear_Cache();
     }
     
+    void Structure::RemoveCompGroup(std::shared_ptr<CompGroup> cg)
+    {
+        for (size_t i=0; i < components.size(); i++) {
+            if (components[i]->first == cg) {
+                std::cout << "REMOVING " << components[i]->first << std::endl;
+                components.erase(components.begin()+i);
+                break;
+            }
+        }
+    }
+    
     LogNormalDist Structure::CostNC(double im)
     {
         std::vector<LogNormalDist> dists;

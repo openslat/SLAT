@@ -23,6 +23,7 @@ namespace SLAT {
         ~Structure() {};
 
         void AddCompGroup(std::shared_ptr<CompGroup> cg);
+        void RemoveCompGroup(std::shared_ptr<CompGroup> cg);
 
         LogNormalDist Cost(double im, bool consider_collapse);
         LogNormalDist TotalCost(double im);

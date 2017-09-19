@@ -177,6 +177,7 @@ class Structure {
 public:
     Structure(std::shared_ptr<SLAT::Structure> structure);
     void AddCompGroup(CompGroup cg);
+    void RemoveCompGroup(CompGroup cg);
     LogNormalDist Cost(double im, bool consider_collapse);
     LogNormalDist TotalCost(double im);
     std::vector<LogNormalDist> DeaggregatedCost(double im);

@@ -1267,6 +1267,11 @@ class structure:
                                  "(expected " + self._im + "; got " + 
                                  group.get_IM() << ")");
 
+    ## Remvoe a component group from the structure.
+    #
+    # @param group The component group to be removed.
+    def RemoveCompGroup(self, group):
+        self._structure.RemoveCompGroup(group.function())
 
     ## Set the rebuild cost of the structure
     # @param cost A log normal distribution represeting the rebuild cost of
