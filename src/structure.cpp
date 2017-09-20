@@ -171,9 +171,11 @@ namespace SLAT {
     Structure::COSTS Structure::CostsByFate(double im)
     {
         COSTS result;
-        result.repair = CostNC(im).ScaleDistributionByProbability(this->im->pRepair(im));
-        result.demolition = demolition_cost.ScaleDistributionByProbability(this->im->pDemolition(im));
-        result.collapse = rebuild_cost.ScaleDistributionByProbability(this->im->pCollapse(im));
+        if (this->im != NULL) {
+            result.repair = CostNC(im).ScaleDistributionByProbability(this->im->pRepair(im));
+            result.demolition = demolition_cost.ScaleDistributionByProbability(this->im->pDemolition(im));
+            result.collapse = rebuild_cost.ScaleDistributionByProbability(this->im->pCollapse(im));
+        }
         return result;
     }
 
