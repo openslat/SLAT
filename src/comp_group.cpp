@@ -36,7 +36,7 @@ namespace SLAT {
              }, name + std::string("::SD_ln_cost_IM")),
          E_delay_IM([this] (double im) {
                 return this->E_delay_IM_calc(im);
-            }, name + std::string("::E_cost_IM")),
+            }, name + std::string("::E_delay_IM")),
          SD_ln_delay_IM([this] (double im) {
                  return this->SD_ln_delay_IM_calc(im);
              }, name + std::string("::SD_ln_cost_IM")),

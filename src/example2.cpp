@@ -577,6 +577,7 @@ int main(int argc, char **argv)
                                             data[i].cost.bilevel[j].cost_at_max,
                                             data[i].cost.bilevel[j].dispersion);
                                     }
+#pragma omp critical
                                     cost_functions[data[i].id] = make_shared<BiLevelLossFn>(dists);
                                 }
                             }

@@ -32,12 +32,14 @@ namespace SLAT {
             return 0;
         };
 
-        
         /**
          * Overloaded << operator for printing a LossFn to a stream. Intended
          * for debugging.
          */
         friend std::ostream& operator<<(std::ostream& out, LossFn& o);
+
+    private:
+        virtual std::string to_string(void);
     };
     
     class SimpleLossFn: public LossFn {
@@ -57,6 +59,7 @@ namespace SLAT {
         friend std::ostream& operator<<(std::ostream& out, SimpleLossFn& o);
     private:
         std::vector<LogNormalDist> loss_functions;
+        virtual std::string to_string(void);
     };
 
     class BiLevelLoss {
@@ -67,11 +70,11 @@ namespace SLAT {
         int count_min, count_max;
         double cost_at_min, cost_at_max, dispersion;
 
-        friend std::ostream& operator<<(std::ostream& out, BiLevelLoss& o);
         Caching::CachedFunction<LogNormalDist, int> LossFunctionsForCount;
     private:
         LogNormalDist LossFunctionsForCount_calc(int count);
         BiLevelLoss(const BiLevelLoss &other);
+        virtual std::string to_string(void);
     };
     
     class BiLevelLossFn: public LossFn {

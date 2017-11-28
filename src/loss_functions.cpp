@@ -23,9 +23,20 @@ namespace SLAT {
 
     std::ostream& operator<<(std::ostream& out, LossFn& o)
     {
+        if (&o) {
+            out << o.to_string();
+        } else {
+            out << "<NULL POINTER TO LossFn>";
+        }
+        return out;
+    }
+
+    std::string LossFn::to_string(void) 
+    {
+        std::stringstream out;
         out << "LossFn: ";
         out << std::endl;
-        return out;
+        return out.str();
     }
 
     SimpleLossFn::SimpleLossFn(std::vector<LogNormalDist> distributions)
@@ -49,14 +60,15 @@ namespace SLAT {
         return result.ScaleDistributionByNumComponents(count);
     }
 
-    std::ostream& operator<<(std::ostream& out, SimpleLossFn& o)
+    std::string SimpleLossFn::to_string()
     {
+        std::stringstream out;
         out << "SimpleLossFn: ";
-        for (size_t i=0; i < o.n_states(); i++) {
-            out << o.loss_functions[i] << "; ";
+        for (size_t i=0; i < this->n_states(); i++) {
+            out << this->loss_functions[i] << "; ";
         }
         out << std::endl;
-        return out;
+        return out.str();
     }
 
     BiLevelLoss::BiLevelLoss(int count_min, int count_max, double cost_at_min, double cost_at_max, double dispersion)
@@ -71,12 +83,13 @@ namespace SLAT {
         this->dispersion = dispersion;
     };
 
-    std::ostream& operator<<(std::ostream& out, BiLevelLoss& o)
+    std::string BiLevelLoss::to_string()
     {
-        out << "BiLevelLoss: " << o.cost_at_min << " @ " << o.count_min
-            << "; " << o.cost_at_max << " @ " << o.count_max
-            << "; dispersion=" << o.dispersion;
-        return out;
+        std::stringstream out;
+        out << "BiLevelLoss: " << this->cost_at_min << " @ " << this->count_min
+            << "; " << this->cost_at_max << " @ " << this->count_max
+            << "; dispersion=" << this->dispersion;
+        return out.str();
     }
 
     BiLevelLossFn::BiLevelLossFn(std::vector<std::shared_ptr<BiLevelLoss>> distributions) :
