@@ -23,11 +23,7 @@ namespace SLAT {
 
     std::ostream& operator<<(std::ostream& out, LossFn& o)
     {
-        if (&o) {
-            out << o.to_string();
-        } else {
-            out << "<NULL POINTER TO LossFn>";
-        }
+        out << o.to_string();
         return out;
     }
 
