@@ -121,10 +121,16 @@ namespace SLAT {
         LogNormalDist cost_repair = CostNC(im);
         LogNormalDist cost_demolition = demolition_cost;
         LogNormalDist cost_collapse = rebuild_cost;
-        
-        double E_cost = cost_repair.get_mean_X() * this->im->pRepair(im)
-            + cost_demolition.get_mean_X() * this->im->pDemolition(im)
-            + cost_collapse.get_mean_X() * this->im->pCollapse(im); 
+
+        double E_cost = cost_repair.get_mean_X() * this->im->pRepair(im);
+
+        if (this->im->pDemolition(im) > 0) {
+            E_cost +=  cost_demolition.get_mean_X() * this->im->pDemolition(im);
+        }
+
+        if (this->im->pCollapse(im) > 0) {
+            E_cost += cost_collapse.get_mean_X() * this->im->pCollapse(im); 
+        }
         
         double E_sq_cost_repair = cost_repair.get_mean_X() * cost_repair.get_mean_X() +
             cost_repair.get_sigma_X() * cost_repair.get_sigma_X();
@@ -133,9 +139,13 @@ namespace SLAT {
         double E_sq_cost_collapse = cost_collapse.get_mean_X() * cost_collapse.get_mean_X() +
             cost_collapse.get_sigma_X() * cost_collapse.get_sigma_X();
 
-        double E_sq_cost = E_sq_cost_repair * this->im->pRepair(im)
-            + E_sq_cost_demolition * this->im->pDemolition(im)
-            + E_sq_cost_collapse * this->im->pCollapse(im);
+        double E_sq_cost = E_sq_cost_repair * this->im->pRepair(im);
+        if (this->im->pDemolition(im) > 0) {
+            E_sq_cost += E_sq_cost_demolition * this->im->pDemolition(im);
+        }
+        if (this->im->pCollapse(im) > 0) {
+            E_sq_cost += E_sq_cost_collapse * this->im->pCollapse(im);
+        }
         
         double var_cost = E_sq_cost - E_cost * E_cost;
         double sigma_cost = sqrt(var_cost);
