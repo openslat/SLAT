@@ -23,15 +23,15 @@ BOOST_AUTO_TEST_CASE(Integration_Settings_Test)
     /*
      * Verify the system defaults:
      */
-    BOOST_REQUIRE(IntegrationSettings::Get_Integration_Eval_Limit() == 1024);
-    BOOST_REQUIRE(IntegrationSettings::Get_Tolerance() == 1E-6);
+    BOOST_REQUIRE(IntegrationSettings::Get_Integration_Eval_Limit() == 2048);
+    BOOST_REQUIRE(IntegrationSettings::Get_Tolerance() == 1E-3);
 
     /*
      * Change tolerance, max evals should not be effected:
      */
     IntegrationSettings::Set_Tolerance(1E-5);
     BOOST_REQUIRE(IntegrationSettings::Get_Tolerance() == 1E-5);
-    BOOST_REQUIRE(IntegrationSettings::Get_Integration_Eval_Limit() == 1024);
+    BOOST_REQUIRE(IntegrationSettings::Get_Integration_Eval_Limit() == 2048);
 
     /*
      * Change Max Evals; should not affect root settings:
@@ -44,8 +44,8 @@ BOOST_AUTO_TEST_CASE(Integration_Settings_Test)
      * Reset the integration parameters & verify:
      */
     IntegrationSettings::Reset();
-    BOOST_REQUIRE(IntegrationSettings::Get_Integration_Eval_Limit() == 1024);
-    BOOST_REQUIRE(IntegrationSettings::Get_Tolerance() == 1E-6);
+    BOOST_REQUIRE(IntegrationSettings::Get_Integration_Eval_Limit() == 2048);
+    BOOST_REQUIRE(IntegrationSettings::Get_Tolerance() == 1E-3);
 }
 
 
@@ -64,7 +64,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
         });
     BOOST_REQUIRE(result.successful);
     BOOST_REQUIRE(result.evaluations >= 1 && result.evaluations < 100);
-    BOOST_CHECK_CLOSE(result.integral, 1.0, 1E-4);
+    BOOST_CHECK_CLOSE(result.integral, 1.0, 0.1);
 
     /*
      * With a ridiculously small evaluations limit, the integration should fail
@@ -92,8 +92,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
         });
     BOOST_REQUIRE(result.successful);
     BOOST_REQUIRE(result.evaluations >= 1 && result.evaluations < 100);
-    BOOST_CHECK_CLOSE(result.integral, 1.0, 1E-4);
-
+    BOOST_CHECK_CLOSE(result.integral, 1.0, 0.1);
     /*
      * Set the default MAX_EVALS to 3; both should fail:
      */
@@ -110,6 +109,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
      * good result anyway:
      */
     IntegrationSettings::Reset();
+    IntegrationSettings::Set_Integration_Eval_Limit(1024);
     IntegrationSettings::Set_Tolerance(2E-13);
     result = MAQ([] (double x) -> double {
             return gsl_ran_lognormal_pdf(x, log(1), 1);
@@ -125,6 +125,7 @@ BOOST_AUTO_TEST_CASE(MAQ_Test)
      * within * 0.1% of 1.0.
      */
     IntegrationSettings::Reset();
+    IntegrationSettings::Set_Tolerance(1E-6);
     IntegrationSettings::Set_Integration_Eval_Limit(40);
     result = MAQ([] (double x) -> double {
             return gsl_ran_lognormal_pdf(x, log(1), 1);

@@ -284,7 +284,7 @@ BOOST_AUTO_TEST_CASE( collapse )
 
     BOOST_CHECK_CLOSE( 0.0002158956085998493,
                        im_rate_rel.CollapseRate(),
-                       0.1);
+                       0.5);
 }
 
 BOOST_AUTO_TEST_CASE( Compound_Rate_Relationship_Test )
