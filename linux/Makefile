@@ -18,3 +18,7 @@ PYSLATCORE=_pyslatcore.so
 #LDFLAGS+=-Wl,-rpath,.
 
 include ../Makefile.common
+
+run_tests: $(BINDIR)/unit_tests$(EXECEXT) interp $(BINDIR)/example2$(EXECEXT)
+	$(BINDIR)/unit_tests$(EXECEXT)
+	cd .. && ./regression-test.sh
