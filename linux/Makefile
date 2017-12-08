@@ -20,5 +20,5 @@ PYSLATCORE=_pyslatcore.so
 include ../Makefile.common
 
 run_tests: $(BINDIR)/unit_tests$(EXECEXT) interp $(BINDIR)/example2$(EXECEXT)
-	$(BINDIR)/unit_tests$(EXECEXT)
-	cd .. && ./regression-test.sh
+	LD_LIBRARY_PATH=lib $(BINDIR)/unit_tests$(EXECEXT)
+	cd .. && LD_LIBRARY_PATH=linux/lib PYTHONPATH=linux/lib ./regression-test.sh
