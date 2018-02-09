@@ -45,8 +45,8 @@ public:
     double ValueAt(double v);
 };
 
-DeterministicFn *factory(FUNCTION_TYPE t, std::vector<double>x, std::vector<double> y);
-DeterministicFn *factory(FUNCTION_TYPE t, std::vector<double> params);
+DeterministicFn *factory3(FUNCTION_TYPE t, std::vector<double>x, std::vector<double> y);
+DeterministicFn *factory2(FUNCTION_TYPE t, std::vector<double> params);
 
 ProbabilisticFn *MakeLogNormalProbabilisticFn(const DeterministicFn &mu_function,
                                                   LOGNORMAL_MU_TYPE mu_type,

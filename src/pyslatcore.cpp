@@ -100,7 +100,7 @@ double DeterministicFn::ValueAt(double v)
     return function->ValueAt(v);
 }
 
-DeterministicFn *factory(FUNCTION_TYPE t, std::vector<double>x, std::vector<double> y)
+DeterministicFn *factory3(FUNCTION_TYPE t, std::vector<double>x, std::vector<double> y)
 {
     std::shared_ptr<SLAT::DeterministicFn> result;
     
@@ -134,7 +134,7 @@ DeterministicFn *factory(FUNCTION_TYPE t, std::vector<double>x, std::vector<doub
     return new DeterministicFn(result);
 }
 
-DeterministicFn *factory(FUNCTION_TYPE t, std::vector<double> params)
+DeterministicFn *factory2(FUNCTION_TYPE t, std::vector<double> params)
 {
     std::shared_ptr<SLAT::DeterministicFn> result;
     

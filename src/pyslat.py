@@ -133,7 +133,7 @@ class INTEGRATION_METHOD:
 # @param params A vector of numbers, specifying the control parameters
 #  of the function.
 def factory2(t, params):
-    return pyslatcore.factory(t, params)
+    return pyslatcore.factory2(t, params)
 
 ## Create an interpolated deterministic function.
 # This function wraps the library function SLAT::factory(). It returns
@@ -144,7 +144,7 @@ def factory2(t, params):
 # @param params A vector of numbers, specifying the x and y values for
 #          the interpolation.
 def factory3(t, param1, param2):
-    return pyslatcore.factory(t, param1, param2)
+    return pyslatcore.factory3(t, param1, param2)
 
 ## Create a log normal function.
 # This function wraps the library function SLAT::MakeLogNormalProbabilisticFn().
