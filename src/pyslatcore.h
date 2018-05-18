@@ -177,7 +177,10 @@ private:
     std::shared_ptr<SLAT::FragilityFn> fragility;
     friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
                                     LossFn cost_fn, LossFn delay_fn,
-                                    int count, std::string name);
+                                    int count,
+                                    double cost_adjustment_factor,
+                                    double delay_adjustment_factor,
+                                    std::string name);
 };
 
 FragilityFn *MakeFragilityFn(std::vector<LogNormalDist *> distributions);
@@ -190,7 +193,10 @@ public:
 private:
     std::shared_ptr<SLAT::LossFn> loss;
     friend CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn,
-                                    LossFn cost_fn, LossFn delay_fn, int count, std::string name);
+                                    LossFn cost_fn, LossFn delay_fn, int count, 
+                                    double cost_adjustment_factor,
+                                    double delay_adjustment_factor,
+                                    std::string name);
 };
 
 

@@ -649,6 +649,8 @@ int main(int argc, char **argv)
                                 cost_functions[data[i].frag],
                                 delay_functions[data[i].frag],
                                 data[i].count,
+                                1.0,  // Cost adjustment factor
+                                1.0,  // Delay adjustment factor
                                 name.str());
 #pragma omp critical
                             compgroups[data[i].id] = cg;

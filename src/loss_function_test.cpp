@@ -270,7 +270,7 @@ BOOST_FIXTURE_TEST_CASE( BiLevelLossFn_1, Fixture)
 {
     std::vector<double> p({0.10, 0.20, 0.40});
     LogNormalDist distribution = b.CalculateUnadjustedLoss(p, 1);
-    
+
     // Create a simple loss function that uses the same values at the
     // BiLevelLossFn will use for one component:
     SimpleLossFn s(
@@ -279,6 +279,26 @@ BOOST_FIXTURE_TEST_CASE( BiLevelLossFn_1, Fixture)
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(15000, 0.4),
                     LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(60000, 0.5)}));
     LogNormalDist d  = s.CalculateUnadjustedLoss(p, 1);
+
+    BOOST_CHECK_CLOSE(distribution.get_mean_X(), d.get_mean_X(), 0.1);
+    BOOST_CHECK_CLOSE(distribution.get_sigma_lnX(), d.get_sigma_lnX(), 0.1);
+}
+
+// One component, with and adjustment factor
+BOOST_FIXTURE_TEST_CASE( BiLevelLossFn_1_adj, Fixture)
+{
+    const double adjustment_factor = 3.14;
+    std::vector<double> p({0.10, 0.20, 0.40});
+    LogNormalDist distribution = b.CalculateLoss(p, 1, adjustment_factor);
+    
+    // Create a simple loss function that uses the same values at the
+    // BiLevelLossFn will use for one component:
+    SimpleLossFn s(
+        std::vector<LogNormalDist>({
+                LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(8000, 0.03),
+                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(15000, 0.4),
+                    LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(60000, 0.5)}));
+    LogNormalDist d  = s.CalculateLoss(p, 1, adjustment_factor);
 
     BOOST_CHECK_CLOSE(distribution.get_mean_X(), d.get_mean_X(), 0.1);
     BOOST_CHECK_CLOSE(distribution.get_sigma_lnX(), d.get_sigma_lnX(), 0.1);

@@ -46,6 +46,8 @@ namespace SLAT {
                   std::shared_ptr<LossFn> cost_fn, 
                   std::shared_ptr<LossFn> delay_fn, 
                   int count,
+                  double cost_adj,
+                  double delay_adj,
                   std::string name);
 
         /**
@@ -55,7 +57,9 @@ namespace SLAT {
                   std::shared_ptr<FragilityFn> frag_fn,
                   std::shared_ptr<LossFn> cost_fn, 
                   std::shared_ptr<LossFn> delay_fn, 
-                  int count);
+                  int count,
+                  double cost_adj,
+                  double delay_adj);
 
         /**
          * Unregister callbacks on destruction.

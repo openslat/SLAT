@@ -705,14 +705,20 @@ bool CompGroup::AreSame(const CompGroup &other)
     return this->wrapper == other.wrapper;
 }
 
-CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn cost_fn, LossFn delay_fn, int count, std::string name)
+CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn cost_fn, LossFn delay_fn, int count, 
+                         double cost_adjustment_factor,
+                         double delay_adjustment_factor,
+                         std::string name)
 {
     return new CompGroup(std::make_shared<SLAT::CompGroup>( 
                              edp.relationship, 
                              frag_fn.fragility,
                              cost_fn.loss,
                              delay_fn.loss, 
-                             count, name));
+                             count, 
+                             cost_adjustment_factor,
+                             delay_adjustment_factor,
+                             name));
 }
     
 std::vector<double> CompGroup::pDS_IM(double im)
