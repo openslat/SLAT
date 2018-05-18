@@ -25,7 +25,11 @@ namespace SLAT {
     public:
         ~LossFn() {};
 
-        virtual LogNormalDist CalculateLoss(std::vector<double> probabilities, int count);
+        LogNormalDist CalculateLoss(std::vector<double> probabilities, 
+                                    int count,
+                                    double adjustment_factor);
+
+        virtual LogNormalDist CalculateUnadjustedLoss(std::vector<double> probabilities, int count);
 
         virtual std::size_t n_states(void) {
             throw std::invalid_argument("LossFn::n_states()");
@@ -50,7 +54,7 @@ namespace SLAT {
         ~SimpleLossFn() {};
         std::size_t n_states(void);
 
-        LogNormalDist CalculateLoss(std::vector<double> probabilities, int count);
+        LogNormalDist CalculateUnadjustedLoss(std::vector<double> probabilities, int count);
 
         /**
          * Overloaded << operator for printing a LossFn to a stream. Intended
@@ -85,7 +89,7 @@ namespace SLAT {
         ~BiLevelLossFn() {};
         std::size_t n_states(void);
 
-        LogNormalDist CalculateLoss(std::vector<double> probabilities, int count);
+        LogNormalDist CalculateUnadjustedLoss(std::vector<double> probabilities, int count);
 
         /**
          * Overloaded << operator for printing a LossFn to a stream. Intended

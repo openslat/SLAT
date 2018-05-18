@@ -15,9 +15,14 @@
 
 namespace SLAT {
 
-    LogNormalDist LossFn::CalculateLoss(std::vector<double> probabilities, int count)
+    LogNormalDist LossFn::CalculateLoss(std::vector<double> probabilities, int count, double adjustment_factor)
     {
-        throw std::invalid_argument("LossFn::CalculateLoss()");
+        return this->CalculateUnadjustedLoss(probabilities, count).ApplyAdjustmentFactor(adjustment_factor);
+    }
+
+    LogNormalDist LossFn::CalculateUnadjustedLoss(std::vector<double> probabilities, int count)
+    {
+        throw std::invalid_argument("LossFn::CalculatedUnadjustedLoss()");
         return LogNormalDist();
     }
 
@@ -49,7 +54,7 @@ namespace SLAT {
         return loss_functions.size();
     }
 
-    LogNormalDist SimpleLossFn::CalculateLoss(std::vector<double> probabilities, int count)
+    LogNormalDist SimpleLossFn::CalculateUnadjustedLoss(std::vector<double> probabilities, int count)
     {
         LogNormalDist result = LogNormalDist::AddWeightedDistributions(loss_functions,
                                                                        probabilities);
@@ -115,7 +120,7 @@ namespace SLAT {
         return distributions.size();
     }
 
-    LogNormalDist BiLevelLossFn::CalculateLoss(std::vector<double> probabilities, int count)
+    LogNormalDist BiLevelLossFn::CalculateUnadjustedLoss(std::vector<double> probabilities, int count)
     {
         if (probabilities.size() != distributions.size()) {
             throw std::invalid_argument("BiLevelLossFn::CalculateLoss()");

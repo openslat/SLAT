@@ -118,3 +118,61 @@ BOOST_AUTO_TEST_CASE(x)
     BOOST_CHECK_EQUAL(distribution.x_at_p(0.50), MEDIAN_X);
     BOOST_CHECK_EQUAL(distribution.x_at_p(1.00), INFINITY);
 }
+
+BOOST_AUTO_TEST_CASE(scale)
+{
+    /*
+     * Quick check of scaling functions:
+     */
+    LogNormalDist distribution = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_X(MEAN_X, SIGMA_X);
+    BOOST_CHECK_EQUAL(distribution.ScaleDistributionByProbability(0.0).get_median_X(), 0);
+    BOOST_CHECK_EQUAL(distribution.ScaleDistributionByProbability(0.0).get_mean_X(), 0);
+    BOOST_CHECK_EQUAL(distribution.ScaleDistributionByProbability(0.0).get_mu_lnX(), -INFINITY);
+    BOOST_CHECK_EQUAL(distribution.ScaleDistributionByProbability(0.0).get_sigma_X(), 0);
+    BOOST_CHECK_EQUAL(distribution.ScaleDistributionByProbability(0.0).get_sigma_lnX(), SIGMA_LN_X);
+
+    BOOST_CHECK_EQUAL(distribution.ScaleDistributionByNumComponents(0.0).get_median_X(), 0);
+    BOOST_CHECK_EQUAL(distribution.ScaleDistributionByNumComponents(0.0).get_mean_X(), 0);
+    BOOST_CHECK_EQUAL(distribution.ScaleDistributionByNumComponents(0.0).get_mu_lnX(), -INFINITY);
+    BOOST_CHECK_EQUAL(distribution.ScaleDistributionByNumComponents(0.0).get_sigma_X(), 0);
+    BOOST_CHECK_EQUAL(distribution.ScaleDistributionByNumComponents(0.0).get_sigma_lnX(), SIGMA_LN_X);
+
+    BOOST_CHECK_EQUAL(distribution.ApplyAdjustmentFactor(0.0).get_median_X(), 0);
+    BOOST_CHECK_EQUAL(distribution.ApplyAdjustmentFactor(0.0).get_mean_X(), 0);
+    BOOST_CHECK_EQUAL(distribution.ApplyAdjustmentFactor(0.0).get_mu_lnX(), -INFINITY);
+    BOOST_CHECK_EQUAL(distribution.ApplyAdjustmentFactor(0.0).get_sigma_X(), 0);
+    BOOST_CHECK_EQUAL(distribution.ApplyAdjustmentFactor(0.0).get_sigma_lnX(), SIGMA_LN_X);
+
+    BOOST_CHECK_CLOSE(distribution.ScaleDistributionByProbability(2.5).get_median_X(), 
+                      2.5 * MEDIAN_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ScaleDistributionByProbability(2.5).get_mean_X(), 
+                      2.5 * MEAN_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ScaleDistributionByProbability(2.5).get_mu_lnX(), 
+                      log(2.5) + MU_LN_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ScaleDistributionByProbability(2.5).get_sigma_X(), 
+                      2.5 * SIGMA_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ScaleDistributionByProbability(2.5).get_sigma_lnX(), 
+                      SIGMA_LN_X, 0.1);
+
+    BOOST_CHECK_CLOSE(distribution.ScaleDistributionByNumComponents(7.5).get_median_X(), 
+                      7.5 * MEDIAN_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ScaleDistributionByNumComponents(7.5).get_mean_X(), 
+                      7.5 * MEAN_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ScaleDistributionByNumComponents(7.5).get_mu_lnX(), 
+                      log(7.5) + MU_LN_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ScaleDistributionByNumComponents(7.5).get_sigma_X(), 
+                      7.5 * SIGMA_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ScaleDistributionByNumComponents(7.5).get_sigma_lnX(), 
+                      SIGMA_LN_X, 0.1);
+
+    BOOST_CHECK_CLOSE(distribution.ApplyAdjustmentFactor(19.1).get_median_X(), 
+                      19.1 * MEDIAN_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ApplyAdjustmentFactor(19.1).get_mean_X(), 
+                      19.1 * MEAN_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ApplyAdjustmentFactor(19.1).get_mu_lnX(), 
+                      log(19.1) + MU_LN_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ApplyAdjustmentFactor(19.1).get_sigma_X(), 
+                      19.1 * SIGMA_X, 0.1);
+    BOOST_CHECK_CLOSE(distribution.ApplyAdjustmentFactor(19.1).get_sigma_lnX(), 
+                      SIGMA_LN_X, 0.1);
+}

@@ -251,6 +251,16 @@ namespace SLAT {
         int count;
 
         /**
+         * Multiplier applied to cost calculations.
+         */
+        double cost_adjustment_factor;
+
+        /**
+         * Multiplier applied to delay calculations.
+         */
+        double delay_adjustment_factor;
+
+        /**
          * ID returned when installing a callback for the EDP function. When the
          * EDP is changed or replaced, clear the caches.
          */

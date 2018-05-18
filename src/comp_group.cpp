@@ -51,14 +51,17 @@ namespace SLAT {
                  if (this->cost_fn  == NULL) {
                      return LogNormalDist();
                  } else {
-                     return this->cost_fn->CalculateLoss(this->frag_fn->pHighest(edp), this->count); 
+                     return this->cost_fn->CalculateLoss(this->frag_fn->pHighest(edp), this->count, 
+                         this->cost_adjustment_factor); 
                  }
              }, name + std::string("::cost_EDP_dist")),
          delay_EDP_dist([this] (double edp) {
                  if (this->delay_fn  == NULL) {
                      return LogNormalDist();
                  } else {
-                     return this->delay_fn->CalculateLoss(this->frag_fn->pHighest(edp), this->count); 
+                     return this->delay_fn->CalculateLoss(this->frag_fn->pHighest(edp), 
+                                                          this->count,
+                         this->delay_adjustment_factor); 
                  }
              }, name + std::string("::delay_EDP_dist")),
          Rate([this] (void) {
@@ -69,7 +72,9 @@ namespace SLAT {
          frag_fn(frag_fn),
          cost_fn(cost_fn),
          delay_fn(delay_fn),
-         count(count)
+         count(count),
+         cost_adjustment_factor(1.0),
+         delay_adjustment_factor(1.0)
     {
         /*
          * When the EDP changes or is replaced, clear the cached values.

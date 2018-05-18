@@ -39,6 +39,7 @@ namespace SLAT {
 
         LogNormalDist ScaleDistributionByProbability(double probability);
         LogNormalDist ScaleDistributionByNumComponents(double count);
+        LogNormalDist ApplyAdjustmentFactor(double factor);
 
         static LogNormalDist AddWeightedDistributions(
             const std::vector<LogNormalDist> distributions, 
