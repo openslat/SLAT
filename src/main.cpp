@@ -188,7 +188,10 @@ int main(int argc, char **argv)
     {
         std::shared_ptr<CompGroup> component_group = std::make_shared<CompGroup>(rel, fragFn, costFn, 
                                                                                  std::shared_ptr<LossFn>(),
-                                                                                 1);
+                                                                                 1,   // Count
+                                                                                 1.0, // Cost adjustment
+                                                                                 1.0  // Delay adjustment
+            );
         ofstream outfile("cost_edp.dat");
     
         outfile << setw(10) << "EDP" << setw(15) << "Cost"

@@ -178,15 +178,18 @@ namespace SLAT {
 
     LogNormalDist LogNormalDist::ScaleDistributionByProbability(double probability)
     {
-        return LogNormalDist_from_mean_X_and_sigma_X(
-            probability * get_mean_X(),
-            get_sigma_X());
+        return ApplyAdjustmentFactor(probability);
     }
     
     LogNormalDist LogNormalDist::ScaleDistributionByNumComponents(double count)
     {
+        return ApplyAdjustmentFactor(count);
+    }
+    
+    LogNormalDist LogNormalDist::ApplyAdjustmentFactor(double adjustment_factor)
+    {
         return LogNormalDist_from_mean_X_and_sigma_lnX(
-            count * get_mean_X(), 
+            adjustment_factor * get_mean_X(), 
             get_sigma_lnX());
     }
 

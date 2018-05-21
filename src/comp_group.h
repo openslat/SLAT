@@ -46,6 +46,8 @@ namespace SLAT {
                   std::shared_ptr<LossFn> cost_fn, 
                   std::shared_ptr<LossFn> delay_fn, 
                   int count,
+                  double cost_adj,
+                  double delay_adj,
                   std::string name);
 
         /**
@@ -55,7 +57,9 @@ namespace SLAT {
                   std::shared_ptr<FragilityFn> frag_fn,
                   std::shared_ptr<LossFn> cost_fn, 
                   std::shared_ptr<LossFn> delay_fn, 
-                  int count);
+                  int count,
+                  double cost_adj,
+                  double delay_adj);
 
         /**
          * Unregister callbacks on destruction.
@@ -249,6 +253,16 @@ namespace SLAT {
          * The number of components in the group.
          */
         int count;
+
+        /**
+         * Multiplier applied to cost calculations.
+         */
+        double cost_adjustment_factor;
+
+        /**
+         * Multiplier applied to delay calculations.
+         */
+        double delay_adjustment_factor;
 
         /**
          * ID returned when installing a callback for the EDP function. When the

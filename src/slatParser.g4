@@ -84,7 +84,7 @@ lossfn_anon_array : LBRACKET parameter_array (COMMA parameter_array)* RBRACKET;
 lossfn_dict : LPAREN lossfn_heading COLON (COMMA lossfn_heading COLON parameter)* RPAREN;
 lossfn_named_array : LBRACKET lossfn_dict (COMMA lossfn_dict)* RBRACKET;
 
-compgroup_command : COMPGROUP group_id edp_id frag_id cost_id delay_id? INTEGER;
+compgroup_command : COMPGROUP group_id edp_id frag_id cost_id delay_id? INTEGER FLOAT_VAL? FLOAT_VAL?;
 group_id: ID;
 edp_id: ID;
 frag_id: ID;

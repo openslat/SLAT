@@ -27,6 +27,8 @@ namespace SLAT {
                          std::shared_ptr<LossFn> cost_fn,
                          std::shared_ptr<LossFn> delay_fn,
                          int count,
+                         double cost_adj,
+                         double delay_adj,
                          std::string name):
         E_cost_IM([this] (double im) {
                 return this->E_cost_IM_calc(im);
@@ -51,14 +53,18 @@ namespace SLAT {
                  if (this->cost_fn  == NULL) {
                      return LogNormalDist();
                  } else {
-                     return this->cost_fn->CalculateLoss(this->frag_fn->pHighest(edp), this->count); 
+                     return this->cost_fn->CalculateLoss(this->frag_fn->pHighest(edp), 
+                                                         this->count, 
+                                                         this->cost_adjustment_factor); 
                  }
              }, name + std::string("::cost_EDP_dist")),
          delay_EDP_dist([this] (double edp) {
                  if (this->delay_fn  == NULL) {
                      return LogNormalDist();
                  } else {
-                     return this->delay_fn->CalculateLoss(this->frag_fn->pHighest(edp), this->count); 
+                     return this->delay_fn->CalculateLoss(this->frag_fn->pHighest(edp), 
+                                                          this->count,
+                                                          this->delay_adjustment_factor); 
                  }
              }, name + std::string("::delay_EDP_dist")),
          Rate([this] (void) {
@@ -69,7 +75,9 @@ namespace SLAT {
          frag_fn(frag_fn),
          cost_fn(cost_fn),
          delay_fn(delay_fn),
-         count(count)
+         count(count),
+         cost_adjustment_factor(cost_adj),
+         delay_adjustment_factor(delay_adj)
     {
         /*
          * When the EDP changes or is replaced, clear the cached values.
@@ -174,11 +182,16 @@ namespace SLAT {
      * Abbreviated constructor; used default name ("Anonymous CompGroup").
      */
     CompGroup::CompGroup(std::shared_ptr<EDP> edp,
-                  std::shared_ptr<FragilityFn> frag_fn,
-                  std::shared_ptr<LossFn> cost_fn, 
-                  std::shared_ptr<LossFn> delay_fn, 
-                  int count)
-        : CompGroup(edp, frag_fn, cost_fn, delay_fn, count, "Anonymous CompGroup")
+                         std::shared_ptr<FragilityFn> frag_fn,
+                         std::shared_ptr<LossFn> cost_fn, 
+                         std::shared_ptr<LossFn> delay_fn, 
+                         int count,
+                         double cost_adj,
+                         double delay_adj)
+        : CompGroup(edp, frag_fn, cost_fn, delay_fn, count, 
+                    cost_adj,
+                    delay_adj,
+                    "Anonymous CompGroup")
     {
     };
 

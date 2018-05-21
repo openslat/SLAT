@@ -350,12 +350,23 @@ class SlatInterpreter(slatParserListener):
         cost_id =  ctx.cost_id().getText()
         delay_id = ctx.delay_id() and ctx.delay_id().getText()
         count = int(ctx.INTEGER().getText())
+        floats = ctx.FLOAT_VAL()
+        cost_adj_factor = 1.0
+        delay_adj_factor = 1.0
+        if len(floats) > 0:
+            cost_adj_factor = float(floats[0].getText())
+        if len(floats) > 1:
+            delay_adj_factor = float(floats[1].getText())
+
         pyslat.compgroup(compgroup_id,
                          pyslat.edp.lookup(edp_id),
                          pyslat.fragfn.lookup(frag_id),
                          pyslat.lossfn.lookup(cost_id),
                          delay_id and pyslat.lossfn.lookup(delay_id),
-                         count)
+                         count,
+                         cost_adj_factor,
+                         delay_adj_factor)
+
 
     ## Exit a parse tree prodcued by slatParser#structure_command.
     def exitStructure_command(self, ctx:slatParser.Structure_commandContext):

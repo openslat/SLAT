@@ -29,8 +29,11 @@ struct fixture {
     shared_ptr<CompGroup>  component_group_no_delay;
     shared_ptr<CompGroup>  component_group_no_cost;
     shared_ptr<CompGroup>  component_group;
+    shared_ptr<CompGroup>  component_group_adjusted_costs;
     shared_ptr<DeterministicFn> mu_edp;
     shared_ptr<DeterministicFn> sigma_edp;
+    const double cost_adjustment = 2.78;
+    const double delay_adjustment = 3.14;
 
     fixture() {
         /*
@@ -82,9 +85,11 @@ struct fixture {
         /*
          * Create component groups with just cost, just delay, and both:
          */
-        component_group_no_delay = make_shared<CompGroup>(rel, fragFn, costFn, shared_ptr<LossFn>(), 1);
-        component_group_no_cost = make_shared<CompGroup>(rel, fragFn, shared_ptr<LossFn>(), delayFn, 1);
-        component_group = make_shared<CompGroup>(rel, fragFn, costFn, delayFn, 1);
+        component_group_no_delay = make_shared<CompGroup>(rel, fragFn, costFn, shared_ptr<LossFn>(), 1, 1.0, 1.0);
+        component_group_no_cost = make_shared<CompGroup>(rel, fragFn, shared_ptr<LossFn>(), delayFn, 1, 1.0, 1.0);
+        component_group = make_shared<CompGroup>(rel, fragFn, costFn, delayFn, 1, 1.0, 1.0);
+        component_group_adjusted_costs = make_shared<CompGroup>(rel, fragFn, costFn, delayFn, 1, 
+                                                                cost_adjustment, delay_adjustment);
     };
 
     ~fixture() {
@@ -258,6 +263,33 @@ BOOST_FIXTURE_TEST_CASE(comp_group_edp_test, fixture)
                           component_group_no_delay->SD_ln_cost_EDP(test_data[i].edp));
         BOOST_CHECK(std::isnan(component_group_no_delay->E_delay_EDP(test_data[i].edp)));
         BOOST_CHECK(std::isnan(component_group_no_delay->E_delay_EDP(test_data[i].edp)));
+
+        /*
+         * Tests for the full component group, with adjusted cost and delay. Check both delay and cost
+         * distribution against test data.
+         */
+        if (std::abs(test_data[i].mu_loss) < 1E-10) {
+            BOOST_CHECK_SMALL(component_group_adjusted_costs->E_cost_EDP(test_data[i].edp), 1E-10);
+        } else {
+            BOOST_CHECK_CLOSE(component_group_adjusted_costs->E_cost_EDP(test_data[i].edp), 
+                              test_data[i].mu_loss * cost_adjustment,
+                              0.1);
+        }
+
+        if (std::abs(test_data[i].sd_loss) < 1E-6) {
+            BOOST_CHECK_SMALL(component_group_adjusted_costs->SD_ln_cost_EDP(test_data[i].edp), 1E-6);
+        } else {
+            BOOST_CHECK_CLOSE(component_group_adjusted_costs->SD_ln_cost_EDP(test_data[i].edp), 
+                              test_data[i].sd_loss,
+                              0.5);
+        }
+
+        BOOST_CHECK_CLOSE(component_group_adjusted_costs->E_delay_EDP(test_data[i].edp), 
+                          test_data[i].mu_delay * delay_adjustment,
+                          0.1);
+        BOOST_CHECK_CLOSE(component_group_adjusted_costs->SD_ln_delay_EDP(test_data[i].edp), 
+                          test_data[i].sd_delay,
+                          0.5);
     }
 }
 

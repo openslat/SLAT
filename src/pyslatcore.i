@@ -171,7 +171,9 @@ private:
     friend class Structure;
 };
 
-CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn cost_fn, LossFn delay_fn, int count, std::string name);
+CompGroup *MakeCompGroup(EDP edp, FragilityFn frag_fn, LossFn cost_fn, LossFn delay_fn, int count, 
+                         double cost_adjustment_factor, double delay_adjustment_factor,
+                         std::string name);
 
 class Structure {
 public:
