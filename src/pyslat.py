@@ -206,10 +206,13 @@ def MakeBiLevelLossFn(parameters):
 #                 to repair the component
 # @param count The number of components
 # @param name  The name of the component group
-def MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, name):
+def MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, cost_adjustment_factor, delay_adjustment_factor, name):
     if (delay_fn == None):
         delay_fn = MakeSimpleLossFn([DefaultLogNormalDist()])
-    return pyslatcore.MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, name)
+    return pyslatcore.MakeCompGroup(edp, frag_fn, cost_fn, delay_fn, count, 
+                                    cost_adjustment_factor,
+                                    delay_adjustment_factor,
+                                    name)
 
 ## Create a structure
 # This function wraps SLAT::MakeStructure(), which returns an empty structure.
@@ -1073,18 +1076,23 @@ class compgroup:
     # @param cost The cost function (may be None).
     # @param delay The delay function (may be None).
     # @param count The number of components.
-    def __init__(self, id, edp, frag, cost, delay, count):
+    def __init__(self, id, edp, frag, cost, delay, count, cost_adj, delay_adj):
         self._id = id
         self._edp = edp
         self._frag = frag
         self._cost = cost
         self._count = count
         self._delay = delay
+        self._cost_adj = cost_adj
+        self._delay_adj = delay_adj
         self._func = MakeCompGroup(edp.function(),
                                    frag.function(),
                                    cost and cost.function(),
                                    delay and delay.function(),
-                                   count, str(id))
+                                   count, 
+                                   cost_adj,
+                                   delay_adj,
+                                   str(id))
         if id != None:
             old = compgroup.lookup(id)
             if old:
@@ -1192,13 +1200,15 @@ class compgroup:
     ## Return a string describing the im object.
     #  Used for debugging, warning, and error messages.
     def __str__(self):
-        return("Component Group '{}' using {}, {}, {}, and {} ({} component(s))".format(
+        return("Component Group '{}' using {}, {}, {}, and {} ({} component(s); adjustments: {} and {})".format(
             self._id, 
             self._edp.id(),
             self._frag.id(),
             self._cost and self._cost.id(),
             self._delay and self._delay.id(),
-            self._count))
+            self._count, 
+            self._cost_adj,
+            self._delay_adj))
 
 ## Represents a structure
 #
