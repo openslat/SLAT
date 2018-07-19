@@ -1,0 +1,257 @@
+#+Title:     OpenSLAT: Effect of Hazard Curve
+#+AUTHOR:    Michael Gauland
+#+EMAIL:     michael.gauland@canterbury.ac.nz
+#+DATE:      {{{time(%Y-%m-%d %H:%M)}}}
+#+OPTIONS:   H:6 num:t toc:nil \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t ':t
+#+LATEX_HEADER: \usepackage{unicode-math}
+#+LATEX_HEADER: \usepackage{fontspec}
+#+LATEX_HEADER: \setmainfont{Liberation Serif}
+#+LATEX_HEADER: \setmonofont{Liberation Mono}
+#+LATEX_HEADER: \lstset{keywordstyle=\color{blue}\bfseries}
+#+LATEX_HEADER: \lstset{stringstyle=\color{green}\bfseries}
+#+LATEX_HEADER: \lstset{frame=shadowbox}
+#+LATEX_HEADER: \lstset{basicstyle=\ttfamily}
+#+LATEX_HEADER: \definecolor{mygray}{gray}{0.8}
+#+LATEX_HEADER: \lstset{rulesepcolor=\color{mygray}}
+#+LATEX_HEADER: \lstdefinelanguage{sh}{rulecolor=\color{green},rulesepcolor=\color{mygray},frameround=ffff,backgroundcolor=\color{white}}
+#+LATEX_HEADER: \lstdefinelanguage{fundamental}{basicstyle=\ttfamily\scriptsize,rulesepcolor=\color{cyan},frameround=tttt,backgroundcolor=\color{white},breaklines=true}
+
+#+LATEX_HEADER: \input{/home/mag109/notes/julia-listings.tex}
+#+PROPERTY: header-args :eval always :exports both
+
+#+BEGIN_SRC emacs-lisp :session :results value silent :exports none
+  ;; Set up a filter to preserve Greek symbols in code
+  ;; blocks
+  (set (make-local-variable 
+        'org-export-filter-src-block-functions)
+       (list
+        (lambda (text backend info)
+          (replace-regexp-in-string 
+           "\\([αβγλ]\\)" "§$\\1$§" text))))
+
+  (set (make-local-variable 'org-latex-listings-options)
+       '(("escapechar" "§")))
+#+END_SRC
+
+This file uses 
+
+  #+begin_src julia :results output :session j-pdf-test
+    function read_cost(filename)
+        open(filename) do file
+            readline(file) # Skip first line, with column header
+            return parse(readline(file)) 
+        end
+    end;
+
+    ann_cost_1 = read_cost("pdf-test-results/ann_cost-1.csv");
+    ann_cost_2 = read_cost("pdf-test-results/ann_cost-2.csv");
+    ann_cost_3 = read_cost("pdf-test-results/ann_cost-3.csv");
+
+    println("Annual Costs:")
+    println("Full Hazard:\t\t$ann_cost_1")
+    println("Truncated Hazard:\t$ann_cost_2")
+    println("NZS Hazard:\t\t$ann_cost_3")
+  #+end_src
+
+  #+RESULTS:
+  #+begin_example
+
+
+
+
+
+
+  Annual Costs:
+  Full Hazard:		7838.1
+  Truncated Hazard:	6225.26
+  NZS Hazard:		2640.44
+  #+end_example
+
+  #+begin_src julia :results output :session j-pdf-test
+    function read_slat(filename)
+        open(filename) do file
+            x_values = []
+            y_values = []
+            # The first line has the column headings
+            headings = split(strip(readline(file)), r" +")
+            # Remove number from first column (IM.1, IM.2, IM.3...):
+            headings[1] = "IM"
+
+            for ln in eachline(file)
+                data = split(strip(ln), r" +")
+                push!(k, parse(Float64, data[1]))
+                push!(x_values, parse(Float64, data[1]))
+                push!(y_values, parse(Float64, data[2]))
+            end
+            result = DataFrame(X=Array{Real, 1}(x_values),
+                               Y=Array{Real, 1}(y_values))    
+            rename!(result,
+                    f => Symbol(t) for (f, t) = 
+                    zip(names(result), headings))
+            return(result)
+        end;
+    end;
+    # The "-1" files use the full hazard curve from the original
+    # SLAT example.
+    # The "-2" files use a truncated version of the hazard curve.
+    # The "-3" files use a curve generated from NZS 1170.5
+
+    im1 = read_slat("pdf-test-results/im_rate-1.csv");
+    im2 = read_slat("pdf-test-results/im_rate-2.csv");
+    im3 = read_slat("pdf-test-results/im_rate-3.csv");
+    norm_pdf1 = read_slat("pdf-test-results/norm_pdf-1.csv");
+    norm_pdf2 = read_slat("pdf-test-results/norm_pdf-2.csv");
+    norm_pdf3 = read_slat("pdf-test-results/norm_pdf-3.csv");
+    pdf1 = read_slat("pdf-test-results/pdf-1.csv");
+    pdf2 = read_slat("pdf-test-results/pdf-2.csv");
+    pdf3 = read_slat("pdf-test-results/pdf-3.csv");
+    total_cost1 = read_slat("pdf-test-results/total_cost-1.csv");
+    total_cost2 = read_slat("pdf-test-results/total_cost-2.csv");
+    total_cost3 = read_slat("pdf-test-results/total_cost-3.csv");
+  #+end_src
+
+  #+RESULTS:
+  #+begin_example
+
+
+
+
+
+
+
+
+
+
+
+
+  #+end_example
+
+
+  #+begin_src julia :results output graphics file :file pdf-hazards.pdf :session j-pdf-test
+    # plot the hazard curve:
+    using Plots, StatPlots
+    gr()
+    @df im2 plot(:IM, :lambda,
+                 linecolor=:cyan,
+                 linewidth=5,
+                 label="Full Hazard", 
+                 xlabel="IM",
+                 xlimits=[0.00, 1.5],
+                 ylabel="\\lambda")
+    @df im2 plot!(:IM, :lambda,
+                 linecolor=:green,
+                 linewidth=3,
+                 label="Truncated Hazard")
+    @df im3 plot!(:IM, :lambda,
+                 linecolor=:blue,
+                 linewidth=1,
+                 label="NZS Hazard")
+
+    Plots.savefig("pdf-hazards.pdf")
+  #+end_src
+
+  #+RESULTS:
+  [[file:pdf-hazards.pdf]]
+
+  #+header: :session j-pdf-test
+  #+begin_src julia :results output graphics file :file pdf-hazards-log.pdf
+    # plot the hazard curve:
+    using Plots, StatPlots
+    gr()
+    @df im1 plot(:IM, :lambda,
+                 linecolor=:cyan,
+                 linewidth=5,
+                 label="Full Hazard", 
+                 xlabel="IM",
+                 xlimits=[0.001, 1.5],
+                 xscale=:log10, yscale=:log10,
+                 ylabel="\\lambda")
+    @df im2 plot!(:IM, :lambda,
+                 linecolor=:green,
+                 linewidth=3,
+                 xscale=:log10, yscale=:log10,
+                 label="Truncated Hazard")
+    @df im3 plot!(:IM, :lambda,
+                 linecolor=:blue,
+                 linewidth=1,
+                 xscale=:log10, yscale=:log10,
+                 label="NZS Hazard")
+
+    Plots.savefig("pdf-hazards-log.pdf")
+  #+end_src
+
+  #+RESULTS:
+  [[file:pdf-hazards-log.pdf]]
+
+  #+begin_src julia :results output graphics file :file pdf-norm.pdf :session j-pdf-test
+    # plot the hazard curve:
+    @df norm_pdf1 plot(:IM, :pdf,
+                 linecolor=:cyan,
+                 linewidth=5,
+                 label="Full Hazard", 
+                 xlabel="IM",
+                 xlimits=[0.00, 1.5],
+                 ylabel="pdf")
+    @df norm_pdf2 plot!(:IM, :pdf,
+                 linecolor=:green,
+                 linewidth=3,
+                 label="Truncated Hazard")
+    @df norm_pdf3 plot!(:IM, :pdf,
+                 linecolor=:blue,
+                 linewidth=1,
+                 label="NZS Hazard")
+
+    Plots.savefig("pdf-norm.pdf")
+  #+end_src
+
+  #+RESULTS:
+  [[file:pdf-norm.pdf]]
+
+  #+begin_src julia :results output graphics file :file pdf-pdf.pdf :session j-pdf-test
+    # plot the hazard curve:
+    @df pdf1 plot(:IM, :pdf,
+                 linecolor=:cyan,
+                 linewidth=5,
+                 label="Full Hazard", 
+                 xlabel="IM",
+                 xlimits=[0.00, 1.5],
+                 ylabel="pdf")
+    @df pdf2 plot!(:IM, :pdf,
+                 linecolor=:green,
+                 linewidth=3,
+                 label="Truncated Hazard")
+    @df pdf3 plot!(:IM, :pdf,
+                 linecolor=:blue,
+                 linewidth=1,
+                 label="NZS Hazard")
+
+    Plots.savefig("pdf-pdf.pdf")
+  #+end_src
+
+  #+RESULTS:
+  [[file:pdf-pdf.pdf]]
+
+  #+begin_src julia :results output graphics file :file pdf-total.pdf :session j-pdf-test
+    # plot the hazard curve:
+    @df total_cost1 plot(:IM, :mean_x,
+                 linecolor=:cyan,
+                 linewidth=5,
+                 label="Full Hazard", 
+                 xlabel="IM",
+                 xlimits=[0.00, 1.5],
+                 ylabel="pdf")
+    @df total_cost2 plot!(:IM, :mean_x,
+                 linecolor=:green,
+                 linestyle=:dot,
+                 linewidth=3,
+                 label="Truncated Hazard")
+    @df total_cost3 plot!(:IM, :mean_x,
+                 linecolor=:blue,
+                 linewidth=1,
+                 label="NZS Hazard")
+
+    Plots.savefig("pdf-total.pdf")
+  #+end_src
+
+  #+RESULTS:
+  [[file:pdf-total.pdf]]
