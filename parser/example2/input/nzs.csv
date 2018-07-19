@@ -1,0 +1,11 @@
+# IM-Rate data for Christchurch Sa=1.5 seconds from NZS calculations
+# '#' starts a comment; values must be separated by commas
+0.03872  0.05
+0.0484  0.04
+0.06776  0.02
+0.0968  0.01
+0.1452  0.004
+0.1936  0.002
+0.25168  0.001
+0.32912  5e-04
+0.34848  4e-04
