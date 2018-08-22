@@ -81,11 +81,16 @@ namespace SLAT {
 
     double LogNormalDist::p_at_least(double x) const
     {
-        /*
-         * If mu_lnX is NAN, we'll assume it's because mean(x) is 0, and return
-         * 0 for the rate of exceedence. 
-         */
-        if (std::isnan(mu_lnX)) {
+        if (std::isnan(mu_lnX) && std::isnan(sigma_lnX)) {
+            /*
+             * If both mu_lnX and sigma_lnX are both NAN, return NAN:
+             */
+            return NAN;
+        } else if (std::isnan(mu_lnX)) {
+            /*
+             * If mu_lnX is NAN, we'll assume it's because mean(x) is 0, and return
+             * 0 for the rate of exceedence. 
+             */
             return 0;
         } else {
             double result = gsl_cdf_lognormal_Q(x, mu_lnX, sigma_lnX);
@@ -99,12 +104,19 @@ namespace SLAT {
 
     double LogNormalDist::p_at_most(double x) const
     {
-        double result = gsl_cdf_lognormal_P(x, mu_lnX, sigma_lnX);
-        if (result < 0) {
-            //std::cout << "CLIPPING p_at_most" << std::endl;
-            return 0.0;
+        if (std::isnan(mu_lnX) && std::isnan(sigma_lnX)) {
+            /*
+             * If both mu_lnX and sigma_lnX are both NAN, return NAN:
+             */
+            return NAN;
         } else {
-            return result;
+            double result = gsl_cdf_lognormal_P(x, mu_lnX, sigma_lnX);
+            if (result < 0) {
+                //std::cout << "CLIPPING p_at_most" << std::endl;
+                return 0.0;
+            } else {
+                return result;
+            }
         }
     }
 
