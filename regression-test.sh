@@ -4,7 +4,7 @@ export LD_LIBRARY_PATH=$PWD/linux/lib
 export PYTHONPATH=$PWD/linux/lib
 
 pushd parser/example2
-rm -rf slat_resutls py-results c-results
+rm -rf slat_results py-results c-results
 ../../linux/scripts/SlatInterpreter.py example2.slat
 if ! $(diff --recursive --exclude=slat.log expected-results slat_results); then
     echo 'SLAT script failed.'
