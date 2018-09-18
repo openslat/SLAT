@@ -315,7 +315,7 @@ namespace SLAT {
         if (result.successful) {
             return result.integral;
         } else {
-            return NAN;
+            return 0;
         };
     }
 
@@ -371,7 +371,7 @@ namespace SLAT {
             if (mean_x == 0) sigma_lnx = 0; ///@todo What should sigma_lnx be if mean_x is zero?
             return sigma_lnx;
         } else {
-            return NAN;;
+            return 0;
         };
     }
 
@@ -391,7 +391,7 @@ namespace SLAT {
         if (result.successful) {
             return result.integral;
         } else {
-            return NAN;;
+            return 0;
         }
     }
 
@@ -414,7 +414,7 @@ namespace SLAT {
         if (result.successful) {
             return result.integral;
         } else {
-            return NAN;
+            return 0;
         }
     }
 
@@ -452,7 +452,7 @@ namespace SLAT {
         if (result.successful) {
             return result.integral;
         } else {
-            return NAN;;
+            return 0;
         };
     }
 
@@ -508,7 +508,7 @@ namespace SLAT {
             if (mean_x == 0) sigma_lnx = 0; //sigma_x;
             return sigma_lnx;
         } else {
-            return NAN;;
+            return 0;
         };
     }
 
@@ -576,7 +576,7 @@ namespace SLAT {
         if (result.successful) {
             return result.integral;
         } else {
-            return 0; // NAN
+            return 0;
         };
     }
 
