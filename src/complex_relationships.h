@@ -15,10 +15,7 @@
 
 #include <unordered_map>
 #include "functions.h"
-#include "maq.h"
 #include "replaceable.h"
-#include "caching.h"
-#include "lognormaldist.h"
 #include <iostream>
 
 namespace SLAT {
@@ -43,8 +40,18 @@ namespace SLAT {
     class Complex_IM : public Replaceable<Complex_IM>
     {
     public:
-        Complex_IM();
+        Complex_IM(std::shared_ptr<DeterministicFn> fn_base,
+                   std::shared_ptr<DeterministicFn> fn_x,
+                   std::shared_ptr<DeterministicFn> fn_y,
+                   std::string name);
         ~Complex_IM();
+
+        virtual std::string ToString(void) const;
+        friend std::ostream& operator<<(std::ostream& out, const Complex_IM& o);
+    private:
+        int callback_id_base, callback_id_x, callback_id_y;
+        std::shared_ptr<DeterministicFn> fn_base, fn_x, fn_y;
+        std::string name;
     };
 }
 #endif
