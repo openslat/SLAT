@@ -25,9 +25,11 @@ namespace SLAT {
         if (fn_base != NULL) {
             this->callback_id_base = fn_base->add_callbacks(
                 [this] (void) {
+                    std::cout << "Complex_IM '" << this->name << "' base function changed." << std::endl;
                     this->notify_change();
                 },
                 [this] (std::shared_ptr<DeterministicFn> new_f) {
+                    std::cout << "Complex_IM '" << this->name << "' base function replaced." << std::endl;
                     this->fn_base = new_f;
                     this->notify_change();
                 });
@@ -37,9 +39,11 @@ namespace SLAT {
         if (fn_x != NULL) {
             this->callback_id_x = fn_x->add_callbacks(
                 [this] (void) {
+                    std::cout << "Complex_IM '" << this->name << "' X function changed." << std::endl;
                     this->notify_change();
                 },
                 [this] (std::shared_ptr<DeterministicFn> new_f) {
+                    std::cout << "Complex_IM '" << this->name << "' X function replaced." << std::endl;
                     this->fn_x = new_f;
                     this->notify_change();
                 });
@@ -49,9 +53,11 @@ namespace SLAT {
         if (fn_y != NULL) {
             this->callback_id_y = fn_y->add_callbacks(
                 [this] (void) {
+                    std::cout << "Complex_IM '" << this->name << "' Y function changed." << std::endl;
                     this->notify_change();
                 },
                 [this] (std::shared_ptr<DeterministicFn> new_f) {
+                    std::cout << "Complex_IM '" << this->name << "' Y function replaced." << std::endl;
                     this->fn_y = new_f;
                     this->notify_change();
                 });
@@ -81,4 +87,31 @@ namespace SLAT {
         return out;
     }
 
+    double Complex_IM::lambda(Component which, double where)
+    {
+        switch (which) {
+        case BASE:
+            return fn_base->ValueAt(where);
+        case X:
+            return fn_x->ValueAt(where);
+        case Y:
+            return fn_y->ValueAt(where);
+        default:
+            return NAN;
+        }
+    }
+
+    double Complex_IM::value(Component which, double lambda)
+    {
+        switch (which) {
+        case BASE:
+            return fn_base->solve_for(lambda);
+        case X:
+            return fn_x->solve_for(lambda);
+        case Y:
+            return fn_y->solve_for(lambda);
+        default:
+            return NAN;
+        }
+    }
 }

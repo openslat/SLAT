@@ -40,11 +40,15 @@ namespace SLAT {
     class Complex_IM : public Replaceable<Complex_IM>
     {
     public:
+        enum Component { BASE, X, Y };
         Complex_IM(std::shared_ptr<DeterministicFn> fn_base,
                    std::shared_ptr<DeterministicFn> fn_x,
                    std::shared_ptr<DeterministicFn> fn_y,
                    std::string name);
         ~Complex_IM();
+
+        double lambda(Component which, double where);
+        double value(Component which, double lambda);
 
         virtual std::string ToString(void) const;
         friend std::ostream& operator<<(std::ostream& out, const Complex_IM& o);

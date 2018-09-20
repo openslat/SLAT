@@ -20,6 +20,7 @@
 #include <math.h>
 #include "replaceable.h"
 #include "lognormaldist.h"
+#include "caching.h"
 
 namespace SLAT {
 /**
@@ -36,7 +37,7 @@ namespace SLAT {
         /** 
          * Default constructor; does nothing.
          */     
-    DeterministicFn(void) : Replaceable<DeterministicFn>() {};
+        DeterministicFn(void);
 
         /** 
          * Evalue the function at the given input. Subclasses will override this
@@ -76,8 +77,20 @@ namespace SLAT {
          */
         virtual double DerivativeAt(double x) const;
 
+        /**
+         * Solve the function, return the 'x' value that produces the corresponding
+         * 'y'.
+         *
+         * @param y The value we which to solve for
+         *
+         * @return The root.
+         */
+        Caching::CachedFunction<double, double> solve_for;
+
         friend std::ostream& operator<<(std::ostream& out, const DeterministicFn& o);
         virtual std::string ToString(void) const;
+    private:
+        virtual double solve_for_calc(double y);
     };
 
 

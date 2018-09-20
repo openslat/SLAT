@@ -12,6 +12,7 @@
 
 #include "functions.h"
 #include <boost/test/unit_test.hpp>
+#include <iomanip>
 
 using namespace std;
 using namespace SLAT;
@@ -193,4 +194,76 @@ BOOST_AUTO_TEST_CASE(Log_Normal_Function_Test)
         BOOST_CHECK_CLOSE(expected_pct, actual_pct, 0.5);
         BOOST_CHECK_CLOSE(expected_edp, actual_edp, 1.0);
     }
+}
+
+BOOST_AUTO_TEST_CASE(Solver_Test)
+{
+    shared_ptr<DeterministicFn> f(new NonLinearHyperbolicLaw(1221, 29.8, 62.2));
+
+    const int N=10;
+    const int MAX_X = 2.5;
+
+    for (int i=0; i <= N; i++) {
+        double x = (double)i/N * MAX_X;
+        double y = f->ValueAt(x);
+        double z = f->solve_for(y);
+        
+        if (isnan(z)) std::cout << x << ", " << y << ", " << z << std::endl;
+        BOOST_CHECK_CLOSE(x, z, 0.01);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(Linear_Solver_Test)
+{
+    const size_t size = 30;
+    double x[size], y[size];
+    NonLinearHyperbolicLaw h(1221, 29.8, 62.2);
+
+    for (unsigned int i=0; i < size; i++) {
+        x[i] = double(i)/(size -1) * 28;
+        if (x[i] == 0) x[i] = 0.001;
+        y[i] = h.ValueAt(x[i]);
+    }
+    LinearInterpolatedFn f(x, y, size);
+
+    const int N=10;
+    const int MAX_X = 2.5;
+
+    for (int i=0; i <= N; i++) {
+        double x = (double)i/N * MAX_X;
+        double y = f.ValueAt(x);
+        double z = f.solve_for(y);
+        
+        BOOST_CHECK_CLOSE(x, z, 0.01);
+    }
+}
+
+BOOST_AUTO_TEST_CASE(LogLog_Solver_Test)
+{
+    const size_t size = 30;
+    double x[size], y[size];
+    NonLinearHyperbolicLaw h(1221, 29.8, 62.2);
+
+    for (unsigned int i=0; i < size; i++) {
+        x[i] = double(i)/(size -1) * 28;
+        if (x[i] == 0) x[i] = 0.001;
+        y[i] = h.ValueAt(x[i]);
+    }
+    LogLogInterpolatedFn f(x, y, size);
+
+    double start_time = omp_get_wtime();
+    for (size_t k=0; k < 1000; k++) {
+        const int N=1000;
+        const int MAX_X = 2.5;
+        
+        for (int i=0; i <= N; i++) {
+            double x = (double)i/N * MAX_X;
+            double y = f.ValueAt(x);
+            double z = f.solve_for(y);
+            
+            BOOST_CHECK_CLOSE(x, z, 0.1);
+        }
+    }
+    double end_time = omp_get_wtime();
+    std::cout << "Elapsed time: " << end_time - start_time << endl;
 }

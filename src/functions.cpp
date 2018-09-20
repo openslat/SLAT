@@ -14,13 +14,21 @@
 #include <vector>
 #include <functional>
 #include <gsl/gsl_deriv.h>
+#include <gsl/gsl_roots.h>
 #include <omp.h>
 #include <boost/log/trivial.hpp>
 #include "functions.h"
 #include "lognormaldist.h"
 #include "context.h"
+#include <iomanip>
 
 namespace SLAT {
+    DeterministicFn::DeterministicFn(void): Replaceable<DeterministicFn>(),
+            solve_for([this] (double x) { 
+                    return this->solve_for_calc(x);
+                }) 
+            {};
+
     std::string DeterministicFn::ToString(void) const 
     {
         return "Deterministic Function";
@@ -135,6 +143,110 @@ namespace SLAT {
         if (std::isnan(result)) gsl_deriv_backward(&F, x, 1E-8, &result, &abserror);
 
         return result;
+    }
+
+/*
+ * Uses the GSL to find a root; can be overridden by subclasses.
+ */
+    double DeterministicFn::solve_for_calc(double y) 
+    {
+        /*
+         * Encapsulate the function in a lambda, that we can pass to the GSL through
+         * the function 'wrapper()' (above).
+         */
+        std::function<double (double)> local_lambda = [this, y] (double x) {
+            double result = this->ValueAt(x) - y;
+            return result;
+        };
+
+        /*
+         * Set up a 'gsl_function'--we'll pass the lambda as an additional
+         * parameter, as allowed by the GSL.
+         */
+        gsl_function F;
+        F.function = (double (*)(double, void *))wrapper;
+        F.params = &local_lambda;
+
+        const gsl_root_fsolver_type * T  = gsl_root_fsolver_brent;
+        gsl_root_fsolver * s = gsl_root_fsolver_alloc (T);
+        double x_low = 0, x_high=1/y;
+        if (std::isnan(x_high)) x_high = 1.0;
+        double y_low = this->ValueAt(x_low);
+        double y_high = this->ValueAt(x_high);
+        //std::cout << "solving for " << y << std::endl;
+        //std::cout << x_low << ", " << y_low << "; " << x_high << ", " << y_high << std::endl;
+        if (y_low < y and y_high < y) {
+            while (y_high < y) {
+                x_low = x_high;
+                y_low = y_high;
+
+                x_high = 2 * x_low;
+                y_high = this->ValueAt(x_high);
+            }
+        } else if (y_low > y and y_high > y) {
+            while (y_high > y) {
+                x_low = x_high;
+                y_low = y_high;
+
+                x_high = 2 * x_low;
+                y_high = this->ValueAt(x_high);
+            }
+        } else if (y_low == y) {
+            return x_low; 
+        } else if (y_high == y) {
+            return x_high;
+        }
+        gsl_root_fsolver_set (s, &F, x_low, x_high);
+        /*
+        std::cout << x_low << ", " << y_low << "; " << x_high << ", " << y_high << std::endl;
+        
+        std::cout << "using " << gsl_root_fsolver_name(s) << "method" << std::endl;
+
+        std::cout << std::setw(5) << "iter"
+                  << std::setw(9) << "root" 
+                  << std::setw(10) << "err"
+                  << std::setw(9) << "err(est)" 
+                  << std::endl;
+        */
+        int iter=0;
+        const int max_iter = 100;
+        int status;
+
+        do
+        {
+            iter++;
+            status = gsl_root_fsolver_iterate(s);
+            double r = gsl_root_fsolver_root(s);
+            double x_lo = gsl_root_fsolver_x_lower(s);
+            double x_hi = gsl_root_fsolver_x_upper(s);
+            status = gsl_root_test_interval(x_lo, x_hi,
+                                            0, 0.001);
+            /*
+            if (status == GSL_SUCCESS) {
+                std::cout << "Converged: " << std::endl;
+            }
+            
+            std::cout << std::setw(5) << iter << " ["
+                      << std::setw(7) << x_low << ", "
+                      << std::setw(7) << x_hi << "] "
+                      << std::setw(7) << r
+                      << std::setw(7) << x_hi - x_low
+                      << std::endl;
+            */
+            if (status == GSL_SUCCESS) {
+                gsl_root_fsolver_free (s);
+                return r;
+            }
+            
+            if (status != GSL_CONTINUE) {
+                std::cout << "FAIL: " << x_low << ", " << x_high << "; " << status << std::endl;
+            }
+        }
+        while (status == GSL_CONTINUE && iter < max_iter);
+        std::cout << "ITER: " << iter << std::endl;
+        gsl_root_fsolver_free (s);
+        
+        return NAN;
     }
 
     NonLinearHyperbolicLaw::NonLinearHyperbolicLaw(double v_asy, double IM_asy, double alpha)
