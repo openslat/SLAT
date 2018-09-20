@@ -53,9 +53,9 @@ BOOST_AUTO_TEST_CASE( Complex_Relationship_Test )
               << std::setw(15) << "y"
               << std::endl;
     for (const auto& lambda : rates) {
-        double base = im.value(Complex_IM::BASE, lambda);
-        double x = im.value(Complex_IM::X, lambda);
-        double y = im.value(Complex_IM::Y, lambda);
+        double base = im.ValueFromLambda(Complex_IM::BASE, lambda);
+        double x = im.ValueFromLambda(Complex_IM::X, lambda);
+        double y = im.ValueFromLambda(Complex_IM::Y, lambda);
         std::cout << std::setw(15) << lambda
                   << std::setw(15) << base
                   << std::setw(15) << x
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE( Complex_Relationship_Test )
         
     {
         double lambda = 0.002;
-        double base = im.value(Complex_IM::BASE, lambda);
+        double base = im.ValueFromLambda(Complex_IM::BASE, lambda);
         double x = base * 0.95;
         double y = base * 0.90;
 
@@ -90,7 +90,7 @@ BOOST_AUTO_TEST_CASE( Complex_Relationship_Test )
                   << "     " << x << ": " << im.lambda(Complex_IM::X, x) << std::endl
                   << "     " << y << ": " << im.lambda(Complex_IM::Y, y) << std::endl;
     }
-    BOOST_CHECK_CLOSE(im.value(Complex_IM::BASE, im.lambda(Complex_IM::BASE, 0.001)),
+    BOOST_CHECK_CLOSE(im.ValueFromLambda(Complex_IM::BASE, im.lambda(Complex_IM::BASE, 0.001)),
                       0.001,
         0.1);
     BOOST_CHECK_EQUAL(1, 1);

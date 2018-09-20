@@ -101,7 +101,7 @@ namespace SLAT {
         }
     }
 
-    double Complex_IM::value(Component which, double lambda)
+    double Complex_IM::ValueFromLambda(Component which, double lambda)
     {
         switch (which) {
         case BASE:
