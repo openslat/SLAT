@@ -105,11 +105,11 @@ namespace SLAT {
     {
         switch (which) {
         case BASE:
-            return fn_base->solve_for(lambda);
+            return fn_base->SolveFor(lambda);
         case X:
-            return fn_x->solve_for(lambda);
+            return fn_x->SolveFor(lambda);
         case Y:
-            return fn_y->solve_for(lambda);
+            return fn_y->SolveFor(lambda);
         default:
             return NAN;
         }

@@ -85,12 +85,12 @@ namespace SLAT {
          *
          * @return The root.
          */
-        Caching::CachedFunction<double, double> solve_for;
+        Caching::CachedFunction<double, double> SolveFor;
 
         friend std::ostream& operator<<(std::ostream& out, const DeterministicFn& o);
         virtual std::string ToString(void) const;
     private:
-        virtual double solve_for_calc(double y);
+        virtual double SolveFor_calc(double y);
     };
 
 

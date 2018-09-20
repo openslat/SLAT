@@ -24,8 +24,8 @@
 
 namespace SLAT {
     DeterministicFn::DeterministicFn(void): Replaceable<DeterministicFn>(),
-            solve_for([this] (double x) { 
-                    return this->solve_for_calc(x);
+            SolveFor([this] (double x) { 
+                    return this->SolveFor_calc(x);
                 }) 
             {};
 
@@ -148,7 +148,7 @@ namespace SLAT {
 /*
  * Uses the GSL to find a root; can be overridden by subclasses.
  */
-    double DeterministicFn::solve_for_calc(double y) 
+    double DeterministicFn::SolveFor_calc(double y) 
     {
         /*
          * Encapsulate the function in a lambda, that we can pass to the GSL through

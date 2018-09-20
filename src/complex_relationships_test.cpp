@@ -80,7 +80,16 @@ BOOST_AUTO_TEST_CASE( Complex_Relationship_Test )
               << im.lambda(Complex_IM::Y, 0.001) << std::endl
               << "-----------" << std::endl;
         
+    {
+        double lambda = 0.002;
+        double base = im.value(Complex_IM::BASE, lambda);
+        double x = base * 0.95;
+        double y = base * 0.90;
 
+        std::cout << lambda << ": " << base << std::endl
+                  << "     " << x << ": " << im.lambda(Complex_IM::X, x) << std::endl
+                  << "     " << y << ": " << im.lambda(Complex_IM::Y, y) << std::endl;
+    }
     BOOST_CHECK_CLOSE(im.value(Complex_IM::BASE, im.lambda(Complex_IM::BASE, 0.001)),
                       0.001,
         0.1);

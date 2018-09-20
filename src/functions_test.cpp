@@ -206,7 +206,7 @@ BOOST_AUTO_TEST_CASE(Solver_Test)
     for (int i=0; i <= N; i++) {
         double x = (double)i/N * MAX_X;
         double y = f->ValueAt(x);
-        double z = f->solve_for(y);
+        double z = f->SolveFor(y);
         
         if (isnan(z)) std::cout << x << ", " << y << ", " << z << std::endl;
         BOOST_CHECK_CLOSE(x, z, 0.01);
@@ -232,7 +232,7 @@ BOOST_AUTO_TEST_CASE(Linear_Solver_Test)
     for (int i=0; i <= N; i++) {
         double x = (double)i/N * MAX_X;
         double y = f.ValueAt(x);
-        double z = f.solve_for(y);
+        double z = f.SolveFor(y);
         
         BOOST_CHECK_CLOSE(x, z, 0.01);
     }
@@ -251,19 +251,14 @@ BOOST_AUTO_TEST_CASE(LogLog_Solver_Test)
     }
     LogLogInterpolatedFn f(x, y, size);
 
-    double start_time = omp_get_wtime();
-    for (size_t k=0; k < 1000; k++) {
-        const int N=1000;
-        const int MAX_X = 2.5;
+    const int N=1000;
+    const int MAX_X = 2.5;
+    
+    for (int i=0; i <= N; i++) {
+        double x = (double)i/N * MAX_X;
+        double y = f.ValueAt(x);
+        double z = f.SolveFor(y);
         
-        for (int i=0; i <= N; i++) {
-            double x = (double)i/N * MAX_X;
-            double y = f.ValueAt(x);
-            double z = f.solve_for(y);
-            
-            BOOST_CHECK_CLOSE(x, z, 0.1);
-        }
+        BOOST_CHECK_CLOSE(x, z, 0.1);
     }
-    double end_time = omp_get_wtime();
-    std::cout << "Elapsed time: " << end_time - start_time << endl;
 }
