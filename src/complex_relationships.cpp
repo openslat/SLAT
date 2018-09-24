@@ -91,6 +91,20 @@ namespace SLAT {
         }
     }
 
+    double Complex_IM::DerivativeAt(Component which, double where)
+    {
+        switch (which) {
+        case BASE:
+            return fn_base->DerivativeAt(where);
+        case X:
+            return fn_x->DerivativeAt(where);
+        case Y:
+            return fn_y->DerivativeAt(where);
+        default:
+            return NAN;
+        }
+    }
+    
     double Complex_IM::ValueFromLambda(Component which, double lambda)
     {
         switch (which) {

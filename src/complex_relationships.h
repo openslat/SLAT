@@ -49,6 +49,7 @@ namespace SLAT {
 
         double lambda(Component which, double where);
         double ValueFromLambda(Component which, double lambda);
+        double DerivativeAt(Component which, double where);
 
         virtual std::string ToString(void) const;
         friend std::ostream& operator<<(std::ostream& out, const Complex_IM& o);
