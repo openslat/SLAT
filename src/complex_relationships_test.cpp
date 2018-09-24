@@ -26,9 +26,9 @@ BOOST_AUTO_TEST_CASE( Complex_Relationship_Test )
     shared_ptr<DeterministicFn> base_im_rate_function 
         = NZS_Hazard_Curve(soil_class, 0.0, Z, distance);
     shared_ptr<DeterministicFn> x_im_rate_function
-        = NZS_Hazard_Curve(soil_class, 0.025, /*1.0,*/ Z, distance);
+        = NZS_Hazard_Curve(soil_class, 1.0, Z, distance);
     shared_ptr<DeterministicFn> y_im_rate_function
-        = NZS_Hazard_Curve(soil_class, 0.05, /*2.5,*/ Z, distance);
+        = NZS_Hazard_Curve(soil_class, 2.5, Z, distance);
 
     Complex_IM im(base_im_rate_function, x_im_rate_function, y_im_rate_function, "Test IM");
 
