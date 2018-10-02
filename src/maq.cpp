@@ -600,7 +600,7 @@ namespace SLAT {
                 if (std::isnan(r.a)) {
 #pragma omp critical
                     stats.number_search_fails++;
-                    BOOST_LOG_TRIVIAL(fatal) << Context::GetText() << " binary_subdivision() found nothing";
+                    //BOOST_LOG_TRIVIAL(debug) << Context::GetText() << " binary_subdivision() found nothing";
                     return {0, true, (unsigned int)r.evaluations}; 
                 } else {
                     a = r.a;

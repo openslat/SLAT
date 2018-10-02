@@ -202,11 +202,11 @@ namespace SLAT {
         double P_exceedence(double base_value, double min_dependent_value) const;
         double X_at_exceedence(double x, double p) const;
         
-        double Mean(double base_value) const;
-        double MeanLn(double base_value) const;
-        double Median(double base_value) const;
-        double SD_ln(double base_value) const;
-        double SD(double base_value) const;
+        virtual double Mean(double base_value) const;
+        virtual double MeanLn(double base_value) const;
+        virtual double Median(double base_value) const;
+        virtual double SD_ln(double base_value) const;
+        virtual double SD(double base_value) const;
 
         std::vector<double> Mean(std::vector<double>base_value) const;
         std::vector<double> MeanLn(std::vector<double>base_value) const;
@@ -229,6 +229,54 @@ namespace SLAT {
 
         static double default_tolerance;
         static unsigned int default_max_evaluations;
+    };
+
+/**
+ * @brief CompoundEDP
+ *
+ * A 'CompoundEDP' serves the same function as an EDP object, but uses the maximum
+ * of two EDPs as its demand function.
+ */
+    class CompoundEDP : public EDP
+    {
+    protected:
+        enum DIRECTION { FIRST, SECOND };
+        DIRECTION WhichToUse(double im) const;
+        int second_dependent_rate_callback_id;
+        std::shared_ptr<ProbabilisticFn> second_dependent_rate; /**< Dependent function */
+
+    public:
+        /** 
+         * Create a compound EDP relationship given shared pointers to a rate
+         * relationship and two probabilistic functions.
+         * 
+         * @param base_rate        A shared pointer to a rate relationship
+         * @param dependent_rate_1  A shared pointer to a probabilistic function.
+         * @param dependent_rate_2  A shared pointer to a probabilistic function.
+         * 
+         * @return 
+         */
+        CompoundEDP(std::shared_ptr<IM> base_rate,
+                     std::shared_ptr<ProbabilisticFn> dependent_rate_1,
+                     std::shared_ptr<ProbabilisticFn> dependent_rate_2,
+                     std::string name);
+        CompoundEDP(std::shared_ptr<IM> base_rate,
+                     std::shared_ptr<ProbabilisticFn> dependent_rate_1,
+                     std::shared_ptr<ProbabilisticFn> dependent_rate_2)
+        : CompoundEDP(base_rate, dependent_rate_1,
+                       dependent_rate_2, "Anonymous Compound_EDP") {};
+
+        virtual ~CompoundEDP() {
+            base_rate->remove_callbacks(base_rate_callback_id);
+            dependent_rate->remove_callbacks(dependent_rate_callback_id);
+            second_dependent_rate->remove_callbacks(second_dependent_rate_callback_id);
+        }; /**< Destructor; unregister callbacks */
+
+        virtual double Mean(double base_value) const;
+        virtual double MeanLn(double base_value) const;
+        virtual double Median(double base_value) const;
+        virtual double SD_ln(double base_value) const;
+        virtual double SD(double base_value) const;
     };
 }
 #endif

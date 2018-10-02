@@ -388,6 +388,103 @@ namespace SLAT {
         return result;
     }
 
+    CompoundEDP::CompoundEDP(std::shared_ptr<IM> base_rate,
+                             std::shared_ptr<ProbabilisticFn> dependent_rate_1,
+                             std::shared_ptr<ProbabilisticFn> dependent_rate_2,
+                             std::string name) :
+        EDP(base_rate, dependent_rate_1, name)
+    {
+        this->second_dependent_rate = dependent_rate_2;
+
+        second_dependent_rate_callback_id = second_dependent_rate->add_callbacks(
+            [this] (void) {
+                this->lambda.ClearCache();
+                this->notify_change();
+            },
+            [this] (std::shared_ptr<ProbabilisticFn> new_dependent_rate) {
+                this->lambda.ClearCache();
+                this->dependent_rate = new_dependent_rate;
+                this->notify_change();
+            });
+    }
+
+    CompoundEDP::DIRECTION CompoundEDP::WhichToUse(double base_value) const
+    {
+        double median_1 = dependent_rate->Median(base_value);
+        double median_2 = second_dependent_rate->Median(base_value);
+
+        return median_1 > median_2 ? FIRST : SECOND;
+    }
+
+    double CompoundEDP::Mean(double base_value) const
+    {
+        switch (WhichToUse(base_value)) {
+        case FIRST:
+            return dependent_rate->Mean(base_value);
+            break;
+        case SECOND:
+            return second_dependent_rate->Mean(base_value);
+        default:
+            // FAIL
+            return NAN;
+        }
+    }
+    
+    double CompoundEDP::MeanLn(double base_value) const
+    {
+        switch (WhichToUse(base_value)) {
+        case FIRST:
+            return dependent_rate->MeanLn(base_value);
+            break;
+        case SECOND:
+            return second_dependent_rate->MeanLn(base_value);
+        default:
+            // FAIL
+            return NAN;
+        }
+    }
+    
+    double CompoundEDP::Median(double base_value) const
+    {
+        switch (WhichToUse(base_value)) {
+        case FIRST:
+            return dependent_rate->Median(base_value);
+            break;
+        case SECOND:
+            return second_dependent_rate->Median(base_value);
+        default:
+            // FAIL
+            return NAN;
+        }
+    }
+    
+    double CompoundEDP::SD_ln(double base_value) const
+    {
+        switch (WhichToUse(base_value)) {
+        case FIRST:
+            return dependent_rate->SD_ln(base_value);
+            break;
+        case SECOND:
+            return second_dependent_rate->SD_ln(base_value);
+        default:
+            // FAIL
+            return NAN;
+        }
+    }
+    
+    double CompoundEDP::SD(double base_value) const
+    {
+        switch (WhichToUse(base_value)) {
+        case FIRST:
+            return dependent_rate->SD(base_value);
+            break;
+        case SECOND:
+            return second_dependent_rate->SD(base_value);
+        default:
+            // FAIL
+            return NAN;
+        }
+    }
 }
 
 
