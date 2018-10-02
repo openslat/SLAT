@@ -443,23 +443,36 @@ BOOST_AUTO_TEST_CASE( Compound_EDP_Test )
         BOOST_CHECK_EQUAL(x_edp_im_fn_2->SD_ln(im), 
                           c_edp->SD_ln(im));
     }
-    x_mu_edp_1 = std::make_shared<PowerLawParametricCurve>(0.3, 1.5);
-    x_edp_im_fn_1 = std::make_shared<LogNormalFn>(x_mu_edp_1, LogNormalFn::MEAN_LN_X,
-                                      x_sigma_edp_1, LogNormalFn::SIGMA_LN_X);
+    x_mu_edp_2 = std::make_shared<PowerLawParametricCurve>(0.2, 1.0);
+    x_edp_im_fn_2 = std::make_shared<LogNormalFn>(x_mu_edp_2, LogNormalFn::MEAN_LN_X,
+                                      x_sigma_edp_2, LogNormalFn::SIGMA_LN_X);
     c_edp = std::make_shared<CompoundEDP>(x_im_rate, 
                                           x_edp_im_fn_1,
                                           x_edp_im_fn_2); 
     for (int i=0; i<N; i++) {
-        double im = (double)i/N * 1.0;
-        BOOST_CHECK_EQUAL(x_edp_im_fn_1->Mean(im), 
-                          c_edp->Mean(im));
-        BOOST_CHECK_EQUAL(x_edp_im_fn_1->MeanLn(im), 
-                          c_edp->MeanLn(im));
-        BOOST_CHECK_EQUAL(x_edp_im_fn_1->Median(im), 
-                          c_edp->Median(im));
-        BOOST_CHECK_EQUAL(x_edp_im_fn_1->SD(im), 
-                          c_edp->SD(im));
-        BOOST_CHECK_EQUAL(x_edp_im_fn_1->SD_ln(im), 
-                          c_edp->SD_ln(im));
+        double im = (double)i/N * 5.0;
+        if (x_edp_im_fn_1->Median(im) > x_edp_im_fn_2->Median(im)) {
+            BOOST_CHECK_EQUAL(x_edp_im_fn_1->Mean(im), 
+                              c_edp->Mean(im));
+            BOOST_CHECK_EQUAL(x_edp_im_fn_1->MeanLn(im), 
+                              c_edp->MeanLn(im));
+            BOOST_CHECK_EQUAL(x_edp_im_fn_1->Median(im), 
+                              c_edp->Median(im));
+            BOOST_CHECK_EQUAL(x_edp_im_fn_1->SD(im), 
+                              c_edp->SD(im));
+            BOOST_CHECK_EQUAL(x_edp_im_fn_1->SD_ln(im), 
+                              c_edp->SD_ln(im));
+        } else {
+            BOOST_CHECK_EQUAL(x_edp_im_fn_2->Mean(im), 
+                              c_edp->Mean(im));
+            BOOST_CHECK_EQUAL(x_edp_im_fn_2->MeanLn(im), 
+                              c_edp->MeanLn(im));
+            BOOST_CHECK_EQUAL(x_edp_im_fn_2->Median(im), 
+                              c_edp->Median(im));
+            BOOST_CHECK_EQUAL(x_edp_im_fn_2->SD(im), 
+                              c_edp->SD(im));
+            BOOST_CHECK_EQUAL(x_edp_im_fn_2->SD_ln(im), 
+                              c_edp->SD_ln(im));
+        }
     }
 }
