@@ -516,6 +516,16 @@ EDP *MakeEDP(IM base_rate, ProbabilisticFn dependent_rate, std::string name)
     return result;
 }
 
+EDP *MakeCompoundEDP(IM base_rate, EDP x_edp, EDP y_edp, std::string name)
+{
+    std::shared_ptr<SLAT::EDP> relationship = 
+        std::make_shared<SLAT::CompoundEDP>(base_rate.relationship,
+                                            x_edp.relationship->Dependent_Rate(),
+                                            y_edp.relationship->Dependent_Rate(),
+                                           name);
+    EDP* result = new EDP(relationship);
+    return result;
+}
 
 //     class FragilityFnWrapper;
 //     class LossFnWrapper;

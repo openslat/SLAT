@@ -168,6 +168,13 @@ def MakeIM(f):
 def MakeEDP(base_rate, dependent_rate, name):
     return pyslatcore.MakeEDP(base_rate, dependent_rate, name)
 
+## Create a Compound Engineering Demand Parameter
+# This function wraps the library function SLAT::MakeCompoundEDP(). It returns
+# an EDP (of the subclass CompoundEDP), given an IM, two probabilistic functions,
+# and a name for the EDP.
+def MakeCompoundEDP(base_rate, x_rate, y_rate, name):
+    return pyslatcore.MakeCompoundEDP(base_rate, x_rate, y_rate, name)
+
 ## Create a fragility function.
 # This function wraps the library function SLAT::MakeFragilityFn(). It
 # returns a fragility function, given a list of log normal distributions.
@@ -692,12 +699,18 @@ class edp:
     #         debugging, warning, and error messages.
     #  @param im The intensity measure driving the engineering demand.
     #  @param fn The probabilitic function describing the EDP|IM relationship.
-    def __init__(self, id, im, fn):
+    def __init__(self, id, im, fn, fn2=None):
         self._id = id
         self._im = im
         self._fn = fn
-        self._func = MakeEDP(im.function(), fn.function(), "{}".format(id))
-        self._plot_max = None
+        if fn2==None:
+            self._func = MakeEDP(im.function(), fn.function(), "{}".format(id))
+        else:
+            self._fn2 = fn2
+            self._func = MakeCompoundEDP(im.function(), fn.function(), 
+                                         fn2.function(), "{}".format(id))
+
+            self._plot_max = None
         if id != None:
             old = edp.lookup(id)
             if old:

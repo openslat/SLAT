@@ -215,7 +215,7 @@ namespace SLAT {
         std::vector<double> SD(std::vector<double>base_value) const;
         
         std::shared_ptr<IM> Base_Rate(void) { return base_rate; };
-        
+        std::shared_ptr<ProbabilisticFn> Dependent_Rate(void) { return dependent_rate; };
         std::string get_Name(void) { return name; }
     protected:
         std::string name;

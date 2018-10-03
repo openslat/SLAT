@@ -162,6 +162,7 @@ public:
 };
 
 EDP *MakeEDP(IM base_wrate, ProbabilisticFn dependent_rate, std::string name);
+EDP *MakeCompoundEDP(IM base_rate, EDP x_edp, EDP y_epd, std::string name);
 
 class FragilityFn {
 public:
