@@ -199,8 +199,8 @@ namespace SLAT {
          */
         double calc_lambda(double x);
 
-        double P_exceedence(double base_value, double min_dependent_value) const;
-        double X_at_exceedence(double x, double p) const;
+        virtual double P_exceedence(double base_value, double min_dependent_value) const;
+        virtual double X_at_exceedence(double x, double p) const;
         
         virtual double Mean(double base_value) const;
         virtual double MeanLn(double base_value) const;
@@ -271,6 +271,9 @@ namespace SLAT {
             dependent_rate->remove_callbacks(dependent_rate_callback_id);
             second_dependent_rate->remove_callbacks(second_dependent_rate_callback_id);
         }; /**< Destructor; unregister callbacks */
+            
+        virtual double P_exceedence(double base_value, double min_dependent_value) const;
+        virtual double X_at_exceedence(double x, double p) const;
 
         virtual double Mean(double base_value) const;
         virtual double MeanLn(double base_value) const;

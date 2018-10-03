@@ -279,7 +279,7 @@ namespace SLAT {
                     result = 0;
                 } else {
                     double d = this->base_rate->DerivativeAt(x2);
-                    double p = this->dependent_rate->P_exceedence(x2, min_y);
+                    double p = this->P_exceedence(x2, min_y);
                     result = (p * base_rate->pRepair(x2) + 
                               (1.0 - base_rate->pRepair(x2))) * std::abs(d);
                 }
@@ -410,8 +410,8 @@ namespace SLAT {
 
     CompoundEDP::DIRECTION CompoundEDP::WhichToUse(double base_value) const
     {
-        double median_1 = dependent_rate->Median(base_value);
-        double median_2 = second_dependent_rate->Median(base_value);
+        double median_1 = dependent_rate->Mean(base_value);
+        double median_2 = second_dependent_rate->Mean(base_value);
 
         return median_1 > median_2 ? FIRST : SECOND;
     }
@@ -480,6 +480,34 @@ namespace SLAT {
             break;
         case SECOND:
             return second_dependent_rate->SD(base_value);
+        default:
+            // FAIL
+            return NAN;
+        }
+    }
+    
+    double CompoundEDP::P_exceedence(double base_value, double min_dependent_value) const
+    {
+        switch (WhichToUse(base_value)) {
+        case FIRST:
+            return dependent_rate->P_exceedence(base_value, min_dependent_value);
+            break;
+        case SECOND:
+            return second_dependent_rate->P_exceedence(base_value, min_dependent_value);
+        default:
+            // FAIL
+            return NAN;
+        }
+    }
+
+    double CompoundEDP::X_at_exceedence(double base_value, double p) const
+    {
+        switch (WhichToUse(base_value)) {
+        case FIRST:
+            return dependent_rate->X_at_exceedence(base_value, p);
+            break;
+        case SECOND:
+            return second_dependent_rate->X_at_exceedence(base_value, p);
         default:
             // FAIL
             return NAN;

@@ -10,6 +10,7 @@
  * ©2015 Canterbury University
  */
 #include "relationships.h"
+#include "lognormaldist.h"
 #include "maq.h"
 #include <boost/test/unit_test.hpp>
 
@@ -408,71 +409,186 @@ BOOST_AUTO_TEST_CASE( Callbacks )
 
 BOOST_AUTO_TEST_CASE( Compound_EDP_Test )
 {
-    shared_ptr<DeterministicFn> x_rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
-    shared_ptr<IM> x_im_rate = std::make_shared<IM>(x_rate_fn);
+    shared_ptr<DeterministicFn> rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
+    shared_ptr<IM> im_rate = std::make_shared<IM>(rate_fn);
     
-    shared_ptr<DeterministicFn> x_mu_edp_1 =
+    shared_ptr<DeterministicFn> mu_edp_x =
         std::make_shared<PowerLawParametricCurve>(0.1, 1.5);
-    shared_ptr<DeterministicFn> x_sigma_edp_1 =
+    shared_ptr<DeterministicFn> sigma_edp_x =
         std::make_shared<PowerLawParametricCurve>(0.5, 0.0);
-    shared_ptr<ProbabilisticFn> x_edp_im_fn_1 = 
-        std::make_shared<LogNormalFn>(x_mu_edp_1, LogNormalFn::MEAN_LN_X,
-                                      x_sigma_edp_1, LogNormalFn::SIGMA_LN_X);
-    shared_ptr<DeterministicFn> x_mu_edp_2 =
+    shared_ptr<ProbabilisticFn> edp_im_fn_x = 
+        std::make_shared<LogNormalFn>(mu_edp_x, LogNormalFn::MEAN_LN_X,
+                                      sigma_edp_x, LogNormalFn::SIGMA_LN_X);
+    shared_ptr<EDP> edp_x = std::make_shared<EDP>(im_rate, edp_im_fn_x);
+    
+    shared_ptr<DeterministicFn> mu_edp_y =
         std::make_shared<PowerLawParametricCurve>(0.2, 1.5);
-    shared_ptr<DeterministicFn> x_sigma_edp_2 =
-        std::make_shared<PowerLawParametricCurve>(0.5, 0.0);
-    shared_ptr<ProbabilisticFn> x_edp_im_fn_2 = 
-        std::make_shared<LogNormalFn>(x_mu_edp_2, LogNormalFn::MEAN_LN_X,
-                                      x_sigma_edp_2, LogNormalFn::SIGMA_LN_X);
-    shared_ptr<EDP> c_edp = std::make_shared<CompoundEDP>(x_im_rate, 
-                                                           x_edp_im_fn_1,
-                                                           x_edp_im_fn_2); 
+    shared_ptr<DeterministicFn> sigma_edp_y =
+        std::make_shared<PowerLawParametricCurve>(0.35, 0.0);
+    shared_ptr<ProbabilisticFn> edp_im_fn_y = 
+        std::make_shared<LogNormalFn>(mu_edp_y, LogNormalFn::MEAN_LN_X,
+                                      sigma_edp_y, LogNormalFn::SIGMA_LN_X);
+    shared_ptr<EDP> edp_y = std::make_shared<EDP>(im_rate, edp_im_fn_y);
+    shared_ptr<EDP> c_edp = std::make_shared<CompoundEDP>(im_rate, 
+                                                           edp_im_fn_x,
+                                                           edp_im_fn_y); 
 
     const int N=25;
-    for (int i=0; i<N; i++) {
-        double im = (double)i/N * 1.0;
-        BOOST_CHECK_EQUAL(x_edp_im_fn_2->Mean(im), 
-                          c_edp->Mean(im));
-        BOOST_CHECK_EQUAL(x_edp_im_fn_2->MeanLn(im), 
-                          c_edp->MeanLn(im));
-        BOOST_CHECK_EQUAL(x_edp_im_fn_2->Median(im), 
-                          c_edp->Median(im));
-        BOOST_CHECK_EQUAL(x_edp_im_fn_2->SD(im), 
-                          c_edp->SD(im));
-        BOOST_CHECK_EQUAL(x_edp_im_fn_2->SD_ln(im), 
-                          c_edp->SD_ln(im));
-    }
-    x_mu_edp_2 = std::make_shared<PowerLawParametricCurve>(0.2, 1.0);
-    x_edp_im_fn_2 = std::make_shared<LogNormalFn>(x_mu_edp_2, LogNormalFn::MEAN_LN_X,
-                                      x_sigma_edp_2, LogNormalFn::SIGMA_LN_X);
-    c_edp = std::make_shared<CompoundEDP>(x_im_rate, 
-                                          x_edp_im_fn_1,
-                                          x_edp_im_fn_2); 
+        
     for (int i=0; i<N; i++) {
         double im = (double)i/N * 5.0;
-        if (x_edp_im_fn_1->Median(im) > x_edp_im_fn_2->Median(im)) {
-            BOOST_CHECK_EQUAL(x_edp_im_fn_1->Mean(im), 
+        if (edp_x->Mean(im) > edp_y->Mean(im)) {
+            BOOST_CHECK_EQUAL(edp_x->Mean(im), 
                               c_edp->Mean(im));
-            BOOST_CHECK_EQUAL(x_edp_im_fn_1->MeanLn(im), 
+            BOOST_CHECK_EQUAL(edp_x->MeanLn(im), 
                               c_edp->MeanLn(im));
-            BOOST_CHECK_EQUAL(x_edp_im_fn_1->Median(im), 
+            BOOST_CHECK_EQUAL(edp_x->Median(im), 
                               c_edp->Median(im));
-            BOOST_CHECK_EQUAL(x_edp_im_fn_1->SD(im), 
+            BOOST_CHECK_EQUAL(edp_x->SD(im), 
                               c_edp->SD(im));
-            BOOST_CHECK_EQUAL(x_edp_im_fn_1->SD_ln(im), 
+            BOOST_CHECK_EQUAL(edp_x->SD_ln(im), 
                               c_edp->SD_ln(im));
         } else {
-            BOOST_CHECK_EQUAL(x_edp_im_fn_2->Mean(im), 
+            BOOST_CHECK_EQUAL(edp_y->Mean(im), 
                               c_edp->Mean(im));
-            BOOST_CHECK_EQUAL(x_edp_im_fn_2->MeanLn(im), 
+            BOOST_CHECK_EQUAL(edp_y->MeanLn(im), 
                               c_edp->MeanLn(im));
-            BOOST_CHECK_EQUAL(x_edp_im_fn_2->Median(im), 
+            BOOST_CHECK_EQUAL(edp_y->Median(im), 
                               c_edp->Median(im));
-            BOOST_CHECK_EQUAL(x_edp_im_fn_2->SD(im), 
+            BOOST_CHECK_EQUAL(edp_y->SD(im), 
                               c_edp->SD(im));
-            BOOST_CHECK_EQUAL(x_edp_im_fn_2->SD_ln(im), 
+            BOOST_CHECK_EQUAL(edp_y->SD_ln(im), 
                               c_edp->SD_ln(im));
         }
+    }
+    mu_edp_y->replace(std::make_shared<PowerLawParametricCurve>(0.2, 1.0));
+    c_edp = std::make_shared<CompoundEDP>(im_rate, 
+                                          edp_im_fn_x,
+                                          edp_im_fn_y); 
+    for (int i=0; i<N; i++) {
+        double im = (double)i/N * 5.0;
+        if (edp_x->Mean(im) > edp_y->Mean(im)) {
+            BOOST_CHECK_EQUAL(edp_x->Mean(im), 
+                              c_edp->Mean(im));
+            BOOST_CHECK_EQUAL(edp_x->MeanLn(im), 
+                              c_edp->MeanLn(im));
+            BOOST_CHECK_EQUAL(edp_x->Median(im), 
+                              c_edp->Median(im));
+            BOOST_CHECK_EQUAL(edp_x->SD(im), 
+                              c_edp->SD(im));
+            BOOST_CHECK_EQUAL(edp_x->SD_ln(im), 
+                              c_edp->SD_ln(im));
+        } else {
+            BOOST_CHECK_EQUAL(edp_y->Mean(im), 
+                              c_edp->Mean(im));
+            BOOST_CHECK_EQUAL(edp_y->MeanLn(im), 
+                              c_edp->MeanLn(im));
+            BOOST_CHECK_EQUAL(edp_y->Median(im), 
+                              c_edp->Median(im));
+            BOOST_CHECK_EQUAL(edp_y->SD(im), 
+                              c_edp->SD(im));
+            BOOST_CHECK_EQUAL(edp_y->SD_ln(im), 
+                              c_edp->SD_ln(im));
+        }
+    }
+}
+
+BOOST_AUTO_TEST_CASE( Compound_EDP_Vector_Test )
+{
+        shared_ptr<DeterministicFn> rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
+    shared_ptr<IM> im_rate = std::make_shared<IM>(rate_fn);
+    
+    shared_ptr<DeterministicFn> mu_edp_x =
+        std::make_shared<PowerLawParametricCurve>(0.1, 1.5);
+    shared_ptr<DeterministicFn> sigma_edp_x =
+        std::make_shared<PowerLawParametricCurve>(0.5, 0.0);
+    shared_ptr<ProbabilisticFn> edp_x = 
+        std::make_shared<LogNormalFn>(mu_edp_x, LogNormalFn::MEAN_LN_X,
+                                      sigma_edp_x, LogNormalFn::SIGMA_LN_X);
+    shared_ptr<DeterministicFn> mu_edp_y =
+        std::make_shared<PowerLawParametricCurve>(0.2, 1.0);
+    shared_ptr<DeterministicFn> sigma_edp_y =
+        std::make_shared<PowerLawParametricCurve>(0.5, 0.0);
+    shared_ptr<ProbabilisticFn> edp_y = 
+        std::make_shared<LogNormalFn>(mu_edp_y, LogNormalFn::MEAN_LN_X,
+                                      sigma_edp_y, LogNormalFn::SIGMA_LN_X);
+    shared_ptr<EDP> c_edp = std::make_shared<CompoundEDP>(im_rate, 
+                                                           edp_x,
+                                                           edp_y); 
+
+    const int N=25;
+    std::vector<double> im_values;
+    for (size_t i=0; i <= N; i++) {
+        im_values.push_back(5.0 * i/N);
+    }
+    std::vector<double> means = c_edp->Mean(im_values);
+
+    for (size_t i=0; i < im_values.size(); i++) {
+        BOOST_CHECK_EQUAL(means[i], c_edp->Mean(im_values[i]));
+    }
+}
+
+BOOST_AUTO_TEST_CASE( Compound_EDP_lambda_Test )
+{
+    shared_ptr<DeterministicFn> rate_fn = std::make_shared<NonLinearHyperbolicLaw>(1, 2, 3);
+    shared_ptr<IM> im_rate = std::make_shared<IM>(rate_fn);
+    
+    shared_ptr<DeterministicFn> mu_edp_x =
+        std::make_shared<PowerLawParametricCurve>(0.1, 1.5);
+    shared_ptr<DeterministicFn> sigma_edp_x =
+        std::make_shared<PowerLawParametricCurve>(0.5, 0.0);
+    shared_ptr<ProbabilisticFn> edp_im_fn_x = 
+        std::make_shared<LogNormalFn>(mu_edp_x, LogNormalFn::MEAN_LN_X,
+                                      sigma_edp_x, LogNormalFn::SIGMA_LN_X);
+    shared_ptr<EDP> edp_x = std::make_shared<EDP>(im_rate, edp_im_fn_x);
+    
+    shared_ptr<DeterministicFn> mu_edp_y =
+        std::make_shared<PowerLawParametricCurve>(0.2, 1.5);
+    shared_ptr<DeterministicFn> sigma_edp_y =
+        std::make_shared<PowerLawParametricCurve>(0.5, 0.0);
+    shared_ptr<ProbabilisticFn> edp_im_fn_y = 
+        std::make_shared<LogNormalFn>(mu_edp_y, LogNormalFn::MEAN_LN_X,
+                                      sigma_edp_y, LogNormalFn::SIGMA_LN_X);
+    shared_ptr<EDP> edp_y = std::make_shared<EDP>(im_rate, edp_im_fn_y);
+    shared_ptr<EDP> c_edp = std::make_shared<CompoundEDP>(im_rate, 
+                                                           edp_im_fn_x,
+                                                           edp_im_fn_y); 
+
+    // Create an interpolated function from the max values of each EDP:
+    shared_ptr<EDP> ref_edp;
+    {
+        vector<double> x, mu, sigma;
+        const int N=100;
+        for (int i=0; i<N; i++) {
+            double im = (double)i/N * 5;
+            
+            x.push_back(im);
+            LogNormalDist a = LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(mu_edp_x->ValueAt(im), sigma_edp_x->ValueAt(im));
+            LogNormalDist b = LogNormalDist::LogNormalDist_from_mu_lnX_and_sigma_lnX(mu_edp_y->ValueAt(im), sigma_edp_y->ValueAt(im));
+            
+            if (a.get_mean_X() > b.get_mean_X()) {
+                mu.push_back(a.get_mu_lnX());
+                sigma.push_back(a.get_sigma_lnX());
+            } else {
+                mu.push_back(b.get_mu_lnX());
+                sigma.push_back(b.get_sigma_lnX());
+            }
+        }
+        shared_ptr<DeterministicFn> mu_fn = std::make_shared<LinearInterpolatedFn>(
+            x.data(), mu.data(), x.size());
+        shared_ptr<DeterministicFn> sigma_fn = std::make_shared<LinearInterpolatedFn>(
+            x.data(), sigma.data(), x.size());
+        shared_ptr<ProbabilisticFn> pfn = 
+            std::make_shared<LogNormalFn>(mu_fn, LogNormalFn::MEAN_LN_X,
+                                          sigma_edp_y, LogNormalFn::SIGMA_LN_X);
+        ref_edp = std::make_shared<EDP>(im_rate, pfn);
+    }
+
+    const int N=25;
+    for (int i=1; i<N; i++) {
+        double im = (double)i/N * 5.0;
+        BOOST_CHECK_CLOSE(ref_edp->MeanLn(im), c_edp->MeanLn(im), 0.1);
+        BOOST_CHECK_CLOSE(ref_edp->lambda(im), c_edp->lambda(im), 0.1);
+        BOOST_CHECK_CLOSE(ref_edp->DerivativeAt(im), c_edp->DerivativeAt(im), 0.1);
     }
 }
