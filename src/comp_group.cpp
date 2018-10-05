@@ -281,39 +281,43 @@ namespace SLAT {
 
     double CompGroup::E_cost_IM_calc(double im)
     {
-        TempContext context([this] (std::ostream &o) {
-                o << "CompGroup::E_cost_IM_calc() [" << this->name << "]";
-            });
-        Integration::MAQ_RESULT result;
+        if (count > 0) {
+            TempContext context([this] (std::ostream &o) {
+                    o << "CompGroup::E_cost_IM_calc() [" << this->name << "]";
+                });
+            Integration::MAQ_RESULT result;
 
-        result =  Integration::MAQ(
-            [this, im] (double edp) -> double {
-                double result;
-                if (edp == 0) {
-                    result = 0;
-                } else {
-                    std::function<double (double)> local_lambda = [this, im] (double x) {
-                        double result = this->edp->P_exceedence(im, x);
-                        if (im == 0 || x < 0) result = 0;
-                        return result;
-                    };
-                    gsl_function F;
-                    F.function = (double (*)(double, void *))wrapper;
-                    F.params = &local_lambda;
-                    double deriv, abserror;
-                    gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+            result =  Integration::MAQ(
+                [this, im] (double edp) -> double {
+                    double result;
+                    if (edp == 0) {
+                        result = 0;
+                    } else {
+                        std::function<double (double)> local_lambda = [this, im] (double x) {
+                            double result = this->edp->P_exceedence(im, x);
+                            if (im == 0 || x < 0) result = 0;
+                            return result;
+                        };
+                        gsl_function F;
+                        F.function = (double (*)(double, void *))wrapper;
+                        F.params = &local_lambda;
+                        double deriv, abserror;
+                        gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
                     
-                    double d = deriv;
-                    //double d = this->edp->P_exceedence(im, edp);
-                    double p = this->E_cost_EDP(edp);
-                    result = p * std::abs(d);
-                }
-                return result;
-            }); 
-        if (result.successful) {
-            return result.integral;
+                        double d = deriv;
+                        //double d = this->edp->P_exceedence(im, edp);
+                        double p = this->E_cost_EDP(edp);
+                        result = p * std::abs(d);
+                    }
+                    return result;
+                }); 
+            if (result.successful) {
+                return result.integral;
+            } else {
+                return 0;
+            }
         } else {
             return 0;
         };
@@ -321,75 +325,83 @@ namespace SLAT {
 
     double CompGroup::SD_ln_cost_IM_calc(double im)
     {
-        TempContext context([this] (std::ostream &o) {
-                o << "CompGroup::SD_ln_cost_IM_calc() [" << this->name << "]";
-            });
-        Integration::MAQ_RESULT result;
-        result =  Integration::MAQ(
-            [this, im] (double edp) -> double {
-                double result;
-                if (edp == 0) {
-                    result = 0;
-                } else {
-                    std::function<double (double)> local_lambda = [this, im] (double x) {
-                        if (false) {
-                            double pExceedence = this->edp->P_exceedence(im, x);
-                            double pRepair = this->edp->Base_Rate()->pRepair(im);
-                            return pExceedence * pRepair + (1.0 - pRepair);
-                        } else {
-                            double result = this->edp->P_exceedence(im, x);
-                            return result;
-                        }
-                    };
-                    gsl_function F;
-                    F.function = (double (*)(double, void *))wrapper;
-                    F.params = &local_lambda;
-                    double deriv, abserror;
-                    gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+        if (count > 0) {
+            TempContext context([this] (std::ostream &o) {
+                    o << "CompGroup::SD_ln_cost_IM_calc() [" << this->name << "]";
+                });
+            Integration::MAQ_RESULT result;
+            result =  Integration::MAQ(
+                [this, im] (double edp) -> double {
+                    double result;
+                    if (edp == 0) {
+                        result = 0;
+                    } else {
+                        std::function<double (double)> local_lambda = [this, im] (double x) {
+                            if (false) {
+                                double pExceedence = this->edp->P_exceedence(im, x);
+                                double pRepair = this->edp->Base_Rate()->pRepair(im);
+                                return pExceedence * pRepair + (1.0 - pRepair);
+                            } else {
+                                double result = this->edp->P_exceedence(im, x);
+                                return result;
+                            }
+                        };
+                        gsl_function F;
+                        F.function = (double (*)(double, void *))wrapper;
+                        F.params = &local_lambda;
+                        double deriv, abserror;
+                        gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
 
-                    double d = deriv;
-                    //double d = this->edp->P_exceedence(im, edp);
-                    double e = this->E_cost_EDP(edp); // / this->count;
-                    double sd;
-                    sd = this->SD_cost_EDP(edp);// / this->count;
+                        double d = deriv;
+                        //double d = this->edp->P_exceedence(im, edp);
+                        double e = this->E_cost_EDP(edp); // / this->count;
+                        double sd;
+                        sd = this->SD_cost_EDP(edp);// / this->count;
                     
-                    result = (e * e + sd * sd) * std::abs(d);
-                }
-                return result;
-            }); 
-        if (result.successful) {
-            double mean_x = E_cost_IM(im); /// this->count;
+                        result = (e * e + sd * sd) * std::abs(d);
+                    }
+                    return result;
+                }); 
+            if (result.successful) {
+                double mean_x = E_cost_IM(im); /// this->count;
 
-            double sigma_x = sqrt(result.integral  - mean_x * mean_x);
-            ///@todo What happens if sigma_x is NAN?
-            if (std::isnan(sigma_x)) {
-                sigma_x = 0;
-            }
-            double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
-            if (mean_x == 0) sigma_lnx = 0; ///@todo What should sigma_lnx be if mean_x is zero?
-            return sigma_lnx;
+                double sigma_x = sqrt(result.integral  - mean_x * mean_x);
+                ///@todo What happens if sigma_x is NAN?
+                if (std::isnan(sigma_x)) {
+                    sigma_x = 0;
+                }
+                double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
+                if (mean_x == 0) sigma_lnx = 0; ///@todo What should sigma_lnx be if mean_x is zero?
+                return sigma_lnx;
+            } else {
+                return 0;
+            };
         } else {
             return 0;
-        };
+        }
     }
 
     double CompGroup::E_annual_cost_calc(void)
     {
-        TempContext context([this] (std::ostream &o) {
-                o << "CompGroup::E_annual_cost_calc() [" << this->name << "]";
-            });
+        if (count > 0) {
+            TempContext context([this] (std::ostream &o) {
+                    o << "CompGroup::E_annual_cost_calc() [" << this->name << "]";
+                });
         
-        Integration::MAQ_RESULT result;
-        result = Integration::MAQ(
-            [this] (double im) -> double {
-                double expected_cost = E_cost_IM(im);
-                double deriv = std::abs(edp->Base_Rate()->DerivativeAt(im));
-                return expected_cost * deriv;
-            });
-        if (result.successful) {
-            return result.integral;
+            Integration::MAQ_RESULT result;
+            result = Integration::MAQ(
+                [this] (double im) -> double {
+                    double expected_cost = E_cost_IM(im);
+                    double deriv = std::abs(edp->Base_Rate()->DerivativeAt(im));
+                    return expected_cost * deriv;
+                });
+            if (result.successful) {
+                return result.integral;
+            } else {
+                return 0;
+            }
         } else {
             return 0;
         }
@@ -397,22 +409,26 @@ namespace SLAT {
 
     double CompGroup::lambda_cost_calc(double cost) 
     {
-        TempContext context([this] (std::ostream &o) {
-                o << "CompGroup::lambda_cost_calc() [" << this->name << "]";
-            });
-        Integration::MAQ_RESULT result;
-        result = Integration::MAQ(
-            [this, cost] (double im) -> double {
-                double mean_x = E_cost_IM(im);
-                double sd_ln_x;
-                sd_ln_x = SD_ln_cost_IM(im);
+        if (count > 0) {
+            TempContext context([this] (std::ostream &o) {
+                    o << "CompGroup::lambda_cost_calc() [" << this->name << "]";
+                });
+            Integration::MAQ_RESULT result;
+            result = Integration::MAQ(
+                [this, cost] (double im) -> double {
+                    double mean_x = E_cost_IM(im);
+                    double sd_ln_x;
+                    sd_ln_x = SD_ln_cost_IM(im);
 
-                LogNormalDist ln_fn = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mean_x, sd_ln_x);
+                    LogNormalDist ln_fn = LogNormalDist::LogNormalDist_from_mean_X_and_sigma_lnX(mean_x, sd_ln_x);
                 
-                return ln_fn.p_at_least(cost) * std::abs(edp->Base_Rate()->DerivativeAt(im));
-            });
-        if (result.successful) {
-            return result.integral;
+                    return ln_fn.p_at_least(cost) * std::abs(edp->Base_Rate()->DerivativeAt(im));
+                });
+            if (result.successful) {
+                return result.integral;
+            } else {
+                return 0;
+            }
         } else {
             return 0;
         }
@@ -420,96 +436,104 @@ namespace SLAT {
 
     double CompGroup::E_delay_IM_calc(double im)
     {
-        TempContext context([this] (std::ostream &o) {
-                o << "CompGroup::E_delay_IM_calc() [" << this->name << "]";
-            });
-        Integration::MAQ_RESULT result;
-        result =  Integration::MAQ(
-            [this, im] (double edp) -> double {
-                double result;
-                if (edp == 0) {
-                    result = 0;
-                } else {
-                    std::function<double (double)> local_lambda = [this, im] (double x) {
-                        double result = this->edp->P_exceedence(im, x);
-                        return result;
-                    };
-                    gsl_function F;
-                    F.function = (double (*)(double, void *))wrapper;
-                    F.params = &local_lambda;
-                    double deriv, abserror;
-                    gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+        if (count > 0) {
+            TempContext context([this] (std::ostream &o) {
+                    o << "CompGroup::E_delay_IM_calc() [" << this->name << "]";
+                });
+            Integration::MAQ_RESULT result;
+            result =  Integration::MAQ(
+                [this, im] (double edp) -> double {
+                    double result;
+                    if (edp == 0) {
+                        result = 0;
+                    } else {
+                        std::function<double (double)> local_lambda = [this, im] (double x) {
+                            double result = this->edp->P_exceedence(im, x);
+                            return result;
+                        };
+                        gsl_function F;
+                        F.function = (double (*)(double, void *))wrapper;
+                        F.params = &local_lambda;
+                        double deriv, abserror;
+                        gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
                     
-                    double d = deriv;
-                    //double d = this->edp->P_exceedence(im, edp);
-                    double p = this->E_delay_EDP(edp);
-                    result = p * std::abs(d);
-                }
-                return result;
-            }); 
-        if (result.successful) {
-            return result.integral;
+                        double d = deriv;
+                        //double d = this->edp->P_exceedence(im, edp);
+                        double p = this->E_delay_EDP(edp);
+                        result = p * std::abs(d);
+                    }
+                    return result;
+                }); 
+            if (result.successful) {
+                return result.integral;
+            } else {
+                return 0;
+            };
         } else {
             return 0;
-        };
+        }
     }
 
     double CompGroup::SD_ln_delay_IM_calc(double im)
     {
-        TempContext context([this] (std::ostream &o) {
-                o << "CompGroup::E_ln_delay_IM_calc() [" << this->name << "]";
-            });
-        Integration::MAQ_RESULT result;
-        result =  Integration::MAQ(
-            [this, im] (double edp) -> double {
-                double result;
-                if (edp == 0) {
-                    result = 0;
-                } else {
-                    std::function<double (double)> local_lambda = [this, im] (double x) {
-                        if (false) {
-                            double pExceedence = this->edp->P_exceedence(im, x);
-                            double pRepair = this->edp->Base_Rate()->pRepair(im);
-                            return pExceedence * pRepair + (1.0 - pRepair);
-                        } else {
-                            double result = this->edp->P_exceedence(im, x);
-                            return result;
-                        }
-                    };
-                    gsl_function F;
-                    F.function = (double (*)(double, void *))wrapper;
-                    F.params = &local_lambda;
-                    double deriv, abserror;
-                    gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
-                    if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
+        if (count > 0) {
+            TempContext context([this] (std::ostream &o) {
+                    o << "CompGroup::E_ln_delay_IM_calc() [" << this->name << "]";
+                });
+            Integration::MAQ_RESULT result;
+            result =  Integration::MAQ(
+                [this, im] (double edp) -> double {
+                    double result;
+                    if (edp == 0) {
+                        result = 0;
+                    } else {
+                        std::function<double (double)> local_lambda = [this, im] (double x) {
+                            if (false) {
+                                double pExceedence = this->edp->P_exceedence(im, x);
+                                double pRepair = this->edp->Base_Rate()->pRepair(im);
+                                return pExceedence * pRepair + (1.0 - pRepair);
+                            } else {
+                                double result = this->edp->P_exceedence(im, x);
+                                return result;
+                            }
+                        };
+                        gsl_function F;
+                        F.function = (double (*)(double, void *))wrapper;
+                        F.params = &local_lambda;
+                        double deriv, abserror;
+                        gsl_deriv_central(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_forward(&F, edp, 1E-8, &deriv, &abserror);
+                        if (std::isnan(deriv)) gsl_deriv_backward(&F, edp, 1E-8, &deriv, &abserror);
 
-                    double d = deriv;
-                    //double d = this->edp->P_exceedence(im, edp);
-                    double e = this->E_delay_EDP(edp) / this->count;
-                    double sd;
-                    sd = this->SD_delay_EDP(edp);
+                        double d = deriv;
+                        //double d = this->edp->P_exceedence(im, edp);
+                        double e = this->E_delay_EDP(edp) / this->count;
+                        double sd;
+                        sd = this->SD_delay_EDP(edp);
                     
-                    result = (e * e + sd * sd) * std::abs(d);
-                }
-                return result;
-            }); 
-        if (result.successful) {
-            double mean_x = E_delay_IM(im) / this->count;
+                        result = (e * e + sd * sd) * std::abs(d);
+                    }
+                    return result;
+                }); 
+            if (result.successful) {
+                double mean_x = E_delay_IM(im) / this->count;
 
-            double sigma_x = sqrt(result.integral  - mean_x * mean_x);
-            ///@todo What happens if sigma_x is NAN?
-            if (std::isnan(sigma_x)) {
-                sigma_x = 0;
-            }
-            double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
-            if (mean_x == 0) sigma_lnx = 0; //sigma_x;
-            return sigma_lnx;
+                double sigma_x = sqrt(result.integral  - mean_x * mean_x);
+                ///@todo What happens if sigma_x is NAN?
+                if (std::isnan(sigma_x)) {
+                    sigma_x = 0;
+                }
+                double sigma_lnx = sqrt(log(1.0 + (sigma_x * sigma_x) / (mean_x * mean_x)));
+                if (mean_x == 0) sigma_lnx = 0; //sigma_x;
+                return sigma_lnx;
+            } else {
+                return 0;
+            };
         } else {
             return 0;
-        };
+        }
     }
 
     /**
