@@ -14,7 +14,21 @@ import numbers
 import sys
 import os.path
 
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
 pyslatcore.Initialise()
+
+def ClearCaches():
+    detfn.defs = dict()
+    probfn.defs = dict()
+    im.defs = dict()
+    edp.defs = dict()
+    fragfn.defs = dict()
+    lossfn.defs = dict()
+    compgroup.defs = dict()
+    structure.defs = dict()
+    recorder.defs = dict()
 
 _DEFAULT_INPUT_EXTENSION = ".csv"
 _DEFAULT_INPUT_DIRECTORY = "."
