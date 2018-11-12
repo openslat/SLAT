@@ -547,6 +547,14 @@ namespace SLAT {
          */
         MAQ_RESULT MAQ(std::function<double (double)> integrand) 
         {
+            // static int max_threads = 0;
+            // if (omp_get_num_threads() > max_threads) {
+            //     max_threads = omp_get_num_threads();
+            //     std::cout << "MAX THREADS: " << omp_get_max_threads()
+            //               << "; NUM_THREADS: " << omp_get_num_threads()
+            //               << "; NUM_PROCS: " << omp_get_num_procs()
+            //               << std::endl;
+            // }
 #pragma omp critical
             stats.calls++;
             

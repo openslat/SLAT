@@ -84,15 +84,12 @@ namespace SLAT {
     
     LogNormalDist Structure::CostNC(double im)
     {
-        std::vector<LogNormalDist> dists;
-        int num_components = 0;
-        for_each(components.begin(),
-                 components.end(), 
-                 [&num_components, &dists, im] (std::shared_ptr<CG_ENTRY> cg_entry) {
-                     num_components++;
-                     LogNormalDist dist = cg_entry->first->CostDist_IM(im);
-                     dists.push_back(dist);
-                 });
+        std::vector<LogNormalDist> dists(components.size());
+        const size_t N = components.size();
+#pragma omp parallel for
+        for (size_t i=0; i < N; i++) {
+            dists[i] = components[i]->first->CostDist_IM(im);
+        }
         return LogNormalDist::AddDistributions(dists);
     }
 
@@ -196,9 +193,12 @@ namespace SLAT {
             });
         double mu=NAN, beta=NAN;
         if (components.size() > 0) {
-#pragma omp parallel sections
+            // I commented out the omp pragmas because I found they were limiting
+            // performance. The calls to TotalCost() were only using one thread,
+            // while they could be evaluating several component groups at once.
+//#pragma omp parallel sections num_threads(2)
             {
-#pragma omp section
+//#pragma omp section
                 {
                     Integration::MAQ_RESULT result;
                     result = Integration::MAQ(
@@ -212,7 +212,7 @@ namespace SLAT {
                     } 
                 }
 
-#pragma omp section
+//#pragma omp section
                 {
                     Integration::MAQ_RESULT result;
                     result = Integration::MAQ(
