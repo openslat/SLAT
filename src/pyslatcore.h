@@ -248,6 +248,7 @@ public:
     std::list<std::list<CompGroup *>> ComponentsByEDP(void);
     std::list<std::list<CompGroup *>> ComponentsByFragility(void);
     double pdf(double im);
+    void Clear_Cache(void);
 private:
     std::shared_ptr<SLAT::Structure> wrapper;
 };

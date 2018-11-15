@@ -13,6 +13,7 @@ from contextlib import redirect_stdout
 import numbers
 import sys
 import os.path
+import logging
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
@@ -1304,7 +1305,7 @@ class structure:
                                  "(expected " + self._im + "; got " + 
                                  group.get_IM() << ")");
 
-    ## Remvoe a component group from the structure.
+    ## Remove a component group from the structure.
     #
     # @param group The component group to be removed.
     def RemoveCompGroup(self, group):
@@ -1393,6 +1394,13 @@ class structure:
     #          a common fragility function.
     def ComponentsByFragility(self):
         return self._structure.ComponentsByFragility()
+
+    ## Clear the calculation cache
+    def Clear_Cache(self):
+        return self._structure.Clear_Cache()
+
+    def __str__(self):
+        return "[Structure {}]".format(hex(id(self)))
     
 ## Objects for recording output.
 #  This class doesn't wrap anything. It makes sense to move at least the

@@ -47,6 +47,7 @@ namespace SLAT {
         std::string get_Name(void) const { return name; };
 
         double pdf(double im);
+        void Clear_Cache(void);
     private:
         std::string name;
         LogNormalDist calc_AnnualCost(void);
@@ -56,7 +57,6 @@ namespace SLAT {
         std::shared_ptr<IM> im;
         LogNormalDist rebuild_cost;
         LogNormalDist demolition_cost;
-        void Clear_Cache(void);
     };
 }
 #endif

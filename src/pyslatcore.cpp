@@ -869,6 +869,11 @@ double Structure::pdf(double im)
     return wrapper->pdf(im);
 };
 
+void Structure::Clear_Cache(void)
+{
+    return wrapper->Clear_Cache();
+};
+
 // python::list ComponentsByFragility(void) {
 // //            std::cout << "> ComponentsByFragility()" << std::endl;
 //     python::list result;
