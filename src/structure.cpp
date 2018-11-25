@@ -47,12 +47,10 @@ namespace SLAT {
             im->add_callbacks(
                 [this] (void) {
                     this->Clear_Cache();
-                    std::cout << "Structure: IM Changed; clearing cache." << std::endl;
                 },
                 [this] (std::shared_ptr<IM> new_im) {
                     this->Clear_Cache();
                     this->im = new_im;
-                    std::cout << "Structure: IM Replaced; clearing cache." << std::endl;
                 });
         }
         if (cg->getIM() != im) {
