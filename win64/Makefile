@@ -1,5 +1,5 @@
 TARGET=WIN
-ANTLR=java -jar /usr/local/lib/antlr-4.5.2-complete.jar -Dlanguage=Python3
+ANTLR=java -jar /usr/local/lib/antlr-4.7.1-complete.jar -Dlanguage=Python3
 
 PYLIB=../python-amd64
 

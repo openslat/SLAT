@@ -75,15 +75,6 @@ for i in range(1, N_EDPS + 1):
                      None,
                     at)
 
-edp = pyslat.edp("EDP.99", IM1, pyslat.edp.lookup("EDP.01"), pyslat.edp.lookup("EDP.02"))
-pyslat.MakeRecorder('edpim-99', 'edpim', edp,
-                    {'filename': ResultsFile("im_edp_99")},
-                    ['mean_x', 'sd_ln_x'],
-                    linvalues)
-pyslat.MakeRecorder('edprate-{:>02}'.format(99), 'edprate', edp,
-                    {'filename': ResultsFile("edp_{}_rate".format(99))},
-                     None,
-                    at)
 
 # Fragility, cost, component group:
 SIMPLE_FRAG_DATA = [[3, [[0.004, 0.39], [0.0095, 0.25], [0.02, 0.62], [0.0428, 0.36]],
@@ -287,8 +278,7 @@ COMPONENT_DATA = [[1, "EDP.02", "FRAG.002", "COST_002", "DELAY_002", 20, 1.0, 1.
                   [112, "EDP.13", "FRAG.214", "COST_214", "DELAY_214", 10, 1.0, 1.0],
                   [113, "EDP.15", "FRAG.214", "COST_214", "DELAY_214", 10, 3.5, 1.0],
                   [114, "EDP.17", "FRAG.214", "COST_214", "DELAY_214", 10, 1.0, 2.5],
-                  [115, "EDP.19", "FRAG.214", "COST_214", "DELAY_214", 10, 2.78, 3.14],
-                  [116, "EDP.99", "FRAG.214", "COST_214", "DELAY_214", 10, 2.78, 3.14]]
+                  [115, "EDP.19", "FRAG.214", "COST_214", "DELAY_214", 10, 2.78, 3.14]]
 
 building = pyslat.structure("building")
 building.setRebuildCost(pyslat.MakeLogNormalDist(14E6, pyslat.LOGNORMAL_MU_TYPE.MEAN_X,
