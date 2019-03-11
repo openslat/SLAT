@@ -6,27 +6,20 @@ FORTAN version (available from [here](https://sites.google.com/site/brendonabrad
 approach advocated by the Pacific Earthquake Engineering Research (PEER) Centre,
 where the loss is computed through the use of interim variables.
 
-This project is in very early stages; at present it is little more than a
-collection of classes for representing a few of the relationships needed for
-loss assessment.
+This project provides:
+     - libslat, a shared library for the calculation engine
+     - pyslat.py, Python bindings to libslat
+     - SlatInterpreter.py, a Python-based interpreter for a
+       domain-specific language for defining and evaluating
+       seismic loss assessments.
 
-# Requirements
+The interpreter has been neglected, and has never been thoroughly tested or used. It may
+still be of interest to seismic researchers.
 
-Current requirements include:
+The Python bindings are used by [webslat](https://www.github.com/openslat/webslat). That project provides a web-based interface (using the django framework) to the functionality of libslat. That includes instructions for installing SLAT (and webslat) on a virtual machine; it is a good place to visit when setting up your build system for Linux.
 
--   the GNU g++ compiler
--   GNU make
--   libboost libraries
--   the GNU Scientific Library
+This project includes makefiles for cross-compiling a Windows build on a Linux system, using the [MXE](https://mxe.cc/) toolset.
 
-# Demo
+It should also be possible to build on a Windows system, using [mingw](http://mingw.org/), but I don't have access to a system to test this on at the moment.
 
-The script 'demo.sh' will build and run the 'main' executable, which generates
-data for sample IM-Rate and EDP-IM relationships, as well as deriving data for
-the resulting EDP-Rate relationship. The script then plots the data using
-GNU's *plotutils*, and displays the plots (using `qiv`).
 
-# Tests
-
-The 'unit<sub>tests</sub>' tarket builds the unit tests as `unit_tests`. This executable
-runs some basic unit tests on the defined classes and integration functions.
