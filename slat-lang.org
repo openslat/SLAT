@@ -1,0 +1,1711 @@
+#+Title:     SLAT Language
+#+AUTHOR:    Michael Gauland
+#+EMAIL:     michael.gauland@canterbury.ac.nz
+#+DATE:      {{{time(%Y-%m-%d %H:%M)}}}
+#+DESCRIPTION: 
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:6 num:t toc:nil \n:nil @:t ::t |:t ^:{} -:t f:t *:t <:t
+#+OPTIONS:   TeX:dvipng LaTeX:dvipng skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+OPTIONS:   timestamp:t email:t
+#+OPTIONS:   ':t
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LaTeX_CLASS: article
+#+LaTeX_CLASS_OPTIONS: [a4paper]
+#+LATEX_HEADER: \usepackage{unicode-math}
+#+LaTex_header: \usepackage{epstopdf}
+#+LATEX_HEADER: \usepackage{register}
+#+LATEX_HEADER: \usepackage{bytefield}
+#+LATEX_HEADER: \usepackage{parskip}
+#+LATEX_HEADER: \usepackage{tabulary}
+#+LATEX_HEADER: \usepackage[section]{placeins}
+#+LATEX_HEADER: \usepackage[htt]{hyphenat}
+#+LATEX_HEADER: \setlength{\parindent}{0pt}
+#+LATEX_HEADER: \lstset{extendedchars=true}
+#+LATEX_HEADER: \lstset{keywordstyle=\color{blue}\bfseries}
+#+LATEX_HEADER: \lstset{frame=shadowbox}
+#+LATEX_HEADER: \lstset{basicstyle=\ttfamily}
+#+LATEX_HEADER: \definecolor{mygray}{gray}{0.8}
+#+LATEX_HEADER: \lstset{rulesepcolor=\color{mygray}}
+#+LATEX_HEADER: \lstdefinelanguage{sh}{rulecolor=\color{green},rulesepcolor=\color{mygray},
+#+LATEX_HEADER: frameround=ffff,backgroundcolor=\color{white}}
+#+LATEX_HEADER: \lstdefinelanguage{fundamental}{basicstyle=\ttfamily\scriptsize,
+#+LATEX_HEADER: rulesepcolor=\color{cyan},frameround=tttt,backgroundcolor=\color{white},
+#+LATEX_HEADER: breaklines=true}
+#+LATEX_HEADER: \usepackage{pst-circ}
+#+LATEX_HEADER: \usepackage[hang,small,bf]{caption}
+#+LATEX_HEADER: \setlength{\captionmargin}{20pt}
+#+LINK_UP:   
+#+LINK_HOME: 
+#+XSLT:
+#+STARTUP: overview
+#+STARTUP: align
+#+STARTUP: noinlineimages
+#+PROPERTY: cache yes
+#+PROPERTY: header-args :exports results
+#+MACRO: keyword src_slat[:exports code]{$1}
+#+LATEX_HEADER: \lstdefinelanguage{slat}{keywordstyle={\color{blue}},
+#+LATEX_HEADER: morekeywords={option,outputdir,set,title,detfn,probfn,powerlaw,lognormal,
+#+LATEX_HEADER: fragfn,im,edp,lossfn,compgroup,message,print,integration,recorder,maq,new,
+#+LATEX_HEADER: append,cols,mu,sd,at,analyze,imrate,edpim,edprate,dsedp,dsim,dsrate,
+#+LATEX_HEADER: upper_cost, lower_cost, lower_n, upper_n, cost, disp, mean_uncert,
+#+LATEX_HEADER: var_uncert, median_x, mean_x, mu_ln_x, sd_x, sd_ln_x, hyperbolic,
+#+LATEX_HEADER: placement_type, spread_type, simple, stdoud,
+#+LATEX_HEADER: lossds,lossedp,lossim,stdfunc,db }
+#+LATEX_HEADER: ,sensitive=true
+#+LATEX_HEADER: ,morecomment=[l]{\#}
+#+LATEX_HEADER: ,morestring=[b]"
+#+LATEX_HEADER: ,morestring=[b]'
+#+LATEX_HEADER: ,commentstyle={\itshape\color{gray}}
+#+LATEX_HEADER: ,identifierstyle={\color{red}}
+#+LATEX_HEADER: ,moredelim=[is][\ttfamily]{|}{|}
+#+LATEX_HEADER: ,moredelim=[is][\ttfamily\color{cyan}]{$$}{$$}
+#+LATEX_HEADER: ,moredelim=[is][\ttfamily\color{Aquamarine}]{//}{//}
+#+LATEX_HEADER: ,morecomment=[s][\itshape\color{magenta}]{<}{>}
+#+LATEX_HEADER: }
+#+LATEX_HEADER: \lstdefinelanguage[ANSI]{C}{identifierstyle={\color{magenta}},
+#+LATEX_HEADER:     morekeywords={exp, log, sqrt}
+#+LATEX_HEADER: }
+
+This document describes the command language used by the ~SLAT~ interpreter. It
+is very much a work in progress; please let me know of any conflicts, omissions,
+ambiguities, or other problems.
+
+#+BEGIN_SRC emacs-lisp :session :results value silent :exports none
+;; Set up a filter to preserve greek symbols in code blocks
+(setq org-export-filter-src-block-functions
+      (list
+	(lambda (text backend info)
+	   (replace-regexp-in-string "\\([σβ]\\)" "§$\\1$§" text))))
+	   
+(setq org-latex-listings-options '(("escapechar" "§")))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp :session :results value silent :exports none
+;; Set up EBNF style for railroad diagrams
+  (when (ebnf-find-style 'ebnf-no-name) (ebnf-delete-style 'ebnf-no-name))
+  (ebnf-insert-style 'ebnf-no-name 'default
+                     '(ebnf-syntax . 'ebnf)
+                     '(ebnf-production-name-p . t)
+                     '(ebnf-line-color . "Blue")
+                     '(ebnf-non-terminal-border-color . "Green"))
+  (ebnf-push-style 'ebnf-no-name)
+#+END_SRC
+* Language Description
+  This section describes the general structure of the language, and includes
+  examples of both commands and typical output. A formal definition of the language will follow.
+
+  Commands consist of a keyword, possibly followed by a combination of:
+  - an identifier, if something is being created
+  - additional keywords, further specifying the command
+  - identifiers, indicating the variables to operate on
+  - additional parameters, such as the numbers over which to evaluate a function
+  - optional flags and parameters controlling how the command behaves
+  - the end of a command is indicated by a semi-colon (';') (this does not apply
+    to comments)
+  #+NAME: structure
+  #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+  #+BEGIN_SRC ebnf
+  command = name [id] {keywords} {id} {parameters} {"--" flag [value]} ";".
+  #+END_SRC
+
+  #+ATTR_LaTeX: :width \textwidth :placement [h!bt] :options :float t
+  #+RESULTS[631087755d21e1ff939cb8074766bed5e1f1dd51]: structure
+  [[file:/tmp/babel-6064gPU/temp60643Ud.eps]]
+
+** Comments
+
+   The hash symbol ('#') starts a *comment*, which goes to the end of the line:
+   #+BEGIN_SRC slat :eval never :exports code
+   # This is a comment; it will be ignored.
+
+   title "Example 1"; # This comment follows a command
+
+   # Comments can also appear inside a command:
+   fragfn //frag1// [0.0062, 0.4],   # Damage State 1
+	        [0.0230, 0.4],   # Damage State 2
+		[0.0440, 0.4],   # Damage State 3
+		[0.0564, 0.4];   # Damage State 4
+   #+END_SRC
+
+** Title  
+   The {{{keyword(title)}}} command creates a title for the
+   anaylsis. I'm not yet sure where this will be used, though I expect it may be
+   included in output files or on plots.
+
+   The title must be in quotes (single or double):
+   #+BEGIN_SRC slat :eval never :exports code
+   title "Example 1"
+   title 'Example 2; Single Quote are also acceptable'
+   title 'Example 3; opposite-type "quotes" can be nested'
+   title "Example 4--'in either order'"
+   #+END_SRC
+
+   Strings can also use escape sequences to include quotes or backslashes:
+   #+BEGIN_SRC slat :eval never :exports code
+   title 'Single-quoted strings can escape \' and \\.';
+   title "Double-quoted strings can escape \" and \\.";
+   #+END_SRC
+
+   If more than one title command is supplied, the strings will be treated as
+   separate lines of a single title.
+
+   The title can be explicitly included in output with the {{{keyword(print
+   title)}}} command.
+** Deterministic Functions
+   Deterministic functions are defined with the {{{keyword(detfn)}}} command:
+   #+BEGIN_SRC slat :eval never :exports code
+   detfn <detfn_id> <function type> <parameters>;
+   #+END_SRC
+
+   The command must specify the function type, the name under which to store the
+   function, and the parameters:
+   #+BEGIN_SRC slat :eval never :exports code
+   # Define the hyperbolic function that describes the
+   # IM-Rate relationship:
+   #
+   #                           v_asy im_asy  alpha
+   detfn //IM_FUNC_ID// hyperbolic 1221,   29.8,  62.2;
+   #+END_SRC
+   The {{{keyword(hyperbolic)}}} deterministic function type expects three
+   numbers: {{{keyword(//v_asy//)}}}, {{{keyword(//im_asy//)}}}, and
+   {{{keyword(//alpha//)}}}, in that order.
+
+   The equation for the non-linear hyperbolic law is:
+   \begin{equation}
+   y=v_{asy}\cdot{}e^\frac{\alpha}{\ln{\frac{x}{im_{asy}}}}
+   \end{equation}
+
+   In addition to {{{keyword(hyperbolic)}}}, {{{keyword(detfn)}}} also accepts
+   {{{keyword(powerlaw)}}} as a function type:
+   #+BEGIN_SRC slat :eval never :exports code
+   # POWERLAW functions ca be used to describe the MU and
+   # SIGMA of the EDP-IM relationship:
+   detfn powerlaw    //mu_func//  0.1, 1.5;
+   detfn powerlaw //sigma_func//  0.5, 0.0;
+   #+END_SRC
+   The two arguments $a$ and $b$ are are used like this:
+   \begin{equation}
+   y={a}\cdot{}x^b
+   \end{equation}
+   
+** Probabilistic Functions
+   Probabilistic functions are defined with the {{{keyword(probfn)}}}
+   command. {{{keyword(lognormal)}}} may be the only variant needed, but other
+   distributions could easily be added. The definition identifies the functions
+   which define the distribution:
+   #+BEGIN_SRC slat :eval never :exports code
+   probfn <probfn_id> lognormal <mu_func_id> <sd_func_id>
+                    <placement_type>
+                    <spread_type>;
+   #+END_SRC
+   where {{{keyword(//mu_func_id//)}}} and {{{keyword(//sd_func_id//)}}} refer to
+   deterministic functions defined with the {{{keyword(detfn)}}} command.
+   {{{keyword(<placement_type>)}}} is optional; if present it consists of the
+   flag {{{keyword(--mu)}}}, followed by one of:
+   - {{{keyword(median_x)}}} : the {{{keyword(<mu_func_id>)}}} function describes
+     the median of the distribution.
+   - {{{keyword(mean_x)}}} : the {{{keyword(<mu_func_id>)}}} function describes
+     the mean of the distribution.
+   - {{{keyword(mu_ln_x)}}} : the {{{keyword(<mu_func_id>)}}} function describes
+     the mean of the log of distribution.
+   By default, {{{keyword(<mu_func_id>)}}} describes the mean of the log of the distribution.
+
+   Similarly, {{{keyword(spread_type)}}} is also optional. If present it
+   consists of the flag {{{keyword(--sd)}}}, followed by one of:
+   - {{{keyword(sd_x)}}} : the {{{keyword(<sd_func_id>)}}} function
+        describes the standard deviation of the distribution.
+   - {{{keyword(sd_ln_x)}}} : the {{{keyword(<sd_func_id>)}}} function
+        describes the standard deviation of log of the distribution.
+   By default, {{{keyword(<sd_func_id>)}}} describes the standard deviations
+   of the log of the distribution.
+   
+   This command uses the deterministic functions {{{keyword(//mu_func//)}}} and
+   {{{keyword(//sd_func//)}}} to define the probabilistic function
+   {{{keyword(//edp_fn//)}}}, with both functions referring to the log of the
+   distribution:
+   #+BEGIN_SRC slat :eval never :exports code
+   probfn lognormal //edp_fn// //mu_func// //sd_func//;
+   #+END_SRC
+
+   This command uses the same functions, but {{{keyword(mu_func)}}} describes
+   the median of the distribution.
+   #+BEGIN_SRC slat :eval never :exports code
+   probfn //edp_fn// lognormal //mu_func// //sd_func// --mu median_x;
+   #+END_SRC
+
+** Relationships
+   I'm using the term 'relationship' to describe how the various functions are
+   connected. Would another term be clearer?
+
+   An IM relationship simply refer s to a deterministic function:
+   #+BEGIN_SRC slat :eval never :exports code
+   im  <im_id>  <detfn_id>;
+   #+END_SRC
+
+   For example:
+   #+BEGIN_SRC slat :eval never :exports code
+   im //im1// //im_func//;
+   #+END_SRC
+
+   An EDP relationship refers to an IM relationship, and the probabilistic
+   function describing the engineering response:
+   #+BEGIN_SRC slat :eval never :exports code
+   edp <edp_id> <im_id> <probfn_id>;
+   #+END_SRC
+   For example:
+   #+BEGIN_SRC slat :eval never :exports code
+   edp //edp1// //im1// //edp_fn//;
+   #+END_SRC
+** Fragility Functions
+   Fragility functions can be specified as a set of parameters, describing the
+   lognormal distribution of the onset of each state, such as:
+   #+BEGIN_SRC slat :eval never :exports code
+   fragfn //FRAGID// [0.0062, 0.4], # Damage state #1
+                 [0.0230, 0.4], # Damage state #2
+                 [0.0440, 0.4], # Damage state #3
+                 [0.0564, 0.4]; # Damage state #4
+   #+END_SRC
+   Each pair numbers represents the \mu and \sigma values of the onset for a
+   damage state.  By default, these describe the mean and standard deviation of
+   the log of the distribution, but can be changed as can be done for
+   probabilistic functions:
+
+   #+BEGIN_SRC slat :eval never :exports code
+   fragfn //FRAGID// [0.0062, 0.4], [0.0230, 0.4],
+                 [0.0440, 0.4], [0.0564, 0.4] 
+          --sd sd_x  --mu mean_x;
+   #+END_SRC
+
+   Fragility functions can also be read from a database of standard functions:
+   #+BEGIN_SRC slat :eval never :exports code
+   fragfn //FRAGID// --stdfunc //FRAG_KEY//;
+   #+END_SRC
+   {{{keyword(//FRAG_KEY//)}}} identifies the fragility function in the
+   database. The format of keys is still to be decided.
+
+   It is also possible to use fragility functions from custom databases:
+   #+BEGIN_SRC slat :eval never :exports code
+   fragfn //FRAGID// --db //FILENAME.EXT// --stdfunc //FRAG_KEY//;
+   #+END_SRC
+   I haven't yet given any thought to the structure of the database, or how to
+   identify functions within it.
+** Loss Functions
+   I expect to eventually support a variety of loss function types, but for now
+   only {{{keyword(simple)}}} is supported. This assumes a fixed per-unit cost,
+   following a lognormal distribution described by \mu and \sigma. As with other
+   lognormal distributions, \mu and \sigma describe the mean and standard
+   deviation of the log of the distribution, but can be changed as can be done
+   for probabilistic functions
+   #+BEGIN_SRC slat :eval never :exports code
+   lossfn //LOSS1// simple [0.03, 0.4], # Damage state #1
+                       [0.08, 0.4], # Damage state #2
+                       [0.25, 0.4], # Damage state #3
+                       [1.00, 0.4]; # Damage state #4
+    #+END_SRC
+
+   #+BEGIN_SRC slat :eval never :exports code
+   lossfn LOSS1 simple [0.03,0.4], [0.08, 0.4],
+                       [0.25, 0.4], [1.00, 0.4]
+		--mu mean_x --sd sd_ln_x;
+    #+END_SRC
+** Component Groups 
+   A component group specifies a number of components sharing the same EDP
+   relationship, fragility function, and loss function:
+   #+BEGIN_SRC slat :eval never :exports code
+   comgrp <comgrp_id> <edpid> <fragid> <lossid> <count>
+   #+END_SRC
+   For example:
+   #+BEGIN_SRC slat :eval never :exports code
+   comgrp //cgroup1// //edp1// //frag1// //loss1// //10//;
+   #+END_SRC
+** Print Command
+   The {{{keyword(print)}}} command is used to print definitions to the terminal or a file:
+   #+BEGIN_SRC slat :eval never :exports code
+   print <definition type> <identifier[s]> <options>;
+   #+END_SRC
+   where //<definition type>// is one of:
+   - {{{keyword(detfn)}}}
+   - {{{keyword(probfn)}}}
+   - {{{keyword(im)}}}
+   - {{{keyword(edp)}}}
+   - {{{keyword(fragfn)}}}
+   - {{{keyword(lossfn)}}}
+   - {{{keyword(comgrp)}}}
+   We must specify the type of definition to be printed, since identifiers can
+   be re-used across types of definitions. 
+   
+   {{{keyword(print)}}} can also be used to print a message:
+   #+BEGIN_SRC slat :eval never :exports code
+   print message <string> <options>;
+   #+END_SRC
+   ...or the title:
+   #+BEGIN_SRC slat :eval never :exports code
+   print title <options>:;
+   #+END_SRC
+
+   {{{keyword(<target>)}}} can be:
+   - empty (i.e., it is optional), which sends the output to
+     {{{keyword(stdout)}}}.
+   - a file name, indicating where to send the output. This can optionally be followed by:
+     - The flag {{{keyword(new)}}}, which is the default. This means the output
+       file will be silently overwritten if it already exists.
+     - The flag {{{keyword(append)}}}, which indicates the data should be
+       appended to the end of the file, if it already exists.
+   We can make additional options available as needed.
+
+   Some examples:
+   #+BEGIN_SRC slat :eval never :exports code
+     print message;
+     print message "This is a message string." //MESSAGE.TXT//;
+     print message 'This is a message.' //MESSAGE.TXT// --new;
+     print message 'This is a message.' //MESSAGE.TXT// --append;
+     print detfn //IM_FUNC// //INPUT_DEFS.TXT// --new;
+     print probfn //EDP_FN// //INPUT_DEFS.TXT// --append;
+     print im //IM1// //INPUT_DEFS.TXT// --append;
+     print edp //EDP1// //INPUT_DEFS.TXT// --append;
+     print fragfn //FRAG1// //INPUT_DEFS.TXT// --append;
+     print lossfn //LOSS1// //INPUT_DEFS.TXT// --append;
+     print compgroup //PG1// //INPUT_DEFS.TXT// --append;
+   #+END_SRC
+   {{{keyword(print)}}} is executed right away--it does not wait for the
+   {{{keyword(analyze)}}} command. This can help with troubleshooting, if the
+   system crashes during an analysis.
+** Integration
+   The {{{keyword(integration)}}} command sets up integration parameters
+   #+BEGIN_SRC slat :eval never :exports code
+   integration <algorithm> <accuracy> <iterations>;
+   #+END_SRC
+
+   For example:
+   #+BEGIN_SRC slat :eval never :exports code
+   integration maq |1E-6| 1024;
+   #+END_SRC
+** Recorders
+   The {{{keyword(recorder)}}} command specifies that a function or
+   relationship should be recorded over specified values, to a file or the
+   terminal:
+   #+BEGIN_SRC slat :eval never :exports code
+   recorder <type> <id> <at-values> <columns> <options>;
+   #+END_SRC
+
+   {{{keyword(<type>)}}} and {{{keyword(<id>)}}} are required.
+   {{{keyword(<type>)}}} must be one of:
+   - {{{keyword(detfn)}}}
+   - {{{keyword(probfn)}}}
+   - {{{keyword(imrate)}}}
+   - {{{keyword(edpim)}}}
+   - {{{keyword(dsedp)}}}
+   - {{{keyword(dsim)}}}
+   - {{{keyword(dsrate)}}}
+   - {{{keyword(lossds)}}}
+   - {{{keyword(lossedp)}}}
+   - {{{keyword(lossim)}}}
+   {{{keyword(<id>)}}} identifies the function for the recorder to use (the
+   function type depends on the recorder {{{keyword(<type>)}}}; more on that
+   below).
+
+   {{{keyword(<at-values>)}}} is requires for all but {{{keyword(recorder)}}}
+   {{{keyword(dsrate)}}}, to identify the values at which the function is to be
+   recorded. It can be:
+   - Three numbers, separated by colons, indicating the starting value, ending
+     value, and step size:
+     #+BEGIN_SRC slat :eval never :exports code
+     recorder detfn //im_func// 0.0:1.0:0.1;
+     #+END_SRC
+     will record {{{keyword(detfn)}}} {{{keyword(//im_func//)}}} at values
+     from 0 to 1, in steps of 0.1.
+   - One or more numbers, separated by commas, enumerating the values to use:
+     #+BEGIN_SRC slat :eval never :exports code
+     recorder detfn //im_func// 0.0, 0.1, 0.2;
+     #+END_SRC
+     will record {{{keyword(detfn)}}} {{{keyword(//im_func//)}}} at 0.0, 0.1,
+     and 0.2.
+   - A Python expression that evaluates to a set of values:
+     #+BEGIN_SRC slat :eval never :exports code
+     recorder detfn //im_func//
+              $$$(numpy.arange(0.0, 0.011, 0.001))$$;
+     #+END_SRC
+     will record {{{keyword(detfn)}}} {{{keyword(//im_func//)}}} for values from
+     0.00 to 0.01, in steps of 0.001. Note that the
+     {{{keyword(|numpy.arange|)}}} function excludes the ending limit.
+   - A variable that evaluates to a set of values:
+     #+BEGIN_SRC slat :eval never :exports code
+     set //values// $$$(numpy.arange(0.0, 1.01, 0.01))$$;
+     recorder //imrate// //IM_1// //$values//;
+     #+END_SRC
+     will record {{{keyword(detfn)}}} {{{keyword(//im_func//)}}}, at the values
+     stored in the variable {{{keyword(//values//)}}}.
+
+   The {{{keyword(cols:<values>)}}} clause is optional, and is only relevent for
+   types which represent probability distributions ({{{keyword(probfn)}}},
+   {{{keyword(edp)}}}, {{{keyword(fragfn)}}}, and {{{keyword(lossfn)}}}).
+
+   The {{{keyword(at:<values>)}}} clause specifies the values at which
+   to provide output. This can be specified in several ways:
+   - As a list of numbers:
+     #+BEGIN_SRC slat :eval never :exports code
+     recorder detfn im_func at:[0.0, 0.1, 0.2, 0.3]
+     #+END_SRC
+   - As three numbers, indicating the start value, increment, and end value:
+     #+BEGIN_SRC slat :eval never :exports code
+     recorder detfn im_func AT:<min>:<incr>:<max>
+     #+END_SRC
+     For example, this:
+     #+BEGIN_SRC slat :eval never :exports code
+     recorder detfn im_func AT:0.0:0.001:0.010
+     #+END_SRC
+     will report data for /x/ values from 0.0 to 0.01 (inclusive), in steps of
+     0.001.
+   - As a snippet of python code that evalues to a list of values:
+     #+BEGIN_SRC slat :eval never :exports code
+     recorder detfn im_func
+              at:$$$(numpy.arange(0.0, 0.011, 0.001))$$
+     #+END_SRC
+     and
+     #+BEGIN_SRC slat :eval never :exports code
+     recorder detfn im_func
+              at:$$$(numpy.arange(start=0.0,
+                                step=0.001, stop=0.011))$$
+     #+END_SRC
+     are both equivalent to the previous example.[fn:1]
+     
+     The use of Python code in commands will be discussed below.
+
+*** {{{keyword(detfn)}}}
+    :PROPERTIES:
+    :ALT_TITLE: detfn
+    :END:
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder detfn im_func at:[0.0, 0.1, 0.2]
+    #+END_SRC
+
+    |   X | im_func(x) |
+    |-----+------------|
+    | 0.0 |      1.000 |
+    | 0.1 |      0.022 |
+    | 0.2 |      0.004 |
+
+    The calculations required depend on the function type.
+*** {{{keyword(probfn)}}}
+    :PROPERTIES:
+    :ALT_TITLE: probfn
+    :END:
+    By default, a probability function reports on the parameters which were used
+    to define the distribution (that is, {{{keyword(median_X)}}},
+    {{{keyword(mean_X)}}}, or {{{keyword(mu_lnX)}}} and {{{keyword(sd_X)}}} or
+    {{{keyword(sigma_lnX)}}}:
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder probfn edp_fn at:0.0:0.1:0.5
+    #+END_SRC
+
+    |   X | mu_ln(edp_fn(X)) | sigma_ln(edp_fn((X)) |
+    |-----+------------------+----------------------|
+    | 0.0 |            0.000 |                0.500 |
+    | 0.1 |            0.003 |                0.500 |
+    | 0.2 |            0.008 |                0.500 |
+    | 0.3 |            0.016 |                0.500 |
+    | 0.4 |            0.025 |                0.500 |
+    | 0.5 |            0.035 |                0.500 |
+
+    Another option is to provide a {{{keyword(cols)}}} parameter,
+    providing one or more probabilities:
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder probfn edp_fn COLS:[0.16, 0.50, 0.84] AT:0.0:0.1:0.5
+    #+END_SRC
+    |  IM |  0.16 |  0.50 |  0.84 |
+    |-----+-------+-------+-------|
+    | 0.0 | 0.000 | 0.000 | 0.000 |
+    | 0.1 | 0.002 | 0.003 | 0.005 |
+    | 0.2 | 0.005 | 0.009 | 0.015 |
+    | 0.3 | 0.010 | 0.016 | 0.027 |
+    | 0.4 | 0.015 | 0.025 | 0.042 |
+    | 0.5 | 0.022 | 0.035 | 0.058 |
+
+    The {{{keyword(cols)}}} parameter can also include the symbols used to
+    define probabilistic functions (see section [[Probabilistic Functions]]).
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder probfn edp_fn cols:[mu_lnX, 0.16, sigma_lnX] 
+                           at:0.0:0.1:0.5
+    #+END_SRC
+    |   X | mean_ln(edp_fn(X)) |  0.16 | sigma_ln(edp_fn((X)) |
+    |-----+--------------------+-------+----------------------|
+    | 0.0 |              0.000 | 0.000 |                0.500 |
+    | 0.1 |              0.003 | 0.002 |                0.500 |
+    | 0.2 |              0.008 | 0.005 |                0.500 |
+    | 0.3 |              0.016 | 0.010 |                0.500 |
+    | 0.4 |              0.025 | 0.0l5 |                0.500 |
+    | 0.5 |              0.035 | 0.022 |                0.500 |
+
+    Calculating the distribution parameters is simply a matter of evaluating the
+    deterministic functions used to define them (an possibly translating them,
+    if the parameters requested do not match those stored internally).
+
+    Calculating the value at a given probability from the distribution
+    parameters is done by the GNU Scientific Library (GSL) function
+    ~gsl_cdf_lognormal_Pinv()~. I haven't looked at the code for this, but I
+    don't expect to be able to improve on it. 
+
+*** {{{keyword(imrate)}}}
+    :PROPERTIES:
+    :ALT_TITLE: imrate
+    :END:
+    An {{{keyword(imrate)}}}-type {{{keyword(recorder)}}} evaluates the
+    exceedence function for given values of the intensity measure:
+
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder imrate im1 at:[0.0, 0.1, 0.2]
+    #+END_SRC
+    |  IM | Exceedence(IM) |
+    |-----+----------------|
+    | 0.0 |          1.000 |
+    | 0.1 |          0.022 |
+    | 0.2 |          0.004 |
+
+    These calculations simply require evaluating the deterministic function used
+    to define the intensity measure.
+*** {{{keyword(edpim)}}}
+    :PROPERTIES:
+    :ALT_TITLE: edpim
+    :END:
+    An {{{keyword(edpim)}}}-type {{{keyword(recorder)}}} reports on the
+    distribution of the engineering demand parameter for given values of the
+    intensity measure. Since this is a probabilistic function, it accepts a
+    {{{keyword(cols)}}} parameter as described above.
+
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder edpim edp1 cols:[mean_X, sd_X, 0.16] 
+                          at:0.0:0.1:0.5
+    #+END_SRC
+    |  IM | mean_X(EDP(IM)) | sd_X(EDP(IM)) |  0.16 |
+    |-----+-----------------+---------------+-------|
+    | 0.0 |           0.000 |         0.500 | 0.000 |
+    | 0.1 |           0.003 |         0.500 | 0.002 |
+    | 0.2 |           0.008 |         0.500 | 0.005 |
+    | 0.3 |           0.016 |         0.500 | 0.010 |
+    | 0.4 |           0.025 |         0.500 | 0.015 |
+    | 0.5 |           0.035 |         0.500 | 0.022 |
+
+    Calculating the distribution parameters is simply a matter of evaluating the
+    probabilistic function used to define the engineering demand parameter.
+
+    Calculating the percentage points is easily done from the distribution
+    parameters, using standard statistics functions (e.g., ~qlnorm()~ in ~R~).
+*** {{{keyword(edprate)}}}
+    :PROPERTIES:
+    :ALT_TITLE: edprate
+    :END:
+    An {{{keyword(edprate)}}}-type {{{keyword(recorder)}}} reports on the
+    rate of exceedence for given values of the engineering demand parameter.
+
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder edprate edp1 at:0.001:0.001:0.005
+    #+END_SRC
+    |   EDP | Exceedence |
+    |-------+------------|
+    | 0.001 |      0.088 |
+    | 0.002 |      0.043 |
+    | 0.003 |      0.027 |
+    | 0.004 |      0.019 |
+    | 0.005 |      0.014 |
+
+    For a given IM value /im/, the probability that the EDP will exceed a given
+    EDP value /e/ (written as "$p(EDP > e|IM=im)$") is easily calculated from
+    the distribution parameters for EDP at /im/, using standards statistics
+    functions (such as ~plnorm()~ in ~R~)
+
+    The probability of exceeding a given EDP value /e/ is
+    #+NAME: eq:edprate
+    \begin{equation}
+    \lambda_{EDP}(e)=\int_{im=0}^{\infty}p(EDP>e|IM=im)
+        \left|\frac{d\,\lambda_{IM}(im)}{d\,im}\right|\,d\,im
+    \end{equation}
+    That is, we need to integrate over all values of IM the probability of
+    EDP exceeding /e/ given the intensity measure /im/, times the probability of
+    the intensity measure.[fn:2]
+
+    /Verify equation [[eq:edprate]]./
+
+*** {{{keyword(dsedp)}}}
+    :PROPERTIES:
+    :ALT_TITLE: dsedp
+    :END:
+    An {{{keyword(dsedp)}}}-type {{{keyword(recorder)}}} reports on the
+    relationship between EDP and damage states.
+
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder dsedp cgroup1 at:0.00:0.01:0.15
+    #+END_SRC
+
+    |  EDP | p(DS>=DS1) | p(DS>=DS2) | p(DS>=DS3) | p(DS>=DS4) |
+    |------+------------+------------+------------+------------|
+    | 0.00 |   0.000000 |   0.000000 |   0.000000 |   0.000000 |
+    | 0.01 |   0.883974 |   0.018659 |   0.000106 |   0.000008 |
+    | 0.02 |   0.998294 |   0.363393 |   0.024354 |   0.004773 |
+    | 0.03 |   0.999960 |   0.746737 |   0.169162 |   0.057262 |
+    | 0.04 |   0.999998 |   0.916739 |   0.405834 |   0.195177 |
+    | 0.05 |   1.000000 |   0.973890 |   0.625358 |   0.381663 |
+    | 0.06 |   1.000000 |   0.991738 |   0.780945 |   0.561467 |
+    | 0.07 |   1.000000 |   0.997303 |   0.877131 |   0.705424 |
+    | 0.08 |   1.000000 |   0.999084 |   0.932490 |   0.808912 |
+    | 0.09 |   1.000000 |   0.999676 |   0.963197 |   0.878668 |
+    | 0.10 |   1.000000 |   0.999881 |   0.979937 |   0.923893 |
+    | 0.11 |   1.000000 |   0.999954 |   0.989010 |   0.952543 |
+    | 0.12 |   1.000000 |   0.999982 |   0.993934 |   0.970457 |
+    | 0.13 |   1.000000 |   0.999993 |   0.996619 |   0.981586 |
+    | 0.14 |   1.000000 |   0.999997 |   0.998096 |   0.988485 |
+    | 0.15 |   1.000000 |   0.999999 |   0.998916 |   0.992766 |
+
+    By default, {{{keyword(dsedp)}}} will output a column for each damage state,
+    but you can override this with the {{{keyword(cols)}}} parameter:
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder dsedp cgroup1 cols:[1, 4] at:0.00:0.01:0.15
+    #+END_SRC
+
+    |  EDP | p(DS>=DS1) | p(DS>=DS4) |
+    |------+------------+------------|
+    | 0.00 |   0.000000 |   0.000000 |
+    | 0.01 |   0.883974 |   0.000008 |
+    | 0.02 |   0.998294 |   0.004773 |
+    | 0.03 |   0.999960 |   0.057262 |
+    | 0.04 |   0.999998 |   0.195177 |
+    | 0.05 |   1.000000 |   0.381663 |
+    | 0.06 |   1.000000 |   0.561467 |
+    | 0.07 |   1.000000 |   0.705424 |
+    | 0.08 |   1.000000 |   0.808912 |
+    | 0.09 |   1.000000 |   0.878668 |
+    | 0.10 |   1.000000 |   0.923893 |
+    | 0.11 |   1.000000 |   0.952543 |
+    | 0.12 |   1.000000 |   0.970457 |
+    | 0.13 |   1.000000 |   0.981586 |
+    | 0.14 |   1.000000 |   0.988485 |
+    | 0.15 |   1.000000 |   0.992766 |
+
+    Note that in this case the lognormal distribution paramaters
+    ({{{keyword(median_X)}}}, etc.) don't make sense, and are not allowed.
+
+    $P(DS_{i}|EDP=e)$ is the probability that damage state /DS_{i}/ will be
+    exceeded given an EDP of /e/. This is trivially calculated from the
+    parameters of the lognormal distribution for the onset of /DS_{i}/.
+*** {{{keyword(dsim)}}}
+    :PROPERTIES:
+    :ALT_TITLE: dsim
+    :END:
+    An {{{keyword(dsim)}}}-type {{{keyword(recorder)}}} reports on the
+    relationship between IM and damage states.
+
+    The command:
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder dsim cgroup1 at:0.0:0.5:1.5
+    #+END_SRC
+    would produce something like (made-up numbers):
+    |   IM | p(DS>=DS1) | p(DS>=DS2) | p(DS>=DS3) | p(DS>=DS4) |
+    |------+------------+------------+------------+------------|
+    | 0.00 |   0.000000 |   0.000000 |   0.000000 |   0.000000 |
+    | 0.05 |   1.000000 |   0.973890 |   0.625358 |   0.381663 |
+    | 0.10 |   1.000000 |   0.999881 |   0.979937 |   0.923893 |
+    | 0.15 |   1.000000 |   0.999999 |   0.998916 |   0.992766 |
+
+    As with {{{keyword(dsedp)}}}, {{{keyword(dsim)}}} will output a column for
+    each damage state by default; this can be overridden with the {{{keyword(cols)}}}
+    parameter.
+
+    The probability of exceeding a given DS state /DS_{i}/ is
+    #+NAME: eq:dsim
+    \begin{equation}
+    p(DS_{i}|IM=im)=\int_{edp=0}^{\infty}p(DS_{i}|EDP=edp)\,
+        \left|\frac{dp(EDP>edp|IM=im)}{d\,edp}\right|\,d\,edp
+    \end{equation}
+
+    /Verify equation [[eq:dsim]]./
+    
+*** {{{keyword(dsrate)}}}
+    :PROPERTIES:
+    :ALT_TITLE: dsrate
+    :END:
+    An {{{keyword(dsrate)}}}-type {{{keyword(recorder)}}} reports on the overall
+    probability of each damage state being exceeded. This produces one value per
+    damage state (made-up numbers):
+
+    The command:
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder dsrate cgroup1
+    #+END_SRC
+    will produce something like this (made-up numbers):
+    
+    |  DS1 |  DS2 |  DS3 |  DS4 |
+    |------+------+------+------|
+    | 0.10 | 0.08 | 0.04 | 0.01 |
+
+    Note that {{{keyword(dsrate)}}} does not accept the {{{keyword(at)}}}
+    parameter.
+
+    The rate of /DS_{i}/ is:
+    #+NAME: eq:dsrate
+    \begin{equation}
+    \lambda_{DS}(DS_{i})=\int_{im=0}^{\infty}p(DS_{i}|IM=im)
+        \left|\frac{\lambda_{im}(im)}{d\,im}\right|\,d\,im
+    \end{equation}
+
+    /Verify equation [[eq:dsrate]]./
+
+*** {{{keyword(lossds)}}}
+    :PROPERTIES:
+    :ALT_TITLE: lossds
+    :END:
+    A {{{keyword(lossds)}}}-type {{{keyword(recorder)}}} reports on the
+    probability the loss will exceed a given value for each damage state.
+
+    The command:
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder lossds cgroup1 at:[1E3, 1E4, 1E5]
+    #+END_SRC
+    would produce something like this (made-up numbers):
+    
+    | Loss |  DS1 |  DS2 |  DS3 |  DS4 |
+    |------+------+------+------+------|
+    |  1E3 | 0.90 | 0.70 | 0.50 | 0.20 |
+    |  1E4 | 0.80 | 0.40 | 0.30 | 0.10 |
+    |  1E5 | 0.70 | 0.30 | 0.20 | 0.05 |
+
+    
+    /How is this calculated?/
+*** {{{keyword(lossedp)}}}
+    :PROPERTIES:
+    :ALT_TITLE: lossedp
+    :END:
+    A {{{keyword(lossedp)}}}-type {{{keyword(recorder)}}} reports on the
+    relationship between EDP and expected loss.
+
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder lossedp cgroup1 at:0.0:0.05:0.15
+    #+END_SRC
+    would produce something like (made-up numbers):
+
+    |  EDP | \mu(LOSS EDP) | \sigma(LOSS EDP) |
+    |------+---------------+------------------|
+    | 0.00 |             0 |                0 |
+    | 0.05 |         5.0E5 |            5.0E5 |
+    | 0.10 |         9.0E6 |            4.2E5 |
+    | 0.15 |         1.0E6 |            4.0E5 |
+    
+    /How is this calculated?/
+*** {{{keyword(lossim)}}}
+    :PROPERTIES:
+    :ALT_TITLE: lossim
+    :END:
+    A {{{keyword(lossim)}}}-type {{{keyword(recorder)}}} reports on the
+    relationship between IM and expected loss.
+
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder lossim cgroup1 at:0.0:0.05:0.15
+    #+END_SRC
+    would produce something like (made-up numbers):
+
+    |   IM | \mu(LOSS \vbar IM) | \sigma(LOSS \vbar IM) |
+    |------+--------------------+-----------------------|
+    | 0.00 |                  0 |                     0 |
+    | 0.05 |              5.0E5 |                 5.0E5 |
+    | 0.10 |              9.0E6 |                 4.2E5 |
+    | 0.15 |              1.0E6 |                 4.0E5 |
+
+    /How is this calculated?/
+*** Python Code
+    Python code can be evaluated to produce parameters. The code is delimited by
+    {{{keyword($$$($$)}}} and {{{keyword($$)$$)}}}. For example, in the command:
+     #+BEGIN_SRC slat :eval never :exports code
+     recorder detfn im_func
+              at:$$$(numpy.arange(0.00, 0.05, 0.01))$$
+     #+END_SRC
+     The Python expression evaluates to the array:
+     #+BEGIN_SRC python :results value raw :exports results
+     import numpy
+     return(numpy.arange(0.00, 0.05, 0.01))
+     #+END_SRC
+
+     Note that this requires the ~numpy~ library be loaded, which slat does by
+     default.
+** Variables
+*** Setting
+    We can define local variables with the SET command. The expression after the =
+    will be evaluated by Python:
+    #+BEGIN_SRC slat :eval never :exports code
+    set probabilities=[0.16, 0.50, 0.84]
+    #+END_SRC
+    The type of the variable will depend on the Python expression. In the example
+    above, {{{keyword(probabilities)}}} will be a list of numbers. In contrast,
+    #+BEGIN_SRC slat :eval never :exports code
+    set FILE_ROOT="slat_output"
+    #+END_SRC
+    will set {{{keyword(file_root)}}} to a string.
+*** Referencing
+    To use a variable, prefix it with a dollar sign($). The command:
+    #+BEGIN_SRC slat :eval never :exports code
+    recorder probfn edp_fn cols:$PROBABILITIES at:0.0:0.1:0.5
+             create:$FILE_ROOT
+    #+END_SRC
+    sets up an {{{keyword(probfn)}}} recorder with colums of 16%, 50%, and 84%,
+    to be saved to the file "slat_output".
+
+    /I can see users wanting to set up a base string for a file name, and add to
+    that for each output file. For example, writing the EDPIM recorder to/
+    /~slat_output_EDPIM~, and the EDPRATE recorder to ~slat_output_EDPRATE~. We
+    need to identify a syntax for this./
+
+    Note that {{{keyword($probabilities)}}} is different from
+    {{{keyword($$$(probabilities)$)}}}. The first will look up the value in a
+    local table of things that have been 'SET'; the latter will exececute Python
+    code directly (using the ~eval()~ function) to evaluate the variable.
+    
+    Also note that ~eval()~ will use the __builtins__ namespace, for safety.
+
+    /Can we use local variables in code?/
+    #+BEGIN_SRC slat :eval never :exports code
+    set local_var=0
+    set local_var=$($local_var + 1)
+    #+END_SRC
+    /I think we can, if we substitute the variable(s) before executing the code./
+
+** {{{keyword(analyze)}}}
+   :PROPERTIES:
+   :ALT_TITLE: analyze
+   :END:
+   The {{{keyword(analyze)}}} command causes ~slat~ to generate the data for each
+   {{{keyword(recorder)}}}, performing (and caching) the necessary calculations
+   as it does does so.
+
+   #+BEGIN_SRC slat :eval never :exports code
+   # Perform the analysis:
+   analyze
+
+   # Perform the analysis again--calculations should be
+   # faster, as results have been cached:
+   analyze
+   #+END_SRC
+
+   Changing the integration parameters will invalidate the
+   cache. {{{keyword(analyze)}}} will need to re-evaluate all calculations with
+   the new integration parameters.
+   #+BEGIN_SRC slat :eval never :exports code
+   integration maq |1E-6| 2048
+   analyze
+   #+END_SRC
+
+   Each time we run {{{keyword(analyze)}}} the output files are overwritten,
+   which is probably not what we would like. The easiest way to prevent this may
+   be to change the output directory.
+   #+BEGIN_SRC slat :eval never :exports code
+   option outputdir "results"
+   analyze  # Output files are in the 'results' subdirectory
+   
+   option outputdir "more_results"
+   analyze  # Output files are in the 'more_results'
+            # subdirectory
+   #+END_SRC
+ 
+   Harder, would be to support some sort of dynamic naming--interpret a pattern
+   when the recorder is actually run. Something like:
+   #+BEGIN_SRC slat :eval never :exports code
+   set prefix="first"
+   recorder detfn im_func 0.0:1.0:0.001
+            create:$prefix + "-im_func.txt"
+   analyze  # Data is written to 'first-im_func.txt'
+
+   set prefix="second"
+   analyze  # Data is written to 'second-im_func.txt'
+   #+END_SRC
+   It might be better to have specific syntax for deferred expansion, to avoid
+   confusion.
+** Redefining
+   What happens if we try to redefine an identifier?
+   #+BEGIN_SRC slat :eval never :exports code
+   detfn hyperbolic im_func [1221, 29.8, 62.2]
+   im  im1  im_func
+   detfn hyperbolic im_func [122.1, 29.8, 62.2]
+   #+END_SRC
+   I think the second {{{keyword(detfn)}}} should replace the first, including
+   in {{{keyword(im1)}}}, and invalidate any caches in {{{keyword(im1)}}}, or
+   functions that rely (however indirectly) on {{{keyword(im1)}}}.
+
+   Similarly, if we redefine im1:
+   #+BEGIN_SRC slat :eval never :exports code
+   im im1 <some other function>
+   #+END_SRC
+   ...I would expect {{{keyword(im1)}}}'s cache (if any) to be cleared, along
+   with all functions that rely on {{{keyword(im1)}}}.
+
+
+* Lognormal Distributions
+  ~SLAT~ makes extensive use of lognormal distributions. If /X/ is a lognormal
+  distribution (and therefore /$\ln{(X)}$/ is a normal distribution), it can be
+  described by mean (\mu) and standard deviation (\sigma) of
+  $\ln{(X)}$. However, there are other parameters which some users may
+  prefer. Table [[tbl:lognparams]] lists those ~SLAT~ will support:
+
+  #+NAME: tbl:lognparams
+  #+CAPTION: Lognormal distribution paramers supported by ~SLAT~.
+  | <20>              | <15>        | <30>                                                     |
+  | Symbol            | Identifier  | Meaning                                                  |
+  |-------------------+-------------+----------------------------------------------------------|
+  | \mu_{$ln{X}$}     | ~mu_lnX~    | Mean of the normal distribution $\ln{(X)}$               |
+  | median_{X}        | ~median_X~  | Median of the lognormal distribution $X$                 |
+  | mean_{X}          | ~mean_X~    | Mean of the lognormal distribution $X$                   |
+  | \sigma_{$\ln{X}$} | ~sigma_lnX~ | Standard deviation of the normal distribution $\ln{(X)}$ |
+  | sd_{X}            | ~sd_X~      | Standard deviation of the lognormal distribution $X$     |
+
+  To describe a lognormal distribution, the user must provide one of ~mu_lnX~,
+  ~median_X~ or ~mean_X~, along with either ~sigma_lnX~ or ~sd_X~. The first
+  parameter controls the placement of the distribution along the X axis; the
+  second controls the spread of the distribution. Not all combinations of
+  parameters will be supported (see Table [[tbl:logn_conversions]]).
+
+  The relationship between \mu_{\ln{X}} and median_{X} is straightforward
+  logarithmic one:
+  \[median_{X}=e^{\mu_{\ln{X}}}\]
+  and
+  \[\mu_{\ln{X}}=\ln{median_{X}}\]
+
+  In code, this would look like:
+  #+BEGIN_SRC c :eval never :exports code
+  median_X = exp(mu_lnX);
+  mu_lnX = log(median_X);
+  #+END_SRC
+
+  
+  The relationship between \mu_{\ln{X}} and mean_{X} is affected by \sigma_{\ln{X}}:
+  \[mean_{X}=e^{\mu_{ln{X}}+\frac{\sigma_{\ln{X}}^{2}}{2}}\]
+  and
+  \[\mu_{\ln{X}}=\ln{(mean_{X})}-\frac{\sigma_{\ln{X}}^2}{2}\]
+  In code, this would look like:
+  #+BEGIN_SRC c :eval never :exports code
+  mean_X = exp(mu_lnX + sigma_lnX * sigma_lnX / 2);
+  mu_lnX = log(mean_X) - sigma_lnX * sigma_lnX / 2;
+  #+END_SRC
+  
+
+  The relationship between $\sigma_{\ln{X}}$ and $sd_{X}$ is the most complex:
+  \[sd_{X}=mean_{X} \sqrt{e^{\sigma_{\ln{X}}^2}-1}\] and
+  \[\sigma_{\ln{X}}=\sqrt{\ln{{\frac{sd_{X}^2}{mean_{X}^2}+1}}}\]
+
+  In code, this would look like:
+  #+BEGIN_SRC c :eval never :exports code
+  sd_X = mean_X * sqrt(exp(sigma_lnX * sigma_lnX) - 1);
+  sigma_lnX = sqrt(log(1 + (sd_X*sd_X) / (mean_X*mean_X)));
+  #+END_SRC
+
+  ~SLAT~ will store lognormal distributions as ~mu_lnX~ and ~sigma_lnX~; if the
+  user provides other parameters the will be converted. Table
+  [[tbl:logn_conversions]] shows how different combinations are converted; note that
+  ~sd_X~ is only supported in conjunction with ~mean_X~.
+  #+NAME: tbl:logn_conversions
+  #+ATTR_LaTeX: :placement [h!bt]
+  #+ATTR_LaTeX: :environment tabulary :width \textwidth :align L|L|p{5cm}
+  | <10>       | <10>      | <50>                                                                                           |
+  | Placement  | Spread    | Action                                                                                         |
+  |------------+-----------+------------------------------------------------------------------------------------------------|
+  | mu_lnX     | sigma_lnX | Nothing                                                                                        |
+  | mu_lnX     | sd_X      | Not supported                                                                                  |
+  | median_lnX | sigma_lnX | Convert median_lnX to mu_lnX.                                                                  |
+  | median_lnX | sd_X      | Not supported                                                                                  |
+  | mean_X     | sigma_lnX | Use mean_X and sigma_lnX to calculate mu_lnX.                                                  |
+  | mean_X     | sd_X      | Use mean_X and sd_X to calculate sigma_lnX, then use sigma_lnX and mean_X to calculate mu_lnX. |
+
+* Formal Definition						   :noexport:
+** Building Blocks
+   This section addresses patterns which are used as components of SLAT commands.
+*** ~tagid~  
+    A ~tagid~ provides an identifier for a user-defined object. Identifiers must
+    be unique for each type of identifier, but need not be globally unique. That
+    is, there can only be one deterministic function with the identifier '1', but
+    the same identifier can also be used for a probabilistic function, an intensity
+    measure, etc.
+
+    A ~tagid~ is any sequence of letters, digits, and '_', but must include at
+    least one letter or digit. Keywords can be used as ~tagid~ values.
+   
+    #+NAME: tagid
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    alphanum = (:alpha: | :digit:)+.
+    tagid = alphanum "_" | "_" alphanum | tagid tagid.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/2 :placement [h!bt] :options :float t
+    #+RESULTS[5da9baa8f0874d75840f7d6d955ac542bdf44d6c]: tagid
+    [[file:/tmp/babel-1382rb1/temp13823eM.eps]]
+
+
+
+    In the rest of this document, a pattern name ending in '~tagid~' represents
+    a ~tagid~ of a particular type. For example, ~im_tagid~ signifies an ~idtag~
+    used to identify an intensity measure.
+*** ~:float:~
+    The symbol ~:float:~ represents a floating-point number, as you would
+    expect. This needs to be defined for the parser, but for now we just assume
+    it recognises the usual representations.
+*** ~float_list~
+    Many commands require one or more numeric arguments. The pattern ~float_list~
+    matches a sequence of one or more floating-point numbers. A list is enclosed
+    in square brackets, with the individual values separated by commas. If the
+    list consists of only one number, the brackets are optional.
+    #+NAME: float_list
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    float_list = :float: | "[" :float: {"," :float:}* "]".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/2 :placement [h!bt] :options :float t
+    #+RESULTS[a553ce0d6dff4a508be6703522f03114749b0ddc]: float_list
+    [[file:/tmp/temp4236-su.eps]]
+*** ~float_pairs~
+    Some commands require pairs of numbers (for example, representing function
+    data for an interpolated function). This pattern is a list of lists of pairs
+    of numbers, as would be recognised by Python.
+
+    #+NAME: float_pairs
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    float_pairs = "[" {"[" :float: "," :float: "]"}+ "]".
+    #+END_SRC
+    #+ATTR_LaTeX: :width \textwidth*1/2 :placement [h!bt] :options :float t
+    #+RESULTS[144a01e2a076a747a6c83fb850024a18a39a35b3]: float_pairs
+    [[file:/tmp/temp4236lS1.eps]]
+*** Probability Columns Spec
+    This pattern is used to specify values for recording a probability
+    function. The keywords {{{keyword(mu)}}} and {{{keyword(sigma)}}} indicate
+    that the output should include the corresponding distribution parameters;
+    floating-point numbers are interpreted as percentages. Thus, the pattern:
+    #+BEGIN_SRC fundamental
+    mu, sigma, 16, 50, 84
+    #+END_SRC
+    references the \mu and \sigma of the distribution, as well as the values
+    representing 16%, 50%, and 84% of the random values.
+
+    #+NAME: prob_col_spec
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    prob_col_spec = "MU" | "SIGMA" | :float: | prob_col_spec, prob_col_spec.
+    #+END_SRC
+
+    #+RESULTS[48f23b37cd18e7717f8bac2fb1ffad5ac92d09b5]: prob_col_spec
+    [[file:/tmp/temp4236o4O.eps]]
+
+    #+ATTR_LaTeX: :width \textwidth*1/2 :placement [h!bt] :options :float t
+*** X Values Spec
+    This pattern is used to specify the values at which to evaluate a function.
+    #+NAME: x_values_spec
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    x_values_spec = :float: | :float: : [:float: : :float:] | x_values_spec x_values_spec.
+    #+END_SRC
+    #+ATTR_LaTeX: :width \textwidth*1/2 :placement [h!bt] :options :float t
+    #+RESULTS: x_values_spec
+    [[file:/tmp/babel-1584fLJ/temp1584UYj.eps]]
+*** Output Spec
+    This pattern is used to specify what to do with the output of a ~RECORD~
+    command:
+    #+NAME: output_spec
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    output_spec = ((file_name | "FILE" ":" file_name) [":" file_options]) | "DISPLAY".
+    #+END_SRC
+    #+ATTR_LaTeX: :width \textwidth*1/2 :placement [h!bt] :options :float t
+    #+RESULTS: output_spec
+*** Comments
+    A comment starts with the hash symbol ('~#~'), and goes to the end of the
+    line.
+    #+NAME: comment
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    comment = # {"[^\\n\\000-\\010\\016-\\037\\177-\\237]"}* "\\n".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/2 :placement [h!bt] :options :float t
+    #+RESULTS: comment
+    [[file:/tmp/babel-1584fLJ/temp1584Kpu.eps]]
+** Options
+   The patterns in this section set or modify values with will affect future
+   calculations or output:
+*** Title
+    This sets the title of the analysis, which was done by the original SLAT
+    code, though I'm not yet sure how we'll use it:
+  
+    #+NAME: title
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    title_cmd = "TITLE" (string | quoted_string).
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/2 :placement [h!bt] :options :float t
+    #+RESULTS: title
+    [[file:/tmp/babel-1584fLJ/temp15840Oq.eps]]
+*** Considerations
+    This command sets options that determine what will be considered in the
+    analysis:
+    #+NAME: cons_cmd
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    cons_cmd = "CONSIDER" {"COLLAPSE" | "EPI_UNCERT" | "DEAGG_LOSSES" | "DOWNTIME"}.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/2 :placement [h!bt] :options :float t
+    #+RESULTS[874c186bc0ec5a92615161f3562b74c0b533af7d]: cons_cmd
+    [[file:/tmp/babel-1584PTd/temp15849_h.eps]]
+
+*** Correlations   
+   - correlation:
+     - aleatoric correlation for Loss|DS relationship between different
+       components
+     - aleatoric correlation for DS-EDP relationship between different components
+     - aleatoric correlation for EDP|IM relationship between different demand
+       paramaters
+     - epistemic correlation for L|DS relationship within components
+     - epistemic correlation for DS|EDP paramaters within components
+   - Integration methods
+     - Type of integration for aleotoric integrations (FOSM, MAQ, MAQ with FOSM
+       for correlations)
+     - Type of integrations for epistemic integrations (Monte Carlo simulations)
+     - Allowable relative error in aleotoric integrations
+     - Allowable relative error in epistemic consideration? (not used in original
+       SLAT)
+     - Maximum number of function evaluations during aleotoric integrations
+     - Number of simulations to perform during epistemic Monte Carlo
+       integrations
+** Functions
+*** Deterministic Functions
+    Deterministic functions may be either parametric or interpolated. The parser
+    will not validate the data--the underlying code will be responsible for
+    ensuring that the right number and range of values are provided.
+  
+    #+NAME: detfn
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    det_fn_def = "DETFN" dfn_tagid ((df_par_type  float_list) |
+	(df_interp_type (float_pairs | file_name))).
+
+    df_par_type = "HYPERBOLIC" | "POWERLAW".
+    df_interp_type = "LINEAR" | "LOGLOG".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/2 :placement [h!bt] :options :float t
+    #+RESULTS: detfn
+    [[file:/tmp/babel-1584fLJ/temp1584RaY.eps]]
+
+    /What is the format of the data for an interpolated function?/
+
+    /Should there be options for handling the input file (format, lines to skip)?/
+
+    /What about fitting data to a function?/
+
+*** Probabilistic Functions
+    Probabilistic functions use two deterministic functions to control a
+    probability distribution.  The two ~tagid~ values must refer to ids used for
+    deterministic functions. The parser will not validate the data--the underlying
+    code will be responsible for ensuring that the deterministic functions have
+    been defined.
+
+    #+NAME: probfn
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    prob_fn_def = "PROBFN" pfn_tagid prob_type dfn_tagid dfn_tagid.
+    prob_type = "LOGNORMAL".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth :placement [h!bt] :options :float t
+    #+RESULTS: probfn
+    [[file:/tmp/railroad_diagram.eps]]
+*** Dumping Functions
+   
+** Relationships
+*** Intensity Measure-Rate Relationship
+    An ~im~ definition identifies a deterministic function as describing the rate
+    of exceedence of an intensity measure:
+    #+NAME: im
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    im_def = "IM" im_tagid dfn_tagid.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: im
+  
+*** Engineering Demand Parameter-IM Relationship
+    ~edp~ maps an IM and a probabilistic function to an EDP definition.
+    #+NAME: edp
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    edp_def = "EDP" edp_tagid im_tagid pfn_tagid.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: edp
+*** Fragility and Loss Functions
+    Fragility and loss functions are defined separately, to allow for cases where
+    the user is not interested in calculating losses, for specifying functions for
+    collapse and demolition, and to allow different loss functions to be used for
+    the same fragility function (/e.g./, the columns on the first and tenth floors
+    may have the same fragility function, but it may be more expensive to repair
+    the higher ones.
+
+    A fragility function is described by pairs of numbers, each representing the
+    mean and standard deviation of the EDP value at which the damage state becomes
+    active. Note that damage states are numbered started at 1; damage state #0 is
+    the default, undamaged state.
+    #+NAME: fragility
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    frag_fn = "FRAGFN" frag_tagid float_pairs.
+    #+END_SRC
+   
+    /How do we distinguish library fragility functions from user-defined
+    functions?/
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS[5f078867b2f34d7a6be45793d5c000037fc980de]: fragility
+    [[file:/tmp/babel-1382rb1/temp1382rcB.eps]]
+
+
+
+
+
+    A loss function describes the costs associated with the damage states for a
+    given fragility function. Seven numbers are required for each damage state:
+    + The upper and lower limits on the mean loss due to the onset of the state
+    + The number of components up to which the maximum per-unit cost applies
+    + The number after which the minimum per-unit cost applies
+    + The normalised dispersion (in the loss) due to the onset of the state
+    + The epistemic uncertainty in mean and variance of $ln(loss)$ for the onset of
+      the state.
+
+    /I think the same command could be used regardless of whether the loss is/
+    /measured in dollars or downtime. Should we add a tag indicating the type of/
+    /loss?/
+    #+NAME: loss
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    loss_fn = "LOSSFN" loss_tagid {2*2:float: 2*2:integer 3*3:float:}+.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: loss
+    [[file:/tmp/babel-1584fLJ/temp1584jFS.eps]]
+
+    /I'm not comfortable with this. I think it will be hard to read (though this/
+    /can be mitigated by commenting). It limits the changes we can make in the/
+    /future, since the only way to identify the number of damage states is by the/
+    /total number of values. This (probably) isn't a problem with fragility/
+    /functions; it's unlikely we'll need more than two values to define a state./
+
+    /Alternatives include specifying the loss function for each damage state in a/
+    /separate command; requiring a delimiter (/e.g./, a semicolon) between the/
+    /parameters for different damage states, requiring tags to identify each/
+    /parameter, requiring parenthesis around each group of parameters, etc./
+  
+*** Performance Groups
+    The ~perf_group~ rule defines a performance group, combining EDP, fragility,
+    and loss functions, with the number of components in the group.  Note that the
+    fragility and loss functions must have the same number of damage states.
+    #+NAME: perf_groups
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    perf_group = "PGROUP" pgroup_tagid edp_tagid frag_tagid loss_tagid :integer:.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: perf_groups
+*** Dumping Relationships   
+** Recorders
+   A ~RECORDER~ pattern specifies data to be recorded during analysis, and saved to
+   a file (or, possible, displayed on the screen).
+
+   /File and number formats should be controlled by default values, which can be
+   overridden both globally and locally./
+*** Deterministic Function
+    This pattern will evaluate a deterministic function at the specified points,
+    and record the results.
+    #+NAME: dfn_calc
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    dfn_calc = "RECORDER" "DETFN" dfn_tagid x_values_spec output_spec.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: dfn_calc
+    [[file:/tmp/babel-1584fLJ/temp1584TeQ.eps]]
+*** Probabilistic Function (at % points)
+    This pattern will evaluate a probabilistic function at the specified points,
+    and record the results. The column spec defaults to "MU, SIGMA".
+    #+NAME: pfn_calc
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    pfn_calc = "RECORDER" "PROBFN" pfn_tagid [prob_col_spec] x_values_spec.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS[6caf4fdccdece836400449cd61588140f4e927cd]: pfn_calc
+    [[file:/tmp/temp4236tVu.eps]]
+*** IM-Rate
+    This pattern will evaluate in Intensity Measure at the specified points,
+    and record the corresponding rate of exceedence.
+    #+NAME: im_rate
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    im_rate_calc = "RECORDER" "IMRATE" im_tagid x_values_spec [output_spec].
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: im_rate
+   
+*** EDPIM
+    This pattern records EDP values (any combination of \mu, \sigma, and
+    percentages) for specified IM values:
+    #+NAME: edp_calc
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    edp_im_calc = "RECORDER" "EDPIM" edp_tagid [prob_col_spec] x_values_spec [output_spec].
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: edp_calc
+    [[file:/tmp/babel-1584fLJ/temp1584721.eps]]
+*** EDPRATE
+    This pattern records the rate of exceedence for the specifiid EDP values:
+    #+NAME: edp_calc
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    edprate_calc = "RECORDER" "EDPRATE" edp_tagid x_values_spec [output_spec].
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: edp_calc
+    [[file:/tmp/babel-1584fLJ/temp1584721.eps]]
+*** DSEDP
+    This pattern will report, for each damage state, the probability of that
+    damage state being active for specified EDP values:
+    #+NAME: ds_calc
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    dsedp_calc = "RECORDER" "DSEDP" ds_tagid x_values_spec [output_spec].
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: ds_calc
+    [[file:/tmp/babel-1584fLJ/temp1584W2B.eps]]
+*** DSIM
+    This pattern will report, for each damage state, the probability of that
+    damage state being active for specified IM values:
+    #+NAME: ds_calc
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    ds_im_calc = "RECORDER" "DSIM" ds_tagid x_values_spec [output_spec].
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: ds_calc
+    [[file:/tmp/babel-1584fLJ/temp1584W2B.eps]]
+*** DSRATE
+    This pattern will report, for each damage state, the probability of that
+    damage state being active.
+    #+NAME: ds_calc
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    dsrate_calc = "RECORDER" "DSRATE" ds_tagid [output_spec].
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: ds_calc
+    [[file:/tmp/babel-1584fLJ/temp1584W2B.eps]]
+*** LOSSDS
+    This pattern will report, for each damage state, the probability of that
+    damage state resulting in specified losses:
+
+    /Is this a correct description? What will the data be expected to look like?/
+    #+NAME: ds_calc
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    lossds_calc = "RECORDER" "LOSSDS" pg_tagid x_values_spec [output_spec].
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: ds_calc
+    [[file:/tmp/babel-1584fLJ/temp1584W2B.eps]]
+
+*** LOSSEDP
+    This pattern will report, for each damage state, the probability distribution
+    of the losses resulting from that damage state for given EDP values:
+    #+NAME: ds_calc
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    lossedp_calc = "RECORDER" "LOSSEDP" pg_tagid prob_col_spec x_values_spec [output_spec].
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: ds_calc
+    [[file:/tmp/babel-1584fLJ/temp1584W2B.eps]]
+
+*** LOSSIM
+    This pattern will report, for each damage state, the probability distribution
+    of the losses resulting from that damage state for given IM values
+    #+NAME: ds_calc
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    lossedp_calc = "RECORDER" "LOSSIM" pg_tagid prob_col_spec x_values_spec [output_spec].
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: ds_calc
+    [[file:/tmp/babel-1584fLJ/temp1584W2B.eps]]
+
+*** Collapse/Demolition
+    This pattern records the probability of collapse and demolition for given IM
+    values, if these options are enabled for the analysis:
+    #+NAME: collapse_calc
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf
+    collapse_calc = "RECORDER" "COLLAPSE" x_values_spec [output_spec].
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*3/4 :placement [h!bt] :options :float t
+    #+RESULTS: collapse_calc
+    [[file:/tmp/babel-1584fLJ/temp1584wRC.eps]]
+   
+*** Expected Loss
+    This pattern records \mu and \sigma of the expected annual loss.
+* Formal Definition
+    #+NAME: script
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    script = {whitespace | command}*.
+    whitespace = "SPACE" | "TAB" | "NEWLINE" | comment.
+    comment = "#" {"^NEWLINE"}*.
+    command = title_command |  "...".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[3b3a2e7767d61948f8adc2952816b5e4ae700ce5]: script
+    [[file:/tmp/babel-3074Khu/temp3074Goi.eps]]
+
+
+
+    #+NAME: title_command
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    title_command = TITLE whitespace string.
+    string = unquoted_string | single_quoted_string | double_quoted_string.
+    printable = "any non-whitespace character".
+    unquoted_string = {printable}*.
+    single_quoted_string = "'" {"not '\\" | ("\\" ("'" | "\\"))}*  "'".
+    double_quoted_string = "\"" {"not \"\\" | ("\\" ("\"" | "\\"))}*  "\"".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[d924be026e9ca2668a40014bf28097ae8ef78776]: title_command
+
+    #+NAME: detfn_cmd
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    detfn_cmd = "DETFN" detfn_type detfn_id parameters.
+    detfn_type = "HYPERBOLIC" | "POWERLAW".
+    detfn_id = tag_id.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[4f59c9b2167a3f2871e8c86394ca96731c1f9954]: detfn_cmd
+    [[file:/tmp/babel-1382rb1/temp1382e2q.eps]]
+
+    #+NAME: parameters
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    parameters = parameter | parameter_array | parameter_dictionary.
+    parameter = number | string.
+    parameter_array = "[" parameter / "," "]".
+    parameter_dictionary = "{" (string ":" parameter) /"," "}".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[14d1a15dacf3f344940bb2d8c769909e1dd10ac8]: parameters
+    [[file:/tmp/babel-1382rb1/temp1382rHl.eps]]
+
+
+    #+NAME: tagid
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    alphanum = (:alpha: | :digit:)+.
+    tag_id = alphanum | alphanum "_" | "_" alphanum | tag_id tag_id.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[28ee21a814040620176afc5fcc6cce925520939e]: tagid
+    [[file:/tmp/temp4236gGe.eps]]
+
+
+    #+NAME: probfn_cmd
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    probfn_cmd = "PROBFN" probfn_id "LOGNORMAL" lognormal_params.
+    probfn_id = tag_id.
+    lognormal_params = "{" (lognormal_param_type ":" detfn_id) / "," "}".
+    lognormal_param_type = placement_type | spread_type.
+    placement_type = "MEDIAN_X" | "MEAN_X" | "MEAN_LN_X".
+    spread_type = "SD_X" | "SD_LN_X".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[058ef865679902ba2caacf1c50d9bb054a847f81]: probfn_cmd
+    [[file:/tmp/babel-1382rb1/temp13824fT.eps]]
+
+
+
+    #+NAME: relationship
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    im_rel = "IM" im_id detfn_id.
+    im_id = tag_id.
+
+    edp_rel = "EDP" edp_id im_id probfn_id.
+    edp_id = tag_id.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[4e91517482669b73f6e41bdc78c05a4d61825db5]: relationship
+    [[file:/tmp/babel-1382rb1/temp1382f3x.eps]]
+
+
+    #+NAME: fragility
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    fragfn = "FRAGFN" frag_id (frag_params | ([ "DB" ":" db_id ] "STDFUNC" ":" frag_func_key)).
+    frag_id = tag_id.
+    db_id = "database identifier".
+    frag_func_key = "fragility function key in database".
+    frag_params = "[" lognormal_params / "," "]".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[ad3793eec59b6e34a0968ad8a98c0f337f7261da]: fragility
+
+
+    #+NAME: lossfn
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    lossfn = loss_id simple_loss_fn | proportional_loss.
+    simple_loss_fn = "SIMPLE" "[" fixed_cost / "," "]".
+    fixed_cost = "{" "COST" ":" number ["," "DISP" ":" number] "}".
+
+    proportional_loss = "PROPORTIONAL" "[" proportional_cost / "," "]".
+    proportional_cost = "[" cost_point / "," "]".
+    cost_point = "{" "N" ":" integer "," "UNIT_COST" ":" number ("," "DISP" ":" number) "}".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[200b58d9d690aab5a4707bce63da56082b6203df]: lossfn
+    [[file:/tmp/babel-1382rb1/temp1382SCI.eps]]
+
+
+    #+NAME: compgroup
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    compgroup = compgroup_id edp_id frag_id loss_id [count].
+    compgroup_id = tag_id.
+    count = integer.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[da5db418c8484a979a420a7a5f11487a559e008a]: compgroup
+    [[file:/tmp/babel-1382rb1/temp1382g_s.eps]]
+
+    #+NAME: print
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    print_cmd = "PRINT" (("MESSAGE" string) | (value_type id_list)) [print_options].
+    print_options = ("CREATE" | "APPEND") ":" filename.
+    value_type = "DETFN" | "PROBFN" | "IM" | "EDP" | "FRAGFN" | "LOSSFN" | "COMPGROUP".
+    id_list = string | "[" string / "," "]".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[338fb8c99a2e89da2b25a5c7652324954321ead2]: print
+    [[file:/tmp/babel-1382rb1/temp13826at.eps]]
+
+    #+NAME: integration
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    integration_cmd = "INTEGRATION" algorithm accuracy iterations.
+    algorithm = "MAQ".
+    accuracy = number.
+    iterations = number.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[10313add01f5c0baa555bfb98214ec50b83503db]: integration
+    [[file:/tmp/babel-1382rb1/temp13825uC.eps]]
+
+
+    #+NAME: recorder
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    recorder_cmd = "RECORDER" recorder_type tag_id ["COLS" ":" column_values] "AT" ":" at_values print_options.
+    recorder_type = "DETFN" | "PROBFN" | "IMRATE" | "EDPIM" | "EDPRATE" | "DSEDP" | "DSIM" | "DSRATE" | "LOSSDS" | "LOSSEDP" | "LOSSIM".
+    column_values = column_value | "[" column_value / "," "]".
+    column_value = placement_type | spread_type.
+    at_values = number | "[" number / "," "]" | min ":" increment ":" max.
+    min = number.
+    increment = number.
+    max = number.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[abe7b6f878bcbc6ec20da789a92e38a8d70af212]: recorder
+    [[file:/tmp/babel-1382rb1/temp1382Hsn.eps]]
+
+
+    #+NAME: python
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    python_code = "$" "(" python_expression ")".
+    python_expression = "a python expression with balanced parentheses".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[53874960f2bee723273bca72c8dcfa39536f961e]: python
+    [[file:/tmp/babel-1382rb1/temp1382hA0.eps]]
+
+
+    #+NAME: variables
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    var_set_cmd = "SET" identifier "=" expression.
+    identifier = tag_id.
+    expression = parameters | python_code.
+
+    var_ref = "$" tag_id.
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[9816973d3a83d37b5dcba67e88cf1366e7a1c8fb]: variables
+    [[file:/tmp/babel-1382rb1/temp1382Hzb.eps]]
+
+
+
+    #+NAME: analyze
+    #+HEADER: :file (org-babel-temp-file "./temp" ".eps")
+    #+BEGIN_SRC ebnf :results file
+    analyze_cmd = "ANALYZE".
+    #+END_SRC
+
+    #+ATTR_LaTeX: :width \textwidth*1/1 :placement [h!bt] :options :float t
+    #+RESULTS[ad3793eec59b6e34a0968ad8a98c0f337f7261da]: analyze
+
+
+
+
+* Footnotes
+
+[fn:2] Note that $\lambda(IM)$ is the probabilty of the intensity measure
+/exceeding/ /IM/; the derivative of this indicates how likely an intensity
+measure of /IM/ is.
+
+[fn:1] Note that the end limit is /not/ included in the results of the ~arange~
+function.
+
